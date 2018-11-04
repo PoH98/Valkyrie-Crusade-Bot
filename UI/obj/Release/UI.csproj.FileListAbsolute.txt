@@ -27,3 +27,4 @@ C:\Users\Shun Yuan\Desktop\Bot\UI\obj\Release\UI.csproj.CoreCompileInputs.cache
 C:\Users\Shun Yuan\Desktop\Bot\UI\obj\Release\UI.csproj.CopyComplete
 C:\Users\Shun Yuan\Desktop\Bot\UI\obj\Release\Run.exe
 C:\Users\Shun Yuan\Desktop\Bot\UI\obj\Release\Run.pdb
+C:\Users\Shun Yuan\Desktop\Bot\UI\obj\Release\UI.Download.resources

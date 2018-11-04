@@ -499,7 +499,7 @@ namespace ImageProcessor
 
         private void button8_Click(object sender, EventArgs e)
         {
-            Download.Url = "https://dl1.filehippo.com/c594d79ddba3441a81aa96fd8545e436/Memu-Setup-3.6.9.0.exe?ttl=1541317508&token=9fd4a11b2a075fc89bcf5ba6db2a455d";
+            Download.Url = "https://github.com/PoH98/Bot/raw/master/神女控.apk";
             Download d = new Download();
             d.Show();
         }

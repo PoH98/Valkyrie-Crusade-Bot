@@ -49,6 +49,8 @@
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.button8 = new System.Windows.Forms.Button();
+            this.button7 = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.checkBox5 = new System.Windows.Forms.CheckBox();
@@ -68,8 +70,6 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.button6 = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.button7 = new System.Windows.Forms.Button();
-            this.button8 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -299,6 +299,26 @@
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "其他功能";
             // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(6, 62);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(242, 38);
+            this.button8.TabIndex = 1;
+            this.button8.Text = "下载神女控 + 自动安装";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
+            // 
+            // button7
+            // 
+            this.button7.Location = new System.Drawing.Point(6, 19);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(242, 37);
+            this.button7.TabIndex = 0;
+            this.button7.Text = "下载逍遥模拟器";
+            this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
+            // 
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.groupBox2);
@@ -513,26 +533,6 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(619, 53);
             this.panel2.TabIndex = 14;
-            // 
-            // button7
-            // 
-            this.button7.Location = new System.Drawing.Point(6, 19);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(242, 37);
-            this.button7.TabIndex = 0;
-            this.button7.Text = "下载逍遥模拟器";
-            this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.button7_Click);
-            // 
-            // button8
-            // 
-            this.button8.Location = new System.Drawing.Point(6, 62);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(242, 38);
-            this.button8.TabIndex = 1;
-            this.button8.Text = "下载神女控 + 自动安装";
-            this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // MainScreen
             // 
