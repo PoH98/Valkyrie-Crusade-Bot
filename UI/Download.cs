@@ -112,6 +112,21 @@ namespace UI
 
         private void button1_Click(object sender, EventArgs e)
         {
+            try
+            {
+                if (File.Exists("temp.exe"))
+                {
+                    File.Delete("temp.exe");
+                }
+                if (File.Exists("temp.apk"))
+                {
+                    File.Delete("temp.apk");
+                }
+            }
+            catch
+            {
+
+            }
             Close();
         }
 

@@ -44,3 +44,4 @@ C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\obj\Release\ImageProcessor.csproj.
 C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\obj\Release\ImageProcessor.csproj.CopyComplete
 C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\obj\Release\ImageProcessor.dll
 C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\obj\Release\ImageProcessor.pdb
+C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\obj\Release\ImageProcessor.csprojAssemblyReference.cache
