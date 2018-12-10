@@ -2,8 +2,10 @@
 QQ群号：809233738
 
 __自定义脚本插件例子：__
-//class名字随意，但是必须加上 : BattleScript为后叠
-public class defaultScript : BattleScript
+
+
+    //class名字随意，但是必须加上 : BattleScript为后叠
+    public class defaultScript : BattleScript
     {
         //最主要的脚本操作
         public void Attack()
