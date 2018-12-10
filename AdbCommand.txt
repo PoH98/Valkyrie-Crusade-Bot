@@ -1,0 +1,14 @@
+kill -STOP <pid> //Pause Game
+kill -CONT <pid> //Resume Game
+adb shell ps (| grep) <app package name> //Get PID
+https://stackoverflow.com/questions/22184246/implement-imagesearchdll-dll-in-c-sharp //Use third party dll for faster image search
+https://social.msdn.microsoft.com/Forums/vstudio/en-US/de9ee1c9-16d3-4422-a99f-e863041e4c1d/reading-raw-rgba-data-into-a-bitmap?forum=netfxbcl //Convert rgba to bitmap
+
+So fastest find image:
+Get PID
+Pause Game
+Screencap <path + emulatorpid>.rgba
+Fast image search
+Resume Game
+
+

@@ -13,7 +13,7 @@ namespace ImageProcessor
     /// <summary>
     /// Variables that are stored in memory for future usage
     /// </summary>
-    public class Variables
+    public static class Variables
     {   /// <summary>
         /// A list of devices that are connected to the computer. Retreive by using EmulatorController.StartAdb()
         /// </summary>
@@ -21,7 +21,7 @@ namespace ImageProcessor
         /// <summary>
         /// Select which device that is need to control. We can't control thousands of them in a same time!
         /// </summary>
-        public static int Control_Device_Num = 0, Selected_Process_Num;
+        public static int Control_Device_Num = -1, Selected_Process_Num;
         /// <summary>
         /// Confiures of bot.ini, use EmulatorController.ReadConfig() to fill up values
         /// </summary>
@@ -51,9 +51,17 @@ namespace ImageProcessor
         /// </summary>
         public static Process Proc;
         /// <summary>
-        /// The emulator's shared pictures path
+        /// Virtual box path
         /// </summary>
-        public static string SharedPicturePath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + "\\MEmu Photo\\";
+        public static string VBoxManagerPath;
+        /// <summary>
+        /// The download path that shared for image capturing
+        /// </summary>
+        public static string SharedPath;
+        /// <summary>
+        /// The instance name of emulator to multi-bot
+        /// </summary>
+        public static string Instance = "";
 
     }
 }

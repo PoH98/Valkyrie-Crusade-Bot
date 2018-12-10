@@ -19,7 +19,9 @@ namespace UI
         public static string Url;
         static WebClient wc = new WebClient();
         static bool Completed;
+        static bool installing = false;
         static bool Error;
+
         public Download()
         {
             InitializeComponent();
@@ -29,20 +31,36 @@ namespace UI
         {
             try
             {
-                if (Url.Contains(".exe"))
+                if (Url.Contains("memu")|| Url.Contains("exe"))
                 {
                     wc.DownloadFile(Url, "temp.exe");
-                    Process.Start("temp.exe");
+                    //Process.Start();
+                   Process.Start("temp.exe");
                 }
                 else if (Url.Contains(".apk"))
                 {
                     wc.DownloadFile(Url, "temp.apk");
+                    EmulatorController.StartEmulator();
+                    EmulatorController.StartAdb();
+                    Thread.Sleep(10000);
                     EmulatorController.InstallAPK("temp.apk");
+                    installing = true;
+                    while (true)
+                    {
+                        byte[] image = EmulatorController.ImageCapture();
+                        Point? point = EmulatorController.FindImage(image, "CustomImg\\Icon.png", true);
+                        if(point != null)
+                        {
+                            break;
+                        }
+                        Thread.Sleep(1000);
+                    }
                 }
                 Completed = true;
             }
-            catch
+            catch(Exception ex)
             {
+                MessageBox.Show(ex.ToString());
                 Error = true;
                 Completed = true;
             }
@@ -64,7 +82,7 @@ namespace UI
                 if (File.Exists("temp.exe"))
                 {
                     FileInfo file = new FileInfo("temp.exe");
-                    long Num = file.Length / 1024;
+                    double Num = file.Length / 1024;
                     string Size = " kb";
                     if(Num > 1024)
                     {
@@ -76,12 +94,13 @@ namespace UI
                         Num = Num / 1024;
                         Size = " gb";
                     }
-                    label4.Text = Num + Size;
+                    
+                    label4.Text = Num.ToString("0.00") + Size;
                 }
                 else if (File.Exists("temp.apk"))
                 {
                     FileInfo file = new FileInfo("temp.apk");
-                    long Num = file.Length / 1024;
+                    double Num = file.Length / 1024;
                     string Size = " kb";
                     if (Num > 1024)
                     {
@@ -93,16 +112,20 @@ namespace UI
                         Num = Num / 1024;
                         Size = " gb";
                     }
-                    label4.Text = Num + Size;
+                    label4.Text = Num.ToString("0.00") + Size;
                 }
                 else
                 {
                     label4.Text = "正在连接...";
                 }
             }
+            else if (installing)
+            {
+                label4.Text = "正在安装！";
+            }
             else if(!Error)
             {
-                label4.Text = "已下载完毕！正在安装！";
+                label4.Text = "已完成！";
             }
             else
             {
@@ -134,9 +157,10 @@ namespace UI
         {
             if (e.Button == MouseButtons.Left)
             {
-                MainScreen.ReleaseCapture();
-                MainScreen.SendMessage(Handle, MainScreen.WM_NCLBUTTONDOWN, MainScreen.HT_CAPTION, 0);
+                DllImport.ReleaseCapture();
+                DllImport.SendMessage(Handle, DllImport.WM_NCLBUTTONDOWN, DllImport.HT_CAPTION, 0);
             }
         }
+
     }
 }

@@ -7,7 +7,7 @@ using System.Net;
 
 namespace UI
 {
-    class WebClientOverride:WebClient
+    public class WebClientOverride:WebClient
     {
         protected override WebRequest GetWebRequest(Uri address)
         {

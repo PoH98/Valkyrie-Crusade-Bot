@@ -61,3 +61,30 @@ C:\Users\Shun Yuan\Desktop\Bot\UI\obj\Debug\UI.csproj.CopyComplete
 C:\Users\Shun Yuan\Desktop\Bot\UI\obj\Debug\Run.exe
 C:\Users\Shun Yuan\Desktop\Bot\UI\obj\Debug\Run.pdb
 C:\Users\Shun Yuan\Desktop\Bot\UI\obj\Debug\UI.Loading.resources
+D:\Backup\Bot\UI\bin\Debug\Run.exe.config
+D:\Backup\Bot\UI\obj\Debug\Run.exe
+D:\Backup\Bot\UI\obj\Debug\Run.pdb
+D:\Backup\Bot\UI\bin\Debug\x64\concrt140.dll
+D:\Backup\Bot\UI\bin\Debug\x64\cvextern.dll
+D:\Backup\Bot\UI\bin\Debug\x64\msvcp140.dll
+D:\Backup\Bot\UI\bin\Debug\x64\opencv_ffmpeg341_64.dll
+D:\Backup\Bot\UI\bin\Debug\x64\vcruntime140.dll
+D:\Backup\Bot\UI\bin\Debug\x86\concrt140.dll
+D:\Backup\Bot\UI\bin\Debug\x86\cvextern.dll
+D:\Backup\Bot\UI\bin\Debug\x86\msvcp140.dll
+D:\Backup\Bot\UI\bin\Debug\x86\opencv_ffmpeg341.dll
+D:\Backup\Bot\UI\bin\Debug\x86\vcruntime140.dll
+D:\Backup\Bot\UI\bin\Debug\Run.exe
+D:\Backup\Bot\UI\bin\Debug\Run.pdb
+D:\Backup\Bot\UI\bin\Debug\ImageProcessor.dll
+D:\Backup\Bot\UI\bin\Debug\SharpAdbClient.dll
+D:\Backup\Bot\UI\bin\Debug\Emgu.CV.World.dll
+D:\Backup\Bot\UI\bin\Debug\ImageProcessor.pdb
+D:\Backup\Bot\UI\bin\Debug\SharpAdbClient.pdb
+D:\Backup\Bot\UI\bin\Debug\Emgu.CV.World.xml
+D:\Backup\Bot\UI\obj\Debug\UI.csprojResolveAssemblyReference.cache
+D:\Backup\Bot\UI\obj\Debug\UI.Download.resources
+D:\Backup\Bot\UI\obj\Debug\UI.Loading.resources
+D:\Backup\Bot\UI\obj\Debug\ImageProcessor.MainScreen.resources
+D:\Backup\Bot\UI\obj\Debug\UI.Properties.Resources.resources
+D:\Backup\Bot\UI\obj\Debug\UI.csproj.GenerateResource.Cache
