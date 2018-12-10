@@ -164,11 +164,16 @@ __自定义脚本插件例子：__
             txtBox.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
             txtBox.Name = "Description";
             CheckBox chk = new CheckBox();
+            CheckBox chk = new CheckBox();
             chk.Text = "使用脚本";
             chk.Checked = true;
             chk.EnabledChanged += Chk_EnabledChanged;
             chk.Location = new Point(10,250);
             chk.AutoSize = true;
+            if(PrivateVariable.BattleScript.Count == 1)
+            {
+                chk.Enabled = false; //只有默认脚本在，那就不让用户修改要不要用脚本了，不然是要在战斗的时候永久发呆？
+            }
             WebBrowser wb = new WebBrowser();
             wb.Location = new Point(10, 270);
             wb.Height = 400;
@@ -177,14 +182,14 @@ __自定义脚本插件例子：__
             Control[] thingsToReturn = { text, txtBox ,chk,wb};
             return thingsToReturn;
         }
-        //创建的GUI可以另外增加功能，例如上述的Chk Checkbox当发现脚本数量只有一个或者更少（不可能的事情，毕竟都加载了这个默认脚本）后，禁止用于点取消打勾
+        //创建的GUI可以另外增加功能
         private void Chk_EnabledChanged(object sender, EventArgs e)
         {
-            if(PrivateVariable.BattleScript.Count < 2)
+            if((sender as CheckBox).Checked)
             {
-                (sender as CheckBox).Checked = true;
+                PrivateVariable.Selected_Script = 0;
             }
-            PrivateVariable.Selected_Script = 0;
+
         }
         //如果您的脚本有任何需要读取脚本资料的，可在这个地方加入，如File.ReadAllLines之类
         public void ReadConfig()
