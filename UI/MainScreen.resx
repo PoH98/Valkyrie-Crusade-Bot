@@ -2671,64 +2671,14 @@
         932VH+YAAAAASUVORK5CYII=
 </value>
   </data>
-  <data name="textBox4.Text" xml:space="preserve">
-    <value>自定义脚本帮助:
-
-脚本格式将会是
-A|B|C|D
-
-A指令有:
-1. “//”为注释，脚本将会无视
-2. “攻击”则是选择B的指令攻击C敌人
-3. “发动”则是检查B指令的卡牌是否有技能可以发动，有则马上发动，需要在这之前进行“截图”指令
-4. “截图”则是用于接下来少数功能，不进行截图直接执行某些指令则脚本出错软件闪退
-5. “寻找”则是用于从“截图”功能后寻找B格式的C
-6. “等待”则是用于挂机不做任何动作直到B毫秒后
-7. “重返”则是直接回到脚本运行初始点，重新运行脚本一次
-8.“标记”则是用于寻找以及重返时的标记
-
-B指令在“攻击”和“发动”有:
-1. 最左 
-2. 左
-3. 中间
-4. 右
-5. 最右
-
-B指令在“寻找”有:
-1. 颜色
-2.文件
-
-B指令在“等待”有
-1. 毫秒
-
-B指令在“重返”有
-1.空白不写则重返脚本开始
-2.标记名字则跳到该标记名后继续运行
-
-C指令在“攻击”有:
-1. 最左 - 攻击最左的敌人
-2. 左 - 攻击靠左的敌人
-3. 中间 - 攻击中间的Boss
-4. 右 - 攻击靠右的敌人
-5. 最右 - 攻击最右的敌人
-
-C指令在“寻找”有:
-当B为“颜色”时：
-1.坐标X, 坐标Y： 颜色（RGB）- 返回是否找到颜色
-
-当B为“文件”时：
-1.文件路径
-
-D指令为当“寻找”返回正确时
-1.点击 - 点击图片位置
-2.滑动 - 长按图片位置
-3.继续 = &lt;标记名&gt;- 继续运行脚本，找不到则跳过接下来的行动直到下一个标记</value>
-  </data>
   <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>191, 17</value>
   </metadata>
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>331, 17</value>
+  </metadata>
+  <metadata name="errorProvider1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>428, 17</value>
   </metadata>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>48</value>

@@ -173,7 +173,6 @@ namespace ImageProcessor
                 // The following properties run the new process as administrator
                 processInfo.UseShellExecute = true;
                 processInfo.Verb = "runas";
-
                 // Start the new process
                 try
                 {
@@ -182,9 +181,8 @@ namespace ImageProcessor
                 catch (Exception)
                 {
                     // The user did not allow the application to run as administrator
-                    MessageBox.Show("Sorry, this application must be run as Administrator.");
+                    MessageBox.Show("挂机需要权限才能运行！");
                 }
-
                 // Shut down the current process
                 Application.Exit();
             }
@@ -235,9 +233,10 @@ namespace ImageProcessor
             catch //Not able to locate registry, no MEmu found
             {
                 MessageBox.Show("请安装逍遥模拟器再继续运行！");
-                Download.Url = "http://dl.memuplay.com/download/backup/Memu-Setup-3.7.0.0.exe";
-                Download d = new Download();
-                d.ShowDialog();
+                if (File.Exists("Updater.exe"))
+                {
+                    Process.Start("Updater.exe", "http://dl.memuplay.com/download/backup/Memu-Setup-3.7.0.0.exe");
+                }
             }
             openFileDialog1.InitialDirectory = startuppath;
             if (Variables.Configure.TryGetValue("Path", out output))
@@ -285,9 +284,10 @@ namespace ImageProcessor
             if (!output.Contains("MEmu.exe"))
             {
                 MessageBox.Show("请安装逍遥模拟器再继续运行！");
-                Download.Url = "http://dl.memuplay.com/download/backup/Memu-Setup-3.7.0.0.exe";
-                Download d = new Download();
-                d.ShowDialog();
+                if (File.Exists("Updater.exe"))
+                {
+                    Process.Start("Updater.exe", "http://dl.memuplay.com/download/backup/Memu-Setup-3.7.0.0.exe");
+                }
             }
             Variables.VBoxManagerPath = output.Replace("\\MEmu\\MEmu.exe", "\\MEmuHyperv");
             ProcessStartInfo fetch = new ProcessStartInfo(Variables.VBoxManagerPath + "\\MEmuManage.exe");
@@ -388,27 +388,6 @@ namespace ImageProcessor
                     checkBox8.Checked = true;
                 }
             }
-            if (Variables.Configure.TryGetValue("CustomScript", out output))
-            {
-                if (output == "true")
-                {
-                    PrivateVariable.CustomScript = true;
-                    checkBox10.Checked = true;
-                }
-                else
-                {
-                    PrivateVariable.CustomScript = false;
-                }
-            }
-            else
-            {
-                Variables.Configure.Add("CustomScript", "true");
-                PrivateVariable.CustomScript = false;
-                using (var stream = File.AppendText("bot.ini"))
-                {
-                    stream.WriteLine("CustomScript=false");
-                }
-            }
             if (Variables.Configure.TryGetValue("Archwitch_New", out output))
             {
                 if (output == "true")
@@ -482,13 +461,22 @@ namespace ImageProcessor
             webBrowser1.DocumentText = html;
             LoadEventBrowser();
             webBrowser3.Navigate(new Uri("http://www.xldsdr.com/valkyriecrusade"));
+            Script.Read_Plugins();
+            foreach (var s in PrivateVariable.BattleScript)
+            {
+                tabControl2.TabPages.Add(s.ScriptName());
+                foreach (var c in s.CreateUI())
+                {
+                    tabControl2.TabPages[tabControl2.TabPages.Count - 1].Controls.Add(c);
+                }
+            }
+            EmulatorController.StartAdb();
             Loading.LoadCompleted = true;
             Thread mon = new Thread(DeviceConnected);
             mon.Start();
             PrivateVariable.EventType = -1;
             timer1.Start();
             timer2.Start();
-            EmulatorController.StartAdb();
         }
 
         private bool IsRunAsAdministrator()
@@ -598,11 +586,12 @@ namespace ImageProcessor
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if ((PrivateVariable.nospam - DateTime.Now).Duration() < TimeSpan.FromSeconds(5))
+            if ((PrivateVariable.nospam - DateTime.Now).Duration() < TimeSpan.FromSeconds(4))
             {
                 MessageBox.Show("啊！亚麻跌！慢点！好疼啊！");
                 return;
             }
+            Script.archwitch_level_location = new Point(Convert.ToInt32(numericUpDown1.Value), Convert.ToInt32(numericUpDown2.Value));
             PrivateVariable.nospam = DateTime.Now;
             PrivateVariable.Run = true;
             if (textBox2.Text.Length > 0)
@@ -998,19 +987,18 @@ namespace ImageProcessor
 
         private void button7_Click(object sender, EventArgs e)
         {
-            Download.Url = "http://dl.memuplay.com/download/backup/Memu-Setup-3.7.0.0.exe";
-            Download d = new Download();
-            d.Show();
+            if (File.Exists("Updater.exe"))
+            {
+                Process.Start("Updater.exe", "http://dl.memuplay.com/download/backup/Memu-Setup-3.7.0.0.exe");
+            }
         }
 
         private void button8_Click(object sender, EventArgs e)
         {
-            EmulatorController.StartEmulator();
-            EmulatorController.StartAdb();
-            Thread.Sleep(10000);
-            Download.Url = "https://github.com/PoH98/Bot/raw/master/神女控.apk";
-            Download d = new Download();
-            d.Show();
+            if (File.Exists("Updater.exe"))
+            {
+                Process.Start("Updater.exe", "https://github.com/PoH98/Bot/raw/master/神女控.apk");
+            }
         }
 
         private void button5_MouseEnter(object sender, EventArgs e)
@@ -1084,12 +1072,6 @@ namespace ImageProcessor
         {
             PrivateVariable.AlwaysAttackNew = checkBox9.Checked;
             WriteConfig("Archwitch_New", checkBox9.Checked.ToString().ToLower());
-        }
-
-        private void checkBox10_CheckedChanged(object sender, EventArgs e)
-        {
-            PrivateVariable.CustomScript = checkBox10.Checked;
-            WriteConfig("CustomScript",checkBox9.Checked.ToString().ToLower());
         }
 
         private void button9_Click(object sender, EventArgs e)
@@ -1351,15 +1333,9 @@ namespace ImageProcessor
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void checkBox14_CheckedChanged(object sender, EventArgs e)
         {
-            Thread t = new Thread(Test);
-            t.Start();
-        }
-
-        private static void Test()
-        {
-            EmulatorController.CloseEmulator("MEmuManage.exe");
+            WriteConfig("Second_Page", checkBox14.Checked.ToString().ToLower());
         }
 
         private static void WriteConfig(string key, string value)

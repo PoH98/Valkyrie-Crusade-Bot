@@ -45,7 +45,6 @@ D:\Backup\Bot\UI\bin\Release\ImageProcessor.pdb
 D:\Backup\Bot\UI\bin\Release\SharpAdbClient.pdb
 D:\Backup\Bot\UI\bin\Release\Emgu.CV.World.xml
 D:\Backup\Bot\UI\obj\Release\UI.csprojResolveAssemblyReference.cache
-D:\Backup\Bot\UI\obj\Release\UI.Download.resources
 D:\Backup\Bot\UI\obj\Release\UI.Loading.resources
 D:\Backup\Bot\UI\obj\Release\ImageProcessor.MainScreen.resources
 D:\Backup\Bot\UI\obj\Release\UI.Properties.Resources.resources
