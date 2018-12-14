@@ -13,6 +13,7 @@ using SharpAdbClient;
 using System.Text;
 using System.Collections.Generic;
 using System.Security.Principal;
+using UI.Properties;
 
 namespace ImageProcessor
 {
@@ -27,36 +28,28 @@ namespace ImageProcessor
 
         static bool Docked = false;
 
+        static System.Windows.Forms.Timer timeout = new System.Windows.Forms.Timer();
+
         public MainScreen()
         {
             InitializeComponent();
+            timeout.Interval = 5000;
+            timeout.Tick += Timeout_Tick;
             GC.WaitForPendingFinalizers();
         }
 
-        private void LoadEvent()
+        private void Timeout_Tick(object sender, EventArgs e)
         {
-            try
+            if (webBrowser3.IsBusy)
             {
-                WebClientOverride wc = new WebClientOverride();
-                html = wc.DownloadString(new Uri("https://d2n1d3zrlbtx8o.cloudfront.net/news/info/sch/index.html"));
-                html = html.Replace("bgcolor=\"#000000\"　text color=\"#FFFFFF\"", "style=\"background - color:#303030; color:white\"");
-                html = html.Replace("<span class=\"iro4\">详细请前往菜单>新信息>消息</span><br /><br />", "");
-                html = html.Replace("<td height=\"40\"><span class=\"iro1\"><center><B>◆最新消息◆</B></center></span></td>", "");
-                html = html.Replace("<tr height=\"30\" background=\"img/btn.png\">", "");
-                html = html.Replace("<table width=\"200\">", "");
-                html = html.Replace("</table>", "");
-                this.Invoke((MethodInvoker)(delegate ()
-                {
-                    webBrowser1.DocumentText = html;
-
-                }));
-                html = File.ReadAllText("index.json");
+                webBrowser3.Stop();
+                webBrowser3.DocumentText = File.ReadAllText("index.json");
             }
-            catch
+            if (webBrowser2.IsBusy)
             {
-
+                webBrowser2.Stop();
+                webBrowser2.DocumentText = File.ReadAllText("index.json");
             }
-
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -341,6 +334,46 @@ namespace ImageProcessor
             }
             label11.Text = "逍遥模拟器安装位置：" + output.ToLower(); ;
             label12.Text = "逍遥模拟器共享文件夹：" + Variables.SharedPath;
+            bool second = false;
+            if (File.Exists("Archwitch.ini"))
+            {
+                foreach (var line in File.ReadAllLines("Archwitch.ini"))
+                {
+                    try
+                    {
+                        if (line.Contains("[2]"))
+                        {
+                            second = true;
+                            continue;
+                        }
+                        else if (line.Contains("[1]"))
+                        {
+                            second = false;
+                            continue;
+                        }
+                        string key = line.Split('=')[0];
+                        Point value = new Point(Convert.ToInt32(line.Split('=')[1].Split(',')[0]), Convert.ToInt32(line.Split('=')[1].Split(',')[1]));
+                        comboBox1.Items.Add(key);
+                        if (!second)
+                        {
+                            PrivateVariable.Archwitch.Add(key, value);
+                        }
+                        else
+                        {
+                            PrivateVariable.Archwitch2.Add(key, value);
+                        }
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("请重新安装挂机，挂机缺少了文件！");
+                Environment.Exit(0);
+            }
             if (Variables.Configure.TryGetValue("Level", out output))
             {
                 switch (output)
@@ -360,7 +393,7 @@ namespace ImageProcessor
             {
                 WriteConfig("Level","0");
             }
-            if (Variables.Configure.TryGetValue("background", out output))
+            if (Variables.Configure.TryGetValue("Background", out output))
             {
                 if (output == "true")
                 {
@@ -374,11 +407,11 @@ namespace ImageProcessor
             }
             else
             {
-                Variables.Configure.Add("background", "true");
+                Variables.Configure.Add("Background", "true");
                 Variables.Background = true;
                 using (var stream = File.AppendText("bot.ini"))
                 {
-                    stream.WriteLine("background=true");
+                    stream.WriteLine("Background=true");
                 }
             }
             if(Variables.Configure.TryGetValue("Double_Event",out output))
@@ -431,6 +464,24 @@ namespace ImageProcessor
                     checkBox13.Checked = true;
                 }
             }
+            if(Variables.Configure.TryGetValue("Archwitch",out output))
+            {
+                comboBox1.SelectedIndex = comboBox1.Items.IndexOf(output);
+            }
+            if(Variables.Configure.TryGetValue("WitchGate",out output))
+            {
+                if(output == "true")
+                {
+                    checkBox14.Checked = true;
+                }
+            }
+            if(Variables.Configure.TryGetValue("A_Repeat",out output))
+            {
+                if(output == "true")
+                {
+                    checkBox15.Checked = true;
+                }
+            }
             if (Is64BitOperatingSystem())
             {
                 label13.Text = "系统资料：64位系统" ;
@@ -460,6 +511,8 @@ namespace ImageProcessor
             }
             webBrowser1.DocumentText = html;
             LoadEventBrowser();
+            webBrowser3.Navigating += OnNavigating;
+            webBrowser3.Navigated += WebBrowser3_Navigated;
             webBrowser3.Navigate(new Uri("http://www.xldsdr.com/valkyriecrusade"));
             Script.Read_Plugins();
             foreach (var s in PrivateVariable.BattleScript)
@@ -477,6 +530,19 @@ namespace ImageProcessor
             PrivateVariable.EventType = -1;
             timer1.Start();
             timer2.Start();
+        }
+
+        private void WebBrowser3_Navigated(object sender, WebBrowserNavigatedEventArgs e)
+        {
+            timeout.Stop();
+        }
+
+        private void OnNavigating(object sender, WebBrowserNavigatingEventArgs e)
+        {
+            //Reset Timer
+            timeout.Stop();
+            timeout.Start();
+
         }
 
         private bool IsRunAsAdministrator()
@@ -528,8 +594,13 @@ namespace ImageProcessor
 
         private static void Monitor_DeviceDisconnected(object sender, DeviceDataEventArgs e)
         {
+            var temp = AdbClient.Instance.GetDevices();
+            if(Variables.Control_Device_Num > temp.Count)
+            {
+                Variables.Control_Device_Num = temp.IndexOf(Variables.Devices_Connected[Variables.Control_Device_Num]);
+            }
             Variables.Devices_Connected.Clear();
-            Variables.Devices_Connected = AdbClient.Instance.GetDevices();
+            Variables.Devices_Connected = temp;
             Variables.DeviceChanged = true;
             Docked = false;
         }
@@ -552,6 +623,7 @@ namespace ImageProcessor
                     try
                     {
                         WebRequest request = WebRequest.Create("http://www-valkyriecrusade.nubee.com/event/sch/event_info/" + eventdetails + "_event.html");
+                        request.Timeout = 3000;
                         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                         if (response.StatusCode != HttpStatusCode.OK)
                         {
@@ -591,7 +663,26 @@ namespace ImageProcessor
                 MessageBox.Show("啊！亚麻跌！慢点！好疼啊！");
                 return;
             }
-            Script.archwitch_level_location = new Point(Convert.ToInt32(numericUpDown1.Value), Convert.ToInt32(numericUpDown2.Value));
+            Point output;
+            if(PrivateVariable.EventType == 1)
+            {
+                if (comboBox1.SelectedIndex == -1)
+                {
+                    comboBox1.SelectedIndex = 0;
+                }
+            }
+            if(PrivateVariable.Archwitch.TryGetValue(comboBox1.Items[comboBox1.SelectedIndex].ToString(),out output))
+            {
+                Script.Archwitch_Stage = comboBox1.SelectedIndex;
+                WriteConfig("Second_Page", "false");
+                Script.archwitch_level_location = PrivateVariable.Archwitch[comboBox1.Items[comboBox1.SelectedIndex].ToString()];
+            }
+            else
+            {
+                Script.Archwitch_Stage = comboBox1.SelectedIndex - PrivateVariable.Archwitch.Count;
+                WriteConfig("Second_Page", "true");
+                Script.archwitch_level_location = PrivateVariable.Archwitch2[comboBox1.Items[comboBox1.SelectedIndex].ToString()];
+            }
             PrivateVariable.nospam = DateTime.Now;
             PrivateVariable.Run = true;
             if (textBox2.Text.Length > 0)
@@ -890,9 +981,9 @@ namespace ImageProcessor
                 foreach (var l in lines)
                 {
                     string key = l.Split('=')[0];
-                    if (key == "background")
+                    if (key == "Background")
                     {
-                        lines[x] = "background=true";
+                        lines[x] = "Background=true";
                         break;
                     }
                     x++;
@@ -904,9 +995,9 @@ namespace ImageProcessor
                 foreach (var l in lines)
                 {
                     string key = l.Split('=')[0];
-                    if (key == "background")
+                    if (key == "Background")
                     {
-                        lines[x] = "background=false";
+                        lines[x] = "Background=false";
                         break;
                     }
                     x++;
@@ -1141,7 +1232,7 @@ namespace ImageProcessor
             }
             else
             {
-                webBrowser2.Refresh();
+                LoadEventBrowser();
             }
 
         }
@@ -1266,6 +1357,7 @@ namespace ImageProcessor
             {
                 PrivateVariable.EnterRune = true;
                 WriteConfig("Manual_Rune", "false");
+                checkBox10.Enabled = true;
             }
             
         }
@@ -1276,6 +1368,8 @@ namespace ImageProcessor
             {
                 PrivateVariable.EnterRune = false;
                 WriteConfig("Manual_Rune", "true");
+                checkBox10.Checked = false;
+                checkBox10.Enabled = false;
             }
         }
 
@@ -1333,9 +1427,27 @@ namespace ImageProcessor
             }
         }
 
+        private void checkBox10_CheckedChanged(object sender, EventArgs e)
+        {
+            WriteConfig("Use_Item", checkBox10.Checked.ToString().ToLower());
+            PrivateVariable.Use_Item = checkBox10.Checked;
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            WriteConfig("Archwitch",comboBox1.Items[comboBox1.SelectedIndex].ToString());
+        }
+
         private void checkBox14_CheckedChanged(object sender, EventArgs e)
         {
-            WriteConfig("Second_Page", checkBox14.Checked.ToString().ToLower());
+            Script.EnterWitchGate = checkBox14.Checked;
+            WriteConfig("WitchGate", checkBox14.Checked.ToString().ToLower());
+        }
+
+        private void checkBox15_CheckedChanged(object sender, EventArgs e)
+        {
+            Script.Archwitch_Repeat = checkBox15.Checked;
+            WriteConfig("A_Repeat", checkBox15.Checked.ToString().ToLower());
         }
 
         private static void WriteConfig(string key, string value)
@@ -1353,6 +1465,14 @@ namespace ImageProcessor
                 x++;
             }
             config[config.Length - 1] = config[config.Length - 1] + "\n" + key + "=" + value;
+            if (Variables.Configure.ContainsKey(key))
+            {
+                Variables.Configure[key] = value;
+            }
+            else
+            {
+                Variables.Configure.Add(key, value);
+            }
             File.WriteAllLines("bot.ini", config);
         }
     }

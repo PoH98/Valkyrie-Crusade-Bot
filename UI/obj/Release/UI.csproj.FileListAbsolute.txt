@@ -1,56 +1,26 @@
-C:\Users\Shun Yuan\Desktop\Bot\UI\bin\Release\x64\concrt140.dll
-C:\Users\Shun Yuan\Desktop\Bot\UI\bin\Release\x64\cvextern.dll
-C:\Users\Shun Yuan\Desktop\Bot\UI\bin\Release\x64\msvcp140.dll
-C:\Users\Shun Yuan\Desktop\Bot\UI\bin\Release\x64\opencv_ffmpeg341_64.dll
-C:\Users\Shun Yuan\Desktop\Bot\UI\bin\Release\x64\vcruntime140.dll
-C:\Users\Shun Yuan\Desktop\Bot\UI\bin\Release\x86\concrt140.dll
-C:\Users\Shun Yuan\Desktop\Bot\UI\bin\Release\x86\cvextern.dll
-C:\Users\Shun Yuan\Desktop\Bot\UI\bin\Release\x86\msvcp140.dll
-C:\Users\Shun Yuan\Desktop\Bot\UI\bin\Release\x86\opencv_ffmpeg341.dll
-C:\Users\Shun Yuan\Desktop\Bot\UI\bin\Release\x86\vcruntime140.dll
-C:\Users\Shun Yuan\Desktop\Bot\UI\bin\Release\Run.exe.config
-C:\Users\Shun Yuan\Desktop\Bot\UI\bin\Release\Run.exe
-C:\Users\Shun Yuan\Desktop\Bot\UI\bin\Release\Run.pdb
-C:\Users\Shun Yuan\Desktop\Bot\UI\bin\Release\ImageProcessor.dll
-C:\Users\Shun Yuan\Desktop\Bot\UI\bin\Release\SharpAdbClient.dll
-C:\Users\Shun Yuan\Desktop\Bot\UI\bin\Release\Emgu.CV.World.dll
-C:\Users\Shun Yuan\Desktop\Bot\UI\bin\Release\ImageProcessor.pdb
-C:\Users\Shun Yuan\Desktop\Bot\UI\bin\Release\ImageProcessor.dll.config
-C:\Users\Shun Yuan\Desktop\Bot\UI\bin\Release\SharpAdbClient.pdb
-C:\Users\Shun Yuan\Desktop\Bot\UI\bin\Release\Emgu.CV.World.xml
-C:\Users\Shun Yuan\Desktop\Bot\UI\obj\Release\UI.csprojAssemblyReference.cache
-C:\Users\Shun Yuan\Desktop\Bot\UI\obj\Release\UI.Download.resources
-C:\Users\Shun Yuan\Desktop\Bot\UI\obj\Release\UI.Loading.resources
-C:\Users\Shun Yuan\Desktop\Bot\UI\obj\Release\ImageProcessor.MainScreen.resources
-C:\Users\Shun Yuan\Desktop\Bot\UI\obj\Release\UI.Properties.Resources.resources
-C:\Users\Shun Yuan\Desktop\Bot\UI\obj\Release\UI.csproj.GenerateResource.cache
-C:\Users\Shun Yuan\Desktop\Bot\UI\obj\Release\UI.csproj.CoreCompileInputs.cache
-C:\Users\Shun Yuan\Desktop\Bot\UI\obj\Release\UI.csproj.CopyComplete
-C:\Users\Shun Yuan\Desktop\Bot\UI\obj\Release\Run.exe
-C:\Users\Shun Yuan\Desktop\Bot\UI\obj\Release\Run.pdb
-D:\Backup\Bot\UI\bin\Release\x64\concrt140.dll
-D:\Backup\Bot\UI\bin\Release\x64\cvextern.dll
-D:\Backup\Bot\UI\bin\Release\x64\msvcp140.dll
-D:\Backup\Bot\UI\bin\Release\x64\opencv_ffmpeg341_64.dll
-D:\Backup\Bot\UI\bin\Release\x64\vcruntime140.dll
-D:\Backup\Bot\UI\bin\Release\x86\concrt140.dll
-D:\Backup\Bot\UI\bin\Release\x86\cvextern.dll
-D:\Backup\Bot\UI\bin\Release\x86\msvcp140.dll
-D:\Backup\Bot\UI\bin\Release\x86\opencv_ffmpeg341.dll
-D:\Backup\Bot\UI\bin\Release\x86\vcruntime140.dll
-D:\Backup\Bot\UI\bin\Release\ImageProcessor.dll
-D:\Backup\Bot\UI\bin\Release\SharpAdbClient.dll
-D:\Backup\Bot\UI\bin\Release\Emgu.CV.World.dll
-D:\Backup\Bot\UI\bin\Release\ImageProcessor.pdb
-D:\Backup\Bot\UI\bin\Release\SharpAdbClient.pdb
-D:\Backup\Bot\UI\bin\Release\Emgu.CV.World.xml
-D:\Backup\Bot\UI\obj\Release\UI.csprojResolveAssemblyReference.cache
-D:\Backup\Bot\UI\obj\Release\UI.Loading.resources
-D:\Backup\Bot\UI\obj\Release\ImageProcessor.MainScreen.resources
-D:\Backup\Bot\UI\obj\Release\UI.Properties.Resources.resources
-D:\Backup\Bot\UI\obj\Release\UI.csproj.GenerateResource.Cache
-D:\Backup\Bot\UI\bin\Release\VCweiyi.exe.config
-D:\Backup\Bot\UI\bin\Release\VCweiyi.exe
-D:\Backup\Bot\UI\bin\Release\VCweiyi.pdb
-D:\Backup\Bot\UI\obj\Release\VCweiyi.exe
-D:\Backup\Bot\UI\obj\Release\VCweiyi.pdb
+C:\Users\PoH98\Desktop\Bot\UI\bin\Release\VCweiyi.exe.config
+C:\Users\PoH98\Desktop\Bot\UI\bin\Release\x64\concrt140.dll
+C:\Users\PoH98\Desktop\Bot\UI\bin\Release\x64\cvextern.dll
+C:\Users\PoH98\Desktop\Bot\UI\bin\Release\x64\msvcp140.dll
+C:\Users\PoH98\Desktop\Bot\UI\bin\Release\x64\opencv_ffmpeg341_64.dll
+C:\Users\PoH98\Desktop\Bot\UI\bin\Release\x64\vcruntime140.dll
+C:\Users\PoH98\Desktop\Bot\UI\bin\Release\x86\concrt140.dll
+C:\Users\PoH98\Desktop\Bot\UI\bin\Release\x86\cvextern.dll
+C:\Users\PoH98\Desktop\Bot\UI\bin\Release\x86\msvcp140.dll
+C:\Users\PoH98\Desktop\Bot\UI\bin\Release\x86\opencv_ffmpeg341.dll
+C:\Users\PoH98\Desktop\Bot\UI\bin\Release\x86\vcruntime140.dll
+C:\Users\PoH98\Desktop\Bot\UI\bin\Release\VCweiyi.exe
+C:\Users\PoH98\Desktop\Bot\UI\bin\Release\VCweiyi.pdb
+C:\Users\PoH98\Desktop\Bot\UI\bin\Release\ImageProcessor.dll
+C:\Users\PoH98\Desktop\Bot\UI\bin\Release\SharpAdbClient.dll
+C:\Users\PoH98\Desktop\Bot\UI\bin\Release\Emgu.CV.World.dll
+C:\Users\PoH98\Desktop\Bot\UI\bin\Release\ImageProcessor.pdb
+C:\Users\PoH98\Desktop\Bot\UI\bin\Release\SharpAdbClient.pdb
+C:\Users\PoH98\Desktop\Bot\UI\bin\Release\Emgu.CV.World.xml
+C:\Users\PoH98\Desktop\Bot\UI\obj\Release\UI.csprojResolveAssemblyReference.cache
+C:\Users\PoH98\Desktop\Bot\UI\obj\Release\UI.Loading.resources
+C:\Users\PoH98\Desktop\Bot\UI\obj\Release\ImageProcessor.MainScreen.resources
+C:\Users\PoH98\Desktop\Bot\UI\obj\Release\UI.Properties.Resources.resources
+C:\Users\PoH98\Desktop\Bot\UI\obj\Release\UI.csproj.GenerateResource.Cache
+C:\Users\PoH98\Desktop\Bot\UI\obj\Release\VCweiyi.exe
+C:\Users\PoH98\Desktop\Bot\UI\obj\Release\VCweiyi.pdb

@@ -1,91 +1,45 @@
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\x64\concrt140.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\x64\cvextern.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\x64\msvcp140.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\x64\opencv_ffmpeg341_64.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\x64\vcruntime140.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\x86\concrt140.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\x86\cvextern.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\x86\msvcp140.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\x86\opencv_ffmpeg341.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\x86\vcruntime140.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\ImageProcessor.dll.config
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\ImageProcessor.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\ImageProcessor.pdb
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\Camalot.Common.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\Emgu.CV.UI.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\Emgu.CV.World.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\Managed.Adb.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\MoreLinq.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\Newtonsoft.Json.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\SharpAdbClient.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\ZedGraph.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\Emgu.CV.UI.xml
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\Emgu.CV.World.xml
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\Managed.Adb.pdb
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\Managed.Adb.xml
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\MoreLinq.xml
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\Newtonsoft.Json.xml
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\SharpAdbClient.pdb
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\ZedGraph.xml
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\de\ZedGraph.resources.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\es\ZedGraph.resources.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\fr\ZedGraph.resources.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\hu\ZedGraph.resources.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\it\ZedGraph.resources.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\ja\ZedGraph.resources.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\pt\ZedGraph.resources.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\ru\ZedGraph.resources.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\sk\ZedGraph.resources.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\sv\ZedGraph.resources.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\tr\ZedGraph.resources.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\zh-cn\ZedGraph.resources.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\bin\Release\zh-tw\ZedGraph.resources.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\obj\Release\ImageProcessor.csproj.CoreCompileInputs.cache
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\obj\Release\ImageProcessor.csproj.CopyComplete
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\obj\Release\ImageProcessor.dll
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\obj\Release\ImageProcessor.pdb
-C:\Users\Shun Yuan\Desktop\Bot\ImageProcessor\obj\Release\ImageProcessor.csprojAssemblyReference.cache
-D:\Backup\Bot\ImageProcessor\bin\Release\x64\concrt140.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\x64\cvextern.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\x64\msvcp140.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\x64\opencv_ffmpeg341_64.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\x64\vcruntime140.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\x86\concrt140.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\x86\cvextern.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\x86\msvcp140.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\x86\opencv_ffmpeg341.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\x86\vcruntime140.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\ImageProcessor.dll.config
-D:\Backup\Bot\ImageProcessor\bin\Release\ImageProcessor.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\ImageProcessor.pdb
-D:\Backup\Bot\ImageProcessor\bin\Release\Camalot.Common.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\Emgu.CV.UI.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\Emgu.CV.World.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\Managed.Adb.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\MoreLinq.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\Newtonsoft.Json.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\SharpAdbClient.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\ZedGraph.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\Emgu.CV.UI.xml
-D:\Backup\Bot\ImageProcessor\bin\Release\Emgu.CV.World.xml
-D:\Backup\Bot\ImageProcessor\bin\Release\Managed.Adb.pdb
-D:\Backup\Bot\ImageProcessor\bin\Release\Managed.Adb.xml
-D:\Backup\Bot\ImageProcessor\bin\Release\MoreLinq.xml
-D:\Backup\Bot\ImageProcessor\bin\Release\Newtonsoft.Json.xml
-D:\Backup\Bot\ImageProcessor\bin\Release\SharpAdbClient.pdb
-D:\Backup\Bot\ImageProcessor\bin\Release\ZedGraph.xml
-D:\Backup\Bot\ImageProcessor\bin\Release\de\ZedGraph.resources.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\es\ZedGraph.resources.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\fr\ZedGraph.resources.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\hu\ZedGraph.resources.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\it\ZedGraph.resources.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\ja\ZedGraph.resources.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\pt\ZedGraph.resources.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\ru\ZedGraph.resources.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\sk\ZedGraph.resources.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\sv\ZedGraph.resources.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\tr\ZedGraph.resources.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\zh-cn\ZedGraph.resources.dll
-D:\Backup\Bot\ImageProcessor\bin\Release\zh-tw\ZedGraph.resources.dll
-D:\Backup\Bot\ImageProcessor\obj\Release\ImageProcessor.dll
-D:\Backup\Bot\ImageProcessor\obj\Release\ImageProcessor.pdb
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\x64\concrt140.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\x64\cvextern.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\x64\msvcp140.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\x64\opencv_ffmpeg341_64.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\x64\vcruntime140.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\x86\concrt140.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\x86\cvextern.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\x86\msvcp140.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\x86\opencv_ffmpeg341.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\x86\vcruntime140.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\ImageProcessor.dll.config
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\ImageProcessor.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\ImageProcessor.pdb
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\Camalot.Common.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\Emgu.CV.UI.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\Emgu.CV.World.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\Managed.Adb.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\MoreLinq.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\Newtonsoft.Json.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\SharpAdbClient.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\ZedGraph.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\Emgu.CV.UI.xml
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\Emgu.CV.World.xml
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\Managed.Adb.pdb
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\Managed.Adb.xml
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\MoreLinq.xml
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\Newtonsoft.Json.xml
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\SharpAdbClient.pdb
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\ZedGraph.xml
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\de\ZedGraph.resources.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\es\ZedGraph.resources.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\fr\ZedGraph.resources.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\hu\ZedGraph.resources.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\it\ZedGraph.resources.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\ja\ZedGraph.resources.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\pt\ZedGraph.resources.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\ru\ZedGraph.resources.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\sk\ZedGraph.resources.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\sv\ZedGraph.resources.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\tr\ZedGraph.resources.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\zh-cn\ZedGraph.resources.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\zh-tw\ZedGraph.resources.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\obj\Release\ImageProcessor.csprojResolveAssemblyReference.cache
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\obj\Release\ImageProcessor.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\obj\Release\ImageProcessor.pdb

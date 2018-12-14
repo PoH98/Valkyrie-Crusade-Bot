@@ -51,5 +51,11 @@ namespace UI
         public static List<BattleScript> BattleScript = new List<UI.BattleScript>();
 
         public static int Selected_Script = 0;
+
+        public static bool Use_Item = false;
+
+        public static Dictionary<string, Point> Archwitch = new Dictionary<string, Point>();
+
+        public static Dictionary<string, Point> Archwitch2 = new Dictionary<string, Point>();
     }
 }
