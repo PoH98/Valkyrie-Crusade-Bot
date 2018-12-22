@@ -14,6 +14,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Security.Principal;
 using UI.Properties;
+using System.Net.NetworkInformation;
 
 namespace ImageProcessor
 {
@@ -22,7 +23,7 @@ namespace ImageProcessor
         
         private static string html;
 
-        private static int eventdetails = 133, ReloadTime = 0;
+        private static int eventdetails = 133, ReloadTime = 0, guild = 32;
 
         public static int Level;
 
@@ -194,7 +195,11 @@ namespace ImageProcessor
             label3.Text = label3.Text + "  v" + fvi.FileVersion;
             if (File.Exists("Updater.exe"))
             {
-                Process.Start("Updater.exe", fvi.FileVersion.ToString());
+                ProcessStartInfo updater = new ProcessStartInfo();
+                updater.FileName = "Updater.exe";
+                updater.WindowStyle = ProcessWindowStyle.Hidden;
+                updater.Arguments = fvi.FileVersion.ToString();
+                Process.Start(updater);
             }
             Thread load = new Thread(loading);
             load.Start();
@@ -292,10 +297,11 @@ namespace ImageProcessor
             {
                 fetch.Arguments = "showvminfo MEmu";
             }
+            var codePage = Console.OutputEncoding.CodePage;
             fetch.RedirectStandardOutput = true;
             fetch.UseShellExecute = false;
             fetch.CreateNoWindow = true;
-            fetch.StandardOutputEncoding = Encoding.ASCII;
+            fetch.StandardOutputEncoding = Encoding.GetEncoding(codePage);
             while (Variables.SharedPath == null || PrivateVariable.Adb_IP == null)
             {
                 Process fetching = Process.Start(fetch);
@@ -316,7 +322,7 @@ namespace ImageProcessor
                             WriteConfig("Shared_Path", path);
                             if (!Directory.Exists(path))
                             {
-                                MessageBox.Show("不支持英文字母以外的文件夹路径，请先在模拟器内设置好新路径后重启挂机");
+                                MessageBox.Show("共享路径包含不允许字符，请重新设置模拟器的共享路径！");
                                 Environment.Exit(0);
                             }
                         }
@@ -493,6 +499,7 @@ namespace ImageProcessor
             PrivateVariable.nospam = DateTime.Now;
             string ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36";
             DllImport.UrlMkSetSessionOption(DllImport.URLMON_OPTION_USERAGENT, ua, ua.Length, 0);
+            NetworkChange.NetworkAvailabilityChanged += NetworkChange_NetworkAvailabilityChanged;
             html = File.ReadAllText("index.json");
             WebClientOverride wc = new WebClientOverride();
             try
@@ -523,13 +530,23 @@ namespace ImageProcessor
                     tabControl2.TabPages[tabControl2.TabPages.Count - 1].Controls.Add(c);
                 }
             }
-            EmulatorController.StartAdb();
+            webBrowser1.ScriptErrorsSuppressed = false;
+            webBrowser2.ScriptErrorsSuppressed = false;
+            webBrowser3.ScriptErrorsSuppressed = false;
             Loading.LoadCompleted = true;
             Thread mon = new Thread(DeviceConnected);
             mon.Start();
             PrivateVariable.EventType = -1;
             timer1.Start();
             timer2.Start();
+        }
+
+        private void NetworkChange_NetworkAvailabilityChanged(object sender, NetworkAvailabilityEventArgs e)
+        {
+            if (e.IsAvailable)
+            {
+                LoadEventBrowser();
+            }
         }
 
         private void WebBrowser3_Navigated(object sender, WebBrowserNavigatedEventArgs e)
@@ -549,7 +566,6 @@ namespace ImageProcessor
         {
             var wi = WindowsIdentity.GetCurrent();
             var wp = new WindowsPrincipal(wi);
-
             return wp.IsInRole(WindowsBuiltInRole.Administrator);
         }
 
@@ -617,7 +633,7 @@ namespace ImageProcessor
         {
             try
             {
-                int old = eventdetails;
+                int old = eventdetails, oldg = guild;
                 while (true)
                 {
                     try
@@ -638,6 +654,26 @@ namespace ImageProcessor
                         break;
                     }
                 }
+                while (true)
+                {
+                    try
+                    {
+                        WebRequest request = WebRequest.Create("http://www-valkyriecrusade.nubee.com/event/sch/event_info/" + guild.ToString("000") + "_event.html");
+                        request.Timeout = 3000;
+                        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                        if (response.StatusCode != HttpStatusCode.OK)
+                        {
+                            break;
+                        }
+                        response.Close();
+                        guild++;
+                    }
+                    catch (WebException)
+                    {
+                        guild--;
+                        break;
+                    }
+                }
                 if(eventdetails != old)
                 {
                     this.Invoke((MethodInvoker)delegate
@@ -646,8 +682,6 @@ namespace ImageProcessor
                         webBrowser2.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/event/sch/event_info/" + eventdetails + "_event.html"));
                     });
                 }
-
-                
             }
             catch (Exception ex)
             {
@@ -794,6 +828,9 @@ namespace ImageProcessor
         private void timer2_Tick(object sender, EventArgs e)
         {
             GC.Collect();
+            webBrowser1.ScriptErrorsSuppressed = false;
+            webBrowser2.ScriptErrorsSuppressed = false;
+            webBrowser3.ScriptErrorsSuppressed = false;
             var device = Variables.Devices_Connected.ToArray();
             int index = Array.IndexOf(device, PrivateVariable.Adb_IP);
             if (index > -1) //The Emulator is running
@@ -1194,17 +1231,13 @@ namespace ImageProcessor
                 else
                 {
                     webBrowser3.Visible = true;
+                    if(webBrowser3.Url != new Uri("http://www.xldsdr.com/valkyriecrusade"))
+                    {
+                        webBrowser3.Navigate(new Uri("http://www.xldsdr.com/valkyriecrusade"));
+                    }
                 }
             }
                 
-        }
-
-        private void radioButton7_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioButton7.Checked)
-            {
-
-            }
         }
 
         private void radioButton6_CheckedChanged(object sender, EventArgs e)

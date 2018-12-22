@@ -6,6 +6,7 @@ using UI;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 
 namespace Installer
 {
@@ -13,9 +14,17 @@ namespace Installer
     {
         static long file;
         static double percentage;
-        static byte[] update;
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
+
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        const int SW_HIDE = 0;
+        const int SW_SHOW = 5;
         static void Main(string[] args)
         {
+            var handle = GetConsoleWindow();
             Console.CursorVisible = false;
             if (args.Length > 0)
             {
@@ -26,6 +35,7 @@ namespace Installer
                 {
                     if (args[0].Contains("apk"))
                     {
+                        ShowWindow(handle, SW_SHOW);
                         Console.WriteLine("Downloading Apk...");
                         WebClientOverride wc = new WebClientOverride();
                         wc.Headers.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36");
@@ -64,6 +74,7 @@ namespace Installer
                     }
                     else if (args[0].Contains("exe"))
                     {
+                        ShowWindow(handle, SW_SHOW);
                         Console.WriteLine("Downloading MEmu...");
                         WebClientOverride wc = new WebClientOverride();
                         wc.Headers.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36");
@@ -114,6 +125,7 @@ namespace Installer
                         Console.WriteLine("The online version is " + newest);
                         if (newest != args[0])
                         {
+                            ShowWindow(handle, SW_SHOW);
                             Console.WriteLine("Newest Version Found! Downloading...");
                             Uri url = new Uri(@"https://github.com/PoH98/Bot/releases/download/v" + newest + "/default.exe");
 

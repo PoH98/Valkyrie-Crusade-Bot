@@ -68,6 +68,7 @@
             this.button7 = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.groupBox14 = new System.Windows.Forms.GroupBox();
+            this.checkBox15 = new System.Windows.Forms.CheckBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.checkBox14 = new System.Windows.Forms.CheckBox();
@@ -107,8 +108,6 @@
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage5 = new System.Windows.Forms.TabPage();
-            this.webBrowser3 = new System.Windows.Forms.WebBrowser();
-            this.webBrowser2 = new System.Windows.Forms.WebBrowser();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
             this.radioButton11 = new System.Windows.Forms.RadioButton();
             this.button13 = new System.Windows.Forms.Button();
@@ -116,14 +115,14 @@
             this.button11 = new System.Windows.Forms.Button();
             this.checkBox11 = new System.Windows.Forms.CheckBox();
             this.radioButton8 = new System.Windows.Forms.RadioButton();
-            this.radioButton7 = new System.Windows.Forms.RadioButton();
             this.radioButton6 = new System.Windows.Forms.RadioButton();
+            this.webBrowser3 = new System.Windows.Forms.WebBrowser();
+            this.webBrowser2 = new System.Windows.Forms.WebBrowser();
             this.panel2 = new System.Windows.Forms.Panel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.panel3 = new System.Windows.Forms.Panel();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
-            this.checkBox15 = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -593,6 +592,17 @@
             this.groupBox14.TabStop = false;
             this.groupBox14.Text = "关卡自定义位置";
             // 
+            // checkBox15
+            // 
+            this.checkBox15.AutoSize = true;
+            this.checkBox15.Location = new System.Drawing.Point(6, 50);
+            this.checkBox15.Name = "checkBox15";
+            this.checkBox15.Size = new System.Drawing.Size(74, 17);
+            this.checkBox15.TabIndex = 1;
+            this.checkBox15.Text = "无限重复";
+            this.checkBox15.UseVisualStyleBackColor = true;
+            this.checkBox15.CheckedChanged += new System.EventHandler(this.checkBox15_CheckedChanged);
+            // 
             // comboBox1
             // 
             this.comboBox1.FormattingEnabled = true;
@@ -1021,9 +1031,9 @@
             // 
             // tabPage5
             // 
+            this.tabPage5.Controls.Add(this.groupBox10);
             this.tabPage5.Controls.Add(this.webBrowser3);
             this.tabPage5.Controls.Add(this.webBrowser2);
-            this.tabPage5.Controls.Add(this.groupBox10);
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
@@ -1031,29 +1041,6 @@
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "资料库";
             this.tabPage5.UseVisualStyleBackColor = true;
-            // 
-            // webBrowser3
-            // 
-            this.webBrowser3.AllowWebBrowserDrop = false;
-            this.webBrowser3.Location = new System.Drawing.Point(6, -3);
-            this.webBrowser3.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser3.Name = "webBrowser3";
-            this.webBrowser3.Size = new System.Drawing.Size(414, 547);
-            this.webBrowser3.TabIndex = 21;
-            this.webBrowser3.Visible = false;
-            this.webBrowser3.WebBrowserShortcutsEnabled = false;
-            this.webBrowser3.NewWindow += new System.ComponentModel.CancelEventHandler(this.webBrowser3_NewWindow);
-            // 
-            // webBrowser2
-            // 
-            this.webBrowser2.AllowWebBrowserDrop = false;
-            this.webBrowser2.Location = new System.Drawing.Point(6, 6);
-            this.webBrowser2.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser2.Name = "webBrowser2";
-            this.webBrowser2.Size = new System.Drawing.Size(414, 538);
-            this.webBrowser2.TabIndex = 20;
-            this.webBrowser2.WebBrowserShortcutsEnabled = false;
-            this.webBrowser2.NewWindow += new System.ComponentModel.CancelEventHandler(this.webBrowser2_NewWindow);
             // 
             // groupBox10
             // 
@@ -1063,11 +1050,10 @@
             this.groupBox10.Controls.Add(this.button11);
             this.groupBox10.Controls.Add(this.checkBox11);
             this.groupBox10.Controls.Add(this.radioButton8);
-            this.groupBox10.Controls.Add(this.radioButton7);
             this.groupBox10.Controls.Add(this.radioButton6);
-            this.groupBox10.Location = new System.Drawing.Point(436, 6);
+            this.groupBox10.Location = new System.Drawing.Point(426, 6);
             this.groupBox10.Name = "groupBox10";
-            this.groupBox10.Size = new System.Drawing.Size(117, 543);
+            this.groupBox10.Size = new System.Drawing.Size(127, 543);
             this.groupBox10.TabIndex = 0;
             this.groupBox10.TabStop = false;
             this.groupBox10.Text = "设置";
@@ -1075,7 +1061,7 @@
             // radioButton11
             // 
             this.radioButton11.AutoSize = true;
-            this.radioButton11.Location = new System.Drawing.Point(6, 88);
+            this.radioButton11.Location = new System.Drawing.Point(5, 65);
             this.radioButton11.Name = "radioButton11";
             this.radioButton11.Size = new System.Drawing.Size(65, 17);
             this.radioButton11.TabIndex = 7;
@@ -1127,7 +1113,7 @@
             // radioButton8
             // 
             this.radioButton8.AutoSize = true;
-            this.radioButton8.Location = new System.Drawing.Point(6, 65);
+            this.radioButton8.Location = new System.Drawing.Point(5, 42);
             this.radioButton8.Name = "radioButton8";
             this.radioButton8.Size = new System.Drawing.Size(73, 17);
             this.radioButton8.TabIndex = 2;
@@ -1135,18 +1121,6 @@
             this.radioButton8.Text = "卡牌图鉴";
             this.radioButton8.UseVisualStyleBackColor = true;
             this.radioButton8.CheckedChanged += new System.EventHandler(this.radioButton8_CheckedChanged);
-            // 
-            // radioButton7
-            // 
-            this.radioButton7.AutoSize = true;
-            this.radioButton7.Enabled = false;
-            this.radioButton7.Location = new System.Drawing.Point(6, 42);
-            this.radioButton7.Name = "radioButton7";
-            this.radioButton7.Size = new System.Drawing.Size(73, 17);
-            this.radioButton7.TabIndex = 1;
-            this.radioButton7.Text = "盟战活动";
-            this.radioButton7.UseVisualStyleBackColor = true;
-            this.radioButton7.CheckedChanged += new System.EventHandler(this.radioButton7_CheckedChanged);
             // 
             // radioButton6
             // 
@@ -1160,6 +1134,29 @@
             this.radioButton6.Text = "塔楼/魔女活动";
             this.radioButton6.UseVisualStyleBackColor = true;
             this.radioButton6.CheckedChanged += new System.EventHandler(this.radioButton6_CheckedChanged);
+            // 
+            // webBrowser3
+            // 
+            this.webBrowser3.AllowWebBrowserDrop = false;
+            this.webBrowser3.Location = new System.Drawing.Point(8, 6);
+            this.webBrowser3.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser3.Name = "webBrowser3";
+            this.webBrowser3.Size = new System.Drawing.Size(412, 538);
+            this.webBrowser3.TabIndex = 21;
+            this.webBrowser3.Visible = false;
+            this.webBrowser3.WebBrowserShortcutsEnabled = false;
+            this.webBrowser3.NewWindow += new System.ComponentModel.CancelEventHandler(this.webBrowser3_NewWindow);
+            // 
+            // webBrowser2
+            // 
+            this.webBrowser2.AllowWebBrowserDrop = false;
+            this.webBrowser2.Location = new System.Drawing.Point(6, 6);
+            this.webBrowser2.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser2.Name = "webBrowser2";
+            this.webBrowser2.Size = new System.Drawing.Size(414, 538);
+            this.webBrowser2.TabIndex = 20;
+            this.webBrowser2.WebBrowserShortcutsEnabled = false;
+            this.webBrowser2.NewWindow += new System.ComponentModel.CancelEventHandler(this.webBrowser2_NewWindow);
             // 
             // panel2
             // 
@@ -1188,17 +1185,6 @@
             // errorProvider1
             // 
             this.errorProvider1.ContainerControl = this;
-            // 
-            // checkBox15
-            // 
-            this.checkBox15.AutoSize = true;
-            this.checkBox15.Location = new System.Drawing.Point(6, 50);
-            this.checkBox15.Name = "checkBox15";
-            this.checkBox15.Size = new System.Drawing.Size(74, 17);
-            this.checkBox15.TabIndex = 1;
-            this.checkBox15.Text = "无限重复";
-            this.checkBox15.UseVisualStyleBackColor = true;
-            this.checkBox15.CheckedChanged += new System.EventHandler(this.checkBox15_CheckedChanged);
             // 
             // MainScreen
             // 
@@ -1320,7 +1306,6 @@
         private System.Windows.Forms.CheckBox Adb_Log;
         private System.Windows.Forms.TabPage tabPage5;
         private System.Windows.Forms.GroupBox groupBox10;
-        private System.Windows.Forms.RadioButton radioButton7;
         private System.Windows.Forms.RadioButton radioButton6;
         private System.Windows.Forms.WebBrowser webBrowser2;
         private System.Windows.Forms.CheckBox checkBox11;
