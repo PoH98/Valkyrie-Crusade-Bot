@@ -15,20 +15,23 @@ namespace UI
     public class Script
     {
         public static Stopwatch stop = new Stopwatch();
-        public static bool RuneBoss, Stuck, EnterWitchGate, Archwitch_Repeat;
+        public static bool RuneBoss, Stuck, EnterWitchGate, Archwitch_Repeat, DisableAutoCheckEvent;
         public static int runes, energy;
         public static int Archwitch_Stage;
         public static Point? clickLocation;
         public static int TreasureHuntIndex = -1;
         public static byte[] image = null;
-        public static List<Bitmap> errorImages = new List<Bitmap>();
+        /// <summary>
+        /// 显示塔楼目前抵达的楼层以及排名
+        /// </summary>
+        public static byte[] Tower_Current_Stage = null;
         public static Point archwitch_level_location;
         public static DateTime nextOnline;
         private static defaultScript battle = new defaultScript();
         //Main Loop
         public static void Bot()
         {
-            Thread errorhandler = new Thread(ErrorHandle);
+            Thread errorhandler = new Thread(ScriptErrorHandler.ErrorHandle);
             errorhandler.Start();
             while (PrivateVariable.Run)
             {
@@ -229,6 +232,16 @@ namespace UI
                 }
                 Thread.Sleep(100);
                 point = EmulatorController.FindImage(Script.image, "Img\\Close2.png", true);
+                if (point != null)
+                {
+                    EmulatorController.SendTap(point.Value);
+                    return;
+                }
+                if (!PrivateVariable.Run)
+                {
+                    return;
+                }
+                point = EmulatorController.FindImage(Script.image, "Img\\Close.png", true);
                 if (point != null)
                 {
                     EmulatorController.SendTap(point.Value);
@@ -536,11 +549,19 @@ namespace UI
                     PrivateVariable.InMainScreen = false;
                     return;
                 }
-                if (error > 60)
+                if (error > 20)
                 {
-                    PrivateVariable.Run = false;
-                    Variables.ScriptLog.Add("Looks like your event is not detectable! Stopping script!");
-                    return;
+                    DisableAutoCheckEvent = true;
+                    Variables.ScriptLog.Add("Checking another event as current event unable to locate!");
+                    if(PrivateVariable.EventType == 0)
+                    {
+                        PrivateVariable.EventType = 1;
+                    }
+                    else
+                    {
+                        PrivateVariable.EventType = 0;
+                    }
+                    error = 0;
                 }
 
             }
@@ -557,13 +578,15 @@ namespace UI
             CheckEnemy();
             if (clickLocation != null) //It is in battle, so go on to battle!
             {
+                PrivateVariable.InEventScreen = true;
                 PrivateVariable.Battling = true;
                 return;
             }
             byte[] crop = EmulatorController.CropImage(Script.image, new Point(125, 0), new Point(1280, 720));
             point = EmulatorController.FindImage(crop, "Img\\Start_Battle.png", false);
-            if(point != null) //It is also in battle!
+            if (point != null) //It is also in battle!
             {
+                PrivateVariable.InEventScreen = true;
                 PrivateVariable.Battling = true;
                 return;
             }
@@ -578,11 +601,14 @@ namespace UI
             {
                 return;
             }
-            point = EmulatorController.FindImage(Script.image, "Img\\Locate_Tower.PNG", true);
+            crop = image;
+            point = EmulatorController.FindImage(image, "Img\\Locate_Tower.PNG", true);
             Variables.ScriptLog.Add("Locating Tower Event UI!");
             if (point != null)
             {
+                Tower_Current_Stage = EmulatorController.CropImage(crop, new Point(290, 110), new Point(436, 175));
                 Variables.ScriptLog.Add("Tower Event Found!");
+                PrivateVariable.InEventScreen = true;
             }
             else
             {
@@ -696,6 +722,7 @@ namespace UI
                     Thread.Sleep(2000);
                     stop.Start();
                     PrivateVariable.Battling = true;
+                    energy--; //Calculate Energy used
                     Thread.Sleep(1000);
                     break;
                 }
@@ -936,7 +963,7 @@ namespace UI
                 }
                 if (swiped > 10)
                 {
-                    Reset("Unable to locate normal stage! Returning!");
+                    ScriptErrorHandler.Reset("Unable to locate normal stage! Returning!");
                     return;
                 }
                 Point? p = EmulatorController.FindImage(Script.image, "Img\\SelectStage.png", true);
@@ -947,7 +974,7 @@ namespace UI
                 }
                 else
                 {
-                    Reset("Something wrong occurs! Unable to locate switching stage");
+                    ScriptErrorHandler.Reset("Something wrong occurs! Unable to locate switching stage");
                     return;
                 }
                 p = EmulatorController.FindImage(Script.image, "Img\\SelectWorld.png", true);
@@ -966,58 +993,13 @@ namespace UI
                 }
                 else
                 {
-                    Reset("Unable to choose stage! Stage number not visible！");
+                    ScriptErrorHandler.Reset("Unable to choose stage! Stage number not visible！");
                     return;
                 }
                 Archwitch();
             } 
-        //Reset back to just started the script
-        public static void Reset(string log)
-        {
-            PrivateVariable.InMainScreen = false;
-            PrivateVariable.InEventScreen = false;
-            Variables.ScriptLog.Add(log);
-        }
-        //Click away all error messages
-        private static void ErrorHandle()
-        {
-            foreach (var f in Directory.GetFiles("Img\\Errors"))
-            {
-                Thread.Sleep(10);
-                using (Stream bmp = File.Open(f, FileMode.Open))
-                {
-                    Image temp = Image.FromStream(bmp);
-                    errorImages.Add(new Bitmap(temp));
-                }
-            }
-            while (PrivateVariable.Run)
-            {
-                
-                Thread.Sleep(2000);
-                if(Variables.Proc != null)
-                {
-                    try
-                    {
-                        foreach (var e in errorImages)
-                        {
-                            Thread.Sleep(10);
-                            Point? p = EmulatorController.FindImage(image, e, true);
-                            if (p != null)
-                            {
-                                EmulatorController.SendTap(p.Value);
-                                Reset("Error message found!");
-                            }
-                        }
-                    }
-                    catch
-                    {
 
-                    }
-                }
-                
-            }
-        }
-        //Fighting
+        //Fighting and locate UI
         private static void LocateEnemy()
         {
 
@@ -1038,10 +1020,21 @@ namespace UI
                 point = EmulatorController.FindImage(image, "Img\\NoEnergy.png", true);
                 if(point != null)
                 {
-                    Reset("No Energy Left!");
+                    ScriptErrorHandler.Reset("No Energy Left!");
                     NoEnergy();
+                    return;
                 }
                 point = null;
+                point = EmulatorController.FindImage(image, "Img\\Locate_Tower.png", false);
+                if(point != null)
+                {
+                    PrivateVariable.Battling = false;
+                    Variables.ScriptLog.Add("Battle Ended!");
+                    stop.Stop();
+                    Variables.ScriptLog.Add("Battle used up " + stop.Elapsed);
+                    stop.Reset();
+                    return;
+                }
                 byte[] crop = EmulatorController.CropImage(Script.image, new Point(125, 0), new Point(1280, 720));
                 point = EmulatorController.FindImage(crop, "Img\\GreenButton.png", false);
                 if (point != null)
@@ -1057,8 +1050,6 @@ namespace UI
                             PrivateVariable.Battling = false;
                             Stuck = true;
                             Variables.ScriptLog.Add("Battle Ended!");
-                            PrivateVariable.Battling = false;
-                            PrivateVariable.InEventScreen = true;
                             stop.Stop();
                             Variables.ScriptLog.Add("Battle used up " + stop.Elapsed);
                             stop.Reset();
@@ -1068,12 +1059,6 @@ namespace UI
                         {
                             clickLocation = new Point(2000, 2000);
                             EmulatorController.SendTap(new Point(point.Value.X + 125, point.Value.Y));
-                            Variables.ScriptLog.Add("Battle Ended!");
-                            PrivateVariable.Battling = false;
-                            PrivateVariable.InEventScreen = true;
-                            stop.Stop();
-                            Variables.ScriptLog.Add("Battle used up " + stop.Elapsed);
-                            stop.Reset();
                             return;
                         }
                     }
@@ -1095,6 +1080,7 @@ namespace UI
                             stop.Stop();
                             Variables.ScriptLog.Add("Battle used up " + stop.Elapsed);
                             stop.Reset();
+                            return;
                         }
                         else
                         {
@@ -1133,7 +1119,7 @@ namespace UI
                 if (point != null)
                 {
                     clickLocation = point.Value;
-
+                    return;
                 }
                 point = null;
                 if (!PrivateVariable.Battling)
@@ -1222,7 +1208,7 @@ namespace UI
                 }
             }
         }
-
+        //Click on enemy
         private static void Battle()
         {
             do
@@ -1246,7 +1232,7 @@ namespace UI
             }
             while (PrivateVariable.Battling);
         }
-
+        //Get energy
         public static int GetEnergy()
         {
             if (!PrivateVariable.Run)
@@ -1293,7 +1279,7 @@ namespace UI
             }
             return num;
         }
-
+        //Get runes
         private static int GetRune()
         {
             if (!PrivateVariable.Run)
@@ -1339,7 +1325,7 @@ namespace UI
             }
             return num;
         }
-
+        //Archwitch select stage
         private static void SelectStage(Point? newtemp, bool SecondPage)
         {
 
@@ -1456,7 +1442,7 @@ namespace UI
             }
             StartMove();
         }
-
+        //Start to move in archwitch event
         private static void StartMove()
         {
             Point? point = null;
@@ -1522,7 +1508,7 @@ namespace UI
                 }
             }
         }
-
+        //Archiwitch fighting
         private static void 击杀魔女()
         {
             Thread.Sleep(5000);
@@ -1530,15 +1516,15 @@ namespace UI
             if(p != null)
             {
                 EmulatorController.SendTap(p.Value);
-                Reset("Fighting archwitch!");
+                ScriptErrorHandler.Reset("Fighting archwitch!");
                 PrivateVariable.Battling = true;
             }
             else
             {
-                Reset("No archwitch found!");
+                ScriptErrorHandler.Reset("No archwitch found!");
             }
         }
-
+        //Close Game and wait for energy in tower event for stucking rune time
         private static void StuckRune()
         {
             int el = 5 - energy - 1;
@@ -1570,13 +1556,13 @@ namespace UI
             }
             Thread.Sleep(wait - 60000);
         }
-
+        //No energy left so close game
         private static void NoEnergy()
         {
             if(PrivateVariable.EventType == 0)
             {
                 int el = 5 - energy;
-                int wait = el * 2600000;
+                int wait = el * 2500000;
                 nextOnline = DateTime.Now.AddMilliseconds(wait);
                 Variables.ScriptLog.Add("Estimate online time is " + nextOnline);
                 EmulatorController.KillGame("com.nubee.valkyriecrusade");
@@ -1595,7 +1581,7 @@ namespace UI
             }
 
         }
-
+        //Read battle script plugins
         public static void Read_Plugins()
         {
             if (!Directory.Exists("Battle_Script"))

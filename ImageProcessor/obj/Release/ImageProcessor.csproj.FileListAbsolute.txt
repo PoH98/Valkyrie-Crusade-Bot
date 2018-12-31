@@ -40,6 +40,6 @@ C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\sv\ZedGraph.resources.dll
 C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\tr\ZedGraph.resources.dll
 C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\zh-cn\ZedGraph.resources.dll
 C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\zh-tw\ZedGraph.resources.dll
-C:\Users\PoH98\Desktop\Bot\ImageProcessor\obj\Release\ImageProcessor.csprojResolveAssemblyReference.cache
 C:\Users\PoH98\Desktop\Bot\ImageProcessor\obj\Release\ImageProcessor.dll
 C:\Users\PoH98\Desktop\Bot\ImageProcessor\obj\Release\ImageProcessor.pdb
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\obj\Release\ImageProcessor.csprojResolveAssemblyReference.cache

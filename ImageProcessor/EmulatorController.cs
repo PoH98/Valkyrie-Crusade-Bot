@@ -95,13 +95,22 @@ namespace ImageProcessor
             }
             close.CreateNoWindow = true;
             close.WindowStyle = ProcessWindowStyle.Hidden;
-            Process p = Process.Start(close);
-            if(Variables.Proc != null)
+            try
             {
-                Variables.Proc.Kill();
+                if (Variables.Proc != null)
+                {
+                    Variables.Proc.Kill();
+                }
             }
+            catch
+            {
+
+            }
+            Process p = Process.Start(close);
             Variables.Devices_Connected = AdbClient.Instance.GetDevices();
             Variables.Control_Device_Num = -1;
+            Variables.Proc = null;
+            Variables.Selected_Process_Num = -1;
             Variables.ScriptLog.Add("Emulator Closed");
         }
         /// <summary>
@@ -345,6 +354,7 @@ namespace ImageProcessor
                     AdbClient.Instance.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", Variables.Devices_Connected[Variables.Control_Device_Num], receiver);
                     Thread.Sleep(1000);
                     AdbClient.Instance.ExecuteRemoteCommand("am force-stop " + packagename, Variables.Devices_Connected[Variables.Control_Device_Num], receiver);
+                    receiver.Flush();
                 }
             }
             catch (InvalidOperationException)
@@ -406,7 +416,6 @@ namespace ImageProcessor
                     Variables.AdbLog.Add("Screenshot saved to memory stream. Used time: " + s.ElapsedMilliseconds + " ms");
                     return Compress(bmp);
                 }
-
             }
             catch (IOException)
             {
@@ -431,6 +440,7 @@ namespace ImageProcessor
                 if (Variables.Devices_Connected[Variables.Control_Device_Num].State == DeviceState.Online)
                 {
                     AdbClient.Instance.ExecuteRemoteCommand("input tap " + x + " " + y, Variables.Devices_Connected[Variables.Control_Device_Num], receiver);
+                    receiver.Flush();
                 }
                 if (receiver.ToString().Contains("Error"))
                 {
@@ -464,6 +474,7 @@ namespace ImageProcessor
                 if (Variables.Devices_Connected[Variables.Control_Device_Num].State == DeviceState.Online)
                 {
                     AdbClient.Instance.ExecuteRemoteCommand("input touchscreen swipe " + x + " " + y + " " + ex + " " + ey + " " + usedTime, Variables.Devices_Connected[Variables.Control_Device_Num], receiver);
+                    receiver.Flush();
                 }
                 if (receiver.ToString().Contains("Error"))
                 {
@@ -491,6 +502,7 @@ namespace ImageProcessor
                 if (Variables.Devices_Connected[Variables.Control_Device_Num].State == DeviceState.Online)
                 {
                     AdbClient.Instance.ExecuteRemoteCommand("input tap " + x + " " + y, Variables.Devices_Connected[Variables.Control_Device_Num], receiver);
+                    receiver.Flush();
                 }
                 if (receiver.ToString().Contains("Error"))
                 {

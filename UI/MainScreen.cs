@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Security.Principal;
 using UI.Properties;
 using System.Net.NetworkInformation;
+using System.Xml;
 
 namespace ImageProcessor
 {
@@ -23,7 +24,7 @@ namespace ImageProcessor
         
         private static string html;
 
-        private static int eventdetails = 133, ReloadTime = 0, guild = 32;
+        private static int ReloadTime = 0;
 
         public static int Level;
 
@@ -496,6 +497,9 @@ namespace ImageProcessor
             {
                 label13.Text = "系统资料：32位系统";
             }
+            webBrowser1.ScriptErrorsSuppressed = true;
+            webBrowser2.ScriptErrorsSuppressed = true;
+            webBrowser3.ScriptErrorsSuppressed = true;
             PrivateVariable.nospam = DateTime.Now;
             string ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36";
             DllImport.UrlMkSetSessionOption(DllImport.URLMON_OPTION_USERAGENT, ua, ua.Length, 0);
@@ -530,9 +534,6 @@ namespace ImageProcessor
                     tabControl2.TabPages[tabControl2.TabPages.Count - 1].Controls.Add(c);
                 }
             }
-            webBrowser1.ScriptErrorsSuppressed = false;
-            webBrowser2.ScriptErrorsSuppressed = false;
-            webBrowser3.ScriptErrorsSuppressed = false;
             Loading.LoadCompleted = true;
             Thread mon = new Thread(DeviceConnected);
             mon.Start();
@@ -633,55 +634,8 @@ namespace ImageProcessor
         {
             try
             {
-                int old = eventdetails, oldg = guild;
-                while (true)
-                {
-                    try
-                    {
-                        WebRequest request = WebRequest.Create("http://www-valkyriecrusade.nubee.com/event/sch/event_info/" + eventdetails + "_event.html");
-                        request.Timeout = 3000;
-                        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                        if (response.StatusCode != HttpStatusCode.OK)
-                        {
-                            break;
-                        }
-                        response.Close();
-                        eventdetails++;
-                    }
-                    catch (WebException)
-                    {
-                        eventdetails--;
-                        break;
-                    }
-                }
-                while (true)
-                {
-                    try
-                    {
-                        WebRequest request = WebRequest.Create("http://www-valkyriecrusade.nubee.com/event/sch/event_info/" + guild.ToString("000") + "_event.html");
-                        request.Timeout = 3000;
-                        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                        if (response.StatusCode != HttpStatusCode.OK)
-                        {
-                            break;
-                        }
-                        response.Close();
-                        guild++;
-                    }
-                    catch (WebException)
-                    {
-                        guild--;
-                        break;
-                    }
-                }
-                if(eventdetails != old)
-                {
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        DllImport.DeleteUrlCacheEntry("http://www-valkyriecrusade.nubee.com/event/sch/event_info/" + eventdetails + "_event.html");
-                        webBrowser2.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/event/sch/event_info/" + eventdetails + "_event.html"));
-                    });
-                }
+                GetEventXML.LoadXMLEvent();
+                webBrowser2.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/","/sch/") + ".html"));
             }
             catch (Exception ex)
             {
@@ -828,44 +782,55 @@ namespace ImageProcessor
         private void timer2_Tick(object sender, EventArgs e)
         {
             GC.Collect();
-            webBrowser1.ScriptErrorsSuppressed = false;
-            webBrowser2.ScriptErrorsSuppressed = false;
-            webBrowser3.ScriptErrorsSuppressed = false;
             var device = Variables.Devices_Connected.ToArray();
             int index = Array.IndexOf(device, PrivateVariable.Adb_IP);
             if (index > -1) //The Emulator is running
             {
                 Variables.Control_Device_Num = index; //Register it, we need this to control our emulator
             }
-            if (webBrowser2.DocumentText.Contains("楼层"))
+            if (!Script.DisableAutoCheckEvent)
             {
-                groupBox8.Text = "塔楼活动";
-                groupBox9.Text = "";
-                progressBar1.Value = Script.energy;
-                progressBar2.Value = Script.runes;
-                label7.Text = Script.runes + "/5";
-                label6.Text = Script.energy + "/5";
-                if(Script.nextOnline != null)
+                if (webBrowser2.DocumentText.Contains("楼层"))
                 {
-                    if(Script.nextOnline > DateTime.Now)
+                    groupBox8.Text = "塔楼活动";
+                    groupBox9.Text = "";
+                    progressBar1.Value = Script.energy;
+                    progressBar2.Value = Script.runes;
+                    label7.Text = Script.runes + "/5";
+                    label6.Text = Script.energy + "/5";
+                    if (Script.nextOnline != null)
                     {
-                        TimeSpan time = Script.nextOnline - DateTime.Now;
-                        label9.Text = time.Hours + " : " + time.Minutes + " : " + time.Seconds;
+                        if (Script.nextOnline > DateTime.Now)
+                        {
+                            TimeSpan time = Script.nextOnline - DateTime.Now;
+                            label9.Text = time.Hours.ToString("00") + " : " + time.Minutes.ToString("00") + " : " + time.Seconds.ToString("00");
+                        }
+                    }
+                    PrivateVariable.EventType = 0;
+                    if(Script.Tower_Current_Stage != null)
+                    {
+                        try
+                        {
+                            pictureBox3.Image = EmulatorController.Decompress(Script.Tower_Current_Stage);
+                        }
+                        catch
+                        {
+
+                        }
                     }
                 }
-                PrivateVariable.EventType = 0;
-            }
-            else if (webBrowser2.DocumentText.Contains("魔女讨伐"))
-            {
-                groupBox8.Text = "";
-                groupBox9.Text = "魔女讨伐";
-                PrivateVariable.EventType = 1;
-            }
-            else
-            {
-                groupBox8.Text = "警告，无法获取活动资料";
-                groupBox9.Text = "警告，无法获取活动资料";
-                PrivateVariable.EventType = -1;
+                else if (webBrowser2.DocumentText.Contains("魔女讨伐"))
+                {
+                    groupBox8.Text = "";
+                    groupBox9.Text = "魔女讨伐";
+                    PrivateVariable.EventType = 1;
+                }
+                else
+                {
+                    groupBox8.Text = "警告，无法获取活动资料";
+                    groupBox9.Text = "警告，无法获取活动资料";
+                    PrivateVariable.EventType = -1;
+                }
             }
         }
         /// <summary>
@@ -894,7 +859,7 @@ namespace ImageProcessor
                                     if (PrivateVariable.Run && !Docked)
                                     {
                                         DllImport.SetParent(EmulatorController.handle, panel3.Handle);
-                                        DllImport.MoveWindow(EmulatorController.handle, -1, -30, 1104, 683, true);
+                                        DllImport.MoveWindow(EmulatorController.handle, -1, -35, 1104, 683, true);
                                         Docked = true;
                                     }
                                 }
@@ -1246,7 +1211,7 @@ namespace ImageProcessor
             {
                 if (checkBox11.Checked)
                 {
-                    Process.Start("http://www-valkyriecrusade.nubee.com/event/sch/event_info/" + eventdetails + "_event.html");
+                    Process.Start("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/sch/") + ".html");
                 }
                 else
                 {
@@ -1447,17 +1412,8 @@ namespace ImageProcessor
 
         private void radioButton11_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioButton11.Checked)
-            {
-                if (checkBox11.Checked)
-                {
-                    Process.Start("https://jq.qq.com/?_wv=1027&k=51gVT8A");
-                }
-                else
-                {
-                    webBrowser3.Navigate("https://jq.qq.com/?_wv=1027&k=51gVT8A");
-                }
-            }
+            if(radioButton11.Checked)
+                webBrowser3.Navigate("https://jq.qq.com/?_wv=1027&k=51gVT8A");
         }
 
         private void checkBox10_CheckedChanged(object sender, EventArgs e)
@@ -1475,6 +1431,22 @@ namespace ImageProcessor
         {
             Script.EnterWitchGate = checkBox14.Checked;
             WriteConfig("WitchGate", checkBox14.Checked.ToString().ToLower());
+        }
+
+        private void radioButton7_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton7.Checked)
+            {
+                if (checkBox11.Checked)
+                {
+                    Process.Start("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/sch/index.html");
+                }
+                else
+                {
+                    webBrowser3.Visible = true;
+                    webBrowser3.Navigate("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/sch/index.html");
+                }
+            }
         }
 
         private void checkBox15_CheckedChanged(object sender, EventArgs e)

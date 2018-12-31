@@ -54,7 +54,8 @@
     <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>UI.Program</StartupObject>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -123,6 +124,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BattleScript.cs" />
+    <Compile Include="GetEventXML.cs" />
     <Compile Include="Loading.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -143,6 +145,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Script.cs" />
+    <Compile Include="ScriptErrorHandler.cs" />
     <Compile Include="Variables.cs" />
     <Compile Include="WebClientOverride.cs">
       <SubType>Component</SubType>
@@ -175,7 +178,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="file.ico" />
-    <EmbeddedResource Include="Licence.txt" />
     <None Include="Resources\img.jpg" />
     <None Include="Resources\img2.png" />
   </ItemGroup>
