@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -12,9 +8,11 @@ namespace UI
     class GetEventXML
     {
         private static string url = "http://www-valkyriecrusade.nubee.com/";
-        public static string Eventlink;
+        public static string Eventlink, RandomImage;
+
         public static void LoadXMLEvent()
         {
+            List<string> Imagelink = new List<string>();
             try
             {
                 XmlDocument doc = new XmlDocument();
@@ -22,6 +20,7 @@ namespace UI
                 //get a list of the Definition nodes in the document
                 var temp = doc.GetElementsByTagName("Contents");
                 DateTime newest = DateTime.MinValue;
+                DateTime banner = DateTime.MinValue;
                 int index = 0, newestindex = 0;
                 foreach (XmlNode n in temp)
                 {
@@ -34,9 +33,16 @@ namespace UI
                             newestindex = index;
                         }
                     }
+                    else if (n.InnerText.Contains("img/info_card"))
+                    {
+                        Imagelink.Add(n.InnerText.Substring(n.InnerText.IndexOf("event")).Remove(n.InnerText.IndexOf(".png")) + ".png");
+                    }
                     index++;
                 }
                 Eventlink = temp[newestindex].InnerText.Remove(temp[newestindex].InnerText.IndexOf(".html"));
+                Random rnd = new Random();
+                int imindex = rnd.Next(0, Imagelink.Count);
+                RandomImage = Imagelink[imindex];
             }
             catch
             {

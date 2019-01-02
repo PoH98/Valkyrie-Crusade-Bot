@@ -67,10 +67,9 @@ namespace UI
             Point? loc = EmulatorController.FindImage(Script.image, "Img\\Errors\\Shop\\Background.png", false);
             if (loc != null)
             {
-                var receiver = new ConsoleOutputReceiver();
-                //Possible is in the shop screen
-                AdbClient.Instance.ExecuteRemoteCommand("ainput keyevent 4", Variables.Devices_Connected[Variables.Control_Device_Num], receiver);
-                receiver.Flush();
+                EmulatorController.KillGame("com.nubee.valkyriecrusade");
+                Variables.ScriptLog.Add("Entered Shop! Maybe no energy left?");
+                Reset("Critical error found! Trying to restart game!");
             }
             else
             {
@@ -78,9 +77,9 @@ namespace UI
                 loc = EmulatorController.FindImage(Script.image, "Img\\Errors\\Shop\\Background_Light.png", false);
                 if(loc != null)
                 {
-                    var receiver = new ConsoleOutputReceiver();
-                    AdbClient.Instance.ExecuteRemoteCommand("ainput keyevent 4", Variables.Devices_Connected[Variables.Control_Device_Num], receiver);
-                    receiver.Flush();
+                    EmulatorController.KillGame("com.nubee.valkyriecrusade");
+                    Variables.ScriptLog.Add("Entered Shop! Maybe no energy left?");
+                    Reset("Critical error found! Trying to restart game!");
                 }
             } 
 

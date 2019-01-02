@@ -13,9 +13,8 @@ using SharpAdbClient;
 using System.Text;
 using System.Collections.Generic;
 using System.Security.Principal;
-using UI.Properties;
 using System.Net.NetworkInformation;
-using System.Xml;
+using ImgXml;
 
 namespace ImageProcessor
 {
@@ -45,12 +44,12 @@ namespace ImageProcessor
             if (webBrowser3.IsBusy)
             {
                 webBrowser3.Stop();
-                webBrowser3.DocumentText = File.ReadAllText("index.json");
+                webBrowser3.DocumentText = Resource.index;
             }
             if (webBrowser2.IsBusy)
             {
                 webBrowser2.Stop();
-                webBrowser2.DocumentText = File.ReadAllText("index.json");
+                webBrowser2.DocumentText = Resource.index;
             }
         }
 
@@ -204,8 +203,9 @@ namespace ImageProcessor
             }
             Thread load = new Thread(loading);
             load.Start();
-            Icon = new Icon("Img\\file.ico");
-            pictureBox1.Image = Image.FromFile("Img\\file.ico");
+            IntPtr ico = Resource.Icon.GetHicon();
+            Icon = Icon.FromHandle(ico);
+            pictureBox1.Image = Resource.Icon;
             EmulatorController.ReadConfig();
             string output = "";
             string[] args = Environment.GetCommandLineArgs();
@@ -504,7 +504,7 @@ namespace ImageProcessor
             string ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36";
             DllImport.UrlMkSetSessionOption(DllImport.URLMON_OPTION_USERAGENT, ua, ua.Length, 0);
             NetworkChange.NetworkAvailabilityChanged += NetworkChange_NetworkAvailabilityChanged;
-            html = File.ReadAllText("index.json");
+            html = Resource.index;
             WebClientOverride wc = new WebClientOverride();
             try
             {
@@ -533,6 +533,12 @@ namespace ImageProcessor
                 {
                     tabControl2.TabPages[tabControl2.TabPages.Count - 1].Controls.Add(c);
                 }
+            }
+            var request = WebRequest.Create("http://www-valkyriecrusade.nubee.com/" + GetEventXML.RandomImage);
+            using (var response = request.GetResponse())
+            using (var stream = response.GetResponseStream())
+            {
+                pictureBox4.Image = Bitmap.FromStream(stream);
             }
             Loading.LoadCompleted = true;
             Thread mon = new Thread(DeviceConnected);
@@ -1357,7 +1363,6 @@ namespace ImageProcessor
                 WriteConfig("Manual_Rune", "false");
                 checkBox10.Enabled = true;
             }
-            
         }
 
         private void radioButton10_CheckedChanged(object sender, EventArgs e)
@@ -1479,6 +1484,32 @@ namespace ImageProcessor
                 Variables.Configure.Add(key, value);
             }
             File.WriteAllLines("bot.ini", config);
+        }
+
+        private void pictureBox4_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog s = new SaveFileDialog();
+            s.CheckPathExists = true;
+            s.OverwritePrompt = true;
+            s.AddExtension = false;
+            s.Filter = "(PNG)|*.png";
+            s.DefaultExt = "png";
+            s.AddExtension = true;
+            var result = s.ShowDialog();
+            if(result == DialogResult.OK)
+            {
+                pictureBox4.Image.Save(s.FileName);
+            }
+        }
+
+        private void pictureBox4_MouseEnter(object sender, EventArgs e)
+        {
+            toolTip1.Show("点击即可保存图片哦！", pictureBox4);
+        }
+
+        private void pictureBox4_MouseLeave(object sender, EventArgs e)
+        {
+            toolTip1.Hide(pictureBox4);
         }
     }
 }

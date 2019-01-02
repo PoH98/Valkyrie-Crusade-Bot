@@ -172,9 +172,10 @@
       <Project>{017b3cf6-ecc9-4867-b057-f9a69d682779}</Project>
       <Name>ImageProcessor</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\775aa79e8c0f80ecbe6146329fe3778332b93a15_hq.jpg" />
+    <ProjectReference Include="..\ImgXml\ImgXml.csproj">
+      <Project>{e5f41ff6-b00f-4ebf-9d13-2d24bb232b65}</Project>
+      <Name>ImgXml</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="file.ico" />

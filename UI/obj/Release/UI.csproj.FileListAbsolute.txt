@@ -24,3 +24,5 @@ C:\Users\PoH98\Desktop\Bot\UI\obj\Release\UI.Properties.Resources.resources
 C:\Users\PoH98\Desktop\Bot\UI\obj\Release\UI.csproj.GenerateResource.Cache
 C:\Users\PoH98\Desktop\Bot\UI\obj\Release\VCweiyi.exe
 C:\Users\PoH98\Desktop\Bot\UI\obj\Release\VCweiyi.pdb
+C:\Users\PoH98\Desktop\Bot\UI\bin\Release\ImgXml.dll
+C:\Users\PoH98\Desktop\Bot\UI\bin\Release\ImgXml.pdb

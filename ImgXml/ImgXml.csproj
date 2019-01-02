@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E5F41FF6-B00F-4EBF-9D13-2D24BB232B65}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ImgXml</RootNamespace>
+    <AssemblyName>ImgXml</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\index.json" />
+    <None Include="Resources\NoEnergy.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Normal.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PT.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RoundBattle.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Rune_Witch.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SelectStage.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SelectWorld.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Start_Battle.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Start_Game.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TowerFinished.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TreasureHunt.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TreasureHunt2.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Update_Complete.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\WitchGate.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Wrong_Click.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Wrong_Click2.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Archwitch.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Archwitch_Rec.Png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Auto.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Back_to_Village.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Click_Wrong.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Close.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Close2.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\file.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GarbageMessage.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GreenButton.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Help.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Icon.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Idle.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Locate.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Locate_Tower.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Login_Reward.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Love.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Map.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Menu.PNG" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
