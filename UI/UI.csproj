@@ -144,6 +144,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ProxyConnection.cs" />
     <Compile Include="Script.cs" />
     <Compile Include="ScriptErrorHandler.cs" />
     <Compile Include="Variables.cs" />

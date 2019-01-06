@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Media;
 using System.Reflection;
 using System.Linq;
+using System.Net;
 
 namespace UI
 {
@@ -21,11 +22,8 @@ namespace UI
         public static Point? clickLocation;
         public static int TreasureHuntIndex = -1;
         private static int Retry = 0;
+        public static string Tower_Floor = "", Tower_Rank = "";
         public static byte[] image = null;
-        /// <summary>
-        /// 显示塔楼目前抵达的楼层以及排名
-        /// </summary>
-        public static byte[] Tower_Current_Stage = null;
         public static Point archwitch_level_location;
         public static DateTime nextOnline;
         private static defaultScript battle = new defaultScript();
@@ -137,11 +135,12 @@ namespace UI
                 if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
                     Variables.ScriptLog.Add("Starting Game");
-                    if (!EmulatorController.StartGame(Resource.Icon, Script.image))
-                    {
-                        Variables.ScriptLog.Add("Unable to start game");
-                        EmulatorController.StartGame("com.nubee.valkyriecrusade");
-                    }
+                        if (!EmulatorController.StartGame(Resource.Icon, image))
+                        {
+                            Variables.ScriptLog.Add("Unable to start game");
+                            EmulatorController.StartGame("com.nubee.valkyriecrusade");
+                        }
+                    
                 }
                 else
                 {
@@ -279,6 +278,10 @@ namespace UI
                 {
                     return;
                 }
+                if (!PrivateVariable.Run)
+                {
+                    return;
+                }
                 Thread.Sleep(100);
                 point = EmulatorController.FindImage(image, Resource.Menu, true);
                 if (point == null)
@@ -295,6 +298,13 @@ namespace UI
                         Variables.ScriptLog.Add("Tried 60 times but still unable to locate main screen. Stopping bot");
                         return;
                     }
+                }
+                Thread.Sleep(100);
+                point = EmulatorController.FindImage(image, Resource.GreenButton, true);
+                if (point != null)
+                {
+                    EmulatorController.SendTap(point.Value);
+                    Variables.ScriptLog.Add("Green Button Found!");
                 }
                 else
                 {
@@ -625,7 +635,8 @@ namespace UI
             Variables.ScriptLog.Add("Locating Tower Event UI!");
             if (point != null)
             {
-                Tower_Current_Stage = EmulatorController.CropImage(image, new Point(290, 110), new Point(436, 175));
+                Tower_Floor = OCR.OcrImage(EmulatorController.Decompress(EmulatorController.CropImage(image, new Point(280, 110), new Point(440, 145))));
+                Tower_Rank = OCR.OcrImage(EmulatorController.Decompress(EmulatorController.CropImage(image, new Point(280, 140), new Point(410, 170))));
                 Variables.ScriptLog.Add("Tower Event Found!");
                 PrivateVariable.InEventScreen = true;
             }
@@ -706,6 +717,12 @@ namespace UI
                     break;
                 case 2:
                     EmulatorController.SendTap(581, 646);
+                    break;
+                case 3:
+                    EmulatorController.SendTap(741, 623);
+                    break;
+                case 4:
+                    EmulatorController.SendTap(921, 620);
                     break;
             }
             Thread.Sleep(3000);

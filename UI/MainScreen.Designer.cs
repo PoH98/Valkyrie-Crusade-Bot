@@ -43,8 +43,10 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
-            this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.progressBar2 = new System.Windows.Forms.ProgressBar();
@@ -131,7 +133,6 @@
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox8.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             this.tabPage2.SuspendLayout();
             this.groupBox11.SuspendLayout();
             this.groupBox5.SuspendLayout();
@@ -311,8 +312,10 @@
             // 
             // groupBox8
             // 
+            this.groupBox8.Controls.Add(this.label16);
+            this.groupBox8.Controls.Add(this.label17);
+            this.groupBox8.Controls.Add(this.label15);
             this.groupBox8.Controls.Add(this.label14);
-            this.groupBox8.Controls.Add(this.pictureBox3);
             this.groupBox8.Controls.Add(this.label9);
             this.groupBox8.Controls.Add(this.label8);
             this.groupBox8.Controls.Add(this.progressBar2);
@@ -328,6 +331,33 @@
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "塔楼活动";
             // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(6, 234);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(13, 13);
+            this.label16.TabIndex = 34;
+            this.label16.Text = "0";
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(6, 221);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(91, 13);
+            this.label17.TabIndex = 33;
+            this.label17.Text = "当前塔楼排名：";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(6, 196);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(22, 13);
+            this.label15.TabIndex = 32;
+            this.label15.Text = "0 F";
+            // 
             // label14
             // 
             this.label14.AutoSize = true;
@@ -335,17 +365,7 @@
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(91, 13);
             this.label14.TabIndex = 31;
-            this.label14.Text = "当前塔楼排名：";
-            // 
-            // pictureBox3
-            // 
-            this.pictureBox3.BackColor = System.Drawing.Color.Black;
-            this.pictureBox3.Location = new System.Drawing.Point(6, 199);
-            this.pictureBox3.Name = "pictureBox3";
-            this.pictureBox3.Size = new System.Drawing.Size(129, 65);
-            this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox3.TabIndex = 0;
-            this.pictureBox3.TabStop = false;
+            this.label14.Text = "当前塔楼层数：";
             // 
             // label9
             // 
@@ -866,7 +886,6 @@
             // radioButton5
             // 
             this.radioButton5.AutoSize = true;
-            this.radioButton5.Enabled = false;
             this.radioButton5.Location = new System.Drawing.Point(61, 42);
             this.radioButton5.Name = "radioButton5";
             this.radioButton5.Size = new System.Drawing.Size(49, 17);
@@ -874,6 +893,7 @@
             this.radioButton5.TabStop = true;
             this.radioButton5.Text = "霸级";
             this.radioButton5.UseVisualStyleBackColor = true;
+            this.radioButton5.CheckedChanged += new System.EventHandler(this.radioButton5_CheckedChanged);
             // 
             // radioButton1
             // 
@@ -891,7 +911,6 @@
             // radioButton4
             // 
             this.radioButton4.AutoSize = true;
-            this.radioButton4.Enabled = false;
             this.radioButton4.Location = new System.Drawing.Point(61, 19);
             this.radioButton4.Name = "radioButton4";
             this.radioButton4.Size = new System.Drawing.Size(61, 17);
@@ -899,6 +918,7 @@
             this.radioButton4.TabStop = true;
             this.radioButton4.Text = "超上级";
             this.radioButton4.UseVisualStyleBackColor = true;
+            this.radioButton4.CheckedChanged += new System.EventHandler(this.radioButton4_CheckedChanged);
             // 
             // radioButton2
             // 
@@ -1253,7 +1273,6 @@
             this.tabPage1.PerformLayout();
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.groupBox11.ResumeLayout(false);
             this.groupBox11.PerformLayout();
@@ -1382,10 +1401,12 @@
         private System.Windows.Forms.CheckBox checkBox14;
         private System.Windows.Forms.CheckBox checkBox15;
         public System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.PictureBox pictureBox3;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.RadioButton radioButton7;
         private System.Windows.Forms.PictureBox pictureBox4;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Label label17;
     }
 }
 

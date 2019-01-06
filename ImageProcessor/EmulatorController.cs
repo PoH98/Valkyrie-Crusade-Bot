@@ -27,6 +27,10 @@ namespace ImageProcessor
         public static IntPtr handle = IntPtr.Zero;
         private static Thread cleaningthread = null;
         private static ImageConverter _imageConverter = new ImageConverter();
+        /// <summary>
+        /// The path to bot.ini
+        /// </summary>
+        public static string profilePath = "MEmu";
         public static string path;
 
         [HandleProcessCorruptedStateExceptions]
@@ -553,11 +557,15 @@ namespace ImageProcessor
         /// </summary>
         public static void ReadConfig()
         {
-            if (!File.Exists("bot.ini"))
+            if (!Directory.Exists("Profiles\\" + EmulatorController.profilePath))
             {
-                File.WriteAllText("bot.ini", "Emulator=MEmu\nPath=MEmu.exe\nBackground=true");
+                Directory.CreateDirectory("Profiles\\" + EmulatorController.profilePath);
             }
-            var lines = File.ReadAllLines("bot.ini");
+            if (!File.Exists("Profiles\\" + EmulatorController.profilePath + "\\bot.ini"))
+            {
+                File.WriteAllText("Profiles\\" + EmulatorController.profilePath + "\\bot.ini", "Emulator=MEmu\nPath=MEmu.exe\nBackground=true");
+            }
+            var lines = File.ReadAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
             foreach (var l in lines)
             {
                 string[] temp = l.Split('=');
@@ -585,7 +593,7 @@ namespace ImageProcessor
                     if (!File.Exists(temp))
                     {
                         MessageBox.Show("Unable to locate path of emulator!");
-                        Process.Start("bot.ini");
+                        Process.Start("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
                     }
                     ProcessStartInfo info = new ProcessStartInfo();
                     info.FileName = temp.Replace("MEmu.exe", "MEmuConsole.exe");
@@ -609,14 +617,14 @@ namespace ImageProcessor
                 catch (Exception ex)
                 {
                     MessageBox.Show("Error while starting emulator! Error message: " + ex.Message);
-                    Process.Start("bot.ini");
+                    Process.Start("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
                     Environment.Exit(0);
                 }
             }
             else
             {
                 MessageBox.Show("Unable to locate path of emulator!");
-                Process.Start("bot.ini");
+                Process.Start("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
                 Environment.Exit(0);
             }
         }
@@ -1325,6 +1333,53 @@ namespace ImageProcessor
 
             return Compress(temp.Bitmap);
 
+        }
+        /// <summary>
+        /// Force emulator keep potrait
+        /// </summary>
+        public static void StayPotrait()
+        {
+            var receiver = new ConsoleOutputReceiver();
+            if (Variables.Devices_Connected[Variables.Control_Device_Num].State == DeviceState.Online)
+            {
+                AdbClient.Instance.ExecuteRemoteCommand("content insert --uri content://settings/system --bind name:s:accelerometer_rotation --bind value:i:0", Variables.Devices_Connected[Variables.Control_Device_Num], receiver);
+                AdbClient.Instance.ExecuteRemoteCommand("content insert --uri content://settings/system --bind name:s:user_rotation --bind value:i:0", Variables.Devices_Connected[Variables.Control_Device_Num], receiver);
+                receiver.Flush();
+            }
+        }
+        /// <summary>
+        /// Rotate image
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="angle"></param>
+        /// <returns></returns>
+        public static Bitmap RotateImage(Image image, float angle)
+        {
+            if (image == null)
+                throw new ArgumentNullException("image");
+
+            PointF offset = new PointF((float)image.Width / 2, (float)image.Height / 2);
+
+            //create a new empty bitmap to hold rotated image
+            Bitmap rotatedBmp = new Bitmap(image.Width, image.Height);
+            rotatedBmp.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+            //make a graphics object from the empty bitmap
+            Graphics g = Graphics.FromImage(rotatedBmp);
+
+            //Put the rotation point in the center of the image
+            g.TranslateTransform(offset.X, offset.Y);
+
+            //rotate the image
+            g.RotateTransform(angle);
+
+            //move the image back
+            g.TranslateTransform(-offset.X, -offset.Y);
+
+            //draw passed in image onto graphics object
+            g.DrawImage(image, new PointF(0, 0));
+
+            return rotatedBmp;
         }
     }
 }

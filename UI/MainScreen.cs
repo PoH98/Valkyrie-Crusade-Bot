@@ -20,7 +20,7 @@ namespace ImageProcessor
 {
     public partial class MainScreen : Form
     {
-        
+
         private static string html;
 
         private static int ReloadTime = 0;
@@ -206,17 +206,40 @@ namespace ImageProcessor
             IntPtr ico = Resource.Icon.GetHicon();
             Icon = Icon.FromHandle(ico);
             pictureBox1.Image = Resource.Icon;
-            EmulatorController.ReadConfig();
             string output = "";
             string[] args = Environment.GetCommandLineArgs();
-            foreach(var arg in args)
+            foreach (var arg in args)
+            {
+                if (arg.Contains("MEmu"))
+                {
+                    EmulatorController.profilePath = arg;
+                }
+                label1.Text += arg.ToLower() + " ";
+            }
+            EmulatorController.ReadConfig();
+            if (File.Exists("bot.ini"))
+            {
+                if(File.Exists(Environment.CurrentDirectory + "\\Profiles\\" + EmulatorController.profilePath + "\\bot.ini"))
+                {
+                    File.Delete(Environment.CurrentDirectory + "\\Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
+                }
+                try
+                {
+                    File.Copy("bot.ini", Environment.CurrentDirectory + "\\Profiles\\" + EmulatorController.profilePath + "\\bot.ini", true);
+                    File.Delete("bot.ini");
+                }
+                catch
+                {
+
+                }
+            }
+            foreach (var arg in args)
             {
                 if (arg.Contains("MEmu"))
                 {
                     Variables.Instance = arg;
-                    label3.Text += "("+Variables.Instance+")";
+                    label3.Text += " (" + Variables.Instance + ")";
                 }
-                label1.Text += arg.ToLower() + " ";
             }
             string startuppath = "C:";
             RegistryKey reg = Registry.LocalMachine;
@@ -249,7 +272,7 @@ namespace ImageProcessor
                     if (openFileDialog1.CheckFileExists)
                     {
                         Variables.Configure["Path"] = openFileDialog1.FileName;
-                        var lines = File.ReadAllLines("bot.ini");
+                        var lines = File.ReadAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
                         int x = 0;
                         foreach (var l in lines)
                         {
@@ -261,7 +284,7 @@ namespace ImageProcessor
                             x++;
                         }
                         output = openFileDialog1.FileName;
-                        File.WriteAllLines("bot.ini", lines);
+                        File.WriteAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini", lines);
                     }
                 }
             }
@@ -274,9 +297,9 @@ namespace ImageProcessor
                 if (openFileDialog1.CheckFileExists)
                 {
                     Variables.Configure.Add("Path",openFileDialog1.FileName);
-                    var lines = File.ReadAllText("bot.ini");
+                    var lines = File.ReadAllText("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
                     lines = lines + "\nPath=" + openFileDialog1.FileName;
-                    File.WriteAllText("bot.ini", lines);
+                    File.WriteAllText("Profiles\\" + EmulatorController.profilePath + "\\bot.ini", lines);
                     output = openFileDialog1.FileName;
                 }
             }
@@ -416,7 +439,7 @@ namespace ImageProcessor
             {
                 Variables.Configure.Add("Background", "true");
                 Variables.Background = true;
-                using (var stream = File.AppendText("bot.ini"))
+                using (var stream = File.AppendText("Profiles\\" + EmulatorController.profilePath + "\\bot.ini"))
                 {
                     stream.WriteLine("Background=true");
                 }
@@ -540,6 +563,7 @@ namespace ImageProcessor
             {
                 pictureBox4.Image = Bitmap.FromStream(stream);
             }
+            OCR.PrepairOcr("eng");
             Loading.LoadCompleted = true;
             Thread mon = new Thread(DeviceConnected);
             mon.Start();
@@ -813,11 +837,22 @@ namespace ImageProcessor
                         }
                     }
                     PrivateVariable.EventType = 0;
-                    if(Script.Tower_Current_Stage != null)
+                    if(Script.Tower_Floor.Length>0)
                     {
                         try
                         {
-                            pictureBox3.Image = EmulatorController.Decompress(Script.Tower_Current_Stage);
+                            label15.Text = Script.Tower_Floor.Replace(" ","").Replace("F"," F");
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                    if(Script.Tower_Rank.Length > 0)
+                    {
+                        try
+                        {
+                            label16.Text = Script.Tower_Rank.Replace(" ", "");
                         }
                         catch
                         {
@@ -940,7 +975,7 @@ namespace ImageProcessor
 
         private void button5_Click(object sender, EventArgs e)
         {
-            var lines = File.ReadAllLines("bot.ini");
+            var lines = File.ReadAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
             if (radioButton1.Checked)
             {
                 int x = 0;
@@ -1067,7 +1102,7 @@ namespace ImageProcessor
                     x++;
                 }
             }
-            File.WriteAllLines("bot.ini", lines);
+            File.WriteAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini", lines);
             if (PrivateVariable.Run)
             {
                 button3_Click(sender, e);
@@ -1462,14 +1497,14 @@ namespace ImageProcessor
 
         private static void WriteConfig(string key, string value)
         {
-            var config = File.ReadAllLines("bot.ini");
+            var config = File.ReadAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
             int x = 0;
             foreach (var c in config)
             {
                 if (c.Contains(key + "="))
                 {
                     config[x] = key + "=" + value;
-                    File.WriteAllLines("bot.ini", config);
+                    File.WriteAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini", config);
                     return;
                 }
                 x++;
@@ -1483,7 +1518,7 @@ namespace ImageProcessor
             {
                 Variables.Configure.Add(key, value);
             }
-            File.WriteAllLines("bot.ini", config);
+            File.WriteAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini", config);
         }
 
         private void pictureBox4_Click(object sender, EventArgs e)
@@ -1510,6 +1545,24 @@ namespace ImageProcessor
         private void pictureBox4_MouseLeave(object sender, EventArgs e)
         {
             toolTip1.Hide(pictureBox4);
+        }
+
+        private void radioButton4_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton4.Checked)
+            {
+                WriteConfig("Level", "3");
+                Level = 1;
+            }
+        }
+
+        private void radioButton5_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton5.Checked)
+            {
+                WriteConfig("Level", "4");
+                Level = 1;
+            }
         }
     }
 }
