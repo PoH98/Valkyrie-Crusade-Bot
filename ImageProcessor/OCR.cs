@@ -44,8 +44,6 @@ namespace ImageProcessor
             }
         }
 
-        [HandleProcessCorruptedStateExceptions]
-        [SecurityCritical]
         private static string ReadText(Tesseract ocr, Mat image, bool ReadText, Mat imageColor)
         {
             if (image.NumberOfChannels == 1)
@@ -189,10 +187,10 @@ namespace ImageProcessor
                (int)newWidth, (int)newHeight);
         }
 
-        public static string OcrImage(Image source)
+        public static string OcrImage(byte[] source)
         {
             Mat result = new Mat();
-            return ReadText(_ocr, GetMatFromSDImage(source), true, result);
+            return ReadText(_ocr, GetMatFromSDImage(EmulatorController.Decompress(source)), true, result);
         }
 
         private static Mat GetMatFromSDImage(Image image)

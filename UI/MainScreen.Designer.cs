@@ -65,7 +65,6 @@
             this.checkBox8 = new System.Windows.Forms.CheckBox();
             this.checkBox12 = new System.Windows.Forms.CheckBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -100,6 +99,7 @@
             this.radioButton3 = new System.Windows.Forms.RadioButton();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
@@ -136,7 +136,6 @@
             this.tabPage2.SuspendLayout();
             this.groupBox11.SuspendLayout();
             this.groupBox5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             this.groupBox4.SuspendLayout();
             this.groupBox14.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -146,6 +145,7 @@
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             this.groupBox12.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.tabPage4.SuspendLayout();
@@ -554,7 +554,6 @@
             // 
             // groupBox5
             // 
-            this.groupBox5.Controls.Add(this.pictureBox4);
             this.groupBox5.Controls.Add(this.checkBox1);
             this.groupBox5.Controls.Add(this.textBox2);
             this.groupBox5.Controls.Add(this.label2);
@@ -566,18 +565,6 @@
             this.groupBox5.TabIndex = 11;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "其他功能";
-            // 
-            // pictureBox4
-            // 
-            this.pictureBox4.Location = new System.Drawing.Point(14, 179);
-            this.pictureBox4.Name = "pictureBox4";
-            this.pictureBox4.Size = new System.Drawing.Size(183, 256);
-            this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox4.TabIndex = 25;
-            this.pictureBox4.TabStop = false;
-            this.pictureBox4.Click += new System.EventHandler(this.pictureBox4_Click);
-            this.pictureBox4.MouseEnter += new System.EventHandler(this.pictureBox4_MouseEnter);
-            this.pictureBox4.MouseLeave += new System.EventHandler(this.pictureBox4_MouseLeave);
             // 
             // checkBox1
             // 
@@ -956,6 +943,7 @@
             // tabPage3
             // 
             this.tabPage3.BackColor = System.Drawing.Color.Silver;
+            this.tabPage3.Controls.Add(this.pictureBox4);
             this.tabPage3.Controls.Add(this.groupBox12);
             this.tabPage3.Controls.Add(this.button14);
             this.tabPage3.Controls.Add(this.Adb_Log);
@@ -968,6 +956,15 @@
             this.tabPage3.Text = "Debug测试";
             this.tabPage3.ToolTipText = "除错测试";
             // 
+            // pictureBox4
+            // 
+            this.pictureBox4.Location = new System.Drawing.Point(9, 9);
+            this.pictureBox4.Name = "pictureBox4";
+            this.pictureBox4.Size = new System.Drawing.Size(183, 256);
+            this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox4.TabIndex = 26;
+            this.pictureBox4.TabStop = false;
+            // 
             // groupBox12
             // 
             this.groupBox12.Controls.Add(this.label1);
@@ -975,9 +972,9 @@
             this.groupBox12.Controls.Add(this.label12);
             this.groupBox12.Controls.Add(this.label11);
             this.groupBox12.Controls.Add(this.label10);
-            this.groupBox12.Location = new System.Drawing.Point(6, 237);
+            this.groupBox12.Location = new System.Drawing.Point(6, 271);
             this.groupBox12.Name = "groupBox12";
-            this.groupBox12.Size = new System.Drawing.Size(542, 308);
+            this.groupBox12.Size = new System.Drawing.Size(542, 274);
             this.groupBox12.TabIndex = 19;
             this.groupBox12.TabStop = false;
             this.groupBox12.Text = "系统资料";
@@ -1024,9 +1021,9 @@
             // 
             // button14
             // 
-            this.button14.Location = new System.Drawing.Point(5, 6);
+            this.button14.Location = new System.Drawing.Point(198, 6);
             this.button14.Name = "button14";
-            this.button14.Size = new System.Drawing.Size(322, 34);
+            this.button14.Size = new System.Drawing.Size(129, 34);
             this.button14.TabIndex = 17;
             this.button14.Text = "模拟器资料";
             this.button14.UseVisualStyleBackColor = true;
@@ -1035,19 +1032,20 @@
             // Adb_Log
             // 
             this.Adb_Log.AutoSize = true;
-            this.Adb_Log.Location = new System.Drawing.Point(11, 213);
+            this.Adb_Log.Location = new System.Drawing.Point(198, 248);
             this.Adb_Log.Name = "Adb_Log";
             this.Adb_Log.Size = new System.Drawing.Size(93, 17);
             this.Adb_Log.TabIndex = 16;
             this.Adb_Log.Text = "记录Adb日志";
             this.Adb_Log.UseVisualStyleBackColor = true;
+            this.Adb_Log.CheckedChanged += new System.EventHandler(this.Adb_Log_CheckedChanged);
             // 
             // groupBox7
             // 
             this.groupBox7.Controls.Add(this.textBox1);
             this.groupBox7.Location = new System.Drawing.Point(333, 6);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(217, 225);
+            this.groupBox7.Size = new System.Drawing.Size(217, 259);
             this.groupBox7.TabIndex = 12;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "说明";
@@ -1058,7 +1056,7 @@
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(205, 195);
+            this.textBox1.Size = new System.Drawing.Size(205, 233);
             this.textBox1.TabIndex = 0;
             this.textBox1.Text = "基于模拟器安卓版本可能不支持某些指令\r\n\r\n***************************\r\n请使用此页进行测试！！！\r\n****************" +
     "***********";
@@ -1278,7 +1276,6 @@
             this.groupBox11.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox14.ResumeLayout(false);
             this.groupBox14.PerformLayout();
@@ -1295,6 +1292,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
             this.groupBox12.ResumeLayout(false);
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
@@ -1403,10 +1401,10 @@
         public System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.RadioButton radioButton7;
-        private System.Windows.Forms.PictureBox pictureBox4;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.PictureBox pictureBox4;
     }
 }
 

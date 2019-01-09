@@ -10,6 +10,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -192,8 +193,6 @@ namespace ImageProcessor
         /// <summary>
         /// Start ADB server
         /// </summary>
-        /// 
-
         public static bool StartAdb()
         {
             if (cleaningthread == null)
@@ -219,7 +218,7 @@ namespace ImageProcessor
                             {
                                 if (e.Contains("adb"))
                                 {
-                                    adbname = e;
+                                    adbname = Path.GetFullPath(e);
                                     break;
                                 }
                             }
@@ -258,7 +257,7 @@ namespace ImageProcessor
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.ToString());
+                        Debug_.WriteLine(ex.ToString());
                         return false;
                     }
                 }
@@ -400,13 +399,19 @@ namespace ImageProcessor
                     return null;
                 }
                 byte[] img = new byte[raw.Length - 12]; //remove header
-                for (int x = 12; x < raw.Length; x += 4)
+                ArraySegment<byte> segment = new ArraySegment<byte>(raw, 12, raw.Length - 12);
+                img = segment.ToArray();
+
+                int x = 0;
+                for ( x=0; x < img.Length; x+=4)
                 {
-                    img[x - 10] = raw[x];
-                    img[x - 11] = raw[x + 1];
-                    img[x - 12] = raw[x + 2];
-                    img[x - 9] = raw[x + 3];
+                    byte b = img[x];
+                    img[x + 3] = b;//b
+                    img[x + 2] = img[x + 1];//g
+                    img[x] = img[x + 2]; //r
+                    img[x + 1] = img[x + 3];//a
                 }
+                x = 0;
                 raw = null;
                 using (var stream = new MemoryStream(img))
                 using (var bmp = new Bitmap(1280, 720, PixelFormat.Format32bppArgb))
@@ -418,6 +423,7 @@ namespace ImageProcessor
                     img = null;
                     s.Stop();
                     Variables.AdbLog.Add("Screenshot saved to memory stream. Used time: " + s.ElapsedMilliseconds + " ms");
+                    bmp.Save("test.bmp");
                     return Compress(bmp);
                 }
             }
@@ -430,12 +436,20 @@ namespace ImageProcessor
                 return null;
             }
         }
+
+        public static uint ToARGB(uint rgba)
+        {
+            return (rgba << (3 * 8)) | (rgba >> 8);
+        }
+
+
         /// <summary>
         /// Left click adb command on the point for generating background click in emulators
         /// </summary>
         /// <param name="point">Posiition for clicking</param>
-        public static void SendTap(Point point)
+        public static void SendTap(Point point, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             try
             {
                 var receiver = new ConsoleOutputReceiver();
@@ -466,8 +480,9 @@ namespace ImageProcessor
         /// <param name="start">Swiping start position</param>
         /// <param name="end">Swiping end position</param>
         /// <param name="usedTime">The time used for swiping, milliseconds</param>
-        public static void SendSwipe(Point start, Point end, int usedTime)
+        public static void SendSwipe(Point start, Point end, int usedTime, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             try
             {
                 var receiver = new ConsoleOutputReceiver();
@@ -498,8 +513,9 @@ namespace ImageProcessor
         /// Left click adb command on the point for generating background click in emulators
         /// </summary>
         /// <param name="point">Posiition for clicking</param>
-        public static void SendTap(int x, int y)
+        public static void SendTap(int x, int y, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             try
             {
                 var receiver = new ConsoleOutputReceiver();
@@ -529,8 +545,9 @@ namespace ImageProcessor
         /// <param name="start">Swiping start position</param>
         /// <param name="end">Swiping end position</param>
         /// <param name="usedTime">The time used for swiping, milliseconds</param>
-        public static void SendSwipe(int startX, int startY, int endX, int endY, int usedTime)
+        public static void SendSwipe(int startX, int startY, int endX, int endY, int usedTime, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             try
             {
                 var receiver = new ConsoleOutputReceiver();
@@ -555,8 +572,9 @@ namespace ImageProcessor
         /// <summary>
         /// Read Configure in Bot.ini and save it into Variables.Configure (Dictionary)
         /// </summary>
-        public static void ReadConfig()
+        public static void ReadConfig([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             if (!Directory.Exists("Profiles\\" + EmulatorController.profilePath))
             {
                 Directory.CreateDirectory("Profiles\\" + EmulatorController.profilePath);
@@ -583,8 +601,9 @@ namespace ImageProcessor
         /// Start Emulator accoring to Variables.Configure (Dictionary) Key "Emulator" and "Path"
         /// </summary>
         /// <param name="handleName">Check the emulator's main handle is started</param>
-        public static void StartEmulator()
+        public static void StartEmulator([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             string temp = "";
             if (Variables.Configure.TryGetValue("Path", out temp))
             {
@@ -662,8 +681,9 @@ namespace ImageProcessor
         /// <param name="position">The position of image</param>
         /// <param name="image">The image that need to return color</param>
         /// <returns></returns>
-        public static Color GetPixel(Point position, byte[] rawimage)
+        public static Color GetPixel(Point position, byte[] rawimage, [CallerLineNumber] int lineNumber = 0,[CallerMemberName] string caller = null)
         {
+            Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             Image image = Decompress(rawimage);
             return new Bitmap(image).GetPixel(position.X, position.Y);
         }
@@ -698,8 +718,9 @@ namespace ImageProcessor
         /// <param name="point">The point to check for color</param>
         /// <param name="color">The color to check at point is true or false</param>
         /// <returns>bool</returns>
-        public static bool RGBComparer(byte[] image, Point point, Color color, int tolerance)
+        public static bool RGBComparer(byte[] image, Point point, Color color, int tolerance,[CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             int red = color.R;
             int blue = color.B;
             int green = color.G;
@@ -758,8 +779,9 @@ namespace ImageProcessor
         /// <param name="point">The point to check for color</param>
         /// <param name="tolerance">Tolerance to the color RGB, example: red=120, Tolerance=20 Result=100~140 red will return true</param>
         /// <returns>bool</returns>
-        public static bool RGBComparer(byte[] image, Point point, int red, int green, int blue, int tolerance)
+        public static bool RGBComparer(byte[] image, Point point, int red, int green, int blue, int tolerance, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             if (image == null)
             {
                 return false;
@@ -816,8 +838,9 @@ namespace ImageProcessor
         /// Compare point RGB from image
         /// </summary>
         /// <returns>bool</returns>
-        public static bool RGBComparer(byte[] rawimage, Color color)
+        public static bool RGBComparer(byte[] rawimage, Color color, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             Image image = Decompress(rawimage);
             if (image == null)
             {
@@ -860,8 +883,9 @@ namespace ImageProcessor
         /// Compare point RGB from image
         /// </summary>
         /// <returns>bool</returns>
-        public static bool RGBComparer(byte[] rawimage, Color color, Point start, Point end, out Point? point)
+        public static bool RGBComparer(byte[] rawimage, Color color, Point start, Point end, out Point? point, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             Image image = Decompress(CropImage(rawimage, start, end));
             if (image == null)
             {
@@ -908,8 +932,9 @@ namespace ImageProcessor
         /// Compare point RGB from image
         /// </summary>
         /// <returns>bool</returns>
-        public static bool RGBComparer(byte[] rawimage, Color color, out Point? point)
+        public static bool RGBComparer(byte[] rawimage, Color color, out Point? point, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             Image image = Decompress(rawimage);
             if (image == null)
             {
@@ -957,15 +982,15 @@ namespace ImageProcessor
         /// <param name="find">The smaller image for matching</param>
         /// <param name="original">Original image that need to get the point on it</param>
         /// <returns>Point or null</returns>
-        public static Point? FindImage(byte[] screencapture, Bitmap find, bool GrayStyle)
+        public static Point? FindImage(byte[] screencapture, Bitmap find, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             if (screencapture == null)
             {
                 Variables.AdbLog.Add("Result return null because of null original image");
                 return null;
             }
             Bitmap original = new Bitmap(Decompress(screencapture));
-            var stopwatch = Stopwatch.StartNew();
             if (find == null)
             {
                 return null;
@@ -986,10 +1011,7 @@ namespace ImageProcessor
                         // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
                         if (maxValues[0] > 0.9)
                         {
-                            stopwatch.Stop();
-                            Variables.AdbLog.Add("Image Processed. Used time " + stopwatch.ElapsedMilliseconds + " ms");
-                            source.Dispose();
-                            template.Dispose();
+                            Variables.AdbLog.Add("Image matched");
                             return maxLocations[0];
                         }
                     }
@@ -1007,10 +1029,7 @@ namespace ImageProcessor
                         // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
                         if (maxValues[0] > 0.9)
                         {
-                            stopwatch.Stop();
-                            Variables.AdbLog.Add("Image Processed. Used time " + stopwatch.ElapsedMilliseconds + " ms");
-                            source.Dispose();
-                            template.Dispose();
+                            Variables.AdbLog.Add("Image matched");
                             return maxLocations[0];
                         }
                     }
@@ -1021,102 +1040,19 @@ namespace ImageProcessor
 
 
             }
+            Variables.AdbLog.Add("Image not match");
             return null;
         }
-        /// <summary>
-        /// Return a Point location of the image in Variables.Image (will return null if not found)
-        /// </summary>
-        /// <param name="find">The smaller image for matching</param>
-        /// <param name="original">Original image that need to get the point on it</param>
-        /// <returns>Point or null</returns>
-        public static Point?[] FindImage(byte[] screencapture, Bitmap[] find, bool GrayStyle)
-        {
-            if (screencapture == null)
-            {
-                Variables.AdbLog.Add("Result return null because of null original image");
-                return null;
-            }
-            Bitmap original = new Bitmap(Decompress(screencapture));
-            List<Point?> p = new List<Point?>();
-            var stopwatch = Stopwatch.StartNew();
-            if (find == null)
-            {
-                return null;
-            }
-            try
-            {
-                if (GrayStyle)
-                {
-                    Image<Gray, byte> source = new Image<Gray, byte>(original);
-                    int num = 0;
-                    while (num < find.Length)
-                    {
-                        Image<Gray, byte> template = new Image<Gray, byte>(find[num]);
-                        using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
-                        {
-                            double[] minValues, maxValues;
-                            Point[] minLocations, maxLocations;
-                            result.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
-
-                            // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
-                            if (maxValues[0] > 0.9)
-                            {
-                                // This is a match. Do something with it, for example draw a rectangle around it.
-                                source.Dispose();
-                                template.Dispose();
-                                p.Add(maxLocations[0]);
-                                num++;
-                            }
-                        }
-                    }
-                    stopwatch.Stop();
-                    Variables.AdbLog.Add("Image Processed. Used time " + stopwatch.ElapsedMilliseconds + " ms");
-                    return p.ToArray();
-                }
-                else
-                {
-                    Image<Bgr, byte> source = new Image<Bgr, byte>(original);
-                    int num = 0;
-                    while (num < find.Length)
-                    {
-                        Image<Bgr, byte> template = new Image<Bgr, byte>(find[num]);
-                        using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
-                        {
-                            double[] minValues, maxValues;
-                            Point[] minLocations, maxLocations;
-                            result.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
-
-                            // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
-                            if (maxValues[0] > 0.9)
-                            {
-                                // This is a match. Do something with it, for example draw a rectangle around it.
-                                source.Dispose();
-                                template.Dispose();
-                                p.Add(maxLocations[0]);
-                                num++;
-                            }
-                        }
-                    }
-                    stopwatch.Stop();
-                    Variables.AdbLog.Add("Image Processed. Used time " + stopwatch.ElapsedMilliseconds + " ms");
-                    return p.ToArray();
-                }
-            }
-            catch
-            {
-
-
-            }
-            return null;
-        }
+        
         /// <summary>
         /// Return a Point location of the image in Variables.Image (will return null if not found)
         /// </summary>
         /// <param name="imagePath">Path of the smaller image for matching</param>
         /// <param name="original">Original image that need to get the point on it</param>
         /// <returns>Point or null</returns>
-        public static Point? FindImage(byte[] screencapture, string findPath, bool GrayStyle)
+        public static Point? FindImage(byte[] screencapture, string findPath, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             if (screencapture == null)
             {
                 Variables.AdbLog.Add("Result return null because of null original image");
@@ -1128,7 +1064,6 @@ namespace ImageProcessor
                 Variables.AdbLog.Add("Unable to find image " + findPath.Split('\\').Last() + ", image path not valid");
                 return null;
             }
-            var stopwatch = Stopwatch.StartNew();
             try
             {
                 if (GrayStyle)
@@ -1143,10 +1078,6 @@ namespace ImageProcessor
                         // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
                         if (maxValues[0] > 0.9)
                         {
-                            stopwatch.Stop();
-                            Variables.AdbLog.Add("Image Processed. Used time " + stopwatch.ElapsedMilliseconds + " ms");
-                            source.Dispose();
-                            template.Dispose();
                             return maxLocations[0];
                         }
                     }
@@ -1164,10 +1095,6 @@ namespace ImageProcessor
                         // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
                         if (maxValues[0] > 0.9)
                         {
-                            stopwatch.Stop();
-                            Variables.AdbLog.Add("Image Processed. Used time " + stopwatch.ElapsedMilliseconds + " ms");
-                            source.Dispose();
-                            template.Dispose();
                             return maxLocations[0];
                         }
                     }
@@ -1179,120 +1106,6 @@ namespace ImageProcessor
             }
             return null;
         }
-
-        /// <summary>
-        /// Return multiple Point location of the image in Variables,Image (will return null if not found)
-        /// </summary>
-        /// <param name="imagePath">Path of the smaller image for matching in original</param>
-        /// <param name="original">Original Image for finding point</param>
-        /// <returns>Point arrays</returns>
-        public static Point[] FindMultiple(byte[] screencapture, string imagePath)
-        {
-            if (screencapture == null)
-            {
-                Variables.AdbLog.Add("Result return null because od null original image");
-                return null;
-            }
-            Bitmap original = new Bitmap(Decompress(screencapture));
-            var stopwatch = Stopwatch.StartNew();
-            List<Point> Return = new List<Point>();
-            if (!File.Exists(imagePath))
-            {
-                Variables.AdbLog.Add("Unable to find image " + imagePath.Split('\\').Last() + ", image path not valid");
-                return null;
-            }
-            Bitmap find;
-            using (Stream bmp = File.Open(imagePath, FileMode.Open))
-            {
-                Image image = Image.FromStream(bmp);
-                find = new Bitmap(image);
-            }
-            if (original.Width < find.Width || original.Height < find.Height)
-            {
-                Variables.AdbLog.Add("Image is too big to search in the emulator");
-                return null;
-            }
-            for (int x = 0; x < 10; x++)
-            {
-                Image<Gray, byte> source = new Image<Gray, byte>(original);
-                Image<Gray, byte> template = new Image<Gray, byte>(find);
-                using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
-                {
-                    CvInvoke.Threshold(result, result, 0.7, 1, ThresholdType.ToZero);
-                    double[] minValues, maxValues;
-                    Point[] minLocations, maxLocations;
-                    result.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
-                    // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
-                    if (maxValues[0] > 0.9)
-                    {
-                        Pen p = new Pen(Brushes.Black);
-                        using (Graphics g = Graphics.FromImage(original))
-                        {
-                            g.DrawEllipse(new Pen(Color.Red), new RectangleF(maxLocations[0], new Size(5, 5)));
-                        }
-                        Return.Add(maxLocations[0]);
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
-            stopwatch.Stop();
-            Variables.AdbLog.Add("Image Processed. Used time " + stopwatch.ElapsedMilliseconds + " ms");
-            return Return.ToArray();
-        }
-        /// <summary>
-        /// Return multiple Point location of the image in Variables,Image (will return null if not found)
-        /// </summary>
-        /// <param name="find">Smaller image for matching in original</param>
-        /// <param name="original">Original Image for finding point</param>
-        /// <returns>Point arrays</returns>
-        public static Point[] FindMultiple(byte[] screencapture, Bitmap find)
-        {
-            if (screencapture == null)
-            {
-                Variables.AdbLog.Add("Result return null because od null original image");
-                return null;
-            }
-            Bitmap original = new Bitmap(Decompress(screencapture));
-            var stopwatch = Stopwatch.StartNew();
-            List<Point> Return = new List<Point>();
-            if (original.Width < find.Width || original.Height < find.Height)
-            {
-                Variables.AdbLog.Add("Image is too big to search in the emulator");
-                return null;
-            }
-            for (int x = 0; x < 10; x++)
-            {
-                Image<Bgr, byte> source = new Image<Bgr, byte>(original);
-                Image<Bgr, byte> template = new Image<Bgr, byte>(find);
-                using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
-                {
-                    CvInvoke.Threshold(result, result, 0.7, 1, ThresholdType.ToZero);
-                    double[] minValues, maxValues;
-                    Point[] minLocations, maxLocations;
-                    result.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
-                    // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
-                    if (maxValues[0] > 0.9)
-                    {
-                        Pen p = new Pen(Brushes.Black);
-                        using (Graphics g = Graphics.FromImage(original))
-                        {
-                            g.DrawEllipse(new Pen(Color.Black), new RectangleF(maxLocations[0], new Size(7, 7)));
-                        }
-                        Return.Add(maxLocations[0]);
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
-            stopwatch.Stop();
-            Variables.AdbLog.Add("Image Processed. Used time " + stopwatch.ElapsedMilliseconds + " ms");
-            return Return.ToArray();
-        }
         /// <summary>
         /// Crop the image and return the cropped image
         /// </summary>
@@ -1301,8 +1114,9 @@ namespace ImageProcessor
         /// <param name="start">Starting Point</param>
         /// <param name="End">Ending Point</param>
         /// <returns></returns>
-        public static byte[] CropImage(byte[] original, Point start, Point End)
+        public static byte[] CropImage(byte[] original, Point start, Point End, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             if (original == null)
             {
                 Variables.AdbLog.Add("Result return null because of null original image");

@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Security.Principal;
 using System.Net.NetworkInformation;
 using ImgXml;
+using System.Net.Sockets;
 
 namespace ImageProcessor
 {
@@ -60,15 +61,10 @@ namespace ImageProcessor
                 Thread l = new Thread(LoadEventBrowser);
                 l.Start();
                 ReloadTime = 36000;
-
             }
             else
             {
                 ReloadTime--;
-            }
-            if (Adb_Log.Checked)
-            {
-                File.AppendAllLines("日志.log", Variables.AdbLog);
             }
             if (checkBox2.Checked)
             {
@@ -183,6 +179,10 @@ namespace ImageProcessor
             if (!Directory.Exists("Audio"))
             {
                 Directory.CreateDirectory("Audio");
+            }
+            if (File.Exists("debug.txt"))
+            {
+                Adb_Log.Checked = true;
             }
             string _NET = Get45PlusFromRegistry();
             if (_NET.Length > 0)
@@ -561,9 +561,10 @@ namespace ImageProcessor
             using (var response = request.GetResponse())
             using (var stream = response.GetResponseStream())
             {
-                pictureBox4.Image = Bitmap.FromStream(stream);
+                pictureBox4.Image = Image.FromStream(stream);
             }
             OCR.PrepairOcr("eng");
+            checkBox10.Enabled = radioButton9.Checked;
             Loading.LoadCompleted = true;
             Thread mon = new Thread(DeviceConnected);
             mon.Start();
@@ -627,36 +628,59 @@ namespace ImageProcessor
         {
             try
             {
-                var monitor = new DeviceMonitor(new AdbSocket(new IPEndPoint(IPAddress.Loopback, AdbClient.AdbServerPort)));
-                monitor.DeviceConnected += OnDeviceConnected;
-                monitor.DeviceDisconnected += Monitor_DeviceDisconnected;
-                monitor.Start();
+                IPAddress loopback = null;
+                if(IPAddress.TryParse("127.0.0.1",out loopback))
+                {
+                    IAdbSocket sock = new AdbSocket(new IPEndPoint(loopback, AdbClient.AdbServerPort));
+                    var monitor = new DeviceMonitor(sock);
+                    monitor.DeviceConnected += OnDeviceConnected;
+                    monitor.DeviceDisconnected += OnDeviceDisconnected;
+                    monitor.Start();
+                }
+            }
+            catch(SocketException)
+            {
+                foreach(var adb in Process.GetProcessesByName("adb.exe"))
+                {
+                    adb.Kill();      
+                }
+                EmulatorController.StartAdb();
+                DeviceConnected();
             }
             catch
             {
-                Thread.Sleep(1000);
                 DeviceConnected();
             }
         }
 
-        private static void Monitor_DeviceDisconnected(object sender, DeviceDataEventArgs e)
+        private static void OnDeviceDisconnected(object sender, DeviceDataEventArgs e)
         {
-            var temp = AdbClient.Instance.GetDevices();
-            if(Variables.Control_Device_Num > temp.Count)
+            Variables.Devices_Connected = AdbClient.Instance.GetDevices();
+            for (int x = 0; x < Variables.Devices_Connected.Count; x++)
             {
-                Variables.Control_Device_Num = temp.IndexOf(Variables.Devices_Connected[Variables.Control_Device_Num]);
+                if (Variables.Devices_Connected[x].ToString() == PrivateVariable.Adb_IP)
+                {
+                    Variables.Control_Device_Num = x;
+                    break;
+                }
+                x++;
             }
-            Variables.Devices_Connected.Clear();
-            Variables.Devices_Connected = temp;
             Variables.DeviceChanged = true;
             Docked = false;
         }
 
         private static void OnDeviceConnected(object sender, DeviceDataEventArgs e)
         {
-            
-            Variables.Devices_Connected.Clear();
             Variables.Devices_Connected = AdbClient.Instance.GetDevices();
+            for (int x = 0; x < Variables.Devices_Connected.Count; x++)
+            {
+                if (Variables.Devices_Connected[x].ToString() == PrivateVariable.Adb_IP)
+                {
+                    Variables.Control_Device_Num = x;
+                    break;
+                }
+                x++;
+            }
             Variables.DeviceChanged = true;
         }
 
@@ -682,14 +706,11 @@ namespace ImageProcessor
                 return;
             }
             Point output;
-            if(PrivateVariable.EventType == 1)
+            if (comboBox1.SelectedIndex == -1)
             {
-                if (comboBox1.SelectedIndex == -1)
-                {
-                    comboBox1.SelectedIndex = 0;
-                }
+                comboBox1.SelectedIndex = 0;
             }
-            if(PrivateVariable.Archwitch.TryGetValue(comboBox1.Items[comboBox1.SelectedIndex].ToString(),out output))
+            if (PrivateVariable.Archwitch.TryGetValue(comboBox1.Items[comboBox1.SelectedIndex].ToString(),out output))
             {
                 Script.Archwitch_Stage = comboBox1.SelectedIndex;
                 WriteConfig("Second_Page", "false");
@@ -784,24 +805,14 @@ namespace ImageProcessor
             if (EmulatorController.handle != null && Variables.Proc != null)
             {
                 if (Variables.Instance.Length > 0)
-                {
-                    List<IntPtr> MEmu = DllImport.GetAllChildrenWindowHandles(IntPtr.Zero, "Qt5QWindowIcon", "(" + Variables.Instance + ")", 40);
-                    foreach (var main in MEmu)
-                    {
+                {    
                         DllImport.SetParent(EmulatorController.handle, IntPtr.Zero);
                         DllImport.MoveWindow(EmulatorController.handle, 0, 0, 1280, 720, true);
-                        DllImport.ShowWindow(main, 5);
-                    }
                 }
                 else
                 {
-                    List<IntPtr> MEmu = DllImport.GetAllChildrenWindowHandles(IntPtr.Zero, "Qt5QWindowIcon", "MEmu", 40);
-                    foreach (var main in MEmu)
-                    {
                         DllImport.SetParent(EmulatorController.handle, IntPtr.Zero);
                         DllImport.MoveWindow(EmulatorController.handle, 0, 0, 1280, 720, true);
-                        DllImport.ShowWindow(main, 5);
-                    }
                 }
            }
             Docked = false;
@@ -1110,15 +1121,6 @@ namespace ImageProcessor
             Environment.Exit(0);
         }
 
-        private void button6_Click(object sender, EventArgs e)
-        {
-            EmulatorController.StartEmulator();
-            EmulatorController.StartAdb();
-            
-            EmulatorController.SendSwipe(300, 300, 800, 300, 1000);
-            EmulatorController.SendSwipe(800, 300, 300, 300, 1000);
-        }
-
         private void button7_Click(object sender, EventArgs e)
         {
             if (File.Exists("Updater.exe"))
@@ -1396,7 +1398,7 @@ namespace ImageProcessor
             {
                 PrivateVariable.EnterRune = true;
                 WriteConfig("Manual_Rune", "false");
-                checkBox10.Enabled = true;
+                checkBox10.Enabled = radioButton9.Checked;
             }
         }
 
@@ -1563,6 +1565,12 @@ namespace ImageProcessor
                 WriteConfig("Level", "4");
                 Level = 1;
             }
+        }
+
+        private void Adb_Log_CheckedChanged(object sender, EventArgs e)
+        {
+            Debug_.Enable_Debug = Adb_Log.Checked;
+            Debug_.PrepairDebug();
         }
     }
 }
