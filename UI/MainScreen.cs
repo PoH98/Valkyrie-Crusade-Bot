@@ -11,7 +11,6 @@ using System.Net;
 using System.Text.RegularExpressions;
 using SharpAdbClient;
 using System.Text;
-using System.Collections.Generic;
 using System.Security.Principal;
 using System.Net.NetworkInformation;
 using ImgXml;
@@ -30,6 +29,8 @@ namespace ImageProcessor
 
         static bool Docked = false;
 
+        public static string[] MEmu = {"MEmu","逍遥模拟器" };
+
         static System.Windows.Forms.Timer timeout = new System.Windows.Forms.Timer();
 
         public MainScreen()
@@ -37,7 +38,6 @@ namespace ImageProcessor
             InitializeComponent();
             timeout.Interval = 5000;
             timeout.Tick += Timeout_Tick;
-            GC.WaitForPendingFinalizers();
         }
 
         private void Timeout_Tick(object sender, EventArgs e)
@@ -45,12 +45,12 @@ namespace ImageProcessor
             if (webBrowser3.IsBusy)
             {
                 webBrowser3.Stop();
-                webBrowser3.DocumentText = Resource.index;
+                webBrowser3.DocumentText = Img.index;
             }
             if (webBrowser2.IsBusy)
             {
                 webBrowser2.Stop();
-                webBrowser2.DocumentText = Resource.index;
+                webBrowser2.DocumentText = Img.index;
             }
         }
 
@@ -203,9 +203,9 @@ namespace ImageProcessor
             }
             Thread load = new Thread(loading);
             load.Start();
-            IntPtr ico = Resource.Icon.GetHicon();
+            IntPtr ico = Img.Icon.GetHicon();
             Icon = Icon.FromHandle(ico);
-            pictureBox1.Image = Resource.Icon;
+            pictureBox1.Image = Img.Icon;
             string output = "";
             string[] args = Environment.GetCommandLineArgs();
             foreach (var arg in args)
@@ -512,7 +512,7 @@ namespace ImageProcessor
                     checkBox15.Checked = true;
                 }
             }
-            if (Is64BitOperatingSystem())
+            if (Program.Is64BitOperatingSystem())
             {
                 label13.Text = "系统资料：64位系统" ;
             }
@@ -527,7 +527,7 @@ namespace ImageProcessor
             string ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36";
             DllImport.UrlMkSetSessionOption(DllImport.URLMON_OPTION_USERAGENT, ua, ua.Length, 0);
             NetworkChange.NetworkAvailabilityChanged += NetworkChange_NetworkAvailabilityChanged;
-            html = Resource.index;
+            html = Img.index;
             WebClientOverride wc = new WebClientOverride();
             try
             {
@@ -563,7 +563,6 @@ namespace ImageProcessor
             {
                 pictureBox4.Image = Image.FromStream(stream);
             }
-            OCR.PrepairOcr("eng");
             checkBox10.Enabled = radioButton9.Checked;
             Loading.LoadCompleted = true;
             Thread mon = new Thread(DeviceConnected);
@@ -599,27 +598,6 @@ namespace ImageProcessor
             var wi = WindowsIdentity.GetCurrent();
             var wp = new WindowsPrincipal(wi);
             return wp.IsInRole(WindowsBuiltInRole.Administrator);
-        }
-
-        public static bool Is64BitOperatingSystem()
-        {
-            // Check if this process is natively an x64 process. If it is, it will only run on x64 environments, thus, the environment must be x64.
-            if (IntPtr.Size == 8)
-                return true;
-            // Check if this process is an x86 process running on an x64 environment.
-            IntPtr moduleHandle = DllImport.GetModuleHandle("kernel32");
-            if (moduleHandle != IntPtr.Zero)
-            {
-                IntPtr processAddress = DllImport.GetProcAddress(moduleHandle, "IsWow64Process");
-                if (processAddress != IntPtr.Zero)
-                {
-                    bool result;
-                    if (DllImport.IsWow64Process(DllImport.GetCurrentProcess(), out result) && result)
-                        return true;
-                }
-            }
-            // The environment must be an x86 environment.
-            return false;
         }
         /// <summary>
         /// Line that await for new devices connected and refresh Variables.Devices_Connected
@@ -691,9 +669,9 @@ namespace ImageProcessor
                 GetEventXML.LoadXMLEvent();
                 webBrowser2.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/","/sch/") + ".html"));
             }
-            catch (Exception ex)
+            catch
             {
-                MessageBox.Show(ex.ToString());
+                html = Img.index;
                 webBrowser2.DocumentText = html;
             }
         }
@@ -804,17 +782,9 @@ namespace ImageProcessor
             }
             if (EmulatorController.handle != null && Variables.Proc != null)
             {
-                if (Variables.Instance.Length > 0)
-                {    
-                        DllImport.SetParent(EmulatorController.handle, IntPtr.Zero);
-                        DllImport.MoveWindow(EmulatorController.handle, 0, 0, 1280, 720, true);
-                }
-                else
-                {
-                        DllImport.SetParent(EmulatorController.handle, IntPtr.Zero);
-                        DllImport.MoveWindow(EmulatorController.handle, 0, 0, 1280, 720, true);
-                }
-           }
+                DllImport.SetParent(EmulatorController.handle, IntPtr.Zero);
+                DllImport.MoveWindow(EmulatorController.handle, 0, 0, 1280, 720, true);
+            }
             Docked = false;
             Variables.start = null;
             button1.Enabled = true;
@@ -829,60 +799,94 @@ namespace ImageProcessor
             {
                 Variables.Control_Device_Num = index; //Register it, we need this to control our emulator
             }
-            if (!Script.DisableAutoCheckEvent)
+            if (PrivateVariable.EventType == 0)
             {
-                if (webBrowser2.DocumentText.Contains("楼层"))
+                groupBox8.Text = "塔楼活动";
+                groupBox9.Text = "";
+                progressBar1.Value = Script.energy;
+                progressBar2.Value = Script.runes;
+                label7.Text = Script.runes + "/5";
+                label6.Text = Script.energy + "/5";
+                if (Script.nextOnline != null)
                 {
-                    groupBox8.Text = "塔楼活动";
-                    groupBox9.Text = "";
-                    progressBar1.Value = Script.energy;
-                    progressBar2.Value = Script.runes;
-                    label7.Text = Script.runes + "/5";
-                    label6.Text = Script.energy + "/5";
-                    if (Script.nextOnline != null)
+                    if (Script.nextOnline > DateTime.Now)
                     {
-                        if (Script.nextOnline > DateTime.Now)
-                        {
-                            TimeSpan time = Script.nextOnline - DateTime.Now;
-                            label9.Text = time.Hours.ToString("00") + " : " + time.Minutes.ToString("00") + " : " + time.Seconds.ToString("00");
-                        }
+                        TimeSpan time = Script.nextOnline - DateTime.Now;
+                        label9.Text = time.Hours.ToString("00") + " : " + time.Minutes.ToString("00") + " : " + time.Seconds.ToString("00");
                     }
-                    PrivateVariable.EventType = 0;
-                    if(Script.Tower_Floor.Length>0)
+                }
+                if (Script.Tower_Floor.Length > 0)
+                {
+                    try
                     {
-                        try
-                        {
-                            label15.Text = Script.Tower_Floor.Replace(" ","").Replace("F"," F");
-                        }
-                        catch
-                        {
+                        label15.Text = Script.Tower_Floor.Replace(" ", "").Replace("F", " F");
+                    }
+                    catch
+                    {
 
-                        }
                     }
-                    if(Script.Tower_Rank.Length > 0)
+                }
+                if (Script.Tower_Rank.Length > 0)
+                {
+                    try
                     {
-                        try
-                        {
-                            label16.Text = Script.Tower_Rank.Replace(" ", "");
-                        }
-                        catch
-                        {
+                        label16.Text = Script.Tower_Rank.Replace(" ", "");
+                    }
+                    catch
+                    {
 
-                        }
                     }
                 }
-                else if (webBrowser2.DocumentText.Contains("魔女讨伐"))
+            }
+            else if (PrivateVariable.EventType == 1)
+            {
+                groupBox8.Text = "";
+                groupBox9.Text = "魔女讨伐";
+            }
+            else if (PrivateVariable.EventType == 2)
+            {
+                groupBox9.Text = "";
+                groupBox8.Text = "魔界活动";
+                label5.Text = "";
+                label7.Text = "";
+                label6.Text = Script.energy + "/5";
+                progressBar2.Visible = false;
+                progressBar1.Value = Script.energy;
+                if (Script.nextOnline != null)
                 {
-                    groupBox8.Text = "";
-                    groupBox9.Text = "魔女讨伐";
-                    PrivateVariable.EventType = 1;
+                    if (Script.nextOnline > DateTime.Now)
+                    {
+                        TimeSpan time = Script.nextOnline - DateTime.Now;
+                        label9.Text = time.Hours.ToString("00") + " : " + time.Minutes.ToString("00") + " : " + time.Seconds.ToString("00");
+                    }
                 }
-                else
+                if (Script.Tower_Floor.Length > 0)
                 {
-                    groupBox8.Text = "警告，无法获取活动资料";
-                    groupBox9.Text = "警告，无法获取活动资料";
-                    PrivateVariable.EventType = -1;
+                    try
+                    {
+                        label15.Text = Script.Tower_Floor.Replace(" ", "").Replace("F", " F");
+                    }
+                    catch
+                    {
+
+                    }
                 }
+                if (Script.Tower_Rank.Length > 0)
+                {
+                    try
+                    {
+                        label16.Text = Script.Tower_Rank.Replace(" ", "");
+                    }
+                    catch
+                    {
+
+                    }
+                }
+            }
+            else
+            {
+                groupBox8.Text = "未知的活动";
+                groupBox9.Text = "未知的活动";
             }
         }
         /// <summary>
@@ -901,23 +905,20 @@ namespace ImageProcessor
                     {
                         if (EmulatorController.handle == IntPtr.Zero || EmulatorController.handle == null)
                         {
-                            EmulatorController.ConnectAndroidEmulator("Qt5QWindowIcon", "MainWindowWindow");
+                            EmulatorController.ConnectAndroidEmulator(String.Empty, String.Empty, MEmu);
                         }
-
-                            panel3.Invoke((MethodInvoker)delegate
+                        panel3.Invoke((MethodInvoker)delegate
+                        {
+                            if (DllImport.GetParent(EmulatorController.handle) != panel3.Handle)
                             {
-                                if (DllImport.GetParent(EmulatorController.handle) != panel3.Handle)
+                                if (PrivateVariable.Run && !Docked)
                                 {
-                                    if (PrivateVariable.Run && !Docked)
-                                    {
-                                        DllImport.SetParent(EmulatorController.handle, panel3.Handle);
-                                        DllImport.MoveWindow(EmulatorController.handle, -1, -35, 1104, 683, true);
-                                        Docked = true;
-                                    }
+                                    DllImport.SetParent(EmulatorController.handle, panel3.Handle);
+                                    DllImport.MoveWindow(EmulatorController.handle, -1, -35, 1104, 683, true);
+                                    Docked = true;
                                 }
-                            });
-                        
-                        
+                            }
+                        });
                         if (File.Exists(Variables.SharedPath + "\\" + Variables.Devices_Connected[Variables.Control_Device_Num].Name + ".dump"))
                         {
                             File.Delete(Variables.SharedPath + "\\" + Variables.Devices_Connected[Variables.Control_Device_Num].Name + ".dump");
@@ -941,37 +942,12 @@ namespace ImageProcessor
                         Variables.Control_Device_Num = index;
                         while (Variables.Proc == null)
                         {
+                            EmulatorController.ConnectAndroidEmulator(String.Empty, String.Empty, MEmu);
                             Thread.Sleep(1000);
                         }
                         Variables.ScriptLog.Add("Emulator Started");
                     }
                 }
-            }
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            EmulatorController.StartEmulator();
-            EmulatorController.StartAdb();
-            
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            byte[] image = EmulatorController.ImageCapture();
-            if (image == null)
-            {
-                MessageBox.Show("截图失败！图片为null！");
-                return;
-            }
-            Image temp = EmulatorController.Decompress(image);
-            temp.Save("debug.png");
-            s.Stop();
-            if (s.ElapsedMilliseconds > 1000)
-            {
-                MessageBox.Show("截图使用了" + s.ElapsedMilliseconds / 1000 + "秒！");
-            }
-            else
-            {
-                MessageBox.Show("截图使用了" + s.ElapsedMilliseconds + "毫秒！");
             }
         }
 
@@ -1571,6 +1547,15 @@ namespace ImageProcessor
         {
             Debug_.Enable_Debug = Adb_Log.Checked;
             Debug_.PrepairDebug();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (File.Exists("OCR.png"))
+            {
+                byte[] img = EmulatorController.Compress(Image.FromFile("OCR.png"));
+                MessageBox.Show(OCR.OcrImage(img,"eng"));
+            }
         }
     }
 }

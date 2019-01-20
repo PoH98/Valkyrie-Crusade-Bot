@@ -52,13 +52,16 @@ namespace ImageProcessor
 
         public static Image Decompress(byte[] buffer)
         {
-            if (buffer == null)
+            try
+            {
+                using (var ms = new MemoryStream(buffer))
+                {
+                    return Image.FromStream(ms);
+                }
+            }
+            catch
             {
                 return null;
-            }
-            using (var ms = new MemoryStream(buffer))
-            {
-                return Image.FromStream(ms);
             }
         }
         /// <summary>
@@ -123,28 +126,29 @@ namespace ImageProcessor
         /// </summary>
         /// <param name="classes">for checking if the process is really emulator</param>
         /// <param name="name">for checking if the process is really emulator</param>
-        public static void ConnectAndroidEmulator(string classes, string name)
+        public static void ConnectAndroidEmulator(string classes, string name, string[] processName)
         {
-            string title = Variables.Configure["Path"].Split('\\').Last();
-            title = title.Replace(".exe", "").Replace(" ","");
-            if (Variables.Instance.Length > 0)
+            foreach(var n in processName)
             {
-                title = Variables.Instance;
-            }
-            foreach (var p in Process.GetProcesses())
-            {
-                if (p.MainWindowTitle == title)
+                string title = n;
+                if (Variables.Instance.Length > 0)
                 {
-                    IntPtr handle = DllImport.FindWindowEx(p.MainWindowHandle, IntPtr.Zero, classes, name);
-                    if(handle != IntPtr.Zero)
+                    title = Variables.Instance;
+                }
+                foreach (var p in Process.GetProcessesByName(processName[0]))
+                {
+                    Debug_.WriteLine(p.MainWindowTitle);
+                    if (p.MainWindowTitle == title)
                     {
+                        IntPtr handle = DllImport.FindWindowEx(p.MainWindowHandle, IntPtr.Zero, classes, name);
                         Variables.Proc = p;
                         EmulatorController.handle = p.MainWindowHandle;
-                        Variables.ScriptLog.Add("Emulator ID: "+p.Id);
+                        Variables.ScriptLog.Add("Emulator ID: " + p.Id);
                         break;
                     }
                 }
             }
+            
         }
 
         private static void CleanLog()
@@ -399,19 +403,13 @@ namespace ImageProcessor
                     return null;
                 }
                 byte[] img = new byte[raw.Length - 12]; //remove header
-                ArraySegment<byte> segment = new ArraySegment<byte>(raw, 12, raw.Length - 12);
-                img = segment.ToArray();
-
-                int x = 0;
-                for ( x=0; x < img.Length; x+=4)
+                for (int x = 12; x < raw.Length; x += 4)
                 {
-                    byte b = img[x];
-                    img[x + 3] = b;//b
-                    img[x + 2] = img[x + 1];//g
-                    img[x] = img[x + 2]; //r
-                    img[x + 1] = img[x + 3];//a
+                    img[x - 10] = raw[x];
+                    img[x - 11] = raw[x + 1];
+                    img[x - 12] = raw[x + 2];
+                    img[x - 9] = raw[x + 3];
                 }
-                x = 0;
                 raw = null;
                 using (var stream = new MemoryStream(img))
                 using (var bmp = new Bitmap(1280, 720, PixelFormat.Format32bppArgb))
@@ -423,7 +421,6 @@ namespace ImageProcessor
                     img = null;
                     s.Stop();
                     Variables.AdbLog.Add("Screenshot saved to memory stream. Used time: " + s.ElapsedMilliseconds + " ms");
-                    bmp.Save("test.bmp");
                     return Compress(bmp);
                 }
             }
@@ -436,12 +433,6 @@ namespace ImageProcessor
                 return null;
             }
         }
-
-        public static uint ToARGB(uint rgba)
-        {
-            return (rgba << (3 * 8)) | (rgba >> 8);
-        }
-
 
         /// <summary>
         /// Left click adb command on the point for generating background click in emulators
@@ -612,7 +603,7 @@ namespace ImageProcessor
                     if (!File.Exists(temp))
                     {
                         MessageBox.Show("Unable to locate path of emulator!");
-                        Process.Start("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
+                        Process.Start("Profiles\\" + profilePath + "\\bot.ini");
                     }
                     ProcessStartInfo info = new ProcessStartInfo();
                     info.FileName = temp.Replace("MEmu.exe", "MEmuConsole.exe");
@@ -862,21 +853,30 @@ namespace ImageProcessor
             byte[] pixel = new byte[PixelCount * step];
             IntPtr ptr = bd.Scan0;
             Marshal.Copy(ptr, pixel, 0, pixel.Length);
-            for (int i = 0; i < image.Height; i++)
+            unsafe
             {
-                for (int j = 0; j < image.Width; j++)
+                // example assumes 24bpp image.  You need to verify your pixel depth
+                // loop by row for better data locality
+                for (int y = 0; y < image.Height; ++y)
                 {
-                    //Get the color at each pixel
-                    Color now_color = GetPixel(j, i, ptr, step, Width, Height, Depth, pixel);
-
-                    //Compare Pixel's Color ARGB property with the picked color's ARGB property 
-                    if (now_color.ToArgb() == color.ToArgb())
+                    byte* pRow = (byte*)bd.Scan0 + y * bd.Stride;
+                    for (int x = 0; x < image.Width; ++x)
                     {
-                        return true;
+                        // windows stores images in BGR pixel order
+                        byte r = pRow[1];
+                        byte g = pRow[2];
+                        byte b = pRow[3];
+                        if(r == color.R && g == color.G && b == color.B)
+                        {
+                            bmp.UnlockBits(bd);
+                            return true;
+                        }
+                        // next pixel in the row
+                        pRow += 4;
                     }
                 }
             }
-
+            bmp.UnlockBits(bd);
             return false;
         }
         /// <summary>
@@ -909,21 +909,31 @@ namespace ImageProcessor
             byte[] pixel = new byte[PixelCount * step];
             IntPtr ptr = bd.Scan0;
             Marshal.Copy(ptr, pixel, 0, pixel.Length);
-            for (int i = 0; i < image.Height; i++)
+            unsafe
             {
-                for (int j = 0; j < image.Width; j++)
+                // example assumes 24bpp image.  You need to verify your pixel depth
+                // loop by row for better data locality
+                for (int y = 0; y < image.Height; ++y)
                 {
-                    //Get the color at each pixel
-                    Color now_color = GetPixel(j, i, ptr, step, Width, Height, Depth, pixel);
-
-                    //Compare Pixel's Color ARGB property with the picked color's ARGB property 
-                    if (now_color.ToArgb() == color.ToArgb())
+                    byte* pRow = (byte*)bd.Scan0 + y * bd.Stride;
+                    for (int x = 0; x < image.Width; ++x)
                     {
-                        point = new Point(j, i);
-                        return true;
+                        // windows stores images in BGR pixel order
+                        byte r = pRow[1];
+                        byte g = pRow[2];
+                        byte b = pRow[3];
+                        if (r == color.R && g == color.G && b == color.B)
+                        {
+                            bmp.UnlockBits(bd);
+                            point = new Point(x, y);
+                            return true;
+                        }
+                        // next pixel in the row
+                        pRow += 4;
                     }
                 }
             }
+            bmp.UnlockBits(bd);
             point = null;
             return false;
         }
@@ -969,10 +979,12 @@ namespace ImageProcessor
                     if (now_color.ToArgb() == color.ToArgb())
                     {
                         point = new Point(j, i);
+                        bmp.UnlockBits(bd);
                         return true;
                     }
                 }
             }
+            bmp.UnlockBits(bd);
             point = null;
             return false;
         }
@@ -984,6 +996,7 @@ namespace ImageProcessor
         /// <returns>Point or null</returns>
         public static Point? FindImage(byte[] screencapture, Bitmap find, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            Thread.Sleep(1);
             Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             if (screencapture == null)
             {
@@ -1052,6 +1065,7 @@ namespace ImageProcessor
         /// <returns>Point or null</returns>
         public static Point? FindImage(byte[] screencapture, string findPath, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            Thread.Sleep(1);
             Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             if (screencapture == null)
             {
@@ -1106,6 +1120,67 @@ namespace ImageProcessor
             }
             return null;
         }
+
+        /// <summary>
+        /// Return a Point location of the image in Variables.Image (will return null if not found)
+        /// </summary>
+        /// <param name="imagePath">Path of the smaller image for matching</param>
+        /// <param name="original">Original image that need to get the point on it</param>
+        /// <returns>Point or null</returns>
+        public static Point? FindImage(byte[] screencapture, byte[] image, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        {
+            Thread.Sleep(1);
+            Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
+            if (screencapture == null)
+            {
+                Variables.AdbLog.Add("Result return null because of null original image");
+                return null;
+            }
+            Bitmap original = new Bitmap(Decompress(screencapture));
+            Bitmap find = new Bitmap(Decompress(image));
+            try
+            {
+                if (GrayStyle)
+                {
+                    Image<Gray, byte> source = new Image<Gray, byte>(original);
+                    Image<Gray, byte> template = new Image<Gray, byte>(find);
+                    using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
+                    {
+                        double[] minValues, maxValues;
+                        Point[] minLocations, maxLocations;
+                        result.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
+                        // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
+                        if (maxValues[0] > 0.9)
+                        {
+                            return maxLocations[0];
+                        }
+                    }
+                }
+                else
+                {
+                    Image<Bgr, byte> source = new Image<Bgr, byte>(original);
+                    Image<Bgr, byte> template = new Image<Bgr, byte>(find);
+                    using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
+                    {
+                        double[] minValues, maxValues;
+                        Point[] minLocations, maxLocations;
+                        result.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
+
+                        // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
+                        if (maxValues[0] > 0.9)
+                        {
+                            return maxLocations[0];
+                        }
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+            return null;
+        }
+
         /// <summary>
         /// Crop the image and return the cropped image
         /// </summary>
@@ -1122,19 +1197,7 @@ namespace ImageProcessor
                 Variables.AdbLog.Add("Result return null because of null original image");
                 return null;
             }
-            Bitmap image = new Bitmap(Decompress(original));
-            if (image == null)
-            {
-                Variables.AdbLog.Add("Image crop failed! Image is null!");
-                return null;
-            }
-            Bitmap bmp = new Bitmap(image);
-            if (bmp == null)
-            {
-                Variables.AdbLog.Add("Image crop failed! Bitmap is null!");
-                return null;
-            }
-            Image<Bgr, byte> imgInput = new Image<Bgr, byte>(bmp);
+            Image<Bgr, byte> imgInput = new Image<Bgr, byte>(new Bitmap(Decompress(original)));
             Rectangle rect = new Rectangle();
             rect.X = Math.Min(start.X, End.X);
             rect.Y = Math.Min(start.Y, End.Y);
@@ -1144,7 +1207,6 @@ namespace ImageProcessor
             Image<Bgr, byte> temp = imgInput.CopyBlank();
             imgInput.CopyTo(temp);
             imgInput.Dispose();
-
             return Compress(temp.Bitmap);
 
         }

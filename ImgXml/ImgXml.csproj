@@ -42,16 +42,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resource.Designer.cs">
+    <Compile Include="Img.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Resource.resx</DependentUpon>
+      <DependentUpon>Img.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resource.resx">
+    <EmbeddedResource Include="Img.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+      <LastGenOutput>Img.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -164,7 +164,31 @@
     <None Include="Resources\OCRTest.PNG" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\biubiu.PNG" />
+    <None Include="Resources\HellLoc.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Demon_Arch.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Demon_Boss.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Demon_Poison.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Demon_Box.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Demon_Angle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Demon_Demon.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Demon_InEvent.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Demon_Start.PNG" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

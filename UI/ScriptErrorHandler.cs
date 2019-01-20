@@ -28,17 +28,18 @@ namespace UI
             }
             while (PrivateVariable.Run)
             {
-                Thread.Sleep(2000);
+                Thread.Sleep(1000);
                 if (Variables.Proc != null)
                 {
                     try
                     {
                         foreach (var e in errorImages)
                         {
-                            Thread.Sleep(10);
-                            Point? p = EmulatorController.FindImage(Script.image, e, false);
+                            Thread.Sleep(1000);
+                            Point? p = EmulatorController.FindImage(Script.image, e, true);
                             if (p != null)
                             {
+                                EmulatorController.SendTap(p.Value);
                                 EmulatorController.KillGame("com.nubee.valkyriecrusade");
                                 Reset("Error message found!");
                             }
@@ -59,6 +60,7 @@ namespace UI
             PrivateVariable.InMainScreen = false;
             PrivateVariable.InEventScreen = false;
             PrivateVariable.Battling = false;
+            PrivateVariable.EventType = -1;
             Variables.ScriptLog.Add(log);
         }
         //Check the script went to shop

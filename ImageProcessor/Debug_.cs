@@ -52,94 +52,38 @@ namespace ImageProcessor
         {
             if (Enable_Debug)
             {
-                log.Add(log_ + " Line: " + lineNumber + " Caller: " + caller);
-                if (controller == null)
+                try
                 {
-                    controller = new Thread(Thread_Controller);
-                    controller.Start();
-                    controller.IsBackground = true;
+                    using (StreamWriter s = File.AppendText(FileName))
+                    {
+                        s.WriteLine(Encrypt(log_ + " Line: " + lineNumber + " Caller: " + caller as string));
+                    }
+                }
+                catch
+                {
+                    WriteLine(log_, lineNumber,caller);
                 }
             }
         }
 
-        public static void WriteLine(Image log_, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
-        {
-            if (Enable_Debug)
-            {
-                log.Add(log_);
-                log.Add("Save Debug Image called. Line: " + lineNumber + " Caller: " + caller);
-                if (controller == null)
-                {
-                    controller = new Thread(Thread_Controller);
-                    controller.Start();
-                    controller.IsBackground = true;
-                }
-            }
-        }
+       
 
         public static void WriteLine([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (Enable_Debug)
             {
-                log.Add("Debug Called. Line: " + lineNumber + " Caller: " + caller);
-                if (controller == null)
+                try
                 {
-                    controller = new Thread(Thread_Controller);
-                    controller.Start();
-                    controller.IsBackground = true;
-                }
-            }
-        }
-
-        protected static void Thread_Controller()
-        {
-            while (true)
-            {
-                if(t == null)
-                {
-                    t = new Thread(Write);
-                    t.Start();
-                }
-                if (t.IsAlive)
-                {
-                    Thread.Sleep(100);
-                }
-                else
-                {
-                    t = new Thread(Write);
-                    t.Start();
-                }
-            }
-        }
-
-        protected static List<object> log = new List<object>();
-
-        private static void Write()
-        {
-            if (Enable_Debug)
-            {
-                for (int x = 0; x < log.Count; x++)
-                {
-                    try
+                    using (StreamWriter s = File.AppendText(FileName))
                     {
-                        if (log[x] is string)
-                        {
-                            using (StreamWriter s = File.AppendText(FileName))
-                            {
-                                s.WriteLine(Encrypt(log[x] as string));
-                            }
-                        }
-                        else if (log[x] is Image)
-                        {
-                            (log[x] as Image).Save(Environment.CurrentDirectory + "\\Profiles\\" + EmulatorController.profilePath + "\\" + DateTime.Now + ".debug");
-                        }
-                        log.Remove(log[x]);
-                    }
-                    catch
-                    {
-
+                        s.WriteLine(Encrypt("Debug Called. Line: " + lineNumber + " Caller: " + caller));
                     }
                 }
+                catch
+                {
+                    WriteLine(lineNumber, caller);
+                }
+                
             }
         }
 

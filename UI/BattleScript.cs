@@ -10,21 +10,30 @@ using System.Windows.Forms;
 
 namespace UI
 {
+    /// <summary>
+    /// BattleScrpt for all event to fight Bosses
+    /// </summary>
     public interface BattleScript
     {
         /// <summary>
         /// You have to read your script how to translate if you let users to customize script!
         /// </summary>
         void ReadConfig();
+
         /// <summary>
         /// Then you have to set how the attack will be done! Tips: remember to add Script.clickLocation for reading enemies location or click away UI!
         /// </summary>
         void Attack();
+
         /// <summary>
         /// You need to create bunch of UIs! Else how users enable it?
         /// </summary>
         Control[] CreateUI();
 
+        /// <summary>
+        /// Your Script's Title
+        /// </summary>
+        /// <returns></returns>
         string ScriptName();
     }
 
@@ -39,7 +48,9 @@ namespace UI
             }
             foreach(var cb in toolParameterComboBoxes)
             {
-                switch (cb.SelectedIndex)
+                int index = 0;
+                cb.Invoke((MethodInvoker)delegate { index = cb.SelectedIndex; });
+                switch (index)
                 {
                     case 0:
                         byte[] crop = EmulatorController.CropImage(Script.image, new Point(176, 356), new Point(330, 611));
@@ -51,7 +62,8 @@ namespace UI
                             }
                             try
                             {
-                                Point? p = EmulatorController.FindImage(crop, new Bitmap(EmulatorController.Decompress(f)), false);
+                                Thread.Sleep(10);
+                                Point? p = EmulatorController.FindImage(crop, f, false);
                                 if (p != null)
                                 {
                                     Variables.ScriptLog.Add("Skill actived");
@@ -70,14 +82,14 @@ namespace UI
                         crop = EmulatorController.CropImage(Script.image, new Point(357, 356), new Point(543, 610));
                         foreach (var f in PrivateVariable.Skills)
                         {
-
                             if (!PrivateVariable.Run)
                             {
                                 return;
                             }
                             try
                             {
-                                Point? p = EmulatorController.FindImage(crop, new Bitmap(EmulatorController.Decompress(f)), false);
+                                Thread.Sleep(10);
+                                Point? p = EmulatorController.FindImage(crop, f, false);
                                 if (p != null)
                                 {
                                     Variables.ScriptLog.Add("Skill actived");
@@ -102,7 +114,8 @@ namespace UI
                             }
                             try
                             {
-                                Point? p = EmulatorController.FindImage(crop, new Bitmap(EmulatorController.Decompress(f)), false);
+                                Thread.Sleep(10);
+                                Point? p = EmulatorController.FindImage(crop, f, false);
                                 if (p != null)
                                 {
                                     Variables.ScriptLog.Add("Skill actived");
@@ -127,7 +140,8 @@ namespace UI
                             }
                             try
                             {
-                                Point? p = EmulatorController.FindImage(crop, new Bitmap(EmulatorController.Decompress(f)), false);
+                                Thread.Sleep(10);
+                                Point? p = EmulatorController.FindImage(crop, f, false);
                                 if (p != null)
                                 {
                                     Variables.ScriptLog.Add("Skill actived");
@@ -152,7 +166,8 @@ namespace UI
                             }
                             try
                             {
-                                Point? p = EmulatorController.FindImage(crop, new Bitmap(EmulatorController.Decompress(f)), false);
+                                Thread.Sleep(10);
+                                Point? p = EmulatorController.FindImage(crop,f, false);
                                 if (p != null)
                                 {
                                     Variables.ScriptLog.Add("Skill actived");

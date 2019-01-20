@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -39,15 +40,38 @@ namespace UI
                     }
                     index++;
                 }
-                Eventlink = temp[newestindex].InnerText.Remove(temp[newestindex].InnerText.IndexOf(".html"));
+                var eventlink = temp[newestindex].InnerText.Remove(temp[newestindex].InnerText.IndexOf(".html"));
+                int eventnum = 0;
+                while (true)
+                {
+                    try
+                    {
+                        string convert = eventlink.Substring(eventlink.LastIndexOf('/')).Replace("_event", "").Replace("/", "");
+                        eventnum = Convert.ToInt32(convert);
+                        eventnum = eventnum +1;
+                        eventlink = eventlink.Remove(eventlink.LastIndexOf('/')) +"/"+ eventnum + "_event";
+                        HttpWebRequest request = HttpWebRequest.Create(url + eventlink + ".html") as HttpWebRequest;
+                        HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+                        //Returns TRUE if the Status code == 200
+                        response.Close();
+                    }
+                    catch
+                    {
+                        string convert = eventlink.Substring(eventlink.LastIndexOf('/')).Replace("_event", "").Replace("/", "");
+                        eventnum = Convert.ToInt32(convert);
+                        eventnum = eventnum - 1;
+                        eventlink = eventlink.Remove(eventlink.LastIndexOf('/')) + "/" + eventnum + "_event";
+                        Eventlink = eventlink;
+                        break;
+                    }
+                }
                 Random rnd = new Random();
                 int imindex = rnd.Next(0, Imagelink.Count);
                 RandomImage = Imagelink[imindex];
             }
             catch
             {
-                MessageBox.Show("无法连接神女控活动页面，造成挂机探测不了活动资料，请确保网络连接完善后再启动挂机！");
-                Environment.Exit(0);
+                Eventlink = "";
             }
             
         }

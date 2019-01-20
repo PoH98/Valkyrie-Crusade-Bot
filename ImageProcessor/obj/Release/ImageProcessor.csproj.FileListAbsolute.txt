@@ -1,10 +1,12 @@
 C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\x64\concrt140.dll
 C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\x64\cvextern.dll
 C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\x64\msvcp140.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\x64\opencv_ffmpeg343_64.dll
 C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\x64\vcruntime140.dll
 C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\x86\concrt140.dll
 C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\x86\cvextern.dll
 C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\x86\msvcp140.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\x86\opencv_ffmpeg343.dll
 C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\x86\vcruntime140.dll
 C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\ImageProcessor.dll.config
 C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\ImageProcessor.dll
@@ -38,8 +40,7 @@ C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\sv\ZedGraph.resources.dll
 C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\tr\ZedGraph.resources.dll
 C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\zh-cn\ZedGraph.resources.dll
 C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\zh-tw\ZedGraph.resources.dll
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\obj\Release\ImageProcessor.Resource.resources
+C:\Users\PoH98\Desktop\Bot\ImageProcessor\obj\Release\ImageProcessor.csproj.GenerateResource.Cache
 C:\Users\PoH98\Desktop\Bot\ImageProcessor\obj\Release\ImageProcessor.dll
 C:\Users\PoH98\Desktop\Bot\ImageProcessor\obj\Release\ImageProcessor.pdb
-C:\Users\PoH98\Desktop\Bot\ImageProcessor\obj\Release\ImageProcessor.csprojResolveAssemblyReference.cache
-C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\x64\opencv_ffmpeg343_64.dll
-C:\Users\PoH98\Desktop\Bot\ImageProcessor\bin\Release\x86\opencv_ffmpeg343.dll

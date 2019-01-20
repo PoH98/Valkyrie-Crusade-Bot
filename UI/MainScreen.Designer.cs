@@ -99,6 +99,7 @@
             this.radioButton3 = new System.Windows.Forms.RadioButton();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.button2 = new System.Windows.Forms.Button();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -334,7 +335,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(6, 234);
+            this.label16.Location = new System.Drawing.Point(6, 252);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(13, 13);
             this.label16.TabIndex = 34;
@@ -343,7 +344,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(6, 221);
+            this.label17.Location = new System.Drawing.Point(6, 230);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(91, 13);
             this.label17.TabIndex = 33;
@@ -352,7 +353,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(6, 196);
+            this.label15.Location = new System.Drawing.Point(6, 208);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(22, 13);
             this.label15.TabIndex = 32;
@@ -474,7 +475,7 @@
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
             this.webBrowser1.ScrollBarsEnabled = false;
-            this.webBrowser1.Size = new System.Drawing.Size(554, 139);
+            this.webBrowser1.Size = new System.Drawing.Size(538, 139);
             this.webBrowser1.TabIndex = 18;
             this.webBrowser1.WebBrowserShortcutsEnabled = false;
             // 
@@ -716,7 +717,7 @@
             this.groupBox3.Size = new System.Drawing.Size(153, 455);
             this.groupBox3.TabIndex = 9;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "塔楼活动";
+            this.groupBox3.Text = "塔楼/魔界活动";
             // 
             // checkBox13
             // 
@@ -868,7 +869,7 @@
             this.groupBox1.Size = new System.Drawing.Size(138, 97);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "塔楼难度";
+            this.groupBox1.Text = "塔楼/魔界难度";
             // 
             // radioButton5
             // 
@@ -943,6 +944,7 @@
             // tabPage3
             // 
             this.tabPage3.BackColor = System.Drawing.Color.Silver;
+            this.tabPage3.Controls.Add(this.button2);
             this.tabPage3.Controls.Add(this.pictureBox4);
             this.tabPage3.Controls.Add(this.groupBox12);
             this.tabPage3.Controls.Add(this.button14);
@@ -955,6 +957,16 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Debug测试";
             this.tabPage3.ToolTipText = "除错测试";
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(198, 46);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(129, 34);
+            this.button2.TabIndex = 27;
+            this.button2.Text = "OCR测试";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // pictureBox4
             // 
@@ -1405,6 +1417,7 @@
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.PictureBox pictureBox4;
+        private System.Windows.Forms.Button button2;
     }
 }
 
