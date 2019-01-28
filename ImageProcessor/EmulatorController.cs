@@ -9,13 +9,15 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using System.Security.Cryptography;
 using System.Windows.Forms;
 
 namespace ImageProcessor
@@ -71,11 +73,8 @@ namespace ImageProcessor
         {
             try
             {
-                if (Variables.Devices_Connected[Variables.Control_Device_Num].State == DeviceState.Online)
-                {
-                    var receiver = new ConsoleOutputReceiver();
-                    AdbClient.Instance.ExecuteRemoteCommand("adb install " + path, Variables.Devices_Connected[Variables.Control_Device_Num], receiver);
-                }
+                var receiver = new ConsoleOutputReceiver();
+                AdbClient.Instance.ExecuteRemoteCommand("adb install " + path, Variables.Controlled_Device, receiver);
             }
             catch (InvalidOperationException)
             {
@@ -115,10 +114,8 @@ namespace ImageProcessor
 
             }
             Process p = Process.Start(close);
-            Variables.Devices_Connected = AdbClient.Instance.GetDevices();
-            Variables.Control_Device_Num = -1;
             Variables.Proc = null;
-            Variables.Selected_Process_Num = -1;
+            Variables.Controlled_Device = null;
             Variables.ScriptLog.Add("Emulator Closed");
         }
         /// <summary>
@@ -174,14 +171,15 @@ namespace ImageProcessor
         {
             try
             {
-                if (Variables.Devices_Connected[Variables.Control_Device_Num].State == DeviceState.Online)
+                var receiver = new ConsoleOutputReceiver();
+                 if(Variables.Controlled_Device == null)
                 {
-                    var receiver = new ConsoleOutputReceiver();
-                    AdbClient.Instance.ExecuteRemoteCommand("dumpsys window windows | grep -E 'mCurrentFocus'", Variables.Devices_Connected[Variables.Control_Device_Num], receiver);
-                    if (receiver.ToString().Contains(packagename))
-                    {
-                        return true;
-                    }
+                    return false;
+                }
+                AdbClient.Instance.ExecuteRemoteCommand("dumpsys window windows | grep -E 'mCurrentFocus'", Variables.Controlled_Device, receiver);
+                if (receiver.ToString().Contains(packagename))
+                {
+                    return true;
                 }
             }
             catch (InvalidOperationException)
@@ -256,7 +254,6 @@ namespace ImageProcessor
                             Process.Start(adb);
                         }
                         var result = server.StartServer(adbname, true);
-                        Variables.Devices_Connected = AdbClient.Instance.GetDevices();
                         return true;
                     }
                     catch (Exception ex)
@@ -280,11 +277,15 @@ namespace ImageProcessor
         {
             try
             {
-                if (Variables.Devices_Connected[Variables.Control_Device_Num].State == DeviceState.Online)
+                if(Variables.Controlled_Device == null)
                 {
+                    return false;
+                }
+
+                
                     var receiver = new ConsoleOutputReceiver();
 
-                    AdbClient.Instance.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", Variables.Devices_Connected[Variables.Control_Device_Num], receiver);
+                    AdbClient.Instance.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", Variables.Controlled_Device, receiver);
                     Thread.Sleep(1000);
                     var ico = FindImage(img, icon, true);
                     if (ico != null)
@@ -297,12 +298,6 @@ namespace ImageProcessor
                     {
                         return false;
                     }
-                }
-                else
-                {
-                    Variables.ScriptLog.Add("Emulator is closed!");
-                    return false;
-                }
             }
             catch (InvalidOperationException)
             {
@@ -322,20 +317,16 @@ namespace ImageProcessor
         {
             try
             {
-                if (Variables.Devices_Connected[Variables.Control_Device_Num].State == DeviceState.Online)
+                if (Variables.Controlled_Device == null)
                 {
-                    var receiver = new ConsoleOutputReceiver();
-                    AdbClient.Instance.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", Variables.Devices_Connected[Variables.Control_Device_Num], receiver);
-                    Thread.Sleep(1000);
-                    AdbClient.Instance.ExecuteRemoteCommand("am start -n " + packagename, Variables.Devices_Connected[Variables.Control_Device_Num], receiver);
-                    Thread.Sleep(1000);
-                    return GameIsForeground(packagename);
-                }
-                else
-                {
-                    Variables.ScriptLog.Add("Emulator is closed!");
                     return false;
                 }
+                    var receiver = new ConsoleOutputReceiver();
+                    AdbClient.Instance.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", Variables.Controlled_Device, receiver);
+                    Thread.Sleep(1000);
+                    AdbClient.Instance.ExecuteRemoteCommand("am start -n " + packagename, Variables.Controlled_Device, receiver);
+                    Thread.Sleep(1000);
+                    return GameIsForeground(packagename);
             }
             catch (InvalidOperationException)
             {
@@ -355,12 +346,16 @@ namespace ImageProcessor
         {
             try
             {
-                if (Variables.Devices_Connected[Variables.Control_Device_Num].State == DeviceState.Online)
+                if (Variables.Controlled_Device == null)
+                {
+                    return;
+                }
+
                 {
                     var receiver = new ConsoleOutputReceiver();
-                    AdbClient.Instance.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", Variables.Devices_Connected[Variables.Control_Device_Num], receiver);
+                    AdbClient.Instance.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", Variables.Controlled_Device, receiver);
                     Thread.Sleep(1000);
-                    AdbClient.Instance.ExecuteRemoteCommand("am force-stop " + packagename, Variables.Devices_Connected[Variables.Control_Device_Num], receiver);
+                    AdbClient.Instance.ExecuteRemoteCommand("am force-stop " + packagename, Variables.Controlled_Device, receiver);
                     receiver.Flush();
                 }
             }
@@ -386,12 +381,17 @@ namespace ImageProcessor
                     Process.Start("bot.ini");
                     Environment.Exit(0);
                 }
-                path = Variables.SharedPath + "\\" + Variables.Devices_Connected[Variables.Control_Device_Num].Name + ".raw";
+                path = Variables.SharedPath + "\\" + SHA256(Variables.AdbIpPort) + ".raw";
 
                 Stopwatch s = Stopwatch.StartNew();
                 byte[] raw = null;
                 var receiver = new ConsoleOutputReceiver();
-                AdbClient.Instance.ExecuteRemoteCommand("screencap /sdcard/Download/" + Variables.Devices_Connected[Variables.Control_Device_Num].Name + ".raw", Variables.Devices_Connected[Variables.Control_Device_Num], receiver);
+                if(Variables.Controlled_Device == null)
+                {
+                    Variables.AdbLog.Add("Waiting for device");
+                    return null;
+                }
+                AdbClient.Instance.ExecuteRemoteCommand("screencap /sdcard/Download/" + SHA256(Variables.AdbIpPort) + ".raw", Variables.Controlled_Device, receiver);
                 if (!File.Exists(path))
                 {
                     Variables.AdbLog.Add("Unable to read rgba file because of file not exist!");
@@ -433,7 +433,6 @@ namespace ImageProcessor
                 return null;
             }
         }
-
         /// <summary>
         /// Left click adb command on the point for generating background click in emulators
         /// </summary>
@@ -446,9 +445,13 @@ namespace ImageProcessor
                 var receiver = new ConsoleOutputReceiver();
                 int x = point.X;
                 int y = point.Y;
-                if (Variables.Devices_Connected[Variables.Control_Device_Num].State == DeviceState.Online)
+                if (Variables.Controlled_Device == null)
                 {
-                    AdbClient.Instance.ExecuteRemoteCommand("input tap " + x + " " + y, Variables.Devices_Connected[Variables.Control_Device_Num], receiver);
+                    return;
+                }
+
+                {
+                    AdbClient.Instance.ExecuteRemoteCommand("input tap " + x + " " + y, Variables.Controlled_Device, receiver);
                     receiver.Flush();
                 }
                 if (receiver.ToString().Contains("Error"))
@@ -481,9 +484,13 @@ namespace ImageProcessor
                 int y = start.Y;
                 int ex = end.X;
                 int ey = end.Y;
-                if (Variables.Devices_Connected[Variables.Control_Device_Num].State == DeviceState.Online)
+                if (Variables.Controlled_Device == null)
                 {
-                    AdbClient.Instance.ExecuteRemoteCommand("input touchscreen swipe " + x + " " + y + " " + ex + " " + ey + " " + usedTime, Variables.Devices_Connected[Variables.Control_Device_Num], receiver);
+                    return;
+                }
+
+                {
+                    AdbClient.Instance.ExecuteRemoteCommand("input touchscreen swipe " + x + " " + y + " " + ex + " " + ey + " " + usedTime, Variables.Controlled_Device, receiver);
                     receiver.Flush();
                 }
                 if (receiver.ToString().Contains("Error"))
@@ -510,9 +517,13 @@ namespace ImageProcessor
             try
             {
                 var receiver = new ConsoleOutputReceiver();
-                if (Variables.Devices_Connected[Variables.Control_Device_Num].State == DeviceState.Online)
+                if (Variables.Controlled_Device == null)
                 {
-                    AdbClient.Instance.ExecuteRemoteCommand("input tap " + x + " " + y, Variables.Devices_Connected[Variables.Control_Device_Num], receiver);
+                    return;
+                }
+
+                {
+                    AdbClient.Instance.ExecuteRemoteCommand("input tap " + x + " " + y, Variables.Controlled_Device, receiver);
                     receiver.Flush();
                 }
                 if (receiver.ToString().Contains("Error"))
@@ -541,10 +552,14 @@ namespace ImageProcessor
             Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             try
             {
-                var receiver = new ConsoleOutputReceiver();
-                if (Variables.Devices_Connected[Variables.Control_Device_Num].State == DeviceState.Online)
+                if (Variables.Controlled_Device == null)
                 {
-                    AdbClient.Instance.ExecuteRemoteCommand("input touchscreen swipe " + startX + " " + startY + " " + endX + " " + endY + " " + usedTime, Variables.Devices_Connected[Variables.Control_Device_Num], receiver);
+                    return;
+                }
+                var receiver = new ConsoleOutputReceiver();
+
+                {
+                    AdbClient.Instance.ExecuteRemoteCommand("input touchscreen swipe " + startX + " " + startY + " " + endX + " " + endY + " " + usedTime, Variables.Controlled_Device, receiver);
                 }
                 if (receiver.ToString().Contains("Error"))
                 {
@@ -615,9 +630,15 @@ namespace ImageProcessor
                     {
                         info.Arguments = "MEmu";
                     }
-                    Process proc = Process.Start(info);
-                    proc.WaitForInputIdle();
-                    Variables.Devices_Connected = AdbClient.Instance.GetDevices();
+                    Process.Start(info);
+                    foreach(var device in AdbClient.Instance.GetDevices())
+                    {
+                        if(device.ToString() == Variables.AdbIpPort)
+                        {
+                            Variables.Controlled_Device = device;
+                            break;
+                        }
+                    }
                     Variables.DeviceChanged = true;
                 }
                 catch (SocketException)
@@ -715,6 +736,7 @@ namespace ImageProcessor
             int red = color.R;
             int blue = color.B;
             int green = color.G;
+
             Bitmap bmp = new Bitmap(Decompress(image));
             int Width = bmp.Width;
             int Height = bmp.Height;
@@ -813,9 +835,12 @@ namespace ImageProcessor
                                 bmp.UnlockBits(bd);
                                 return true;
                             }
+                            else
+                            {
+                                Variables.AdbLog.Add("The point " + point.X + ", " + point.Y + " color is " + clr.R + ", " + clr.G + ", " + clr.B);
+                            }
                         }
                     }
-
                 }
             }
             catch
@@ -823,6 +848,7 @@ namespace ImageProcessor
 
             }
             bmp.UnlockBits(bd);
+
             return false;
         }
         /// <summary>
@@ -996,7 +1022,7 @@ namespace ImageProcessor
         /// <returns>Point or null</returns>
         public static Point? FindImage(byte[] screencapture, Bitmap find, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            Thread.Sleep(1);
+            Thread.Sleep(100);
             Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             if (screencapture == null)
             {
@@ -1065,7 +1091,7 @@ namespace ImageProcessor
         /// <returns>Point or null</returns>
         public static Point? FindImage(byte[] screencapture, string findPath, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            Thread.Sleep(1);
+            Thread.Sleep(100);
             Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             if (screencapture == null)
             {
@@ -1129,7 +1155,7 @@ namespace ImageProcessor
         /// <returns>Point or null</returns>
         public static Point? FindImage(byte[] screencapture, byte[] image, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            Thread.Sleep(1);
+            Thread.Sleep(100);
             Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             if (screencapture == null)
             {
@@ -1216,10 +1242,14 @@ namespace ImageProcessor
         public static void StayPotrait()
         {
             var receiver = new ConsoleOutputReceiver();
-            if (Variables.Devices_Connected[Variables.Control_Device_Num].State == DeviceState.Online)
+            if (Variables.Controlled_Device == null)
             {
-                AdbClient.Instance.ExecuteRemoteCommand("content insert --uri content://settings/system --bind name:s:accelerometer_rotation --bind value:i:0", Variables.Devices_Connected[Variables.Control_Device_Num], receiver);
-                AdbClient.Instance.ExecuteRemoteCommand("content insert --uri content://settings/system --bind name:s:user_rotation --bind value:i:0", Variables.Devices_Connected[Variables.Control_Device_Num], receiver);
+                return;
+            }
+            if (Variables.Controlled_Device.State == DeviceState.Online)
+            {
+                AdbClient.Instance.ExecuteRemoteCommand("content insert --uri content://settings/system --bind name:s:accelerometer_rotation --bind value:i:0", Variables.Controlled_Device, receiver);
+                AdbClient.Instance.ExecuteRemoteCommand("content insert --uri content://settings/system --bind name:s:user_rotation --bind value:i:0", Variables.Controlled_Device, receiver);
                 receiver.Flush();
             }
         }
@@ -1256,6 +1286,134 @@ namespace ImageProcessor
             g.DrawImage(image, new PointF(0, 0));
 
             return rotatedBmp;
+        }
+        /// <summary>
+        /// Pull file from emulator to PC
+        /// </summary>
+        /// <param name="from">path of file in android</param>
+        /// <param name="to">path of file on PC</param>
+        /// <returns></returns>
+        public static bool Pull(string from, string to)
+        {
+            if (Variables.Controlled_Device == null)
+            {
+                return false;
+            }
+            using (SyncService service = new SyncService(new AdbSocket(new IPEndPoint(IPAddress.Loopback, AdbClient.AdbServerPort)), Variables.Controlled_Device))
+            using (Stream stream = File.OpenWrite(to))
+            {
+                service.Pull(from, stream, null, CancellationToken.None);
+            }
+            if (File.Exists(to))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        /// Push file from PC to emulator
+        /// </summary>
+        /// <param name="from">path of file on PC</param>
+        /// <param name="to">path of file in android</param>
+        /// <param name="permission">Permission of file</param>
+        public static void Push(string from, string to, int permission)
+        {
+            if (Variables.Controlled_Device == null)
+            {
+                return;
+            }
+            using (SyncService service = new SyncService(new AdbSocket(new IPEndPoint(IPAddress.Loopback, AdbClient.AdbServerPort)), Variables.Controlled_Device))
+            using (Stream stream = File.OpenRead(from))
+            {
+                service.Push(stream, to, permission, DateTime.Now, null, CancellationToken.None);
+            }
+        }
+        /// <summary>
+        /// Encrypt text
+        /// </summary>
+        /// <param name="text">text for encryption</param>
+        /// <returns></returns>
+        public static string Encrypt(string text)
+        {
+            if(text == null)
+            {
+                return "";
+            }
+            StringBuilder sb = new StringBuilder();
+            foreach (char c in text)
+            {
+                char enc = c;
+                char y = (char)(Convert.ToUInt16(enc) + 14);
+                sb.Append(y);
+            }
+            return sb.ToString();
+        }
+        /// <summary>
+        /// Decrypt text
+        /// </summary>
+        /// <param name="text">text for decryption</param>
+        /// <returns></returns>
+        public static string Decrypt(string text)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (char c in text)
+            {
+                char enc = c;
+                char y = (char)(Convert.ToUInt16(enc) - 14);
+                sb.Append(y);
+            }
+            return sb.ToString();
+        }
+        /// <summary>
+        /// Keycode for SendEvent
+        /// </summary>
+        public enum KeyCode
+        {
+            /// <summary>
+            /// Zoom in
+            /// </summary>
+            KEYCODE_ZOOM_IN = 168,
+            /// <summary>
+            /// Zoom out
+            /// </summary>
+            KEYCODE_ZOOM_OUT = 169,
+            /// <summary>
+            /// Mute device
+            /// </summary>
+            KEYCODE_MUTE = 91
+        };
+        /// <summary>
+        /// Send Event to emulator
+        /// </summary>
+        /// <param name="code">Keycode</param>
+        public static void SendEvent(KeyCode code)
+        {
+            var receiver = new ConsoleOutputReceiver();
+            if (Variables.Controlled_Device == null)
+            {
+                return;
+            }
+            AdbClient.Instance.ExecuteRemoteCommand("input keyevent " + (int)code, Variables.Controlled_Device, receiver);
+        }
+        /// <summary>
+        /// Calculate SHA256 of string
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static string SHA256(string text)
+        {
+            byte[] bytes = Encoding.Unicode.GetBytes(text);
+            SHA256Managed hashstring = new SHA256Managed();
+            byte[] hash = hashstring.ComputeHash(bytes);
+            string hashString = string.Empty;
+            foreach (byte x in hash)
+            {
+                hashString += String.Format("{0:x2}", x);
+            }
+            return hashString;
         }
     }
 }

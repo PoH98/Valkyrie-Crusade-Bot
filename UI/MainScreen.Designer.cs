@@ -165,7 +165,7 @@
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.Location = new System.Drawing.Point(4, 6);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(277, 39);
+            this.button1.Size = new System.Drawing.Size(264, 39);
             this.button1.TabIndex = 3;
             this.button1.Text = "开始挂机";
             this.button1.UseVisualStyleBackColor = false;
@@ -177,7 +177,7 @@
             // 
             this.button3.BackColor = System.Drawing.Color.Silver;
             this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button3.Location = new System.Drawing.Point(289, 7);
+            this.button3.Location = new System.Drawing.Point(273, 7);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(277, 38);
             this.button3.TabIndex = 5;
@@ -203,7 +203,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(577, 22);
+            this.panel1.Size = new System.Drawing.Size(558, 22);
             this.panel1.TabIndex = 12;
             this.panel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseDown);
             // 
@@ -214,7 +214,7 @@
             this.button16.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.button16.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button16.ForeColor = System.Drawing.Color.White;
-            this.button16.Location = new System.Drawing.Point(504, 0);
+            this.button16.Location = new System.Drawing.Point(485, 0);
             this.button16.Name = "button16";
             this.button16.Size = new System.Drawing.Size(24, 22);
             this.button16.TabIndex = 4;
@@ -231,7 +231,7 @@
             this.button15.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.button15.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button15.ForeColor = System.Drawing.Color.White;
-            this.button15.Location = new System.Drawing.Point(528, 0);
+            this.button15.Location = new System.Drawing.Point(509, 0);
             this.button15.Name = "button15";
             this.button15.Size = new System.Drawing.Size(24, 22);
             this.button15.TabIndex = 3;
@@ -271,7 +271,7 @@
             this.button5.Dock = System.Windows.Forms.DockStyle.Right;
             this.button5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.button5.ForeColor = System.Drawing.Color.White;
-            this.button5.Location = new System.Drawing.Point(552, 0);
+            this.button5.Location = new System.Drawing.Point(533, 0);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(25, 22);
             this.button5.TabIndex = 0;
@@ -292,7 +292,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 22);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(566, 581);
+            this.tabControl1.Size = new System.Drawing.Size(546, 581);
             this.tabControl1.TabIndex = 13;
             // 
             // tabPage1
@@ -306,7 +306,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(558, 555);
+            this.tabPage1.Size = new System.Drawing.Size(538, 555);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "主页";
             this.tabPage1.ToolTipText = "主页都看不懂的话别活了";
@@ -325,7 +325,7 @@
             this.groupBox8.Controls.Add(this.label7);
             this.groupBox8.Controls.Add(this.label5);
             this.groupBox8.Controls.Add(this.label6);
-            this.groupBox8.Location = new System.Drawing.Point(411, 279);
+            this.groupBox8.Location = new System.Drawing.Point(384, 279);
             this.groupBox8.Name = "groupBox8";
             this.groupBox8.Size = new System.Drawing.Size(141, 270);
             this.groupBox8.TabIndex = 27;
@@ -440,7 +440,7 @@
             // 
             // groupBox9
             // 
-            this.groupBox9.Location = new System.Drawing.Point(411, 151);
+            this.groupBox9.Location = new System.Drawing.Point(384, 151);
             this.groupBox9.Name = "groupBox9";
             this.groupBox9.Size = new System.Drawing.Size(141, 122);
             this.groupBox9.TabIndex = 28;
@@ -454,7 +454,7 @@
             this.richTextBox1.Location = new System.Drawing.Point(6, 151);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(395, 374);
+            this.richTextBox1.Size = new System.Drawing.Size(372, 374);
             this.richTextBox1.TabIndex = 20;
             this.richTextBox1.Text = "";
             this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
@@ -475,7 +475,7 @@
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
             this.webBrowser1.ScrollBarsEnabled = false;
-            this.webBrowser1.Size = new System.Drawing.Size(538, 139);
+            this.webBrowser1.Size = new System.Drawing.Size(517, 139);
             this.webBrowser1.TabIndex = 18;
             this.webBrowser1.WebBrowserShortcutsEnabled = false;
             // 
@@ -490,7 +490,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(558, 555);
+            this.tabPage2.Size = new System.Drawing.Size(538, 555);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "设置";
             this.tabPage2.ToolTipText = "关卡与活动设置";
@@ -562,7 +562,7 @@
             this.groupBox5.Controls.Add(this.button7);
             this.groupBox5.Location = new System.Drawing.Point(349, 107);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(203, 442);
+            this.groupBox5.Size = new System.Drawing.Size(183, 442);
             this.groupBox5.TabIndex = 11;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "其他功能";
@@ -584,7 +584,7 @@
             // 
             this.textBox2.Location = new System.Drawing.Point(9, 130);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(188, 20);
+            this.textBox2.Size = new System.Drawing.Size(154, 20);
             this.textBox2.TabIndex = 3;
             // 
             // label2
@@ -600,7 +600,7 @@
             // 
             this.button8.Location = new System.Drawing.Point(6, 62);
             this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(191, 38);
+            this.button8.Size = new System.Drawing.Size(157, 38);
             this.button8.TabIndex = 1;
             this.button8.Text = "下载神女控";
             this.button8.UseVisualStyleBackColor = true;
@@ -610,7 +610,7 @@
             // 
             this.button7.Location = new System.Drawing.Point(6, 19);
             this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(191, 37);
+            this.button7.Size = new System.Drawing.Size(157, 37);
             this.button7.TabIndex = 0;
             this.button7.Text = "下载逍遥模拟器";
             this.button7.UseVisualStyleBackColor = true;
@@ -953,7 +953,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(558, 555);
+            this.tabPage3.Size = new System.Drawing.Size(538, 555);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Debug测试";
             this.tabPage3.ToolTipText = "除错测试";
@@ -986,7 +986,7 @@
             this.groupBox12.Controls.Add(this.label10);
             this.groupBox12.Location = new System.Drawing.Point(6, 271);
             this.groupBox12.Name = "groupBox12";
-            this.groupBox12.Size = new System.Drawing.Size(542, 274);
+            this.groupBox12.Size = new System.Drawing.Size(526, 274);
             this.groupBox12.TabIndex = 19;
             this.groupBox12.TabStop = false;
             this.groupBox12.Text = "系统资料";
@@ -995,7 +995,7 @@
             // 
             this.label1.Location = new System.Drawing.Point(7, 167);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(529, 34);
+            this.label1.Size = new System.Drawing.Size(511, 34);
             this.label1.TabIndex = 22;
             this.label1.Text = "额外启动设置：";
             // 
@@ -1003,7 +1003,7 @@
             // 
             this.label13.Location = new System.Drawing.Point(6, 65);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(530, 34);
+            this.label13.Size = new System.Drawing.Size(512, 34);
             this.label13.TabIndex = 21;
             this.label13.Text = "系统资料:";
             // 
@@ -1011,7 +1011,7 @@
             // 
             this.label12.Location = new System.Drawing.Point(6, 133);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(530, 34);
+            this.label12.Size = new System.Drawing.Size(512, 34);
             this.label12.TabIndex = 20;
             this.label12.Text = "逍遥模拟器共享文件夹：";
             // 
@@ -1019,7 +1019,7 @@
             // 
             this.label11.Location = new System.Drawing.Point(6, 99);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(530, 34);
+            this.label11.Size = new System.Drawing.Size(512, 34);
             this.label11.TabIndex = 19;
             this.label11.Text = "逍遥模拟器安装位置：";
             // 
@@ -1027,7 +1027,7 @@
             // 
             this.label10.Location = new System.Drawing.Point(6, 31);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(530, 34);
+            this.label10.Size = new System.Drawing.Size(512, 34);
             this.label10.TabIndex = 18;
             this.label10.Text = "当前.NET版本：";
             // 
@@ -1057,7 +1057,7 @@
             this.groupBox7.Controls.Add(this.textBox1);
             this.groupBox7.Location = new System.Drawing.Point(333, 6);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(217, 259);
+            this.groupBox7.Size = new System.Drawing.Size(199, 259);
             this.groupBox7.TabIndex = 12;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "说明";
@@ -1068,7 +1068,7 @@
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(205, 233);
+            this.textBox1.Size = new System.Drawing.Size(185, 233);
             this.textBox1.TabIndex = 0;
             this.textBox1.Text = "基于模拟器安卓版本可能不支持某些指令\r\n\r\n***************************\r\n请使用此页进行测试！！！\r\n****************" +
     "***********";
@@ -1080,7 +1080,7 @@
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(558, 555);
+            this.tabPage4.Size = new System.Drawing.Size(538, 555);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "脚本";
             // 
@@ -1089,7 +1089,7 @@
             this.tabControl2.Location = new System.Drawing.Point(6, 6);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(546, 543);
+            this.tabControl2.Size = new System.Drawing.Size(529, 543);
             this.tabControl2.TabIndex = 0;
             // 
             // tabPage5
@@ -1100,7 +1100,7 @@
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(558, 555);
+            this.tabPage5.Size = new System.Drawing.Size(538, 555);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "资料库";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -1115,7 +1115,7 @@
             this.groupBox10.Controls.Add(this.checkBox11);
             this.groupBox10.Controls.Add(this.radioButton8);
             this.groupBox10.Controls.Add(this.radioButton6);
-            this.groupBox10.Location = new System.Drawing.Point(426, 6);
+            this.groupBox10.Location = new System.Drawing.Point(408, 6);
             this.groupBox10.Name = "groupBox10";
             this.groupBox10.Size = new System.Drawing.Size(127, 543);
             this.groupBox10.TabIndex = 0;
@@ -1217,7 +1217,7 @@
             this.webBrowser3.Location = new System.Drawing.Point(8, 6);
             this.webBrowser3.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser3.Name = "webBrowser3";
-            this.webBrowser3.Size = new System.Drawing.Size(412, 538);
+            this.webBrowser3.Size = new System.Drawing.Size(394, 538);
             this.webBrowser3.TabIndex = 21;
             this.webBrowser3.Visible = false;
             this.webBrowser3.WebBrowserShortcutsEnabled = false;
@@ -1229,7 +1229,7 @@
             this.webBrowser2.Location = new System.Drawing.Point(6, 6);
             this.webBrowser2.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser2.Name = "webBrowser2";
-            this.webBrowser2.Size = new System.Drawing.Size(414, 538);
+            this.webBrowser2.Size = new System.Drawing.Size(396, 538);
             this.webBrowser2.TabIndex = 20;
             this.webBrowser2.WebBrowserShortcutsEnabled = false;
             this.webBrowser2.NewWindow += new System.ComponentModel.CancelEventHandler(this.webBrowser2_NewWindow);
@@ -1241,7 +1241,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(0, 603);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(577, 50);
+            this.panel2.Size = new System.Drawing.Size(558, 50);
             this.panel2.TabIndex = 14;
             // 
             // openFileDialog1
@@ -1252,7 +1252,7 @@
             // 
             this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.panel3.BackColor = System.Drawing.Color.Black;
-            this.panel3.Location = new System.Drawing.Point(575, 28);
+            this.panel3.Location = new System.Drawing.Point(558, 28);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(0, 613);
             this.panel3.TabIndex = 31;
@@ -1263,7 +1263,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.DimGray;
-            this.ClientSize = new System.Drawing.Size(577, 653);
+            this.ClientSize = new System.Drawing.Size(558, 653);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.panel1);

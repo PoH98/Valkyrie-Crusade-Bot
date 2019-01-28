@@ -146,9 +146,14 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ProxyConnection.cs" />
     <Compile Include="Script.cs" />
     <Compile Include="ScriptErrorHandler.cs" />
+    <Compile Include="Suprise.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Suprise.Designer.cs">
+      <DependentUpon>Suprise.cs</DependentUpon>
+    </Compile>
     <Compile Include="Variables.cs" />
     <Compile Include="WebClientOverride.cs">
       <SubType>Component</SubType>
@@ -163,6 +168,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Suprise.resx">
+      <DependentUpon>Suprise.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.manifest" />
     <None Include="packages.config" />

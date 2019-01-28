@@ -14,14 +14,13 @@ namespace ImageProcessor
     /// Variables that are stored in memory for future usage
     /// </summary>
     public static class Variables
-    {   /// <summary>
-        /// A list of devices that are connected to the computer. Retreive by using EmulatorController.StartAdb()
-        /// </summary>
-        public static List<DeviceData> Devices_Connected = new List<DeviceData>();
+    {
         /// <summary>
-        /// Select which device that is need to control. We can't control thousands of them in a same time!
+        /// 
         /// </summary>
-        public static int Control_Device_Num = -1, Selected_Process_Num;
+        public static string AdbIpPort;
+
+        public static DeviceData Controlled_Device = null;
         /// <summary>
         /// Confiures of bot.ini, use EmulatorController.ReadConfig() to fill up values
         /// </summary>

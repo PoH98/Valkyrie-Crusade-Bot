@@ -38,10 +38,6 @@ namespace UI
 
         public static bool EnterRune;
         /// <summary>
-        /// The Fixed Adb IP for the emulator
-        /// </summary>
-        public static string Adb_IP;
-        /// <summary>
         /// The real main window of MEmu
         /// </summary>
         public static IntPtr MEmu_MainWindow;
@@ -57,5 +53,7 @@ namespace UI
         public static Dictionary<string, Point> Archwitch = new Dictionary<string, Point>();
 
         public static Dictionary<string, Point> Archwitch2 = new Dictionary<string, Point>();
+
+        public static Point EmuDefaultLocation = new Point(0,0);
     }
 }

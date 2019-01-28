@@ -17,7 +17,7 @@ namespace UI
     public class Script
     {
         public static Stopwatch stop = new Stopwatch();
-        public static bool RuneBoss, Stuck, EnterWitchGate, Archwitch_Repeat, DisableAutoCheckEvent, CloseEmu = false;
+        public static bool RuneBoss, Stuck, EnterWitchGate, Archwitch_Repeat, DisableAutoCheckEvent, CloseEmu = false, pushed = false;
         public static int runes, energy;
         public static int Archwitch_Stage;
         public static Point? clickLocation;
@@ -28,34 +28,32 @@ namespace UI
         public static Point archwitch_level_location;
         public static DateTime nextOnline;
         private static defaultScript battle = new defaultScript();
+
         //Main Loop
         public static void Bot()
         {
+            pushed = false;
             Debug_.WriteLine();
             Thread errorhandler = new Thread(ScriptErrorHandler.ErrorHandle);
             errorhandler.Start();
             while (PrivateVariable.Run)
             {
-                if(Variables.Proc != null)
-                {
-                    Variables.Proc.Close();
-                }
                 if (!CloseEmu)
                 {
                     Thread.Sleep(10);
-                    string[] device = Variables.Devices_Connected.ConvertAll(x => x.ToString()).ToArray();
-                    if (Array.IndexOf(device, PrivateVariable.Adb_IP) > -1) //The Emulator is running
+                    if (Variables.Controlled_Device != null) //The Emulator is running
                     {
                         while (Variables.Proc == null)//But not registred on our Proc value
                         {
                             Debug_.WriteLine("Variables.Proc is null");
                             //so go on and find the emulator!
-                            EmulatorController.ConnectAndroidEmulator(String.Empty, String.Empty, MainScreen.MEmu);
-                            //Maybe something is wrong, no process is same name as MEmu!
-                            if(Variables.Proc != null)
+                            EmulatorController.ConnectAndroidEmulator(string.Empty, string.Empty, MainScreen.MEmu);
+                            //MEmu found!
+                            if (Variables.Proc != null)
                             {
                                 break;
                             }
+                            //Maybe something is wrong, no process is same name as MEmu!
                             EmulatorController.StartEmulator();
                         }
                     }
@@ -74,19 +72,55 @@ namespace UI
                     Thread.Sleep(10);
                     while (image == null) //Weird problem happens, we still cannot receive any image capture!
                     {
+                        if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                        {
+                            return;
+                        }
                         if (!PrivateVariable.Run)
                         {
                             return;
                         }
                         Thread.Sleep(1000); //Wait forever?
+                        Variables.ScriptLog.Add("Waiting for first tons of image buffer");
                         error++;
-                        if (error > 60) //Nah, we only wait for 1 minute
+                        if (error > 30) //Nah, we only wait for 30 sec
                         {
                             MessageBox.Show("无法截图！出现怪异错误！");
                             Environment.Exit(0);
                         }
                     }
                     Thread.Sleep(10);
+                    if (Variables.Instance.Length < 5)
+                    {
+                        Variables.Instance = "MEmu";
+                    }
+                    string filename = EmulatorController.SHA256(Variables.AdbIpPort);
+                    if (!Directory.Exists("C:\\ProgramData\\" + filename))
+                    {
+                        Directory.CreateDirectory("C:\\ProgramData\\" + filename);
+                    }
+
+                    if (!File.Exists("C:\\ProgramData\\" + filename+"\\" +filename+".xml"))
+                    {
+                        if (!EmulatorController.Pull("/data/data/com.nubee.valkyriecrusade/shared_prefs/NUBEE_ID.xml", "C:\\ProgramData\\" + filename + "\\" + filename + ".xml"))
+                        {
+                            Variables.ScriptLog.Add("Pull files failed");
+                        }
+                        else
+                        {
+                            Variables.ScriptLog.Add("Backup saved");
+                        }
+                    }
+                    else
+                    {
+                        if (!pushed)
+                        {
+                            EmulatorController.Push("C:\\ProgramData\\" + filename + "\\" + filename + ".xml", "/data/data/com.nubee.valkyriecrusade/shared_prefs/NUBEE_ID.xml", 660);
+                            pushed = true;
+                            Variables.ScriptLog.Add("Restored backup xml");
+                            Thread.Sleep(1000);
+                        }
+                    }
                     Image img = EmulatorController.Decompress(Script.image);
                     if (img.Height != 720 || img.Width != 1280)
                     {
@@ -99,6 +133,7 @@ namespace UI
                         {
                             Variables.ScriptLog.Add("Emulator's screen size is not 1280*720! Detected size is " + img.Width + "*" + img.Height);
                             Variables.Proc.Kill();
+                            Variables.Proc = null;
                         }
                         ProcessStartInfo server = new ProcessStartInfo();
                         string path = "";
@@ -116,7 +151,6 @@ namespace UI
                         {
                             Thread.Sleep(200);
                         }
-                        Variables.Proc = null;
                         Variables.ScriptLog.Add("Restarting Emulator after setting size");
                         EmulatorController.StartEmulator();
                         Thread.Sleep(30000);
@@ -130,11 +164,9 @@ namespace UI
                     continue;
                 }
                 Thread.Sleep(10);
-                
                 if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
                     Variables.ScriptLog.Add("Starting Game");
-                    
                     if (!EmulatorController.StartGame(Img.Icon, image))
                     {
                         Variables.ScriptLog.Add("Unable to start game");
@@ -148,15 +180,9 @@ namespace UI
                     if (!PrivateVariable.InMainScreen && !PrivateVariable.InEventScreen && !PrivateVariable.Battling)
                     {
                         LocateMainScreen();
-                        //Collect_Img();
-                        if (TreasureHuntIndex > -1)
-                        {
-                            TreasureHunt();
-                        }
                     }
                     else
                     {
-                        
                         if (!PrivateVariable.InEventScreen)
                         {
                             Thread.Sleep(5000);
@@ -164,7 +190,6 @@ namespace UI
                         }
                         else
                         {
-                            
                             if (!PrivateVariable.Battling)
                             {
                                 switch (PrivateVariable.EventType)
@@ -336,6 +361,7 @@ namespace UI
                 {
                     PrivateVariable.InMainScreen = true;
                     Variables.ScriptLog.Add("Screen Located");
+                    //Collect();
                     Retry = 0;
                 }
                 else
@@ -349,31 +375,43 @@ namespace UI
             }
 
         }
-        //Collect Imgs
-        /*private static void Collect_Img()
+        //Collect
+        private static void Collect()
         {
-            //Find imsge and collect
-            Point? p = EmulatorController.FindImage(Script.image, Img.Gold, true);
-            if (p != null)
+            Variables.ScriptLog.Add("Collecting Resources");
+            for(int x = 0; x < 4; x++)
             {
-                EmulatorController.SendTap(p.Value);
+                switch (x)
+                {
+                    case 0:
+                        EmulatorController.SendSwipe(new Point(925, 576), new Point(614, 26),1000);
+                        break;
+                    case 1:
+                        EmulatorController.SendSwipe(new Point(231, 562), new Point(877, 127), 1000);
+                        break;
+                    case 2:
+                        EmulatorController.SendSwipe(new Point(226, 175), new Point(997, 591), 1000);
+                        break;
+                    case 3:
+                        EmulatorController.SendSwipe(new Point(969, 128), new Point(260, 545), 1000);
+                        break;
+                }
+                var crop = EmulatorController.CropImage(image, new Point(0, 0), new Point(1020, 720));
+                //Find image and collect
+                foreach (var img in Directory.GetFiles("Img\\Resources\\", "*.png"))
+                {
+                    Point? p = EmulatorController.FindImage(crop, img, false);
+                    if (p != null)
+                    {
+                        EmulatorController.SendTap(p.Value);
+                        Thread.Sleep(100);
+                    }
+                }
+                Thread.Sleep(500);
+
             }
-            p = EmulatorController.FindImage(Script.image, Img.Elixir, true);
-            if (p != null)
-            {
-                EmulatorController.SendTap(p.Value);
-            }
-            p = EmulatorController.FindImage(Script.image, Img.Metal, true);
-            if (p != null)
-            {
-                EmulatorController.SendTap(p.Value);
-            }
-            p = EmulatorController.FindImage(Script.image, Img.BlueStone, true);
-            if (p != null)
-            {
-                EmulatorController.SendTap(p.Value);
-            }
-        }*/
+
+        }
         //Treasure hunt!
         public static void TreasureHunt()
         {
@@ -503,11 +541,105 @@ namespace UI
                 return;
             }
             string Special;
-            if(Variables.Configure.TryGetValue("Double_Event",out Special))
+            int error = 0;
+            if (Variables.Configure.TryGetValue("Double_Event",out Special))
             {
                 if(Special == "true")
                 {
-                    EmulatorController.SendTap(130, 350);
+                    if (File.Exists("Img\\Event.png"))
+                    {
+                        EmulatorController.SendTap(170, 630);
+                        Thread.Sleep(5000);
+                        error = 0;
+                        for(int x = 0; x < 5; x++)
+                        {
+                            Point? located = EmulatorController.FindImage(image, Environment.CurrentDirectory + "\\Img\\LocateEventSwitch.png", true);
+                            if (located == null)
+                            {
+                                x = x - 1;
+                                Thread.Sleep(1000);
+                                if(error > 10)
+                                {
+                                    ScriptErrorHandler.Reset("Unable to locate Event Switch screen! Returning main screen!");
+                                    error = 0;
+                                    return;
+                                }
+                                error++;
+                                continue;
+                            }
+                            Variables.ScriptLog.Add("Finding Event.png on screen");
+                            point = EmulatorController.FindImage(image, Environment.CurrentDirectory + "\\Img\\Event.png", true);
+                            if (point == null)
+                            {
+                                EmulatorController.SendSwipe(new Point(1001, 313), new Point(406, 308), 1500);
+                                Thread.Sleep(3000);
+                                if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                                {
+                                    ScriptErrorHandler.Reset("Game close, restarting...");
+                                    return;
+                                }
+                            }
+                            else
+                            {
+                                Variables.ScriptLog.Add("Image matched");
+                                EmulatorController.SendTap(point.Value);
+                                break;
+                            }
+                        }
+                        error = 0;
+                        if(point == null)
+                        {
+                            for (int x = 0; x < 5; x++)
+                            {
+                                Point? located = EmulatorController.FindImage(image, Environment.CurrentDirectory + "\\Img\\LocateEventSwitch.png", true);
+                                if (located == null)
+                                {
+                                    x = x - 1;
+                                    Thread.Sleep(1000);
+                                    if (error > 10)
+                                    {
+                                        ScriptErrorHandler.Reset("Unable to locate Event Switch screen! Returning main screen!");
+                                        error = 0;
+                                        return;
+                                    }
+                                    error++;
+                                    continue;
+                                }
+                                Variables.ScriptLog.Add("Finding Event.png on screen");
+                                point = EmulatorController.FindImage(image, Environment.CurrentDirectory + "\\Img\\Event.png", true);
+                                if (point == null)
+                                {
+                                    EmulatorController.SendSwipe(new Point(406, 308), new Point(1001, 313), 1500);
+                                    Thread.Sleep(3000);
+                                    if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                                    {
+                                        ScriptErrorHandler.Reset("Game close, restarting...");
+                                        return;
+                                    }
+                                }
+                                else
+                                {
+                                    Variables.ScriptLog.Add("Image matched");
+                                    EmulatorController.SendTap(point.Value);
+                                    break;
+                                }
+                            }
+                            if (point == null)
+                            {
+                                MessageBox.Show("Event.png可能有问题，请确保截图是正确的！");
+                                if (EmulatorController.handle != null && Variables.Proc != null)
+                                {
+                                    DllImport.SetParent(EmulatorController.handle, IntPtr.Zero);
+                                    DllImport.MoveWindow(EmulatorController.handle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 1280, 720, true);
+                                }
+                                Environment.Exit(0);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        EmulatorController.SendTap(130, 350);
+                    }
                 }
                 else
                 {
@@ -519,9 +651,13 @@ namespace UI
                 EmulatorController.SendTap(130, 520);
             }
             Thread.Sleep(10000);
-            int error = 0;
+            error = 0;
             do
             {
+                if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                {
+                    return;
+                }
                 if (!PrivateVariable.Run)
                 {
                     return;
@@ -535,6 +671,13 @@ namespace UI
                     PrivateVariable.Battling = true;
                     return;
                 }
+                crop = EmulatorController.CropImage(image, new Point(125, 0), new Point(940, 510));
+                point = EmulatorController.FindImage(crop, Img.GreenButton, false);
+                if (point != null)
+                {
+                    EmulatorController.SendTap(point.Value);
+                    return;
+                }
                 if (!PrivateVariable.Run)
                 {
                     return;
@@ -545,7 +688,7 @@ namespace UI
                     //Is Tower Event
                     PrivateVariable.EventType = 0;
                     PrivateVariable.InEventScreen = true;
-                    break;
+                    return;
                 }
                 if (!PrivateVariable.Run)
                 {
@@ -557,13 +700,13 @@ namespace UI
                     //Is Archwitch
                     PrivateVariable.EventType = 1;
                     PrivateVariable.InEventScreen = true;
-                    break;
+                    return;
                 }
                 if (!PrivateVariable.Run)
                 {
                     return;
                 }
-                if (EmulatorController.RGBComparer(image, new Point(133, 35), Color.FromArgb(30, 30, 30), 10))
+                if (EmulatorController.RGBComparer(image, new Point(133, 35), Color.FromArgb(30, 30, 30), 2))
                 {
                     PrivateVariable.EventType = 2;
                     PrivateVariable.InEventScreen = true;
@@ -576,10 +719,9 @@ namespace UI
                 point = EmulatorController.FindImage(image, Img.HellLoc, true);
                 if (point != null)
                 {
-                    //Is 
                     PrivateVariable.EventType = 2;
                     PrivateVariable.InEventScreen = true;
-                    break;
+                    return;
                 }
                 if (!PrivateVariable.Run)
                 {
@@ -601,6 +743,7 @@ namespace UI
                     EmulatorController.KillGame("com.nubee.valkyriecrusade");
                     ScriptErrorHandler.Reset("Critical error found! Trying to restart game!");
                     error = 0;
+                    return;
                 }
                 error++;
             }
@@ -722,6 +865,10 @@ namespace UI
             Thread.Sleep(3000);
             do
             {
+                if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                {
+                    return;
+                }
                 if (!PrivateVariable.Run)
                 {
                     return;
@@ -737,6 +884,10 @@ namespace UI
                     Point? p  = EmulatorController.FindImage(image, Img.GreenButton,false);
                     while(p == null)
                     {
+                        if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                        {
+                            return;
+                        }
                         Thread.Sleep(500);
                         p = EmulatorController.FindImage(image, Img.GreenButton, false);
                     }
@@ -823,6 +974,10 @@ namespace UI
                     Thread.Sleep(1000);
                     p = EmulatorController.FindImage(Script.image, Img.GreenButton, false);
                     if (!PrivateVariable.Run)
+                    {
+                        return;
+                    }
+                    if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
                     {
                         return;
                     }
@@ -976,17 +1131,23 @@ namespace UI
             {
                 return;
             }
-            if(EmulatorController.RGBComparer(image, new Point(133, 35), Color.FromArgb(30, 30, 30), 10))
-            {
-                DemonStage_Enter();
-                return;
-            }
             point = null;
             int errors = 0;
             while (point == null)
             {
+                if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                {
+                    return;
+                }
                 if (!PrivateVariable.Run)
                 {
+                    return;
+                }
+                if (EmulatorController.RGBComparer(image, new Point(133, 35), Color.FromArgb(30, 30, 30), 2))
+                {
+                    PrivateVariable.EventType = 2;
+                    PrivateVariable.InEventScreen = true;
+                    DemonStage_Enter();
                     return;
                 }
                 point = EmulatorController.FindImage(image, Img.HellLoc, true);
@@ -1005,7 +1166,7 @@ namespace UI
                     errors++;
                     if(errors > 20)
                     {
-                        ScriptErrorHandler.Reset("Restarting game as unable to locate event.");
+                        ScriptErrorHandler.Reset("Unable to locate event. Going back to main screen");
                         return;
                     }
                 }
@@ -1068,6 +1229,11 @@ namespace UI
                 {
                     Thread.Sleep(200);
                 }
+                if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                {
+                    ScriptErrorHandler.Reset("Game is closed! Restarting all!");
+                    return;
+                }
             }
             while (!EnteredStage);
             DemonStage_Enter();
@@ -1075,16 +1241,33 @@ namespace UI
 
         private static void DemonStage_Enter()
         {
+            int error = 0;
             while (!EmulatorController.RGBComparer(image, new Point(133, 35), Color.FromArgb(30, 30, 30), 10))
             {
+                if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                {
+                    ScriptErrorHandler.Reset("Game close, restarting...");
+                    return;
+                }
+                error++;
+                if (error > 10)
+                {
+                    ScriptErrorHandler.Reset("Event Locate Failed!");
+                    EmulatorController.KillGame("com.nubee.valkyriecrusade");
+                    return;
+                }
                 Thread.Sleep(1000);
             }
+            error = 0;
             Variables.ScriptLog.Add("Demon Realm Event Located");
             List<Point> BlackListedLocation = new List<Point>();
-            int error = 0;
             Point? p = null;
             while (error < 20 && p == null)
             {
+                if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                {
+                    return;
+                }
                 if (!PrivateVariable.Run)
                 {
                     return;
@@ -1144,11 +1327,16 @@ namespace UI
             Point? point = EmulatorController.FindImage(image, Img.Red_Button, false);
             while(point == null)
             {
+                if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                {
+                    return;
+                }
                 point = EmulatorController.FindImage(image, Img.Red_Button, false);
                 Thread.Sleep(1000);
             }
             EmulatorController.SendTap(point.Value);
             PrivateVariable.Battling = true;
+            stop.Start();
         }
         //Normal stage enterence
         private static void NormalStage()
@@ -1159,7 +1347,11 @@ namespace UI
             int swiped = 0;
                 while (true)
                 {
-                    Point? point = EmulatorController.FindImage(Script.image, Img.Normal, true);
+                if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                {
+                    return;
+                }
+                Point? point = EmulatorController.FindImage(Script.image, Img.Normal, true);
                     if (point == null && swiped < 5)
                     {
                         EmulatorController.SendSwipe(500, 300, 1000, 300, 500);
@@ -1283,6 +1475,16 @@ namespace UI
                 {
                     ScriptErrorHandler.Reset("No Energy Left!");
                     NoEnergy();
+                    return;
+                }
+                point = EmulatorController.FindImage(image, Img.Locate_Tower, false);
+                if (point != null)
+                {
+                    PrivateVariable.Battling = false;
+                    Variables.ScriptLog.Add("Battle Ended!");
+                    stop.Stop();
+                    Variables.ScriptLog.Add("Battle used up " + stop.Elapsed);
+                    stop.Reset();
                     return;
                 }
                 byte[] crop = EmulatorController.CropImage(image, new Point(125, 0), new Point(1280, 720));
@@ -1492,6 +1694,11 @@ namespace UI
                 {
                     battle.Attack();
                 }
+                if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                {
+                    ScriptErrorHandler.Reset("Game exited, restarting...");
+                    return;
+                }
             }
             while (PrivateVariable.Battling);
         }
@@ -1553,7 +1760,7 @@ namespace UI
                 }
                 int num = 0;
                 Color energy = Color.FromArgb(104, 45, 22);
-                if (EmulatorController.RGBComparer(Script.image, new Point(208, 445), energy, 10))
+                if (EmulatorController.RGBComparer(image, new Point(208, 445), energy, 10))
                 {
                     num++;
                 }
@@ -1561,7 +1768,7 @@ namespace UI
                 {
                     return 0;
                 }
-                if (EmulatorController.RGBComparer(Script.image, new Point(253, 441), energy, 10))
+                if (EmulatorController.RGBComparer(image, new Point(253, 441), energy, 10))
                 {
                     num++;
                 }
@@ -1569,7 +1776,7 @@ namespace UI
                 {
                     return 0;
                 }
-                if (EmulatorController.RGBComparer(Script.image, new Point(315, 445), energy, 10))
+                if (EmulatorController.RGBComparer(image, new Point(315, 445), energy, 10))
                 {
                     num++;
                 }
@@ -1577,7 +1784,7 @@ namespace UI
                 {
                     return 0;
                 }
-                if (EmulatorController.RGBComparer(Script.image, new Point(351, 449), energy, 10))
+                if (EmulatorController.RGBComparer(image, new Point(351, 449), energy, 10))
                 {
                     num++;
                 }
@@ -1586,7 +1793,7 @@ namespace UI
                     return 0;
                 }
                 //下面的还没改好！！
-                if (EmulatorController.RGBComparer(Script.image, new Point(677, 535), energy, 10))
+                if (EmulatorController.RGBComparer(image, new Point(677, 535), energy, 10))
                 {
                     num++;
                 }
@@ -1681,6 +1888,10 @@ namespace UI
                     Point? p = EmulatorController.FindImage(Script.image, Img.GreenButton, false);
                     while (p == null)
                     {
+                        if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                        {
+                            return;
+                        }
                         Thread.Sleep(10);
                         p = EmulatorController.FindImage(Script.image, Img.GreenButton, false);
                     }
@@ -1704,6 +1915,10 @@ namespace UI
                     Point? p = EmulatorController.FindImage(Script.image, Img.GreenButton, false);
                     while (p == null)
                     {
+                        if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                        {
+                            return;
+                        }
                         p = EmulatorController.FindImage(Script.image, Img.GreenButton, false);
                     }
                     EmulatorController.SendTap(p.Value);
@@ -1716,6 +1931,10 @@ namespace UI
                     Point? p = EmulatorController.FindImage(Script.image, Img.GreenButton, false);
                     while (p == null)
                     {
+                        if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                        {
+                            return;
+                        }
                         p = EmulatorController.FindImage(Script.image, Img.GreenButton, false);
                     }
                     EmulatorController.SendTap(p.Value);
@@ -1736,6 +1955,10 @@ namespace UI
                         Point? p = EmulatorController.FindImage(Script.image, Img.GreenButton, false);
                         while (p == null)
                         {
+                            if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                            {
+                                return;
+                            }
                             p = EmulatorController.FindImage(Script.image, Img.GreenButton, false);
                         }
                         EmulatorController.SendTap(p.Value);
@@ -1748,6 +1971,10 @@ namespace UI
                         Point? p = EmulatorController.FindImage(Script.image, Img.GreenButton, false);
                         while (p == null)
                         {
+                            if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                            {
+                                return;
+                            }
                             p = EmulatorController.FindImage(Script.image, Img.GreenButton, false);
                         }
                         EmulatorController.SendTap(p.Value);
@@ -1765,6 +1992,10 @@ namespace UI
             bool Move = true;
             while (Move)
             {
+                if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                {
+                    return;
+                }
                 if (!PrivateVariable.Run)
                 {
                     return;

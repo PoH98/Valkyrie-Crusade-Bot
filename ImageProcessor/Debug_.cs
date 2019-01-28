@@ -61,12 +61,10 @@ namespace ImageProcessor
                 }
                 catch
                 {
-                    WriteLine(log_, lineNumber,caller);
+
                 }
             }
         }
-
-       
 
         public static void WriteLine([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
@@ -81,23 +79,30 @@ namespace ImageProcessor
                 }
                 catch
                 {
-                    WriteLine(lineNumber, caller);
+
                 }
-                
+            }
+        }
+
+        public static void WriteLine(byte[] img)
+        {
+            if (Enable_Debug)
+            {
+                try
+                {
+                    File.WriteAllBytes(FileName.Remove(FileName.LastIndexOf('\\'))+ "debug.png",img);
+                }
+                catch
+                {
+
+                }
             }
         }
 
         protected static string Encrypt(string log)
         {
             string newlog = "[" + DateTime.Now + "]: " + log;
-            StringBuilder sb = new StringBuilder();
-            foreach (char c in newlog)
-            {
-                char enc = c;
-                char y = (char)(Convert.ToUInt16(enc) + 14);
-                sb.Append(y);
-            }
-            return  sb.ToString();
+            return EmulatorController.Encrypt(newlog);
         }
     }
 }

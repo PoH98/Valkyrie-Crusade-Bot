@@ -326,7 +326,7 @@ namespace ImageProcessor
             fetch.UseShellExecute = false;
             fetch.CreateNoWindow = true;
             fetch.StandardOutputEncoding = Encoding.GetEncoding(codePage);
-            while (Variables.SharedPath == null || PrivateVariable.Adb_IP == null)
+            while (Variables.SharedPath == null || Variables.AdbIpPort == null)
             {
                 Process fetching = Process.Start(fetch);
                 string result = fetching.StandardOutput.ReadToEnd();
@@ -358,7 +358,7 @@ namespace ImageProcessor
                     else if (s.Contains("name = ADB"))
                     {
                         var port = s.Substring(s.IndexOf("port = ") + 7, 5).Replace(" ", "");
-                        PrivateVariable.Adb_IP = "127.0.0.1:" + port;
+                        Variables.AdbIpPort = "127.0.0.1:" + port;
                     }
                 }
             }
@@ -612,7 +612,6 @@ namespace ImageProcessor
                     IAdbSocket sock = new AdbSocket(new IPEndPoint(loopback, AdbClient.AdbServerPort));
                     var monitor = new DeviceMonitor(sock);
                     monitor.DeviceConnected += OnDeviceConnected;
-                    monitor.DeviceDisconnected += OnDeviceDisconnected;
                     monitor.Start();
                 }
             }
@@ -631,33 +630,15 @@ namespace ImageProcessor
             }
         }
 
-        private static void OnDeviceDisconnected(object sender, DeviceDataEventArgs e)
-        {
-            Variables.Devices_Connected = AdbClient.Instance.GetDevices();
-            for (int x = 0; x < Variables.Devices_Connected.Count; x++)
-            {
-                if (Variables.Devices_Connected[x].ToString() == PrivateVariable.Adb_IP)
-                {
-                    Variables.Control_Device_Num = x;
-                    break;
-                }
-                x++;
-            }
-            Variables.DeviceChanged = true;
-            Docked = false;
-        }
-
         private static void OnDeviceConnected(object sender, DeviceDataEventArgs e)
         {
-            Variables.Devices_Connected = AdbClient.Instance.GetDevices();
-            for (int x = 0; x < Variables.Devices_Connected.Count; x++)
+            foreach(var device in AdbClient.Instance.GetDevices())
             {
-                if (Variables.Devices_Connected[x].ToString() == PrivateVariable.Adb_IP)
+                if (device.ToString() == Variables.AdbIpPort)
                 {
-                    Variables.Control_Device_Num = x;
+                    Variables.Controlled_Device = device;
                     break;
                 }
-                x++;
             }
             Variables.DeviceChanged = true;
         }
@@ -704,9 +685,24 @@ namespace ImageProcessor
             PrivateVariable.Run = true;
             if (textBox2.Text.Length > 0)
             {
+                if (textBox2.Text.Contains("来点色图"))
+                {
+                    MessageBox.Show("恭喜您启动了隐藏的功能！");
+                    Suprise sup = new Suprise();
+                    sup.Show();
+                    return;
+                }
                 try
                 {
-                    Convert.ToInt64(textBox2.Text);
+                    if(textBox2.Text.Length == 15)
+                    {
+                        Convert.ToInt64(textBox2.Text);
+                    }
+                    else
+                    {
+                        MessageBox.Show("请输入正确的IMEI (只有数字)");
+                        return;
+                    }
                 }
                 catch
                 {
@@ -752,7 +748,7 @@ namespace ImageProcessor
             }
             if (panel3.Visible == false)
             {
-                Width += 1104;
+                Width += 1090;
                 panel3.Visible = true;
             }
             panel3.Enabled = false;
@@ -777,13 +773,13 @@ namespace ImageProcessor
             Variables.ScriptLog.Add("Script Stopped!");
             if(Width > 1054)
             {
-                Width -= 1104;
+                Width -= 1090;
                 panel3.Visible = false;
             }
             if (EmulatorController.handle != null && Variables.Proc != null)
             {
                 DllImport.SetParent(EmulatorController.handle, IntPtr.Zero);
-                DllImport.MoveWindow(EmulatorController.handle, 0, 0, 1280, 720, true);
+                DllImport.MoveWindow(EmulatorController.handle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 1280, 720, true);
             }
             Docked = false;
             Variables.start = null;
@@ -793,12 +789,6 @@ namespace ImageProcessor
         private void timer2_Tick(object sender, EventArgs e)
         {
             GC.Collect();
-            var device = Variables.Devices_Connected.ToArray();
-            int index = Array.IndexOf(device, PrivateVariable.Adb_IP);
-            if (index > -1) //The Emulator is running
-            {
-                Variables.Control_Device_Num = index; //Register it, we need this to control our emulator
-            }
             if (PrivateVariable.EventType == 0)
             {
                 groupBox8.Text = "塔楼活动";
@@ -897,56 +887,64 @@ namespace ImageProcessor
             while (PrivateVariable.Run)
             {
                 Thread.Sleep(1000);
-                string[] device = Variables.Devices_Connected.ConvertAll(x => x.ToString()).ToArray();
-                int index = Array.IndexOf(device, PrivateVariable.Adb_IP);
-                if (index > -1) //The Emulator is running
+                if (Variables.Proc != null)
                 {
-                    if (Variables.Proc != null && Variables.Control_Device_Num > -1)
+                    if (EmulatorController.handle == IntPtr.Zero || EmulatorController.handle == null)
                     {
-                        if (EmulatorController.handle == IntPtr.Zero || EmulatorController.handle == null)
+                        EmulatorController.ConnectAndroidEmulator(String.Empty, String.Empty, MEmu);
+                    }
+                    panel3.Invoke((MethodInvoker)delegate
+                    {
+                        if (DllImport.GetParent(EmulatorController.handle) != panel3.Handle)
                         {
-                            EmulatorController.ConnectAndroidEmulator(String.Empty, String.Empty, MEmu);
-                        }
-                        panel3.Invoke((MethodInvoker)delegate
-                        {
-                            if (DllImport.GetParent(EmulatorController.handle) != panel3.Handle)
+                            if (PrivateVariable.Run && !Docked)
                             {
-                                if (PrivateVariable.Run && !Docked)
+                                DllImport.Rect rect = new DllImport.Rect();
+                                DllImport.GetWindowRect(EmulatorController.handle, ref rect);
+                                PrivateVariable.EmuDefaultLocation = new Point(rect.left, rect.top);
+                                DllImport.SetParent(EmulatorController.handle, panel3.Handle);
+                                DllImport.MoveWindow(EmulatorController.handle, -1, -55, 1124, 700, false);
+                                Docked = true;
+                            }
+                            else if (Docked)
+                            {
+                                if (!DllImport.IsWindow(EmulatorController.handle))
                                 {
-                                    DllImport.SetParent(EmulatorController.handle, panel3.Handle);
-                                    DllImport.MoveWindow(EmulatorController.handle, -1, -35, 1104, 683, true);
-                                    Docked = true;
+                                    EmulatorController.handle = IntPtr.Zero;
+                                    Docked = false;
+                                }
+                                DllImport.Rect rect = new DllImport.Rect();
+                                DllImport.GetWindowRect(EmulatorController.handle, ref rect);
+                                if(rect.left != -1 || rect.top != -55)
+                                {
+                                    DllImport.MoveWindow(EmulatorController.handle, -1, -55, 1124, 700, false);
                                 }
                             }
-                        });
-                        if (File.Exists(Variables.SharedPath + "\\" + Variables.Devices_Connected[Variables.Control_Device_Num].Name + ".dump"))
-                        {
-                            File.Delete(Variables.SharedPath + "\\" + Variables.Devices_Connected[Variables.Control_Device_Num].Name + ".dump");
                         }
-                        try
-                        {
-                            byte[] newimage = EmulatorController.ImageCapture();
-                            if (newimage != null)
-                            {
-                                Script.image = newimage;
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            File.WriteAllText("error.log", ex.ToString());
-                        }
-                    }
-                    else
+                    });
+                    try
                     {
-                        Docked = false;
-                        Variables.Control_Device_Num = index;
-                        while (Variables.Proc == null)
+                        byte[] newimage = EmulatorController.ImageCapture();
+                        if (newimage != null)
                         {
-                            EmulatorController.ConnectAndroidEmulator(String.Empty, String.Empty, MEmu);
-                            Thread.Sleep(1000);
+                            Script.image = newimage;
+                            Debug_.WriteLine(Script.image);
                         }
-                        Variables.ScriptLog.Add("Emulator Started");
                     }
+                    catch (Exception ex)
+                    {
+                        File.WriteAllText("error.log", ex.ToString());
+                    }
+                }
+                else
+                {
+                    Docked = false;
+                    while (Variables.Proc == null)
+                    {
+                        EmulatorController.ConnectAndroidEmulator(String.Empty, String.Empty, MEmu);
+                        Thread.Sleep(1000);
+                    }
+                    Variables.ScriptLog.Add("Emulator Started");
                 }
             }
         }
@@ -1145,6 +1143,7 @@ namespace ImageProcessor
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
+
             Variables.Background = checkBox1.Checked;
         }
 
@@ -1167,7 +1166,10 @@ namespace ImageProcessor
         private void checkBox8_CheckedChanged(object sender, EventArgs e)
         {
             WriteConfig("Double_Event", checkBox8.Checked.ToString().ToLower());
-            Variables.Configure.Add("Double_Event", checkBox8.Checked.ToString().ToLower());
+            if (checkBox8.Checked&& !File.Exists("Img\\Event.png"))
+            {
+                MessageBox.Show("请截图好活动的进入按钮样貌，保存到Img文件夹内，命名为Event.png!");
+            }
         }
 
         private void checkBox8_MouseEnter(object sender, EventArgs e)
