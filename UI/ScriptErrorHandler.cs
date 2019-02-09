@@ -28,7 +28,6 @@ namespace UI
             }
             while (PrivateVariable.Run)
             {
-                Thread.Sleep(1000);
                 if (Variables.Proc != null)
                 {
                     try
@@ -36,7 +35,7 @@ namespace UI
                         foreach (var e in errorImages)
                         {
                             Thread.Sleep(1000);
-                            Point? p = EmulatorController.FindImage(Script.image, e, true);
+                            Point? p = EmulatorController.FindImage(Script.image, e, false);
                             if (p != null)
                             {
                                 EmulatorController.SendTap(p.Value);

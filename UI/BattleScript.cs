@@ -68,7 +68,10 @@ namespace UI
                                 {
                                     Variables.ScriptLog.Add("Skill actived");
                                     EmulatorController.SendSwipe(new Point(263, 473), new Point(264, 474), 1200);
-                                    Thread.Sleep(1000);
+                                    for(int x = 0; x < 5; x++)
+                                    {
+                                        EmulatorController.SendTap(1,1);
+                                    }
                                     break;
                                 }
                             }
@@ -94,7 +97,10 @@ namespace UI
                                 {
                                     Variables.ScriptLog.Add("Skill actived");
                                     EmulatorController.SendSwipe(new Point(448, 492), new Point(449, 493), 1200);
-                                    Thread.Sleep(1000);
+                                    for (int x = 0; x < 5; x++)
+                                    {
+                                        EmulatorController.SendTap(1, 1);
+                                    }
                                     break;
                                 }
                             }
@@ -120,7 +126,10 @@ namespace UI
                                 {
                                     Variables.ScriptLog.Add("Skill actived");
                                     EmulatorController.SendSwipe(new Point(641, 473), new Point(642, 474), 1200);
-                                    Thread.Sleep(1000);
+                                    for (int x = 0; x < 5; x++)
+                                    {
+                                        EmulatorController.SendTap(1, 1);
+                                    }
                                     break;
                                 }
                             }
@@ -146,7 +155,10 @@ namespace UI
                                 {
                                     Variables.ScriptLog.Add("Skill actived");
                                     EmulatorController.SendSwipe(new Point(834, 483), new Point(835, 484), 1200);
-                                    Thread.Sleep(1000);
+                                    for (int x = 0; x < 5; x++)
+                                    {
+                                        EmulatorController.SendTap(1, 1);
+                                    }
                                     break;
                                 }
                             }
@@ -172,7 +184,10 @@ namespace UI
                                 {
                                     Variables.ScriptLog.Add("Skill actived");
                                     EmulatorController.SendSwipe(new Point(1017, 470), new Point(1018, 471), 1200);
-                                    Thread.Sleep(1000);
+                                    for (int x = 0; x < 5; x++)
+                                    {
+                                        EmulatorController.SendTap(1, 1);
+                                    }
                                     break;
                                 }
                             }
@@ -185,32 +200,20 @@ namespace UI
 
                 }
             }
-            if (Script.clickLocation != null)
-            {
-                EmulatorController.SendTap(Script.clickLocation.Value);
-            }
-            else
-            {
-                EmulatorController.SendTap(640, 156);
-                EmulatorController.SendTap(462, 176);
-                EmulatorController.SendTap(820, 187);
-                EmulatorController.SendTap(311, 190);
-                EmulatorController.SendTap(955, 189);
-            }
         }
 
         public Control[] CreateUI()
         {
             Label text = new Label();
             text.Text = "Default Script by PoH98";
-            text.Width = 500;
+            text.AutoSize = true;
             text.Name = "lbl";
             text.Location = new Point(10,10);
             text.TabIndex = 1000;
             RichTextBox txtBox = new RichTextBox();
             txtBox.Location = new Point(10, 40);
             txtBox.Height = 200;
-            txtBox.Width = 510;
+            txtBox.Width = 400;
             txtBox.Text = "这个是默认的脚本战斗系统，将会自动应用到所有的战斗。如果想要自行创建脚本，请期待未来更新 CustomScript.dll 插件，或者到www.github.com/PoH98/Bot/了解如何自己创建脚本插件！";
             txtBox.ReadOnly = true;
             txtBox.TabIndex = 1001;
@@ -250,12 +253,12 @@ namespace UI
             box3.SelectedIndex = 2;
             box4.SelectedIndex = 3;
             box5.SelectedIndex = 4;
-            box2.Width = box3.Width = box4.Width = box5.Width = box1.Width = 50;
+            box2.Width = box3.Width = box4.Width = box5.Width = box1.Width = 45;
             box1.Location = new Point(10, 310);
-            box2.Location = new Point(70, 310);
-            box3.Location = new Point(130, 310);
-            box4.Location = new Point(190, 310);
-            box5.Location = new Point(250, 310);
+            box2.Location = new Point(65, 310);
+            box3.Location = new Point(120, 310);
+            box4.Location = new Point(175, 310);
+            box5.Location = new Point(230, 310);
             box1.SelectedIndexChanged += Cards_SelectedIndexChanged;
             box2.SelectedIndexChanged += Cards_SelectedIndexChanged;
             box3.SelectedIndexChanged += Cards_SelectedIndexChanged;
@@ -267,7 +270,7 @@ namespace UI
             Create.Location = new Point(10, 370);
             Create.Click += Create_Click;
             Create.Text = "创建脚本 (C#语言）";
-            Create.Width = 510;
+            Create.Width = 380;
             Create.Height = 50;
             Control[] thingsToReturn = { text, txtBox ,chk, Create, lbl, box1, box2, box3, box4, box5};
             return thingsToReturn;

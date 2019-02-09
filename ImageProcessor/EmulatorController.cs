@@ -2,6 +2,7 @@
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using SharpAdbClient;
+using SharpAdbClient.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -172,7 +173,7 @@ namespace ImageProcessor
             try
             {
                 var receiver = new ConsoleOutputReceiver();
-                 if(Variables.Controlled_Device == null)
+                if(Variables.Controlled_Device == null)
                 {
                     return false;
                 }
@@ -189,6 +190,11 @@ namespace ImageProcessor
             catch (ArgumentOutOfRangeException)
             {
 
+            }
+            catch (AdbException ex)
+            {
+                Variables.AdbLog.Add("Adb exception found!");
+                Debug_.WriteLine(ex.Message);
             }
             return false;
         }
@@ -281,8 +287,6 @@ namespace ImageProcessor
                 {
                     return false;
                 }
-
-                
                     var receiver = new ConsoleOutputReceiver();
 
                     AdbClient.Instance.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", Variables.Controlled_Device, receiver);
@@ -294,19 +298,21 @@ namespace ImageProcessor
                         Thread.Sleep(1000);
                         return true;
                     }
-                    else
-                    {
-                        return false;
-                    }
             }
             catch (InvalidOperationException)
             {
-                return false;
+
             }
             catch (ArgumentOutOfRangeException)
             {
-                return false;
+                
             }
+            catch (AdbException ex)
+            {
+                Variables.AdbLog.Add("Adb exception found!");
+                Debug_.WriteLine(ex.Message);
+            }
+            return false;
         }
         /// <summary>
         /// Start game using game package name
@@ -330,13 +336,18 @@ namespace ImageProcessor
             }
             catch (InvalidOperationException)
             {
-                return false;
+
             }
             catch (ArgumentOutOfRangeException)
             {
-                return false;
-            }
 
+            }
+            catch (AdbException ex)
+            {
+                Variables.AdbLog.Add("Adb exception found!");
+                Debug_.WriteLine(ex.Message);
+            }
+            return false;
         }
         /// <summary>
         /// Close the game with package name
@@ -367,6 +378,11 @@ namespace ImageProcessor
             {
 
             }
+            catch (AdbException ex)
+            {
+                Variables.AdbLog.Add("Adb exception found!");
+                Debug_.WriteLine(ex.Message);
+            }
         }
         /// <summary>
         /// Fast Capturing screen and return the image, uses WinAPI capture if Variables.Background is false.
@@ -382,7 +398,6 @@ namespace ImageProcessor
                     Environment.Exit(0);
                 }
                 path = Variables.SharedPath + "\\" + SHA256(Variables.AdbIpPort) + ".raw";
-
                 Stopwatch s = Stopwatch.StartNew();
                 byte[] raw = null;
                 var receiver = new ConsoleOutputReceiver();
@@ -426,12 +441,18 @@ namespace ImageProcessor
             }
             catch (IOException)
             {
-                return null;
+
             }
             catch (ArgumentOutOfRangeException)
             {
-                return null;
+
             }
+            catch (AdbException ex)
+            {
+                Variables.AdbLog.Add("Adb exception found!");
+                Debug_.WriteLine(ex.Message);
+            }
+            return null;
         }
         /// <summary>
         /// Left click adb command on the point for generating background click in emulators
@@ -466,6 +487,11 @@ namespace ImageProcessor
             catch (ArgumentOutOfRangeException)
             {
 
+            }
+            catch (AdbException ex)
+            {
+                Variables.AdbLog.Add("Adb exception found!");
+                Debug_.WriteLine(ex.Message);
             }
         }
         /// <summary>
@@ -506,6 +532,11 @@ namespace ImageProcessor
             {
 
             }
+            catch (AdbException ex)
+            {
+                Variables.AdbLog.Add("Adb exception found!");
+                Debug_.WriteLine(ex.Message);
+            }
         }
         /// <summary>
         /// Left click adb command on the point for generating background click in emulators
@@ -539,7 +570,11 @@ namespace ImageProcessor
             {
 
             }
-
+            catch (AdbException ex)
+            {
+                Variables.AdbLog.Add("Adb exception found!");
+                Debug_.WriteLine(ex.Message);
+            }
         }
         /// <summary>
         /// Swipe the screen
@@ -574,6 +609,11 @@ namespace ImageProcessor
             {
 
             }
+            catch (AdbException ex)
+            {
+                Variables.AdbLog.Add("Adb exception found!");
+                Debug_.WriteLine(ex.Message);
+            }
         }
         /// <summary>
         /// Read Configure in Bot.ini and save it into Variables.Configure (Dictionary)
@@ -581,15 +621,15 @@ namespace ImageProcessor
         public static void ReadConfig([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
-            if (!Directory.Exists("Profiles\\" + EmulatorController.profilePath))
+            if (!Directory.Exists("Profiles\\" + profilePath))
             {
-                Directory.CreateDirectory("Profiles\\" + EmulatorController.profilePath);
+                Directory.CreateDirectory("Profiles\\" + profilePath);
             }
-            if (!File.Exists("Profiles\\" + EmulatorController.profilePath + "\\bot.ini"))
+            if (!File.Exists("Profiles\\" + profilePath + "\\bot.ini"))
             {
-                File.WriteAllText("Profiles\\" + EmulatorController.profilePath + "\\bot.ini", "Emulator=MEmu\nPath=MEmu.exe\nBackground=true");
+                File.WriteAllText("Profiles\\" + profilePath + "\\bot.ini", "Emulator=MEmu\nPath=MEmu.exe\nBackground=true");
             }
-            var lines = File.ReadAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
+            var lines = File.ReadAllLines("Profiles\\" + profilePath + "\\bot.ini");
             foreach (var l in lines)
             {
                 string[] temp = l.Split('=');
@@ -604,10 +644,24 @@ namespace ImageProcessor
 
         }
         /// <summary>
+        /// Emulator supported by this dll
+        /// </summary>
+        public enum Emulators
+        {
+            /// <summary>
+            /// No emulator found in PC
+            /// </summary>
+            Null,
+            MEmu,
+            Bluestack,
+            Nox
+        }
+        /// <summary>
         /// Start Emulator accoring to Variables.Configure (Dictionary) Key "Emulator" and "Path"
         /// </summary>
-        /// <param name="handleName">Check the emulator's main handle is started</param>
-        public static void StartEmulator([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        /// <param name="emulator">Emulator that is supported</param>
+        
+        public static void StartEmulator(Emulators emulator,[CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             string temp = "";
@@ -879,26 +933,18 @@ namespace ImageProcessor
             byte[] pixel = new byte[PixelCount * step];
             IntPtr ptr = bd.Scan0;
             Marshal.Copy(ptr, pixel, 0, pixel.Length);
-            unsafe
+            for (int i = 0; i < image.Height; i++)
             {
-                // example assumes 24bpp image.  You need to verify your pixel depth
-                // loop by row for better data locality
-                for (int y = 0; y < image.Height; ++y)
+                for (int j = 0; j < image.Width; j++)
                 {
-                    byte* pRow = (byte*)bd.Scan0 + y * bd.Stride;
-                    for (int x = 0; x < image.Width; ++x)
+                    //Get the color at each pixel
+                    Color now_color = GetPixel(j, i, ptr, step, Width, Height, Depth, pixel);
+
+                    //Compare Pixel's Color ARGB property with the picked color's ARGB property 
+                    if (now_color.ToArgb() == color.ToArgb())
                     {
-                        // windows stores images in BGR pixel order
-                        byte r = pRow[1];
-                        byte g = pRow[2];
-                        byte b = pRow[3];
-                        if(r == color.R && g == color.G && b == color.B)
-                        {
-                            bmp.UnlockBits(bd);
-                            return true;
-                        }
-                        // next pixel in the row
-                        pRow += 4;
+                        bmp.UnlockBits(bd);
+                        return true;
                     }
                 }
             }
@@ -935,27 +981,19 @@ namespace ImageProcessor
             byte[] pixel = new byte[PixelCount * step];
             IntPtr ptr = bd.Scan0;
             Marshal.Copy(ptr, pixel, 0, pixel.Length);
-            unsafe
+            for (int i = 0; i < image.Height; i++)
             {
-                // example assumes 24bpp image.  You need to verify your pixel depth
-                // loop by row for better data locality
-                for (int y = 0; y < image.Height; ++y)
+                for (int j = 0; j < image.Width; j++)
                 {
-                    byte* pRow = (byte*)bd.Scan0 + y * bd.Stride;
-                    for (int x = 0; x < image.Width; ++x)
+                    //Get the color at each pixel
+                    Color now_color = GetPixel(j, i, ptr, step, Width, Height, Depth, pixel);
+
+                    //Compare Pixel's Color ARGB property with the picked color's ARGB property 
+                    if (now_color.ToArgb() == color.ToArgb())
                     {
-                        // windows stores images in BGR pixel order
-                        byte r = pRow[1];
-                        byte g = pRow[2];
-                        byte b = pRow[3];
-                        if (r == color.R && g == color.G && b == color.B)
-                        {
-                            bmp.UnlockBits(bd);
-                            point = new Point(x, y);
-                            return true;
-                        }
-                        // next pixel in the row
-                        pRow += 4;
+                        point = new Point(j, i);
+                        bmp.UnlockBits(bd);
+                        return true;
                     }
                 }
             }
@@ -1040,7 +1078,6 @@ namespace ImageProcessor
                 {
                     Image<Gray, byte> source = new Image<Gray, byte>(original);
                     Image<Gray, byte> template = new Image<Gray, byte>(find);
-                    
                     using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
                     {
                         double[] minValues, maxValues;
@@ -1146,7 +1183,6 @@ namespace ImageProcessor
             }
             return null;
         }
-
         /// <summary>
         /// Return a Point location of the image in Variables.Image (will return null if not found)
         /// </summary>
@@ -1206,8 +1242,7 @@ namespace ImageProcessor
             }
             return null;
         }
-
-        /// <summary>
+        /// <summary> 
         /// Crop the image and return the cropped image
         /// </summary>
         /// <param name="image">Image that need to be cropped</param>
@@ -1295,23 +1330,27 @@ namespace ImageProcessor
         /// <returns></returns>
         public static bool Pull(string from, string to)
         {
-            if (Variables.Controlled_Device == null)
+            try
             {
-                return false;
+                if (Variables.Controlled_Device == null)
+                {
+                    return false;
+                }
+                using (SyncService service = new SyncService(new AdbSocket(new IPEndPoint(IPAddress.Loopback, AdbClient.AdbServerPort)), Variables.Controlled_Device))
+                using (Stream stream = File.OpenWrite(to))
+                {
+                    service.Pull(from, stream, null, CancellationToken.None);
+                }
+                if (File.Exists(to))
+                {
+                    return true;
+                }
             }
-            using (SyncService service = new SyncService(new AdbSocket(new IPEndPoint(IPAddress.Loopback, AdbClient.AdbServerPort)), Variables.Controlled_Device))
-            using (Stream stream = File.OpenWrite(to))
+            catch (AdbException)
             {
-                service.Pull(from, stream, null, CancellationToken.None);
+
             }
-            if (File.Exists(to))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return false;
         }
         /// <summary>
         /// Push file from PC to emulator
@@ -1321,14 +1360,21 @@ namespace ImageProcessor
         /// <param name="permission">Permission of file</param>
         public static void Push(string from, string to, int permission)
         {
-            if (Variables.Controlled_Device == null)
+            try
             {
-                return;
+                if (Variables.Controlled_Device == null)
+                {
+                    return;
+                }
+                using (SyncService service = new SyncService(new AdbSocket(new IPEndPoint(IPAddress.Loopback, AdbClient.AdbServerPort)), Variables.Controlled_Device))
+                using (Stream stream = File.OpenRead(from))
+                {
+                    service.Push(stream, to, permission, DateTime.Now, null, CancellationToken.None);
+                }
             }
-            using (SyncService service = new SyncService(new AdbSocket(new IPEndPoint(IPAddress.Loopback, AdbClient.AdbServerPort)), Variables.Controlled_Device))
-            using (Stream stream = File.OpenRead(from))
+            catch(AdbException)
             {
-                service.Push(stream, to, permission, DateTime.Now, null, CancellationToken.None);
+
             }
         }
         /// <summary>

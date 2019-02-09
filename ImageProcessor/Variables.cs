@@ -16,9 +16,33 @@ namespace ImageProcessor
     public static class Variables
     {
         /// <summary>
-        /// 
+        /// Adb Ip:Port
         /// </summary>
         public static string AdbIpPort;
+        /// <summary>
+        /// The emulator path that is installed at PC with outputing the emulator enum
+        /// </summary>
+        public static string EmulatorPath(out EmulatorController.Emulators emu)
+        {
+            string path = "";
+            if (EmulatorsInstallationPath.MEmu(out path))
+            {
+                emu = EmulatorController.Emulators.MEmu;
+                return path + "\\MEmu\\MEmu.exe";
+            }
+            if (EmulatorsInstallationPath.Bluestack(out path))
+            {
+                emu = EmulatorController.Emulators.Bluestack;
+                return path + "";
+            }
+            if (EmulatorsInstallationPath.Nox(out path))
+            {
+                emu = EmulatorController.Emulators.Nox;
+                return path + "";
+            }
+            emu = EmulatorController.Emulators.Null;
+            return null;
+        }
 
         public static DeviceData Controlled_Device = null;
         /// <summary>

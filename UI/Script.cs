@@ -20,14 +20,12 @@ namespace UI
         public static bool RuneBoss, Stuck, EnterWitchGate, Archwitch_Repeat, DisableAutoCheckEvent, CloseEmu = false, pushed = false;
         public static int runes, energy;
         public static int Archwitch_Stage;
-        public static Point? clickLocation;
         public static int TreasureHuntIndex = -1;
         private static int Retry = 0;
         public static string Tower_Floor = "", Tower_Rank = "";
         public static byte[] image = null;
         public static Point archwitch_level_location;
         public static DateTime nextOnline;
-        private static defaultScript battle = new defaultScript();
 
         //Main Loop
         public static void Bot()
@@ -72,10 +70,6 @@ namespace UI
                     Thread.Sleep(10);
                     while (image == null) //Weird problem happens, we still cannot receive any image capture!
                     {
-                        if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
-                        {
-                            return;
-                        }
                         if (!PrivateVariable.Run)
                         {
                             return;
@@ -225,8 +219,8 @@ namespace UI
             Debug_.WriteLine();
             Thread.Sleep(1000);
             PrivateVariable.InMainScreen = false;
-            int errors = 0;
             Point? point = null;
+            int error = 0;
             if (!PrivateVariable.Run)
             {
                 return;
@@ -315,16 +309,18 @@ namespace UI
                 point = EmulatorController.FindImage(image, Img.Menu, true);
                 if (point == null)
                 {
-                    if (errors < 60)
+                    if (error < 60)
                     {
-                        Variables.ScriptLog.Add("Waiting for Main screen");
+                        if(error == 0)
+                            Variables.ScriptLog.Add("Waiting for Main screen");
                         Thread.Sleep(1000);
-                        errors++;
+                        error++;
                     }
                     else
                     {
-                        PrivateVariable.Run = false;
-                        Variables.ScriptLog.Add("Tried 60 times but still unable to locate main screen. Stopping bot");
+                        EmulatorController.KillGame("com.nubee.valkyriecrusade");
+                        ScriptErrorHandler.Reset("Unable to locate main screen. Restarting Game!");
+                        error = 0;
                         return;
                     }
                 }
@@ -351,8 +347,6 @@ namespace UI
                     EmulatorController.SendTap(point.Value);
                     Variables.ScriptLog.Add("Green Button Found!");
                 }
-                
-
             }
             else
             {
@@ -550,7 +544,6 @@ namespace UI
                     {
                         EmulatorController.SendTap(170, 630);
                         Thread.Sleep(5000);
-                        error = 0;
                         for(int x = 0; x < 5; x++)
                         {
                             Point? located = EmulatorController.FindImage(image, Environment.CurrentDirectory + "\\Img\\LocateEventSwitch.png", true);
@@ -738,6 +731,13 @@ namespace UI
                 {
                     return;
                 }
+                point = EmulatorController.FindImage(image, Img.Red_Button, false);
+                if (point != null)
+                {
+                    Variables.ScriptLog.Add("Battle Screen found. Starting battle!");
+                    PrivateVariable.Battling = true;
+                    return;
+                }
                 if (error > 30)
                 {
                     EmulatorController.KillGame("com.nubee.valkyriecrusade");
@@ -756,7 +756,6 @@ namespace UI
             Thread.Sleep(1000);
             RuneBoss = false;
             Point? point = null;
-            clickLocation = null;
             //Nope, we are in the tower event main screen! So go on!
             point = EmulatorController.FindImage(image, Img.Close2, false);
             if (point != null)
@@ -1132,7 +1131,7 @@ namespace UI
                 return;
             }
             point = null;
-            int errors = 0;
+            int error = 0;
             while (point == null)
             {
                 if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
@@ -1163,8 +1162,8 @@ namespace UI
                 else
                 {
                     Thread.Sleep(1000);
-                    errors++;
-                    if(errors > 20)
+                    error++;
+                    if(error > 20)
                     {
                         ScriptErrorHandler.Reset("Unable to locate event. Going back to main screen");
                         return;
@@ -1416,266 +1415,239 @@ namespace UI
         {
             Debug_.WriteLine();
             Variables.ScriptLog.Add("Locating Enemies & UI");
-            clickLocation = null;
-            CheckEnemy();
-            if (clickLocation != null)
+            Point? point = EmulatorController.FindImage(image, Img.Close2, false);
+            if (point != null)
             {
-                Variables.ScriptLog.Add("Enemies position is at " + clickLocation.Value);
+                EmulatorController.SendTap(point.Value);
+                return;
             }
-            else
+            point = EmulatorController.FindImage(image, "Img\\Demon_InEvent.png", false);
+            if (point != null)
             {
-                Point? point = EmulatorController.FindImage(image, Img.Close2, false);
-                if (point != null)
+                PrivateVariable.Battling = false;
+                Variables.ScriptLog.Add("Battle Ended!");
+                stop.Stop();
+                Variables.ScriptLog.Add("Battle used up " + stop.Elapsed);
+                stop.Reset();
+                Attackable = false;
+                return;
+            }
+            Thread.Sleep(100);
+            point = EmulatorController.FindImage(image, "Img\\HellLoc.png", false);
+            if (point != null)
+            {
+                PrivateVariable.Battling = false;
+                Variables.ScriptLog.Add("Battle Ended!");
+                stop.Stop();
+                Variables.ScriptLog.Add("Battle used up " + stop.Elapsed);
+                stop.Reset();
+                Attackable = false;
+                return;
+            }
+            Thread.Sleep(100);
+            point = EmulatorController.FindImage(image, "Img\\Demon_Start.png", false);
+            if (point != null)
+            {
+                PrivateVariable.Battling = false;
+                Variables.ScriptLog.Add("Battle Ended!");
+                stop.Stop();
+                Variables.ScriptLog.Add("Battle used up " + stop.Elapsed);
+                stop.Reset();
+                EmulatorController.SendTap(1076, 106);
+                Attackable = false;
+                return;
+            }
+            if (!PrivateVariable.Battling)
+            {
+                return;
+            }
+            point = EmulatorController.FindImage(image, Img.NoEnergy, true);
+            if (point != null)
+            {
+                ScriptErrorHandler.Reset("No Energy Left!");
+                NoEnergy();
+                Attackable = false;
+                return;
+            }
+            point = EmulatorController.FindImage(image, Img.Locate_Tower, false);
+            if (point != null)
+            {
+                PrivateVariable.Battling = false;
+                Variables.ScriptLog.Add("Battle Ended!");
+                stop.Stop();
+                Variables.ScriptLog.Add("Battle used up " + stop.Elapsed);
+                stop.Reset();
+                Attackable = false;
+                return;
+            }
+            byte[] crop = EmulatorController.CropImage(image, new Point(125, 0), new Point(1280, 720));
+            point = EmulatorController.FindImage(crop, Img.GreenButton, false);
+            if (point != null)
+            {
+                Variables.ScriptLog.Add("Green Button Found!");
+                if (PrivateVariable.EventType == 0)
                 {
-                    clickLocation = point.Value;
-                    return;
-                }
-                point = EmulatorController.FindImage(image, "Img\\Demon_InEvent.png", false);
-                if (point != null)
-                {
-                    clickLocation = new Point(2000, 2000);
-                    PrivateVariable.Battling = false;
-                    Variables.ScriptLog.Add("Battle Ended!");
-                    stop.Stop();
-                    Variables.ScriptLog.Add("Battle used up " + stop.Elapsed);
-                    stop.Reset();
-                    return;
-                }
-                Thread.Sleep(100);
-                point = EmulatorController.FindImage(image, "Img\\HellLoc.png", false);
-                if (point != null)
-                {
-                    clickLocation = new Point(2000, 2000);
-                    PrivateVariable.Battling = false;
-                    Variables.ScriptLog.Add("Battle Ended!");
-                    stop.Stop();
-                    Variables.ScriptLog.Add("Battle used up " + stop.Elapsed);
-                    stop.Reset();
-                    return;
-                }
-                Thread.Sleep(100);
-                point = EmulatorController.FindImage(image, "Img\\Demon_Start.png", false);
-                if (point != null)
-                {
-                    clickLocation = new Point(2000, 2000);
-                    PrivateVariable.Battling = false;
-                    Variables.ScriptLog.Add("Battle Ended!");
-                    stop.Stop();
-                    Variables.ScriptLog.Add("Battle used up " + stop.Elapsed);
-                    stop.Reset();
-                    EmulatorController.SendTap(1076, 106);
-                    return;
-                }
-                if (!PrivateVariable.Battling)
-                {
-                    return;
-                }
-                point = EmulatorController.FindImage(image, Img.NoEnergy, true);
-                if(point != null)
-                {
-                    ScriptErrorHandler.Reset("No Energy Left!");
-                    NoEnergy();
-                    return;
-                }
-                point = EmulatorController.FindImage(image, Img.Locate_Tower, false);
-                if (point != null)
-                {
-                    PrivateVariable.Battling = false;
-                    Variables.ScriptLog.Add("Battle Ended!");
-                    stop.Stop();
-                    Variables.ScriptLog.Add("Battle used up " + stop.Elapsed);
-                    stop.Reset();
-                    return;
-                }
-                byte[] crop = EmulatorController.CropImage(image, new Point(125, 0), new Point(1280, 720));
-                point = EmulatorController.FindImage(crop, Img.GreenButton, false);
-                if (point != null)
-                {
-                    Variables.ScriptLog.Add("Green Button Found!");
-                    if (PrivateVariable.EventType == 0)
+                    Point? temp = EmulatorController.FindImage(Script.image, Img.TowerFinished, true);
+                    if (temp != null && RuneBoss && runes >= 3 && runes != 5)
                     {
-                        Point? temp = EmulatorController.FindImage(Script.image, Img.TowerFinished, true);
-                        if (temp != null && RuneBoss && runes >= 3 && runes != 5)
-                        {
-                            clickLocation = new Point(2000, 2000);
-                            PrivateVariable.InEventScreen = false;
-                            PrivateVariable.InMainScreen = false;
-                            PrivateVariable.Battling = false;
-                            Stuck = true;
-                            Variables.ScriptLog.Add("Battle Ended!");
-                            stop.Stop();
-                            Variables.ScriptLog.Add("Battle used up " + stop.Elapsed);
-                            stop.Reset();
-                            return;
-                        }
-                        else
-                        {
-                            clickLocation = new Point(2000, 2000);
-                            EmulatorController.SendTap(new Point(point.Value.X + 125, point.Value.Y));
-                            return;
-                        }
-                    }
-                    else if (PrivateVariable.EventType == 2)
-                    {
-                        clickLocation = new Point(point.Value.X + 125, point.Value.Y);
+                        PrivateVariable.InEventScreen = false;
+                        PrivateVariable.InMainScreen = false;
+                        PrivateVariable.Battling = false;
+                        Stuck = true;
+                        Variables.ScriptLog.Add("Battle Ended!");
+                        stop.Stop();
+                        Variables.ScriptLog.Add("Battle used up " + stop.Elapsed);
+                        stop.Reset();
+                        Attackable = false;
                         return;
                     }
                     else
                     {
-                        var pt = EmulatorController.FindImage(crop, Img.PT, true);
-                        if (pt != null)
-                        {
-                            clickLocation = new Point(2000, 2000);
-                            Variables.ScriptLog.Add("Battle Ended!");
-                            EmulatorController.SendTap(point.Value.X + 125, point.Value.Y);
-                            Thread.Sleep(400);
-                            EmulatorController.SendTap(point.Value.X + 125, point.Value.Y);
-                            Thread.Sleep(400);
-                            EmulatorController.SendTap(point.Value.X + 125, point.Value.Y);
-                            for (int x = 0; x < 5; x++)
-                            {
-                                EmulatorController.SendTap(0, 0);
-                            }
-                            PrivateVariable.Battling = false;
-                            PrivateVariable.InEventScreen = true;
-                            stop.Stop();
-                            Variables.ScriptLog.Add("Battle used up " + stop.Elapsed);
-                            stop.Reset();
-                            return;
-                        }
-                        else
-                        {
-                            clickLocation = new Point(point.Value.X + 125, point.Value.Y);
-                            return;
-                        }
+                        EmulatorController.SendTap(new Point(point.Value.X + 125, point.Value.Y));
+                        Attackable = false;
+                        return;
                     }
                 }
-                if (!PrivateVariable.Battling)
+                else if (PrivateVariable.EventType == 2)
                 {
-                    return;
-                }
-                point = EmulatorController.FindImage(crop, Img.Red_Button, false);
-                if (point != null)
-                {
-                    if(PrivateVariable.EventType == 2)
-                    {
-                        if (EmulatorController.RGBComparer(image, new Point(133, 35), Color.FromArgb(30, 30, 30), 10))
-                        {
-                            clickLocation = new Point(2000, 2000);
-                            PrivateVariable.Battling = false;
-                            Variables.ScriptLog.Add("Battle Ended!");
-                            stop.Stop();
-                            Variables.ScriptLog.Add("Battle used up " + stop.Elapsed);
-                            stop.Reset();
-                            return;
-                        }
-                    }
-                    Variables.ScriptLog.Add("Starting Battle");
                     EmulatorController.SendTap(point.Value.X + 125, point.Value.Y);
-                    clickLocation = new Point(2000,2000);
-                    PrivateVariable.Battling = true;
-                    Thread.Sleep(900);
-                    crop = EmulatorController.CropImage(image, new Point(682, 544), new Point(905, 589));
-                    if (EmulatorController.RGBComparer(crop, Color.FromArgb(29,98,24)))
-                    {
-                        EmulatorController.SendTap(793, 565);
-                        Thread.Sleep(1000);
-                    }
-                    return;
-                }
-                if (!PrivateVariable.Battling)
-                {
-                    return;
-                }
-                point = EmulatorController.FindImage(image, Img.GarbageMessage, true);
-                if (point != null)
-                {
-                    clickLocation = point.Value;
-                    return;
-                }
-                if (!PrivateVariable.Battling)
-                {
-                    return;
-                }
-                point = EmulatorController.FindImage(image, Img.Love, true);
-                if (point != null)
-                {
-                    clickLocation = new Point(2000, 2000);
-                    for (int x = 0; x < 10; x++)
-                    {
-                        EmulatorController.SendTap(point.Value);
-                        Thread.Sleep(100);
-                    }
-                    return;
-                }
-                if (!PrivateVariable.Battling)
-                {
-                    return;
-                }
-                if (EmulatorController.RGBComparer(image, new Point(959, 656), 31, 102, 26, 4))
-                {
-                    Variables.ScriptLog.Add("Start battle");
-                    clickLocation = new Point(959, 656);
-                    PrivateVariable.Battling = true;
+                    Attackable = false;
                     return;
                 }
                 else
                 {
-                    Variables.ScriptLog.Add("Unable to locate enemy. ");
+                    var pt = EmulatorController.FindImage(crop, Img.PT, true);
+                    if (pt != null)
+                    {
+                        Variables.ScriptLog.Add("Battle Ended!");
+                        EmulatorController.SendTap(point.Value.X + 125, point.Value.Y);
+                        Thread.Sleep(400);
+                        EmulatorController.SendTap(point.Value.X + 125, point.Value.Y);
+                        Thread.Sleep(400);
+                        EmulatorController.SendTap(point.Value.X + 125, point.Value.Y);
+                        for (int x = 0; x < 5; x++)
+                        {
+                            EmulatorController.SendTap(0, 0);
+                        }
+                        PrivateVariable.Battling = false;
+                        PrivateVariable.InEventScreen = true;
+                        stop.Stop();
+                        Variables.ScriptLog.Add("Battle used up " + stop.Elapsed);
+                        stop.Reset();
+                        Attackable = false;
+                        return;
+                    }
+                    else
+                    {
+                        EmulatorController.SendTap(point.Value.X + 125, point.Value.Y);
+                        Attackable = false;
+                        return;
+                    }
                 }
             }
+            if (!PrivateVariable.Battling)
+            {
+                return;
+            }
+            point = EmulatorController.FindImage(crop, Img.Red_Button, false);
+            if (point != null)
+            {
+                if (PrivateVariable.EventType == 2)
+                {
+                    if (EmulatorController.RGBComparer(image, new Point(133, 35), Color.FromArgb(30, 30, 30), 10))
+                    {
+                        PrivateVariable.Battling = false;
+                        Variables.ScriptLog.Add("Battle Ended!");
+                        stop.Stop();
+                        Variables.ScriptLog.Add("Battle used up " + stop.Elapsed);
+                        stop.Reset();
+                        Attackable = false;
+                        return;
+                    }
+                }
+                Variables.ScriptLog.Add("Starting Battle");
+                EmulatorController.SendTap(point.Value.X + 125, point.Value.Y);
+                PrivateVariable.Battling = true;
+                Thread.Sleep(900);
+                crop = EmulatorController.CropImage(image, new Point(682, 544), new Point(905, 589));
+                if (EmulatorController.RGBComparer(crop, Color.FromArgb(29, 98, 24)))
+                {
+                    EmulatorController.SendTap(793, 565);
+                    Thread.Sleep(1000);
+                }
+                Attackable = false;
+                return;
+            }
+            if (!PrivateVariable.Battling)
+            {
+                return;
+            }
+            point = EmulatorController.FindImage(image, Img.GarbageMessage, true);
+            if (point != null)
+            {
+                EmulatorController.SendTap(point.Value);
+                Attackable = false;
+                return;
+            }
+            if (!PrivateVariable.Battling)
+            {
+                return;
+            }
+            point = EmulatorController.FindImage(image, Img.Love, true);
+            if (point != null)
+            {
+                for (int x = 0; x < 10; x++)
+                {
+                    EmulatorController.SendTap(point.Value);
+                    Thread.Sleep(100);
+                }
+                Attackable = false;
+                return;
+            }
+            if (!PrivateVariable.Battling)
+            {
+                return;
+            }
+            if (EmulatorController.RGBComparer(image, new Point(959, 656), 31, 102, 26, 4))
+            {
+                Variables.ScriptLog.Add("Start battle");
+                EmulatorController.SendTap(959,656);
+                PrivateVariable.Battling = true;
+                Attackable = false;
+                return;
+            }
         }
+        static bool Attackable = true;
         /// <summary>
         /// Check is there any HP bar in game
         /// </summary>
         private static void CheckEnemy()
         {
-            Debug_.WriteLine();
-            byte[] enemy = EmulatorController.CropImage(Script.image, new Point(582, 258), new Point(715, 308));
-            if (EmulatorController.RGBComparer(enemy, Color.FromArgb(33, 106, 159)) || EmulatorController.RGBComparer(enemy, Color.FromArgb(171, 0, 21)))
+            if (Attackable)
             {
-                clickLocation = new Point(640, 156);
-            }
-            else
-            {
-                enemy = EmulatorController.CropImage(Script.image, new Point(409, 255), new Point(534, 307));
+                Debug_.WriteLine();
+                byte[] enemy = EmulatorController.CropImage(image, new Point(582, 258), new Point(715, 308));
                 if (EmulatorController.RGBComparer(enemy, Color.FromArgb(33, 106, 159)) || EmulatorController.RGBComparer(enemy, Color.FromArgb(171, 0, 21)))
                 {
-                    clickLocation = new Point(462, 176);
+                    EmulatorController.SendTap(640, 156);
+                    Variables.ScriptLog.Add("Found Boss at center!");
                 }
                 else
                 {
-                    enemy = EmulatorController.CropImage(Script.image, new Point(771, 260), new Point(889, 307));
-                    if (EmulatorController.RGBComparer(enemy, Color.FromArgb(33, 106, 159)) || EmulatorController.RGBComparer(enemy, Color.FromArgb(171, 0, 21)))
-                    {
-                        clickLocation = new Point(820, 187);
-                    }
-                    else
-                    {
-                        enemy = EmulatorController.CropImage(Script.image, new Point(276, 263), new Point(388, 306));
-                        if (EmulatorController.RGBComparer(enemy, Color.FromArgb(33, 106, 159)) || EmulatorController.RGBComparer(enemy, Color.FromArgb(171, 0, 21)))
-                        {
-                            clickLocation = new Point(311, 190);
-                        }
-                        else
-                        {
-                            enemy = EmulatorController.CropImage(Script.image, new Point(908, 258), new Point(1039, 309));
-                            if (EmulatorController.RGBComparer(enemy, Color.FromArgb(33, 106, 159)) || EmulatorController.RGBComparer(enemy, Color.FromArgb(171, 0, 21)))
-                            {
-                                clickLocation = new Point(955, 189);
-                            }
-                            else
-                            {
-                                clickLocation = null;
-                            }
-                        }
-                    }
+                    EmulatorController.SendTap(640, 156);
+                    EmulatorController.SendTap(462, 176);
+                    EmulatorController.SendTap(820, 187);
+                    EmulatorController.SendTap(311, 190);
+                    EmulatorController.SendTap(955, 189);
+                    Variables.ScriptLog.Add("Boss not found, trying to hit others");
                 }
             }
+            Attackable = true;
         }
         //Click on enemy
         private static void Battle()
         {
+            defaultScript battle = new defaultScript();
             do
             {
                 Debug_.WriteLine();
@@ -1683,10 +1655,9 @@ namespace UI
                 {
                     return;
                 }
-                clickLocation = null;
                 Thread locate = new Thread(LocateEnemy);
                 locate.Start();
-                if(PrivateVariable.BattleScript.Count > 1)
+                if (PrivateVariable.BattleScript.Count > 1)
                 {
                     PrivateVariable.BattleScript[PrivateVariable.Selected_Script].Attack();
                 }
@@ -1694,9 +1665,10 @@ namespace UI
                 {
                     battle.Attack();
                 }
+                CheckEnemy();
                 if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
-                    ScriptErrorHandler.Reset("Game exited, restarting...");
+                    ScriptErrorHandler.Reset("Game is closed! Restarting all!");
                     return;
                 }
             }

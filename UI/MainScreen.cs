@@ -23,8 +23,6 @@ namespace ImageProcessor
 
         private static string html;
 
-        private static int ReloadTime = 0;
-
         public static int Level;
 
         static bool Docked = false;
@@ -47,25 +45,10 @@ namespace ImageProcessor
                 webBrowser3.Stop();
                 webBrowser3.DocumentText = Img.index;
             }
-            if (webBrowser2.IsBusy)
-            {
-                webBrowser2.Stop();
-                webBrowser2.DocumentText = Img.index;
-            }
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if(ReloadTime == 0)
-            {
-                Thread l = new Thread(LoadEventBrowser);
-                l.Start();
-                ReloadTime = 36000;
-            }
-            else
-            {
-                ReloadTime--;
-            }
             if (checkBox2.Checked)
             {
                 if (Variables.AdbLog.Count > 0)
@@ -180,10 +163,6 @@ namespace ImageProcessor
             {
                 Directory.CreateDirectory("Audio");
             }
-            if (File.Exists("debug.txt"))
-            {
-                Adb_Log.Checked = true;
-            }
             string _NET = Get45PlusFromRegistry();
             if (_NET.Length > 0)
             {
@@ -197,15 +176,22 @@ namespace ImageProcessor
             {
                 ProcessStartInfo updater = new ProcessStartInfo();
                 updater.FileName = "Updater.exe";
-                updater.WindowStyle = ProcessWindowStyle.Hidden;
+                updater.WindowStyle = ProcessWindowStyle.Minimized;
                 updater.Arguments = fvi.FileVersion.ToString();
                 Process.Start(updater);
             }
             Thread load = new Thread(loading);
             load.Start();
-            IntPtr ico = Img.Icon.GetHicon();
-            Icon = Icon.FromHandle(ico);
-            pictureBox1.Image = Img.Icon;
+            try
+            {
+                IntPtr ico = Img.Icon.GetHicon();
+                Icon = Icon.FromHandle(ico);
+                pictureBox1.Image = Img.Icon;
+            }
+            catch
+            {
+
+            }
             string output = "";
             string[] args = Environment.GetCommandLineArgs();
             foreach (var arg in args)
@@ -216,7 +202,6 @@ namespace ImageProcessor
                 }
                 label1.Text += arg.ToLower() + " ";
             }
-            EmulatorController.ReadConfig();
             if (File.Exists("bot.ini"))
             {
                 if(File.Exists(Environment.CurrentDirectory + "\\Profiles\\" + EmulatorController.profilePath + "\\bot.ini"))
@@ -233,12 +218,14 @@ namespace ImageProcessor
 
                 }
             }
+            EmulatorController.ReadConfig();
             foreach (var arg in args)
             {
                 if (arg.Contains("MEmu"))
                 {
                     Variables.Instance = arg;
                     label3.Text += " (" + Variables.Instance + ")";
+                    break;
                 }
             }
             string startuppath = "C:";
@@ -257,7 +244,8 @@ namespace ImageProcessor
                 MessageBox.Show("请安装逍遥模拟器再继续运行！");
                 if (File.Exists("Updater.exe"))
                 {
-                    Process.Start("Updater.exe", "http://dl.memuplay.com/download/backup/Memu-Setup-3.7.0.0.exe");
+                    Process p = Process.Start("Updater.exe", "http://dl.memuplay.com/download/backup/Memu-Setup-3.7.0.0.exe");
+                    p.WaitForExit();
                 }
             }
             openFileDialog1.InitialDirectory = startuppath;
@@ -308,7 +296,8 @@ namespace ImageProcessor
                 MessageBox.Show("请安装逍遥模拟器再继续运行！");
                 if (File.Exists("Updater.exe"))
                 {
-                    Process.Start("Updater.exe", "http://dl.memuplay.com/download/backup/Memu-Setup-3.7.0.0.exe");
+                    Process p = Process.Start("Updater.exe", "http://dl.memuplay.com/download/backup/Memu-Setup-3.7.0.0.exe");
+                    p.WaitForExit();
                 }
             }
             Variables.VBoxManagerPath = output.Replace("\\MEmu\\MEmu.exe", "\\MEmuHyperv");
@@ -423,27 +412,6 @@ namespace ImageProcessor
             {
                 WriteConfig("Level","0");
             }
-            if (Variables.Configure.TryGetValue("Background", out output))
-            {
-                if (output == "true")
-                {
-                    Variables.Background = true;
-                }
-                else
-                {
-                    checkBox1.Checked = false;
-                    Variables.Background = false;
-                }
-            }
-            else
-            {
-                Variables.Configure.Add("Background", "true");
-                Variables.Background = true;
-                using (var stream = File.AppendText("Profiles\\" + EmulatorController.profilePath + "\\bot.ini"))
-                {
-                    stream.WriteLine("Background=true");
-                }
-            }
             if(Variables.Configure.TryGetValue("Double_Event",out output))
             {
                 if(output == "true")
@@ -512,7 +480,7 @@ namespace ImageProcessor
                     checkBox15.Checked = true;
                 }
             }
-            if (Program.Is64BitOperatingSystem())
+            if (EmulatorsInstallationPath.Is64BitOperatingSystem())
             {
                 label13.Text = "系统资料：64位系统" ;
             }
@@ -521,12 +489,10 @@ namespace ImageProcessor
                 label13.Text = "系统资料：32位系统";
             }
             webBrowser1.ScriptErrorsSuppressed = true;
-            webBrowser2.ScriptErrorsSuppressed = true;
             webBrowser3.ScriptErrorsSuppressed = true;
             PrivateVariable.nospam = DateTime.Now;
             string ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36";
             DllImport.UrlMkSetSessionOption(DllImport.URLMON_OPTION_USERAGENT, ua, ua.Length, 0);
-            NetworkChange.NetworkAvailabilityChanged += NetworkChange_NetworkAvailabilityChanged;
             html = Img.index;
             WebClientOverride wc = new WebClientOverride();
             try
@@ -544,10 +510,10 @@ namespace ImageProcessor
 
             }
             webBrowser1.DocumentText = html;
-            LoadEventBrowser();
             webBrowser3.Navigating += OnNavigating;
             webBrowser3.Navigated += WebBrowser3_Navigated;
-            webBrowser3.Navigate(new Uri("http://www.xldsdr.com/valkyriecrusade"));
+            GetEventXML.LoadXMLEvent();
+            webBrowser3.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/sch/") + ".html"));
             Script.Read_Plugins();
             foreach (var s in PrivateVariable.BattleScript)
             {
@@ -570,14 +536,6 @@ namespace ImageProcessor
             PrivateVariable.EventType = -1;
             timer1.Start();
             timer2.Start();
-        }
-
-        private void NetworkChange_NetworkAvailabilityChanged(object sender, NetworkAvailabilityEventArgs e)
-        {
-            if (e.IsAvailable)
-            {
-                LoadEventBrowser();
-            }
         }
 
         private void WebBrowser3_Navigated(object sender, WebBrowserNavigatedEventArgs e)
@@ -641,20 +599,6 @@ namespace ImageProcessor
                 }
             }
             Variables.DeviceChanged = true;
-        }
-
-        private void LoadEventBrowser()
-        {
-            try
-            {
-                GetEventXML.LoadXMLEvent();
-                webBrowser2.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/","/sch/") + ".html"));
-            }
-            catch
-            {
-                html = Img.index;
-                webBrowser2.DocumentText = html;
-            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -748,7 +692,7 @@ namespace ImageProcessor
             }
             if (panel3.Visible == false)
             {
-                Width += 1090;
+                Width += 800;
                 panel3.Visible = true;
             }
             panel3.Enabled = false;
@@ -771,11 +715,7 @@ namespace ImageProcessor
             PrivateVariable.InEventScreen = false;
             PrivateVariable.InMainScreen = false;
             Variables.ScriptLog.Add("Script Stopped!");
-            if(Width > 1054)
-            {
-                Width -= 1090;
-                panel3.Visible = false;
-            }
+            button16_Click(sender, e);
             if (EmulatorController.handle != null && Variables.Proc != null)
             {
                 DllImport.SetParent(EmulatorController.handle, IntPtr.Zero);
@@ -792,7 +732,6 @@ namespace ImageProcessor
             if (PrivateVariable.EventType == 0)
             {
                 groupBox8.Text = "塔楼活动";
-                groupBox9.Text = "";
                 progressBar1.Value = Script.energy;
                 progressBar2.Value = Script.runes;
                 label7.Text = Script.runes + "/5";
@@ -830,12 +769,10 @@ namespace ImageProcessor
             }
             else if (PrivateVariable.EventType == 1)
             {
-                groupBox8.Text = "";
-                groupBox9.Text = "魔女讨伐";
+                groupBox8.Text = "魔女讨伐";
             }
             else if (PrivateVariable.EventType == 2)
             {
-                groupBox9.Text = "";
                 groupBox8.Text = "魔界活动";
                 label5.Text = "";
                 label7.Text = "";
@@ -876,7 +813,6 @@ namespace ImageProcessor
             else
             {
                 groupBox8.Text = "未知的活动";
-                groupBox9.Text = "未知的活动";
             }
         }
         /// <summary>
@@ -903,7 +839,7 @@ namespace ImageProcessor
                                 DllImport.GetWindowRect(EmulatorController.handle, ref rect);
                                 PrivateVariable.EmuDefaultLocation = new Point(rect.left, rect.top);
                                 DllImport.SetParent(EmulatorController.handle, panel3.Handle);
-                                DllImport.MoveWindow(EmulatorController.handle, -1, -55, 1124, 700, false);
+                                DllImport.MoveWindow(EmulatorController.handle, -1, -55, 840, 700, false);
                                 Docked = true;
                             }
                             else if (Docked)
@@ -917,7 +853,7 @@ namespace ImageProcessor
                                 DllImport.GetWindowRect(EmulatorController.handle, ref rect);
                                 if(rect.left != -1 || rect.top != -55)
                                 {
-                                    DllImport.MoveWindow(EmulatorController.handle, -1, -55, 1124, 700, false);
+                                    DllImport.MoveWindow(EmulatorController.handle, -1, -55, 840, 700, false);
                                 }
                             }
                         }
@@ -939,10 +875,17 @@ namespace ImageProcessor
                 else
                 {
                     Docked = false;
+                    int error = 0;
                     while (Variables.Proc == null)
                     {
                         EmulatorController.ConnectAndroidEmulator(String.Empty, String.Empty, MEmu);
+                        error++;
                         Thread.Sleep(1000);
+                        if(error > 60)
+                        {
+                            EmulatorController.StartEmulator();
+                            error = 0;
+                        }
                     }
                     Variables.ScriptLog.Add("Emulator Started");
                 }
@@ -1141,12 +1084,6 @@ namespace ImageProcessor
             button3.BackColor = Color.Silver;
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-
-            Variables.Background = checkBox1.Checked;
-        }
-
         private void checkBox7_CheckedChanged(object sender, EventArgs e)
         {
             textBox3.Visible = checkBox7.Checked;
@@ -1236,7 +1173,7 @@ namespace ImageProcessor
                 }
                 else
                 {
-                    webBrowser3.Visible = false;
+                    webBrowser3.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/sch/") + ".html"));
                 }
                 
             }
@@ -1245,47 +1182,17 @@ namespace ImageProcessor
 
         private void button11_Click_1(object sender, EventArgs e)
         {
-            if (webBrowser3.Visible)
-            {
-                webBrowser3.Refresh();
-            }
-            else
-            {
-                LoadEventBrowser();
-            }
-
-        }
-
-        private void webBrowser2_NewWindow(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            webBrowser2.Navigate(webBrowser2.StatusText);
-            e.Cancel = true;
+             webBrowser3.Refresh();
         }
 
         private void button12_Click(object sender, EventArgs e)
         {
-            if (webBrowser3.Visible)
-            {
-                webBrowser3.GoBack();
-            }
-            else
-            {
-                webBrowser2.GoBack();
-            }
-
+             webBrowser3.GoBack();
         }
 
         private void button13_Click(object sender, EventArgs e)
         {
-            if (webBrowser3.Visible)
-            {
-                webBrowser3.GoForward();
-            }
-            else
-            {
-                webBrowser2.GoForward();
-            }
-
+             webBrowser3.GoForward();
         }
 
         private void checkBox12_CheckedChanged(object sender, EventArgs e)
@@ -1356,15 +1263,15 @@ namespace ImageProcessor
 
         private void button16_Click(object sender, EventArgs e)
         {
-            if (Width > 1280)
+            if (Width > 500)
             {
-                Width -= 1104;
+                Width -= 800;
                 panel3.Visible = false;
                 button16.Text = ">";
             }
             else
             {
-                Width += 1104;
+                Width += 800;
                 panel3.Visible = true;
                 button16.Text = "<";
             }
@@ -1532,7 +1439,7 @@ namespace ImageProcessor
             if (radioButton4.Checked)
             {
                 WriteConfig("Level", "3");
-                Level = 1;
+                Level = 3;
             }
         }
 
@@ -1541,7 +1448,7 @@ namespace ImageProcessor
             if (radioButton5.Checked)
             {
                 WriteConfig("Level", "4");
-                Level = 1;
+                Level = 4;
             }
         }
 
