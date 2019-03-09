@@ -14,6 +14,7 @@ namespace UI
     class ScriptErrorHandler
     {
         private static List<Bitmap> errorImages = new List<Bitmap>();
+        public static bool PauseErrorHandler;
         //Click away all error messages
         public static void ErrorHandle()
         {
@@ -28,6 +29,11 @@ namespace UI
             }
             while (PrivateVariable.Run)
             {
+                if (PauseErrorHandler)
+                {
+                    Thread.Sleep(1000);
+                    return;
+                }
                 if (Variables.Proc != null)
                 {
                     try
@@ -35,7 +41,8 @@ namespace UI
                         foreach (var e in errorImages)
                         {
                             Thread.Sleep(1000);
-                            Point? p = EmulatorController.FindImage(Script.image, e, false);
+                            byte[] crop = EmulatorController.CropImage(Script.image, new Point(350,180), new Point(980,515));
+                            Point? p = EmulatorController.FindImage(crop, e, false);
                             if (p != null)
                             {
                                 EmulatorController.SendTap(p.Value);
@@ -48,7 +55,36 @@ namespace UI
                     {
 
                     }
-                    WentShop();
+                    //Went Shop
+                    Point? loc = EmulatorController.FindImage(Script.image, "Img\\Errors\\Shop\\Background.png", false);
+                    if (loc != null)
+                    {
+                        EmulatorController.KillGame("com.nubee.valkyriecrusade");
+                        Variables.ScriptLog.Add("Entered Shop! Maybe no energy left?");
+                        Reset("Critical error found! Trying to restart game!");
+                    }
+                    else
+                    {
+                        Thread.Sleep(1000);
+                        loc = EmulatorController.FindImage(Script.image, "Img\\Errors\\Shop\\Background_Light.png", false);
+                        if (loc != null)
+                        {
+                            EmulatorController.KillGame("com.nubee.valkyriecrusade");
+                            Variables.ScriptLog.Add("Entered Shop! Maybe no energy left?");
+                            Reset("Critical error found! Trying to restart game!");
+                        }
+                    }
+                    if (PrivateVariable.Battling == true && PrivateVariable.EventType == 2)
+                    {
+                        var point = EmulatorController.FindImage(Script.image, "Img\\HellLoc.png", false);
+                        if (point != null)
+                        {
+                            PrivateVariable.Battling = false;
+                            Variables.ScriptLog.Add("Battle Ended!");
+                            return;
+                        }
+                        Thread.Sleep(100);
+                    }
                 }
 
             }
@@ -59,31 +95,9 @@ namespace UI
             PrivateVariable.InMainScreen = false;
             PrivateVariable.InEventScreen = false;
             PrivateVariable.Battling = false;
+            PrivateVariable.InMap = false;
             PrivateVariable.EventType = -1;
             Variables.ScriptLog.Add(log);
-        }
-        //Check the script went to shop
-        private static void WentShop()
-        {
-            Point? loc = EmulatorController.FindImage(Script.image, "Img\\Errors\\Shop\\Background.png", false);
-            if (loc != null)
-            {
-                EmulatorController.KillGame("com.nubee.valkyriecrusade");
-                Variables.ScriptLog.Add("Entered Shop! Maybe no energy left?");
-                Reset("Critical error found! Trying to restart game!");
-            }
-            else
-            {
-                Thread.Sleep(1000);
-                loc = EmulatorController.FindImage(Script.image, "Img\\Errors\\Shop\\Background_Light.png", false);
-                if(loc != null)
-                {
-                    EmulatorController.KillGame("com.nubee.valkyriecrusade");
-                    Variables.ScriptLog.Add("Entered Shop! Maybe no energy left?");
-                    Reset("Critical error found! Trying to restart game!");
-                }
-            } 
-
         }
     }
 }

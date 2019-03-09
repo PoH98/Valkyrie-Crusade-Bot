@@ -12,9 +12,9 @@ using System.Text.RegularExpressions;
 using SharpAdbClient;
 using System.Text;
 using System.Security.Principal;
-using System.Net.NetworkInformation;
 using ImgXml;
 using System.Net.Sockets;
+using System.Collections.Generic;
 
 namespace ImageProcessor
 {
@@ -30,6 +30,8 @@ namespace ImageProcessor
         public static string[] MEmu = {"MEmu","逍遥模拟器" };
 
         static System.Windows.Forms.Timer timeout = new System.Windows.Forms.Timer();
+
+        static List<CheckBox> customScriptEnable = new List<CheckBox>();
 
         public MainScreen()
         {
@@ -219,6 +221,7 @@ namespace ImageProcessor
                 }
             }
             EmulatorController.ReadConfig();
+            string path = "";
             foreach (var arg in args)
             {
                 if (arg.Contains("MEmu"))
@@ -326,7 +329,7 @@ namespace ImageProcessor
                     {
                         string regexSearch = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
                         Regex r = new Regex(string.Format("[{0}]", Regex.Escape(regexSearch)));
-                        var path = s.ToLower().Replace("name: 'download', host path: '", "").Replace("' (machine mapping), writable", "");
+                        path = s.ToLower().Replace("name: 'download', host path: '", "").Replace("' (machine mapping), writable", "");
                         path = r.Replace(path, "\\");
                         path = path.Replace("\\\\", ":\\");
                         if (output != path)
@@ -419,19 +422,6 @@ namespace ImageProcessor
                     checkBox8.Checked = true;
                 }
             }
-            if (Variables.Configure.TryGetValue("Archwitch_New", out output))
-            {
-                if (output == "true")
-                {
-                    PrivateVariable.AlwaysAttackNew = true;
-                    checkBox9.Checked = true;
-                }
-                else
-                {
-                    PrivateVariable.AlwaysAttackNew = false;
-                    checkBox9.Checked = false;
-                }
-            }
             if(Variables.Configure.TryGetValue("Treasure_Hunt",out output))
             {
                 if(output != "-1")
@@ -466,20 +456,6 @@ namespace ImageProcessor
             {
                 comboBox1.SelectedIndex = comboBox1.Items.IndexOf(output);
             }
-            if(Variables.Configure.TryGetValue("WitchGate",out output))
-            {
-                if(output == "true")
-                {
-                    checkBox14.Checked = true;
-                }
-            }
-            if(Variables.Configure.TryGetValue("A_Repeat",out output))
-            {
-                if(output == "true")
-                {
-                    checkBox15.Checked = true;
-                }
-            }
             if (EmulatorsInstallationPath.Is64BitOperatingSystem())
             {
                 label13.Text = "系统资料：64位系统" ;
@@ -493,7 +469,7 @@ namespace ImageProcessor
             PrivateVariable.nospam = DateTime.Now;
             string ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36";
             DllImport.UrlMkSetSessionOption(DllImport.URLMON_OPTION_USERAGENT, ua, ua.Length, 0);
-            html = Img.index;
+            html = Img.index;   
             WebClientOverride wc = new WebClientOverride();
             try
             {
@@ -518,17 +494,43 @@ namespace ImageProcessor
             foreach (var s in PrivateVariable.BattleScript)
             {
                 tabControl2.TabPages.Add(s.ScriptName());
+                CheckBox chk = new CheckBox();
+                chk.Text = "使用脚本";
+                chk.Checked = false;
+                chk.CheckedChanged += Chk_CheckedChanged;
+                chk.Location = new Point(10, 250);
+                chk.AutoSize = true;
+                tabControl2.TabPages[tabControl2.TabPages.Count - 1].Controls.Add(chk);
+                customScriptEnable.Add(chk);
                 foreach (var c in s.CreateUI())
                 {
                     tabControl2.TabPages[tabControl2.TabPages.Count - 1].Controls.Add(c);
                 }
             }
-            var request = WebRequest.Create("http://www-valkyriecrusade.nubee.com/" + GetEventXML.RandomImage);
-            using (var response = request.GetResponse())
-            using (var stream = response.GetResponseStream())
+            string n = File.ReadAllText("saved.script");
+            try
             {
-                pictureBox4.Image = Image.FromStream(stream);
+                int i = Convert.ToInt32(n);
+                if(i > customScriptEnable.Count)
+                {
+                    i = 0;
+                }
+                customScriptEnable[i].Checked = true;
             }
+            catch
+            {
+                customScriptEnable[0].Checked = true;
+            }
+            if(GetEventXML.RandomImage!=null)
+            {
+                var request = WebRequest.Create("http://www-valkyriecrusade.nubee.com/" + GetEventXML.RandomImage);
+                using (var response = request.GetResponse())
+                using (var stream = response.GetResponseStream())
+                {
+                    pictureBox4.Image = Image.FromStream(stream);
+                }
+            }
+            
             checkBox10.Enabled = radioButton9.Checked;
             Loading.LoadCompleted = true;
             Thread mon = new Thread(DeviceConnected);
@@ -536,6 +538,24 @@ namespace ImageProcessor
             PrivateVariable.EventType = -1;
             timer1.Start();
             timer2.Start();
+        }
+
+        private void Chk_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox ck = sender as CheckBox;
+            if (ck.Checked)
+            {
+                PrivateVariable.Selected_Script = customScriptEnable.IndexOf(ck);
+                File.WriteAllText("saved.script", PrivateVariable.Selected_Script.ToString());
+
+            }
+            foreach (var c in customScriptEnable)
+            {
+                if(c != ck)
+                {
+                    c.Checked = !ck.Checked;
+                }
+            }
         }
 
         private void WebBrowser3_Navigated(object sender, WebBrowserNavigatedEventArgs e)
@@ -692,11 +712,10 @@ namespace ImageProcessor
             }
             if (panel3.Visible == false)
             {
-                Width += 800;
+                Width += 700;
                 panel3.Visible = true;
             }
             panel3.Enabled = false;
-            PrivateVariable.AlwaysAttackNew = checkBox9.Checked;
             Variables.start = new Thread(Script.Bot);
             Variables.start.Start();
             Thread capture = new Thread(Capt);
@@ -714,14 +733,16 @@ namespace ImageProcessor
             PrivateVariable.Battling = false;
             PrivateVariable.InEventScreen = false;
             PrivateVariable.InMainScreen = false;
+            PrivateVariable.InMap = false;
             Variables.ScriptLog.Add("Script Stopped!");
             button16_Click(sender, e);
             if (EmulatorController.handle != null && Variables.Proc != null)
             {
                 DllImport.SetParent(EmulatorController.handle, IntPtr.Zero);
-                DllImport.MoveWindow(EmulatorController.handle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 1280, 720, true);
+                DllImport.MoveWindow(EmulatorController.handle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 1318 , 752, true);
+                EmulatorController.handle = IntPtr.Zero;
+                Docked = false;
             }
-            Docked = false;
             Variables.start = null;
             button1.Enabled = true;
         }
@@ -774,11 +795,12 @@ namespace ImageProcessor
             else if (PrivateVariable.EventType == 2)
             {
                 groupBox8.Text = "魔界活动";
-                label5.Text = "";
-                label7.Text = "";
+                label5.Text = "地图碎片数量";
+                label7.Text = Script.runes + "/4";
                 label6.Text = Script.energy + "/5";
-                progressBar2.Visible = false;
+                progressBar2.Maximum = 4;
                 progressBar1.Value = Script.energy;
+                progressBar2.Value = Script.runes;
                 if (Script.nextOnline != null)
                 {
                     if (Script.nextOnline > DateTime.Now)
@@ -829,6 +851,11 @@ namespace ImageProcessor
                     {
                         EmulatorController.ConnectAndroidEmulator(String.Empty, String.Empty, MEmu);
                     }
+                    if (!DllImport.IsWindow(EmulatorController.handle))
+                    {
+                        EmulatorController.handle = IntPtr.Zero;
+                        Docked = false;
+                    }
                     panel3.Invoke((MethodInvoker)delegate
                     {
                         if (DllImport.GetParent(EmulatorController.handle) != panel3.Handle)
@@ -839,27 +866,23 @@ namespace ImageProcessor
                                 DllImport.GetWindowRect(EmulatorController.handle, ref rect);
                                 PrivateVariable.EmuDefaultLocation = new Point(rect.left, rect.top);
                                 DllImport.SetParent(EmulatorController.handle, panel3.Handle);
-                                DllImport.MoveWindow(EmulatorController.handle, -1, -55, 840, 700, false);
+                                DllImport.MoveWindow(EmulatorController.handle, -1, -30, 736, 600, false);
                                 Docked = true;
                             }
                             else if (Docked)
                             {
-                                if (!DllImport.IsWindow(EmulatorController.handle))
-                                {
-                                    EmulatorController.handle = IntPtr.Zero;
-                                    Docked = false;
-                                }
                                 DllImport.Rect rect = new DllImport.Rect();
                                 DllImport.GetWindowRect(EmulatorController.handle, ref rect);
                                 if(rect.left != -1 || rect.top != -55)
                                 {
-                                    DllImport.MoveWindow(EmulatorController.handle, -1, -55, 840, 700, false);
+                                    DllImport.MoveWindow(EmulatorController.handle, -1, -30, 736, 600, false);
                                 }
                             }
                         }
                     });
                     try
                     {
+
                         byte[] newimage = EmulatorController.ImageCapture();
                         if (newimage != null)
                         {
@@ -883,6 +906,7 @@ namespace ImageProcessor
                         Thread.Sleep(1000);
                         if(error > 60)
                         {
+                            EmulatorController.CloseEmulator("MEmuManage.exe");
                             EmulatorController.StartEmulator();
                             error = 0;
                         }
@@ -974,34 +998,7 @@ namespace ImageProcessor
                     x++;
                 }
             }
-            if (checkBox9.Checked)
-            {
-                int x = 0;
-                foreach (var l in lines)
-                {
-                    string key = l.Split('=')[0];
-                    if (key == "Archwitch_New")
-                    {
-                        lines[x] = "Archwitch_New=true";
-                        break;
-                    }
-                    x++;
-                }
-            }
-            else
-            {
-                int x = 0;
-                foreach (var l in lines)
-                {
-                    string key = l.Split('=')[0];
-                    if (key == "Archwitch_New")
-                    {
-                        lines[x] = "Archwitch_New=false";
-                        break;
-                    }
-                    x++;
-                }
-            }
+            
             if (checkBox12.Checked)
             {
                 int x = 0;
@@ -1084,11 +1081,6 @@ namespace ImageProcessor
             button3.BackColor = Color.Silver;
         }
 
-        private void checkBox7_CheckedChanged(object sender, EventArgs e)
-        {
-            textBox3.Visible = checkBox7.Checked;
-        }
-
         private void checkBox6_CheckedChanged(object sender, EventArgs e)
         {
             PrivateVariable.TakePartInNormalStage = checkBox6.Checked;
@@ -1117,12 +1109,6 @@ namespace ImageProcessor
         private void checkBox8_MouseLeave(object sender, EventArgs e)
         {
             toolTip1.Hide(checkBox8);
-        }
-
-        private void checkBox9_CheckedChanged(object sender, EventArgs e)
-        {
-            PrivateVariable.AlwaysAttackNew = checkBox9.Checked;
-            WriteConfig("Archwitch_New", checkBox9.Checked.ToString().ToLower());
         }
 
         private void button9_Click(object sender, EventArgs e)
@@ -1263,15 +1249,15 @@ namespace ImageProcessor
 
         private void button16_Click(object sender, EventArgs e)
         {
-            if (Width > 500)
+            if (Width > 450)
             {
-                Width -= 800;
+                Width -= 700;
                 panel3.Visible = false;
                 button16.Text = ">";
             }
             else
             {
-                Width += 800;
+                Width += 700;
                 panel3.Visible = true;
                 button16.Text = "<";
             }
@@ -1354,12 +1340,6 @@ namespace ImageProcessor
             WriteConfig("Archwitch",comboBox1.Items[comboBox1.SelectedIndex].ToString());
         }
 
-        private void checkBox14_CheckedChanged(object sender, EventArgs e)
-        {
-            Script.EnterWitchGate = checkBox14.Checked;
-            WriteConfig("WitchGate", checkBox14.Checked.ToString().ToLower());
-        }
-
         private void radioButton7_CheckedChanged(object sender, EventArgs e)
         {
             if (radioButton7.Checked)
@@ -1374,12 +1354,6 @@ namespace ImageProcessor
                     webBrowser3.Navigate("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/sch/index.html");
                 }
             }
-        }
-
-        private void checkBox15_CheckedChanged(object sender, EventArgs e)
-        {
-            Script.Archwitch_Repeat = checkBox15.Checked;
-            WriteConfig("A_Repeat", checkBox15.Checked.ToString().ToLower());
         }
 
         private static void WriteConfig(string key, string value)
@@ -1410,18 +1384,22 @@ namespace ImageProcessor
 
         private void pictureBox4_Click(object sender, EventArgs e)
         {
-            SaveFileDialog s = new SaveFileDialog();
-            s.CheckPathExists = true;
-            s.OverwritePrompt = true;
-            s.AddExtension = false;
-            s.Filter = "(PNG)|*.png";
-            s.DefaultExt = "png";
-            s.AddExtension = true;
-            var result = s.ShowDialog();
-            if(result == DialogResult.OK)
+            if(pictureBox4.Image != null)
             {
-                pictureBox4.Image.Save(s.FileName);
+                SaveFileDialog s = new SaveFileDialog();
+                s.CheckPathExists = true;
+                s.OverwritePrompt = true;
+                s.AddExtension = false;
+                s.Filter = "(PNG)|*.png";
+                s.DefaultExt = "png";
+                s.AddExtension = true;
+                var result = s.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    pictureBox4.Image.Save(s.FileName);
+                }
             }
+            
         }
 
         private void pictureBox4_MouseEnter(object sender, EventArgs e)

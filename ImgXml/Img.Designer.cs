@@ -19,7 +19,7 @@ namespace ImgXml {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Img {
@@ -133,56 +133,6 @@ namespace ImgXml {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap Demon_Angle {
-            get {
-                object obj = ResourceManager.GetObject("Demon_Angle", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Demon_Arch {
-            get {
-                object obj = ResourceManager.GetObject("Demon_Arch", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Demon_Boss {
-            get {
-                object obj = ResourceManager.GetObject("Demon_Boss", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Demon_Box {
-            get {
-                object obj = ResourceManager.GetObject("Demon_Box", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Demon_Demon {
-            get {
-                object obj = ResourceManager.GetObject("Demon_Demon", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap Demon_InEvent {
             get {
                 object obj = ResourceManager.GetObject("Demon_InEvent", resourceCulture);
@@ -206,6 +156,16 @@ namespace ImgXml {
         public static System.Drawing.Bitmap Demon_Start {
             get {
                 object obj = ResourceManager.GetObject("Demon_Start", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap DemonEnd {
+            get {
+                object obj = ResourceManager.GetObject("DemonEnd", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -291,7 +251,9 @@ namespace ImgXml {
         ///&lt;p&gt;挂机无法获取任何神女控活动资料！可能造成游戏内网络连接不稳定！
         ///&lt;br&gt;
         ///您还是可以继续使用此软件，只不过游戏很可能经常断线。建议尽快修复您的网络连接！
-        /// [rest of string was truncated]&quot;;.
+        ///&lt;/p&gt;
+        ///&lt;/body&gt;
+        ///&lt;/html&gt; [rest of string was truncated]&quot;;.
         /// </summary>
         public static string index {
             get {

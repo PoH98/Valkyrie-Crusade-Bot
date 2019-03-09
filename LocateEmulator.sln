@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updater", "Installer\Update
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImgXml", "ImgXml\ImgXml.csproj", "{E5F41FF6-B00F-4EBF-9D13-2D24BB232B65}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DefaultScript", "DefaultScript\DefaultScript.csproj", "{2702F485-E54A-4AAB-9C87-B465A733645C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastScript", "FastScript\FastScript.csproj", "{971DADD7-D68A-47A5-8B9E-53686C6406EB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +55,22 @@ Global
 		{E5F41FF6-B00F-4EBF-9D13-2D24BB232B65}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E5F41FF6-B00F-4EBF-9D13-2D24BB232B65}.Release|x86.ActiveCfg = Release|Any CPU
 		{E5F41FF6-B00F-4EBF-9D13-2D24BB232B65}.Release|x86.Build.0 = Release|Any CPU
+		{2702F485-E54A-4AAB-9C87-B465A733645C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2702F485-E54A-4AAB-9C87-B465A733645C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2702F485-E54A-4AAB-9C87-B465A733645C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2702F485-E54A-4AAB-9C87-B465A733645C}.Debug|x86.Build.0 = Debug|Any CPU
+		{2702F485-E54A-4AAB-9C87-B465A733645C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2702F485-E54A-4AAB-9C87-B465A733645C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2702F485-E54A-4AAB-9C87-B465A733645C}.Release|x86.ActiveCfg = Release|Any CPU
+		{2702F485-E54A-4AAB-9C87-B465A733645C}.Release|x86.Build.0 = Release|Any CPU
+		{971DADD7-D68A-47A5-8B9E-53686C6406EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{971DADD7-D68A-47A5-8B9E-53686C6406EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{971DADD7-D68A-47A5-8B9E-53686C6406EB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{971DADD7-D68A-47A5-8B9E-53686C6406EB}.Debug|x86.Build.0 = Debug|Any CPU
+		{971DADD7-D68A-47A5-8B9E-53686C6406EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{971DADD7-D68A-47A5-8B9E-53686C6406EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{971DADD7-D68A-47A5-8B9E-53686C6406EB}.Release|x86.ActiveCfg = Release|Any CPU
+		{971DADD7-D68A-47A5-8B9E-53686C6406EB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

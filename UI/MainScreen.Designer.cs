@@ -68,16 +68,7 @@
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.button8 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.groupBox14 = new System.Windows.Forms.GroupBox();
-            this.checkBox15 = new System.Windows.Forms.CheckBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.checkBox14 = new System.Windows.Forms.CheckBox();
-            this.checkBox9 = new System.Windows.Forms.CheckBox();
-            this.checkBox5 = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.checkBox13 = new System.Windows.Forms.CheckBox();
             this.groupBox13 = new System.Windows.Forms.GroupBox();
@@ -85,11 +76,9 @@
             this.radioButton10 = new System.Windows.Forms.RadioButton();
             this.radioButton9 = new System.Windows.Forms.RadioButton();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.checkBox7 = new System.Windows.Forms.CheckBox();
-            this.checkBox4 = new System.Windows.Forms.CheckBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.comboBox3 = new System.Windows.Forms.ComboBox();
-            this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.checkBox6 = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.radioButton5 = new System.Windows.Forms.RadioButton();
@@ -135,9 +124,6 @@
             this.tabPage2.SuspendLayout();
             this.groupBox11.SuspendLayout();
             this.groupBox5.SuspendLayout();
-            this.groupBox4.SuspendLayout();
-            this.groupBox14.SuspendLayout();
-            this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox13.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -160,7 +146,7 @@
             // 
             this.button1.BackColor = System.Drawing.Color.Silver;
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Location = new System.Drawing.Point(6, 464);
+            this.button1.Location = new System.Drawing.Point(6, 394);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(158, 32);
             this.button1.TabIndex = 3;
@@ -174,7 +160,7 @@
             // 
             this.button3.BackColor = System.Drawing.Color.Silver;
             this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button3.Location = new System.Drawing.Point(6, 502);
+            this.button3.Location = new System.Drawing.Point(6, 432);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(158, 32);
             this.button3.TabIndex = 5;
@@ -200,7 +186,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(451, 22);
+            this.panel1.Size = new System.Drawing.Size(449, 22);
             this.panel1.TabIndex = 12;
             this.panel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseDown);
             // 
@@ -211,7 +197,7 @@
             this.button16.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.button16.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button16.ForeColor = System.Drawing.Color.White;
-            this.button16.Location = new System.Drawing.Point(378, 0);
+            this.button16.Location = new System.Drawing.Point(376, 0);
             this.button16.Name = "button16";
             this.button16.Size = new System.Drawing.Size(24, 22);
             this.button16.TabIndex = 4;
@@ -228,7 +214,7 @@
             this.button15.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.button15.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button15.ForeColor = System.Drawing.Color.White;
-            this.button15.Location = new System.Drawing.Point(402, 0);
+            this.button15.Location = new System.Drawing.Point(400, 0);
             this.button15.Name = "button15";
             this.button15.Size = new System.Drawing.Size(24, 22);
             this.button15.TabIndex = 3;
@@ -268,7 +254,7 @@
             this.button5.Dock = System.Windows.Forms.DockStyle.Right;
             this.button5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.button5.ForeColor = System.Drawing.Color.White;
-            this.button5.Location = new System.Drawing.Point(426, 0);
+            this.button5.Location = new System.Drawing.Point(424, 0);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(25, 22);
             this.button5.TabIndex = 0;
@@ -289,7 +275,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 22);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(441, 639);
+            this.tabControl1.Size = new System.Drawing.Size(441, 578);
             this.tabControl1.TabIndex = 13;
             // 
             // tabPage1
@@ -305,7 +291,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(433, 613);
+            this.tabPage1.Size = new System.Drawing.Size(433, 552);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "主页";
             this.tabPage1.ToolTipText = "主页都看不懂的话别活了";
@@ -313,7 +299,7 @@
             // Adb_Log
             // 
             this.Adb_Log.AutoSize = true;
-            this.Adb_Log.Location = new System.Drawing.Point(6, 564);
+            this.Adb_Log.Location = new System.Drawing.Point(6, 496);
             this.Adb_Log.Name = "Adb_Log";
             this.Adb_Log.Size = new System.Drawing.Size(110, 17);
             this.Adb_Log.TabIndex = 28;
@@ -330,7 +316,7 @@
             this.groupBox8.Controls.Add(this.label14);
             this.groupBox8.Controls.Add(this.label9);
             this.groupBox8.Controls.Add(this.label8);
-            this.groupBox8.Location = new System.Drawing.Point(170, 464);
+            this.groupBox8.Location = new System.Drawing.Point(170, 394);
             this.groupBox8.Name = "groupBox8";
             this.groupBox8.Size = new System.Drawing.Size(254, 146);
             this.groupBox8.TabIndex = 27;
@@ -464,7 +450,7 @@
             this.richTextBox1.Location = new System.Drawing.Point(6, 151);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(418, 307);
+            this.richTextBox1.Size = new System.Drawing.Size(418, 237);
             this.richTextBox1.TabIndex = 20;
             this.richTextBox1.Text = "";
             this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
@@ -472,7 +458,7 @@
             // checkBox2
             // 
             this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(6, 540);
+            this.checkBox2.Location = new System.Drawing.Point(6, 473);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(158, 17);
             this.checkBox2.TabIndex = 21;
@@ -494,13 +480,12 @@
             this.tabPage2.BackColor = System.Drawing.Color.Silver;
             this.tabPage2.Controls.Add(this.groupBox11);
             this.tabPage2.Controls.Add(this.groupBox5);
-            this.tabPage2.Controls.Add(this.groupBox4);
             this.tabPage2.Controls.Add(this.groupBox3);
             this.tabPage2.Controls.Add(this.pictureBox2);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(433, 613);
+            this.tabPage2.Size = new System.Drawing.Size(433, 552);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "设置";
             this.tabPage2.ToolTipText = "关卡与活动设置";
@@ -510,7 +495,7 @@
             this.groupBox11.Controls.Add(this.comboBox2);
             this.groupBox11.Controls.Add(this.checkBox8);
             this.groupBox11.Controls.Add(this.checkBox12);
-            this.groupBox11.Location = new System.Drawing.Point(220, 342);
+            this.groupBox11.Location = new System.Drawing.Point(220, 106);
             this.groupBox11.Name = "groupBox11";
             this.groupBox11.Size = new System.Drawing.Size(202, 98);
             this.groupBox11.TabIndex = 13;
@@ -567,18 +552,17 @@
             // 
             this.groupBox5.Controls.Add(this.textBox2);
             this.groupBox5.Controls.Add(this.label2);
-            this.groupBox5.Controls.Add(this.button8);
             this.groupBox5.Controls.Add(this.button7);
-            this.groupBox5.Location = new System.Drawing.Point(220, 446);
+            this.groupBox5.Location = new System.Drawing.Point(220, 210);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(202, 160);
+            this.groupBox5.Size = new System.Drawing.Size(202, 116);
             this.groupBox5.TabIndex = 11;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "其他功能";
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(9, 130);
+            this.textBox2.Location = new System.Drawing.Point(9, 78);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(187, 20);
             this.textBox2.TabIndex = 3;
@@ -586,21 +570,11 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 112);
+            this.label2.Location = new System.Drawing.Point(6, 60);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(122, 13);
             this.label2.TabIndex = 2;
             this.label2.Text = "IMEI (登入神女控需要)";
-            // 
-            // button8
-            // 
-            this.button8.Location = new System.Drawing.Point(6, 62);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(190, 38);
-            this.button8.TabIndex = 1;
-            this.button8.Text = "下载神女控";
-            this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // button7
             // 
@@ -612,95 +586,6 @@
             this.button7.UseVisualStyleBackColor = true;
             this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.groupBox14);
-            this.groupBox4.Controls.Add(this.groupBox2);
-            this.groupBox4.Location = new System.Drawing.Point(220, 106);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(202, 230);
-            this.groupBox4.TabIndex = 10;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "魔女活动";
-            // 
-            // groupBox14
-            // 
-            this.groupBox14.Controls.Add(this.checkBox15);
-            this.groupBox14.Controls.Add(this.comboBox1);
-            this.groupBox14.Location = new System.Drawing.Point(6, 121);
-            this.groupBox14.Name = "groupBox14";
-            this.groupBox14.Size = new System.Drawing.Size(190, 102);
-            this.groupBox14.TabIndex = 6;
-            this.groupBox14.TabStop = false;
-            this.groupBox14.Text = "关卡自定义位置";
-            // 
-            // checkBox15
-            // 
-            this.checkBox15.AutoSize = true;
-            this.checkBox15.Location = new System.Drawing.Point(6, 50);
-            this.checkBox15.Name = "checkBox15";
-            this.checkBox15.Size = new System.Drawing.Size(74, 17);
-            this.checkBox15.TabIndex = 1;
-            this.checkBox15.Text = "无限重复";
-            this.checkBox15.UseVisualStyleBackColor = true;
-            this.checkBox15.CheckedChanged += new System.EventHandler(this.checkBox15_CheckedChanged);
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(6, 23);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(178, 21);
-            this.comboBox1.TabIndex = 0;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.checkBox14);
-            this.groupBox2.Controls.Add(this.checkBox9);
-            this.groupBox2.Controls.Add(this.checkBox5);
-            this.groupBox2.Location = new System.Drawing.Point(6, 19);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(190, 96);
-            this.groupBox2.TabIndex = 5;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "魔女活动设置";
-            // 
-            // checkBox14
-            // 
-            this.checkBox14.AutoSize = true;
-            this.checkBox14.Location = new System.Drawing.Point(6, 64);
-            this.checkBox14.Name = "checkBox14";
-            this.checkBox14.Size = new System.Drawing.Size(74, 17);
-            this.checkBox14.TabIndex = 7;
-            this.checkBox14.Text = "魔女之扉";
-            this.checkBox14.UseVisualStyleBackColor = true;
-            this.checkBox14.CheckedChanged += new System.EventHandler(this.checkBox14_CheckedChanged);
-            // 
-            // checkBox9
-            // 
-            this.checkBox9.AutoSize = true;
-            this.checkBox9.Checked = true;
-            this.checkBox9.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox9.Location = new System.Drawing.Point(6, 41);
-            this.checkBox9.Name = "checkBox9";
-            this.checkBox9.Size = new System.Drawing.Size(74, 17);
-            this.checkBox9.TabIndex = 6;
-            this.checkBox9.Text = "最新副本";
-            this.checkBox9.UseVisualStyleBackColor = true;
-            this.checkBox9.CheckedChanged += new System.EventHandler(this.checkBox9_CheckedChanged);
-            // 
-            // checkBox5
-            // 
-            this.checkBox5.AutoSize = true;
-            this.checkBox5.Enabled = false;
-            this.checkBox5.Location = new System.Drawing.Point(6, 20);
-            this.checkBox5.Name = "checkBox5";
-            this.checkBox5.Size = new System.Drawing.Size(98, 17);
-            this.checkBox5.TabIndex = 1;
-            this.checkBox5.Text = "随机选择副本";
-            this.checkBox5.UseVisualStyleBackColor = true;
-            // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.checkBox13);
@@ -710,7 +595,7 @@
             this.groupBox3.Controls.Add(this.groupBox1);
             this.groupBox3.Location = new System.Drawing.Point(6, 106);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(208, 499);
+            this.groupBox3.Size = new System.Drawing.Size(208, 425);
             this.groupBox3.TabIndex = 9;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "塔楼/魔界活动";
@@ -736,7 +621,7 @@
             this.groupBox13.Size = new System.Drawing.Size(195, 98);
             this.groupBox13.TabIndex = 9;
             this.groupBox13.TabStop = false;
-            this.groupBox13.Text = "符文时间设置";
+            this.groupBox13.Text = "符文时间/宝藏时间设置";
             // 
             // checkBox10
             // 
@@ -777,11 +662,9 @@
             // 
             // groupBox6
             // 
-            this.groupBox6.Controls.Add(this.textBox3);
-            this.groupBox6.Controls.Add(this.checkBox7);
-            this.groupBox6.Controls.Add(this.checkBox4);
+            this.groupBox6.Controls.Add(this.label18);
+            this.groupBox6.Controls.Add(this.comboBox1);
             this.groupBox6.Controls.Add(this.comboBox3);
-            this.groupBox6.Controls.Add(this.checkBox3);
             this.groupBox6.Enabled = false;
             this.groupBox6.Location = new System.Drawing.Point(4, 272);
             this.groupBox6.Name = "groupBox6";
@@ -790,34 +673,22 @@
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "普通副本设置";
             // 
-            // textBox3
+            // label18
             // 
-            this.textBox3.Location = new System.Drawing.Point(6, 115);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(121, 20);
-            this.textBox3.TabIndex = 5;
-            this.textBox3.Visible = false;
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(5, 47);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(31, 13);
+            this.label18.TabIndex = 4;
+            this.label18.Text = "关卡";
             // 
-            // checkBox7
+            // comboBox1
             // 
-            this.checkBox7.AutoSize = true;
-            this.checkBox7.Location = new System.Drawing.Point(6, 92);
-            this.checkBox7.Name = "checkBox7";
-            this.checkBox7.Size = new System.Drawing.Size(98, 17);
-            this.checkBox7.TabIndex = 4;
-            this.checkBox7.Text = "用户选择副本";
-            this.checkBox7.UseVisualStyleBackColor = true;
-            this.checkBox7.CheckedChanged += new System.EventHandler(this.checkBox7_CheckedChanged);
-            // 
-            // checkBox4
-            // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.Location = new System.Drawing.Point(6, 69);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(74, 17);
-            this.checkBox4.TabIndex = 3;
-            this.checkBox4.Text = "最新副本";
-            this.checkBox4.UseVisualStyleBackColor = true;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(6, 63);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(121, 21);
+            this.comboBox1.TabIndex = 3;
             // 
             // comboBox3
             // 
@@ -830,16 +701,6 @@
             this.comboBox3.Size = new System.Drawing.Size(121, 21);
             this.comboBox3.TabIndex = 2;
             this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
-            // 
-            // checkBox3
-            // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.Location = new System.Drawing.Point(6, 46);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(98, 17);
-            this.checkBox3.TabIndex = 1;
-            this.checkBox3.Text = "随机选择副本";
-            this.checkBox3.UseVisualStyleBackColor = true;
             // 
             // checkBox6
             // 
@@ -949,7 +810,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(433, 613);
+            this.tabPage3.Size = new System.Drawing.Size(433, 552);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Debug测试";
             this.tabPage3.ToolTipText = "除错测试";
@@ -983,9 +844,9 @@
             this.groupBox12.Controls.Add(this.label12);
             this.groupBox12.Controls.Add(this.label11);
             this.groupBox12.Controls.Add(this.label10);
-            this.groupBox12.Location = new System.Drawing.Point(6, 237);
+            this.groupBox12.Location = new System.Drawing.Point(9, 237);
             this.groupBox12.Name = "groupBox12";
-            this.groupBox12.Size = new System.Drawing.Size(416, 364);
+            this.groupBox12.Size = new System.Drawing.Size(416, 301);
             this.groupBox12.TabIndex = 19;
             this.groupBox12.TabStop = false;
             this.groupBox12.Text = "系统资料";
@@ -1068,7 +929,7 @@
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(433, 613);
+            this.tabPage4.Size = new System.Drawing.Size(433, 552);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "脚本";
             // 
@@ -1077,7 +938,7 @@
             this.tabControl2.Location = new System.Drawing.Point(6, 6);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(421, 595);
+            this.tabControl2.Size = new System.Drawing.Size(421, 532);
             this.tabControl2.TabIndex = 0;
             // 
             // tabPage5
@@ -1087,7 +948,7 @@
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(433, 613);
+            this.tabPage5.Size = new System.Drawing.Size(433, 552);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "资料库";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -1204,7 +1065,7 @@
             this.webBrowser3.Location = new System.Drawing.Point(8, 96);
             this.webBrowser3.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser3.Name = "webBrowser3";
-            this.webBrowser3.Size = new System.Drawing.Size(419, 505);
+            this.webBrowser3.Size = new System.Drawing.Size(419, 442);
             this.webBrowser3.TabIndex = 21;
             this.webBrowser3.WebBrowserShortcutsEnabled = false;
             this.webBrowser3.NewWindow += new System.ComponentModel.CancelEventHandler(this.webBrowser3_NewWindow);
@@ -1217,9 +1078,9 @@
             // 
             this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.panel3.BackColor = System.Drawing.Color.Black;
-            this.panel3.Location = new System.Drawing.Point(447, 32);
+            this.panel3.Location = new System.Drawing.Point(447, 28);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(0, 613);
+            this.panel3.Size = new System.Drawing.Size(0, 568);
             this.panel3.TabIndex = 31;
             this.panel3.Visible = false;
             // 
@@ -1228,7 +1089,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.DimGray;
-            this.ClientSize = new System.Drawing.Size(451, 661);
+            this.ClientSize = new System.Drawing.Size(449, 600);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.panel1);
@@ -1254,11 +1115,6 @@
             this.groupBox11.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox14.ResumeLayout(false);
-            this.groupBox14.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox13.ResumeLayout(false);
@@ -1301,13 +1157,9 @@
         private System.Windows.Forms.RadioButton radioButton2;
         private System.Windows.Forms.RadioButton radioButton3;
         private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.CheckBox checkBox5;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.ComboBox comboBox3;
-        private System.Windows.Forms.CheckBox checkBox3;
         private System.Windows.Forms.CheckBox checkBox6;
         private System.Windows.Forms.RadioButton radioButton5;
         private System.Windows.Forms.TabPage tabPage3;
@@ -1315,19 +1167,14 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.CheckBox checkBox2;
-        private System.Windows.Forms.Button button8;
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.TextBox textBox3;
-        private System.Windows.Forms.CheckBox checkBox7;
-        private System.Windows.Forms.CheckBox checkBox4;
         private System.Windows.Forms.CheckBox checkBox8;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.GroupBox groupBox8;
-        private System.Windows.Forms.CheckBox checkBox9;
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.TabPage tabPage5;
         private System.Windows.Forms.GroupBox groupBox10;
@@ -1356,12 +1203,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox checkBox13;
         private System.Windows.Forms.RadioButton radioButton11;
-        private System.Windows.Forms.GroupBox groupBox14;
         private System.Windows.Forms.TabControl tabControl2;
         private System.Windows.Forms.CheckBox checkBox10;
-        private System.Windows.Forms.CheckBox checkBox14;
-        private System.Windows.Forms.CheckBox checkBox15;
-        public System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.RadioButton radioButton7;
         private System.Windows.Forms.PictureBox pictureBox4;
         private System.Windows.Forms.Button button2;
@@ -1379,6 +1222,8 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }
 

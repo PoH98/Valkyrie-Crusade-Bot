@@ -21,16 +21,14 @@ using System.Threading;
 using System.Security.Cryptography;
 using System.Windows.Forms;
 
+
 namespace ImageProcessor
 {
-    /// <summary>
-    /// Functions that used to controls Emulators
-    /// </summary>
     public class EmulatorController
     {
         public static IntPtr handle = IntPtr.Zero;
         private static Thread cleaningthread = null;
-        private static ImageConverter _imageConverter = new ImageConverter();
+        
         /// <summary>
         /// The path to bot.ini
         /// </summary>
@@ -43,6 +41,7 @@ namespace ImageProcessor
         {
             try
             {
+                ImageConverter _imageConverter = new ImageConverter();
                 byte[] xByte = (byte[])_imageConverter.ConvertTo(image, typeof(byte[]));
                 return xByte;
             }
@@ -118,6 +117,13 @@ namespace ImageProcessor
             Variables.Proc = null;
             Variables.Controlled_Device = null;
             Variables.ScriptLog.Add("Emulator Closed");
+        }
+        public static void RestartEmulator()
+        {
+            CloseEmulator("MEmuManage.exe");
+            Variables.ScriptLog.Add("Restarting Emulator...");
+            Thread.Sleep(1000);
+            StartEmulator();
         }
         /// <summary>
         /// Refresh Variables.Proc and EmulatorController.Handle
@@ -195,6 +201,7 @@ namespace ImageProcessor
             {
                 Variables.AdbLog.Add("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
+                CloseEmulator("MEmuManage.exe");
             }
             return false;
         }
@@ -311,6 +318,7 @@ namespace ImageProcessor
             {
                 Variables.AdbLog.Add("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
+                CloseEmulator("MEmuManage.exe");
             }
             return false;
         }
@@ -346,6 +354,8 @@ namespace ImageProcessor
             {
                 Variables.AdbLog.Add("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
+                Variables.Controlled_Device = null;
+                Variables.Proc = null;
             }
             return false;
         }
@@ -382,6 +392,7 @@ namespace ImageProcessor
             {
                 Variables.AdbLog.Add("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
+                CloseEmulator("MEmuManage.exe");
             }
         }
         /// <summary>
@@ -412,6 +423,7 @@ namespace ImageProcessor
                     Variables.AdbLog.Add("Unable to read rgba file because of file not exist!");
                     return null;
                 }
+                path = path.Replace("\\\\", "\\");
                 raw = File.ReadAllBytes(path);
                 if (raw.Length > int.MaxValue || raw.Length < 1)
                 {
@@ -451,6 +463,7 @@ namespace ImageProcessor
             {
                 Variables.AdbLog.Add("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
+                CloseEmulator("MEmuManage.exe");
             }
             return null;
         }
@@ -492,6 +505,7 @@ namespace ImageProcessor
             {
                 Variables.AdbLog.Add("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
+                CloseEmulator("MEmuManage.exe");
             }
         }
         /// <summary>
@@ -536,6 +550,7 @@ namespace ImageProcessor
             {
                 Variables.AdbLog.Add("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
+                CloseEmulator("MEmuManage.exe");
             }
         }
         /// <summary>
@@ -574,6 +589,7 @@ namespace ImageProcessor
             {
                 Variables.AdbLog.Add("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
+                CloseEmulator("MEmuManage.exe");
             }
         }
         /// <summary>
@@ -613,6 +629,7 @@ namespace ImageProcessor
             {
                 Variables.AdbLog.Add("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
+                CloseEmulator("MEmuManage.exe");
             }
         }
         /// <summary>
@@ -661,7 +678,7 @@ namespace ImageProcessor
         /// </summary>
         /// <param name="emulator">Emulator that is supported</param>
         
-        public static void StartEmulator(Emulators emulator,[CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static void StartEmulator([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             string temp = "";
@@ -1076,6 +1093,7 @@ namespace ImageProcessor
             {
                 if (GrayStyle)
                 {
+                   
                     Image<Gray, byte> source = new Image<Gray, byte>(original);
                     Image<Gray, byte> template = new Image<Gray, byte>(find);
                     using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
@@ -1145,7 +1163,7 @@ namespace ImageProcessor
             {
                 if (GrayStyle)
                 {
-                    Image<Gray, byte> source = new Image<Gray, byte>(original);
+                    Image <Gray, byte> source = new Image<Gray, byte>(original);
                     Image<Gray, byte> template = new Image<Gray, byte>(findPath);
                     using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
                     {
