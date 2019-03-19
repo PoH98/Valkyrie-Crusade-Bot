@@ -883,7 +883,7 @@ namespace ImageProcessor
                     try
                     {
 
-                        byte[] newimage = EmulatorController.ImageCapture();
+                        var newimage = EmulatorController.ImageCapture();
                         if (newimage != null)
                         {
                             Script.image = newimage;
@@ -1440,7 +1440,7 @@ namespace ImageProcessor
         {
             if (File.Exists("OCR.png"))
             {
-                byte[] img = EmulatorController.Compress(Image.FromFile("OCR.png"));
+                var img = EmulatorController.Compress(Image.FromFile("OCR.png"));
                 MessageBox.Show(OCR.OcrImage(img,"eng"));
             }
         }

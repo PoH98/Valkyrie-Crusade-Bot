@@ -604,7 +604,7 @@ namespace UI
                 {
                     return;
                 }
-                byte[] crop = EmulatorController.CropImage(image, new Point(125, 0), new Point(900, 510));
+                var crop = EmulatorController.CropImage(image, new Point(125, 0), new Point(900, 510));
                 if (EmulatorController.FindImage(crop, Img.GreenButton, false) != null)
                 {
                     EmulatorController.SendTap(point.Value);
@@ -855,7 +855,7 @@ namespace UI
 
         }
 
-        //Amalgamation Event
+        //Demon Event
         private static void Demon_Realm()
         {
             Debug_.WriteLine();
@@ -1024,7 +1024,7 @@ namespace UI
                 {
                     Stage.Add(Image.FromFile(file));
                 }
-                byte[] crop = EmulatorController.CropImage(image, new Point(0, 0), new Point(1280, 615));
+                var crop = EmulatorController.CropImage(image, new Point(0, 0), new Point(1280, 615));
                 Variables.ScriptLog.Add("Trying to find stages to enter");
                 foreach (var stage in Stage)
                 {
@@ -1150,15 +1150,14 @@ namespace UI
             {
                 return;
             }
-            byte[] crop = EmulatorController.CropImage(image, new Point(125, 0), new Point(1280, 720));
+            var crop = EmulatorController.CropImage(image, new Point(125, 0), new Point(1280, 720));
             point = EmulatorController.FindImage(crop, Img.GreenButton, false);
             if (point != null)
             {
                 Variables.ScriptLog.Add("Green Button Found!");
                 if (PrivateVariable.EventType == 0)
                 {
-                    Point? temp = EmulatorController.FindImage(image, Img.TowerFinished, true);
-                    if (temp != null && RuneBoss && runes >= 3 && runes != 4)
+                    if (EmulatorController.FindImage(image, Img.TowerFinished, true) != null && RuneBoss && runes >= 3 && runes != 5)
                     {
                         PrivateVariable.InEventScreen = false;
                         PrivateVariable.InMainScreen = false;
@@ -1310,7 +1309,7 @@ namespace UI
             if (Attackable)
             {
                 Debug_.WriteLine();
-                byte[] enemy = EmulatorController.CropImage(image, new Point(582, 258), new Point(715, 308));
+                var enemy = EmulatorController.CropImage(image, new Point(582, 258), new Point(715, 308));
                 if (EmulatorController.RGBComparer(enemy, Color.FromArgb(33, 106, 159)) || EmulatorController.RGBComparer(enemy, Color.FromArgb(171, 0, 21)))
                 {
                     EmulatorController.SendTap(640, 156); //Boss在中间，打Boss

@@ -2,6 +2,7 @@
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using SharpAdbClient;
+using Emgu.CV.Util;
 using SharpAdbClient.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,8 @@ using System.Text;
 using System.Threading;
 using System.Security.Cryptography;
 using System.Windows.Forms;
-
+using Emgu.CV.Features2D;
+using Emgu.CV.Flann;
 
 namespace ImageProcessor
 {
@@ -730,34 +732,6 @@ namespace ImageProcessor
                 Environment.Exit(0);
             }
         }
-
-        private static byte[] ForegroundCapture(IntPtr handle)
-        {
-            Image temp = null;
-            var stopwatch = Stopwatch.StartNew();
-            try
-            {
-                DllImport.SetForegroundWindow(Variables.Proc.MainWindowHandle);
-            }
-            catch
-            {
-
-            }
-            var rect = new DllImport.Rect();
-            DllImport.GetWindowRect(handle, ref rect);
-            int width = rect.right - rect.left;
-            int height = rect.bottom - rect.top;
-            temp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-            Graphics graphics = Graphics.FromImage(temp);
-            graphics.CopyFromScreen(rect.left, rect.top, 0, 0, new Size(width, height), CopyPixelOperation.SourceCopy);
-            stopwatch.Stop();
-            if (stopwatch.ElapsedMilliseconds < 500)
-            {
-                Thread.Sleep(500);
-            }
-            Variables.AdbLog.Add("WinAPI capt saved to memory stream. Time used: " + stopwatch.ElapsedMilliseconds + " ms");
-            return Compress(temp);
-        }
         /// <summary>
         /// Get color of location in screenshots
         /// </summary>
@@ -1077,7 +1051,6 @@ namespace ImageProcessor
         /// <returns>Point or null</returns>
         public static Point? FindImage(byte[] screencapture, Bitmap find, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            Thread.Sleep(100);
             Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             if (screencapture == null)
             {
@@ -1146,7 +1119,6 @@ namespace ImageProcessor
         /// <returns>Point or null</returns>
         public static Point? FindImage(byte[] screencapture, string findPath, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            Thread.Sleep(100);
             Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             if (screencapture == null)
             {
@@ -1209,7 +1181,6 @@ namespace ImageProcessor
         /// <returns>Point or null</returns>
         public static Point? FindImage(byte[] screencapture, byte[] image, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            Thread.Sleep(100);
             Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             if (screencapture == null)
             {
@@ -1430,37 +1401,6 @@ namespace ImageProcessor
                 sb.Append(y);
             }
             return sb.ToString();
-        }
-        /// <summary>
-        /// Keycode for SendEvent
-        /// </summary>
-        public enum KeyCode
-        {
-            /// <summary>
-            /// Zoom in
-            /// </summary>
-            KEYCODE_ZOOM_IN = 168,
-            /// <summary>
-            /// Zoom out
-            /// </summary>
-            KEYCODE_ZOOM_OUT = 169,
-            /// <summary>
-            /// Mute device
-            /// </summary>
-            KEYCODE_MUTE = 91
-        };
-        /// <summary>
-        /// Send Event to emulator
-        /// </summary>
-        /// <param name="code">Keycode</param>
-        public static void SendEvent(KeyCode code)
-        {
-            var receiver = new ConsoleOutputReceiver();
-            if (Variables.Controlled_Device == null)
-            {
-                return;
-            }
-            AdbClient.Instance.ExecuteRemoteCommand("input keyevent " + (int)code, Variables.Controlled_Device, receiver);
         }
         /// <summary>
         /// Calculate SHA256 of string

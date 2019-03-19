@@ -29,6 +29,7 @@ namespace UI
             }
             while (PrivateVariable.Run)
             {
+                Thread.Sleep(500);
                 if (PauseErrorHandler)
                 {
                     Thread.Sleep(1000);
@@ -40,8 +41,7 @@ namespace UI
                     {
                         foreach (var e in errorImages)
                         {
-                            Thread.Sleep(1000);
-                            byte[] crop = EmulatorController.CropImage(Script.image, new Point(350,180), new Point(980,515));
+                            var crop = EmulatorController.CropImage(Script.image, new Point(350,180), new Point(980,515));
                             Point? p = EmulatorController.FindImage(crop, e, false);
                             if (p != null)
                             {
@@ -65,7 +65,6 @@ namespace UI
                     }
                     else
                     {
-                        Thread.Sleep(1000);
                         loc = EmulatorController.FindImage(Script.image, "Img\\Errors\\Shop\\Background_Light.png", false);
                         if (loc != null)
                         {
