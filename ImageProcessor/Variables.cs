@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using SharpAdbClient;
 
 namespace ImageProcessor
@@ -50,14 +52,6 @@ namespace ImageProcessor
         /// </summary>
         public static Dictionary<string, string> Configure = new Dictionary<string, string>();
         /// <summary>
-        /// Adb Logs that can be showed, remember to clear this frequently to prevent overload
-        /// </summary>
-        public static List<string> AdbLog = new List<string>();
-        /// <summary>
-        /// Script Logs that can be showed, remember to clear this frequently to prevent overload
-        /// </summary>
-        public static List<string> ScriptLog = new List<string>();
-        /// <summary>
         /// If new devices added, will return true
         /// </summary>
         public static bool DeviceChanged = false;
@@ -86,5 +80,30 @@ namespace ImageProcessor
         /// </summary>
         public static string Instance = "";
 
+        public static RichTextBox richTextBox;
+
+        public static bool AdbLogShow = false;
+        public static void AdbLog(string log, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        {
+            if (AdbLogShow)
+            {
+                richTextBox.Invoke((MethodInvoker)delegate
+                {
+                    richTextBox.SelectionColor = Color.Red;
+                    richTextBox.AppendText("\n[" + DateTime.Now + "]:" + log);
+                });
+            }
+        }
+        
+        public static void ScriptLog(string log, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        {
+            richTextBox.Invoke((MethodInvoker)delegate
+            {
+                richTextBox.SelectionColor = Color.Lime;
+                richTextBox.AppendText("\n[" + DateTime.Now + "]:" + log);
+            });
+                Debug_.WriteLine("ScriptLog: "+log, lineNumber, caller);
+            
+        }
     }
 }

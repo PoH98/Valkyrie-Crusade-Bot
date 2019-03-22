@@ -40,7 +40,7 @@ namespace DefaultScript
                                 Point? p = EmulatorController.FindImage(crop, f, false);
                                 if (p != null)
                                 {
-                                    Variables.ScriptLog.Add("Skill actived");
+                                    Variables.ScriptLog("Skill actived");
                                     EmulatorController.SendSwipe(new Point(263, 473), new Point(264, 474), 1200);
                                     for (int x = 0; x < 5; x++)
                                     {
@@ -69,7 +69,7 @@ namespace DefaultScript
                                 Point? p = EmulatorController.FindImage(crop, f, false);
                                 if (p != null)
                                 {
-                                    Variables.ScriptLog.Add("Skill actived");
+                                    Variables.ScriptLog("Skill actived");
                                     EmulatorController.SendSwipe(new Point(448, 492), new Point(449, 493), 1200);
                                     for (int x = 0; x < 5; x++)
                                     {
@@ -98,7 +98,7 @@ namespace DefaultScript
                                 Point? p = EmulatorController.FindImage(crop, f, false);
                                 if (p != null)
                                 {
-                                    Variables.ScriptLog.Add("Skill actived");
+                                    Variables.ScriptLog("Skill actived");
                                     EmulatorController.SendSwipe(new Point(641, 473), new Point(642, 474), 1200);
                                     for (int x = 0; x < 5; x++)
                                     {
@@ -127,7 +127,7 @@ namespace DefaultScript
                                 Point? p = EmulatorController.FindImage(crop, f, false);
                                 if (p != null)
                                 {
-                                    Variables.ScriptLog.Add("Skill actived");
+                                    Variables.ScriptLog("Skill actived");
                                     EmulatorController.SendSwipe(new Point(834, 483), new Point(835, 484), 1200);
                                     for (int x = 0; x < 5; x++)
                                     {
@@ -156,7 +156,7 @@ namespace DefaultScript
                                 Point? p = EmulatorController.FindImage(crop, f, false);
                                 if (p != null)
                                 {
-                                    Variables.ScriptLog.Add("Skill actived");
+                                    Variables.ScriptLog("Skill actived");
                                     EmulatorController.SendSwipe(new Point(1017, 470), new Point(1018, 471), 1200);
                                     for (int x = 0; x < 5; x++)
                                     {
@@ -323,7 +323,7 @@ namespace DefaultScript
             {
                 save += i.SelectedIndex.ToString();
             }
-            File.WriteAllText("defaultScript.script",save);
+            WriteConfig("Skill_Acd",save);
         }
 
         private void Create_Click(object sender, EventArgs e)
@@ -333,15 +333,40 @@ namespace DefaultScript
 
         public void ReadConfig()
         {
-            if (File.Exists("defaultScript.script"))
+            Variables.Configure.TryGetValue("Skill_Acd", out cboxselected);
+            if(cboxselected == null)
             {
-                cboxselected = File.ReadAllText("defaultScript.script");
+                cboxselected = "";
             }
         }
-
         public string ScriptName()
         {
             return "Default Script";
+        }
+        private static void WriteConfig(string key, string value)
+        {
+            var config = File.ReadAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
+            int x = 0;
+            foreach (var c in config)
+            {
+                if (c.Contains(key + "="))
+                {
+                    config[x] = key + "=" + value;
+                    File.WriteAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini", config);
+                    return;
+                }
+                x++;
+            }
+            config[config.Length - 1] = config[config.Length - 1] + "\n" + key + "=" + value;
+            if (Variables.Configure.ContainsKey(key))
+            {
+                Variables.Configure[key] = value;
+            }
+            else
+            {
+                Variables.Configure.Add(key, value);
+            }
+            File.WriteAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini", config);
         }
     }
 }

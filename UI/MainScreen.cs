@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Threading;
-using System.Windows.Forms;
 using UI;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -15,10 +14,13 @@ using System.Security.Principal;
 using ImgXml;
 using System.Net.Sockets;
 using System.Collections.Generic;
+using System.ComponentModel;
+using MetroFramework.Forms;
+using System.Windows.Forms;
 
 namespace ImageProcessor
 {
-    public partial class MainScreen : Form
+    public partial class MainScreen : MetroForm
     {
 
         private static string html;
@@ -36,6 +38,8 @@ namespace ImageProcessor
         public MainScreen()
         {
             InitializeComponent();
+            Debug_.PrepairDebug();
+            Variables.richTextBox = richTextBox1;
             timeout.Interval = 5000;
             timeout.Tick += Timeout_Tick;
         }
@@ -46,48 +50,6 @@ namespace ImageProcessor
             {
                 webBrowser3.Stop();
                 webBrowser3.DocumentText = Img.index;
-            }
-        }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            if (checkBox2.Checked)
-            {
-                if (Variables.AdbLog.Count > 0)
-                {
-                    try
-                    {
-                        foreach (var log in Variables.AdbLog)
-                        {
-                            richTextBox1.AppendText("[" + DateTime.Now + "]: Adb Result: " + log + "\n");
-                        }
-                        Variables.AdbLog.Clear();
-                    }
-                    catch
-                    {
-
-                    }
-
-                }
-            }
-            else
-            {
-                Variables.AdbLog.Clear();
-            }
-            if (Variables.ScriptLog.Count > 0)
-            {
-                try
-                {
-                    foreach (var log in Variables.ScriptLog)
-                    {
-                        richTextBox1.AppendText("[" + DateTime.Now + "]: Script Result: " + log + "\n");
-                    }
-                    Variables.ScriptLog.Clear();
-                }
-                catch
-                {
-
-                }
             }
         }
 
@@ -142,6 +104,8 @@ namespace ImageProcessor
     
         private void MainScreen_Load(object sender, EventArgs e)
         {
+            Thread load = new Thread(loading);
+            load.Start();
             if (!IsRunAsAdministrator())
             {
                 var processInfo = new ProcessStartInfo(Assembly.GetExecutingAssembly().CodeBase);
@@ -173,7 +137,7 @@ namespace ImageProcessor
             Variables.Background = true;
             Assembly assembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-            label3.Text = label3.Text + "  v" + fvi.FileVersion;
+            this.Text = this.Text + "  v" + fvi.FileVersion;
             if (File.Exists("Updater.exe"))
             {
                 ProcessStartInfo updater = new ProcessStartInfo();
@@ -182,13 +146,10 @@ namespace ImageProcessor
                 updater.Arguments = fvi.FileVersion.ToString();
                 Process.Start(updater);
             }
-            Thread load = new Thread(loading);
-            load.Start();
             try
             {
                 IntPtr ico = Img.Icon.GetHicon();
                 Icon = Icon.FromHandle(ico);
-                pictureBox1.Image = Img.Icon;
             }
             catch
             {
@@ -227,7 +188,7 @@ namespace ImageProcessor
                 if (arg.Contains("MEmu"))
                 {
                     Variables.Instance = arg;
-                    label3.Text += " (" + Variables.Instance + ")";
+                    this.Text += " (" + Variables.Instance + ")";
                     break;
                 }
             }
@@ -507,17 +468,24 @@ namespace ImageProcessor
                     tabControl2.TabPages[tabControl2.TabPages.Count - 1].Controls.Add(c);
                 }
             }
-            string n = File.ReadAllText("saved.script");
-            try
+            string n = "";
+            if(Variables.Configure.TryGetValue("Selected_Script", out n))
             {
-                int i = Convert.ToInt32(n);
-                if(i > customScriptEnable.Count)
+                try
                 {
-                    i = 0;
+                    int i = Convert.ToInt32(n);
+                    if (i > customScriptEnable.Count)
+                    {
+                        i = 0;
+                    }
+                    customScriptEnable[i].Checked = true;
                 }
-                customScriptEnable[i].Checked = true;
+                catch
+                {
+                    customScriptEnable[0].Checked = true;
+                }
             }
-            catch
+            else
             {
                 customScriptEnable[0].Checked = true;
             }
@@ -530,13 +498,11 @@ namespace ImageProcessor
                     pictureBox4.Image = Image.FromStream(stream);
                 }
             }
-            
             checkBox10.Enabled = radioButton9.Checked;
             Loading.LoadCompleted = true;
             Thread mon = new Thread(DeviceConnected);
             mon.Start();
             PrivateVariable.EventType = -1;
-            timer1.Start();
             timer2.Start();
         }
 
@@ -546,8 +512,7 @@ namespace ImageProcessor
             if (ck.Checked)
             {
                 PrivateVariable.Selected_Script = customScriptEnable.IndexOf(ck);
-                File.WriteAllText("saved.script", PrivateVariable.Selected_Script.ToString());
-
+                WriteConfig("Selected_Script", PrivateVariable.Selected_Script.ToString());
             }
             foreach (var c in customScriptEnable)
             {
@@ -623,6 +588,16 @@ namespace ImageProcessor
 
         private void button1_Click(object sender, EventArgs e)
         {
+            ScriptErrorHandler.errorImages.Clear();
+            foreach (var f in Directory.GetFiles("Img\\Errors"))
+            {
+                Thread.Sleep(10);
+                using (Stream bmp = File.Open(f, FileMode.Open))
+                {
+                    Image temp = Image.FromStream(bmp);
+                    ScriptErrorHandler.errorImages.Add(new Bitmap(temp));
+                }
+            }
             if ((PrivateVariable.nospam - DateTime.Now).Duration() < TimeSpan.FromSeconds(4))
             {
                 MessageBox.Show("啊！亚麻跌！慢点！好疼啊！");
@@ -716,10 +691,10 @@ namespace ImageProcessor
                 panel3.Visible = true;
             }
             panel3.Enabled = false;
-            Variables.start = new Thread(Script.Bot);
-            Variables.start.Start();
-            Thread capture = new Thread(Capt);
-            capture.Start();
+            Thread cap = new Thread(Capt);
+            cap.Start();
+            Thread run = new Thread(Script.Bot);
+            run.Start();
         }
 
         private void richTextBox1_TextChanged(object sender, EventArgs e)
@@ -729,13 +704,18 @@ namespace ImageProcessor
 
         private void button3_Click(object sender, EventArgs e)
         {
+            PrivateVariable.nospam = DateTime.Now;
             PrivateVariable.Run = false;
             PrivateVariable.Battling = false;
             PrivateVariable.InEventScreen = false;
             PrivateVariable.InMainScreen = false;
             PrivateVariable.InMap = false;
-            Variables.ScriptLog.Add("Script Stopped!");
-            button16_Click(sender, e);
+            Variables.ScriptLog("Script Stopped!");
+            if (Width > 480)
+            {
+                Width -= 700;
+                panel3.Visible = false;
+            }
             if (EmulatorController.handle != null && Variables.Proc != null)
             {
                 DllImport.SetParent(EmulatorController.handle, IntPtr.Zero);
@@ -873,7 +853,7 @@ namespace ImageProcessor
                             {
                                 DllImport.Rect rect = new DllImport.Rect();
                                 DllImport.GetWindowRect(EmulatorController.handle, ref rect);
-                                if(rect.left != -1 || rect.top != -55)
+                                if (rect.left != -1 || rect.top != -55)
                                 {
                                     DllImport.MoveWindow(EmulatorController.handle, -1, -30, 736, 600, false);
                                 }
@@ -882,12 +862,10 @@ namespace ImageProcessor
                     });
                     try
                     {
-
                         var newimage = EmulatorController.ImageCapture();
                         if (newimage != null)
                         {
                             Script.image = newimage;
-                            Debug_.WriteLine(Script.image);
                         }
                     }
                     catch (Exception ex)
@@ -904,14 +882,14 @@ namespace ImageProcessor
                         EmulatorController.ConnectAndroidEmulator(String.Empty, String.Empty, MEmu);
                         error++;
                         Thread.Sleep(1000);
-                        if(error > 60)
+                        if (error > 60)
                         {
                             EmulatorController.CloseEmulator("MEmuManage.exe");
                             EmulatorController.StartEmulator();
                             error = 0;
                         }
                     }
-                    Variables.ScriptLog.Add("Emulator Started");
+                    Variables.ScriptLog("Emulator Started");
                 }
             }
         }
@@ -1049,16 +1027,6 @@ namespace ImageProcessor
             {
                 Process.Start("Updater.exe", "https://github.com/PoH98/Bot/raw/master/神女控.apk");
             }
-        }
-
-        private void button5_MouseEnter(object sender, EventArgs e)
-        {
-            button5.BackColor = Color.Red;
-        }
-
-        private void button5_MouseLeave(object sender, EventArgs e)
-        {
-            button5.BackColor = Color.Black;
         }
 
         private void button1_MouseEnter(object sender, EventArgs e)
@@ -1221,46 +1189,6 @@ namespace ImageProcessor
             File.WriteAllText("debug.txt", result);
             Process.Start("debug.txt");
             
-        }
-
-        private void button15_Click(object sender, EventArgs e)
-        {
-            this.WindowState = FormWindowState.Minimized;
-        }
-
-        private void button15_MouseEnter(object sender, EventArgs e)
-        {
-            if(sender is Button)
-            {
-                Button btn = (Button)sender;
-                btn.BackColor = Color.Gray;
-            }
-
-        }
-
-        private void button15_MouseLeave(object sender, EventArgs e)
-        {
-            if (sender is Button)
-            {
-                Button btn = (Button)sender;
-                btn.BackColor = Color.Black;
-            }
-        }
-
-        private void button16_Click(object sender, EventArgs e)
-        {
-            if (Width > 450)
-            {
-                Width -= 700;
-                panel3.Visible = false;
-                button16.Text = ">";
-            }
-            else
-            {
-                Width += 700;
-                panel3.Visible = true;
-                button16.Text = "<";
-            }
         }
 
         private void radioButton9_CheckedChanged(object sender, EventArgs e)
@@ -1430,12 +1358,6 @@ namespace ImageProcessor
             }
         }
 
-        private void Adb_Log_CheckedChanged(object sender, EventArgs e)
-        {
-            Debug_.Enable_Debug = Adb_Log.Checked;
-            Debug_.PrepairDebug();
-        }
-
         private void button2_Click(object sender, EventArgs e)
         {
             if (File.Exists("OCR.png"))
@@ -1443,6 +1365,16 @@ namespace ImageProcessor
                 var img = EmulatorController.Compress(Image.FromFile("OCR.png"));
                 MessageBox.Show(OCR.OcrImage(img,"eng"));
             }
+        }
+
+        private void CheckBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            Variables.AdbLogShow = checkBox1.Checked;
+        }
+
+        private void MetroLink1_Click(object sender, EventArgs e)
+        {
+            Process.Start("www.github.com/PoH98/");
         }
     }
 }

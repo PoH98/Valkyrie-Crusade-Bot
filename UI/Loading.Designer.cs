@@ -29,29 +29,12 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.label1 = new System.Windows.Forms.Label();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Loading));
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.metroProgressBar1 = new MetroFramework.Controls.MetroProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 152);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(97, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "加载中...请稍后...";
-            // 
-            // progressBar1
-            // 
-            this.progressBar1.Location = new System.Drawing.Point(12, 177);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(317, 14);
-            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
-            this.progressBar1.TabIndex = 1;
             // 
             // timer1
             // 
@@ -60,39 +43,48 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.pictureBox1.Image = global::UI.Properties.Resources.img;
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Location = new System.Drawing.Point(9, 15);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(341, 149);
+            this.pictureBox1.Size = new System.Drawing.Size(367, 149);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
+            // 
+            // metroProgressBar1
+            // 
+            this.metroProgressBar1.Location = new System.Drawing.Point(9, 170);
+            this.metroProgressBar1.Name = "metroProgressBar1";
+            this.metroProgressBar1.ProgressBarStyle = System.Windows.Forms.ProgressBarStyle.Marquee;
+            this.metroProgressBar1.Size = new System.Drawing.Size(367, 23);
+            this.metroProgressBar1.TabIndex = 3;
+            this.metroProgressBar1.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroProgressBar1.UseCustomBackColor = true;
             // 
             // Loading
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(341, 203);
+            this.ClientSize = new System.Drawing.Size(387, 203);
+            this.ControlBox = false;
+            this.Controls.Add(this.metroProgressBar1);
             this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.progressBar1);
-            this.Controls.Add(this.label1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.DisplayHeader = false;
+            this.DoubleBuffered = false;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "Loading";
+            this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 20);
             this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Loading";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private MetroFramework.Controls.MetroProgressBar metroProgressBar1;
     }
 }

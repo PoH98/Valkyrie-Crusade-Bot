@@ -10,39 +10,17 @@ namespace ImageProcessor
 {
     public class Debug_
     {
-        public static bool Enable_Debug = false;
-
         protected static string FileName;
 
         public static void PrepairDebug()
         {
-            foreach (string file in Directory.GetFiles(Environment.CurrentDirectory + "\\Profiles\\" + EmulatorController.profilePath + "\\", "*.log"))
-            {
-                string name = file.Split('\\')[file.Split('\\').Length - 1];
-                name = name.Replace(".log", "");
-                try
-                {
-                    DateTime logtime = DateTime.MinValue;
-                    DateTime.TryParse(name, out logtime);
-                    TimeSpan saved = DateTime.Now - logtime;
-                    if (saved.Days > 3)
-                    {
-                        File.Delete(file);
-                    }
-                }
-                catch
-                {
-
-                }
-            }
-            if (Enable_Debug)
-            {
                 if (FileName == null)
                 {
-                    FileName = Environment.CurrentDirectory + "\\Profiles\\" + EmulatorController.profilePath + "\\" + DateTime.Now.ToString().Replace(' ','_').Replace('/','_').Replace(':','_') + ".log";
-                    if(!File.Exists(FileName))
+                    Debug_.FileName = "Profiles\\" + Variables.Instance + "\\Logs\\" + DateTime.Now.ToString().Replace(' ', '_').Replace('/', '_').Replace(':', '_') + ".log";
+                    if (!Directory.Exists("Profiles\\" + Variables.Instance + "\\Logs\\"))
+                        Directory.CreateDirectory("Profiles\\" + Variables.Instance + "\\Logs\\");
+                    if (!File.Exists(FileName))
                         File.Create(FileName);
-                }
             }
         }
 
@@ -50,8 +28,6 @@ namespace ImageProcessor
 
         public static void WriteLine(string log_, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            if (Enable_Debug)
-            {
                 try
                 {
                     using (StreamWriter s = File.AppendText(FileName))
@@ -63,13 +39,11 @@ namespace ImageProcessor
                 {
 
                 }
-            }
+            
         }
 
         public static void WriteLine([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            if (Enable_Debug)
-            {
                 try
                 {
                     using (StreamWriter s = File.AppendText(FileName))
@@ -81,22 +55,20 @@ namespace ImageProcessor
                 {
 
                 }
-            }
+            
         }
 
         public static void WriteLine(byte[] img)
         {
-            if (Enable_Debug)
-            {
                 try
                 {
-                    File.WriteAllBytes(FileName.Remove(FileName.LastIndexOf('\\'))+ "debug.png",img);
+                    File.WriteAllBytes(FileName.Remove(FileName.LastIndexOf('\\'))+ "\\debug.png",img);
                 }
                 catch
                 {
 
                 }
-            }
+            
         }
 
         protected static string Encrypt(string log)

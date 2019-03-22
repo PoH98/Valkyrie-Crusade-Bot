@@ -10,7 +10,7 @@ namespace UI
     {
         private static string url = "http://www-valkyriecrusade.nubee.com/";
         public static string Eventlink, RandomImage;
-
+        public static DateTime guildwar = DateTime.MinValue;
         public static void LoadXMLEvent()
         {
             List<string> Imagelink = new List<string>();
@@ -37,6 +37,14 @@ namespace UI
                     else if (n.InnerText.Contains("img/info_card"))
                     {
                         Imagelink.Add(n.InnerText.Substring(n.InnerText.IndexOf("event")).Remove(n.InnerText.IndexOf(".png")) + ".png");
+                    }
+                    else if (n.InnerText.Contains("GuildBattle"))
+                    {
+                        var date = Convert.ToDateTime(n.InnerXml.Substring(n.InnerXml.IndexOf("<LastModified xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">")).Replace("<LastModified xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">", "").Remove(10));
+                        if (guildwar < date)
+                        {
+                            guildwar = date;
+                        }
                     }
                     index++;
                 }

@@ -13,79 +13,39 @@ namespace UI
 {
     class ScriptErrorHandler
     {
-        private static List<Bitmap> errorImages = new List<Bitmap>();
+        public static List<Bitmap> errorImages = new List<Bitmap>();
         public static bool PauseErrorHandler;
-        //Click away all error messages
+        /// <summary>
+        /// Check some error message that need to restart the game
+        /// </summary>
         public static void ErrorHandle()
         {
-            foreach (var f in Directory.GetFiles("Img\\Errors"))
+            if (PauseErrorHandler)
             {
-                Thread.Sleep(10);
-                using (Stream bmp = File.Open(f, FileMode.Open))
-                {
-                    Image temp = Image.FromStream(bmp);
-                    errorImages.Add(new Bitmap(temp));
-                }
+                Thread.Sleep(1000);
+                return;
             }
-            while (PrivateVariable.Run)
+            if (Variables.Proc != null)
             {
-                Thread.Sleep(500);
-                if (PauseErrorHandler)
+                try
                 {
-                    Thread.Sleep(1000);
-                    return;
-                }
-                if (Variables.Proc != null)
-                {
-                    try
+                    Parallel.ForEach(errorImages, error => 
                     {
-                        foreach (var e in errorImages)
+                        var crop = EmulatorController.CropImage(Script.image, new Point(350, 180), new Point(980, 515));
+                        Thread.Sleep(1000);
+                        Point? p = EmulatorController.FindImage(crop, error, false);
+                        if (p != null)
                         {
-                            var crop = EmulatorController.CropImage(Script.image, new Point(350,180), new Point(980,515));
-                            Point? p = EmulatorController.FindImage(crop, e, false);
-                            if (p != null)
-                            {
-                                EmulatorController.SendTap(p.Value);
-                                EmulatorController.KillGame("com.nubee.valkyriecrusade");
-                                Reset("Error message found!");
-                            }
-                        }
-                    }
-                    catch
-                    {
-
-                    }
-                    //Went Shop
-                    Point? loc = EmulatorController.FindImage(Script.image, "Img\\Errors\\Shop\\Background.png", false);
-                    if (loc != null)
-                    {
-                        EmulatorController.KillGame("com.nubee.valkyriecrusade");
-                        Variables.ScriptLog.Add("Entered Shop! Maybe no energy left?");
-                        Reset("Critical error found! Trying to restart game!");
-                    }
-                    else
-                    {
-                        loc = EmulatorController.FindImage(Script.image, "Img\\Errors\\Shop\\Background_Light.png", false);
-                        if (loc != null)
-                        {
+                            EmulatorController.SendTap(p.Value);
                             EmulatorController.KillGame("com.nubee.valkyriecrusade");
-                            Variables.ScriptLog.Add("Entered Shop! Maybe no energy left?");
-                            Reset("Critical error found! Trying to restart game!");
+                            Reset("Error message found!");
                         }
-                    }
-                    if (PrivateVariable.Battling == true && PrivateVariable.EventType == 2)
-                    {
-                        var point = EmulatorController.FindImage(Script.image, "Img\\HellLoc.png", false);
-                        if (point != null)
-                        {
-                            PrivateVariable.Battling = false;
-                            Variables.ScriptLog.Add("Battle Ended!");
-                            return;
-                        }
-                        Thread.Sleep(100);
-                    }
+                    });
                 }
+                catch
+                {
 
+                }
             }
         }
         //Reset back to just started the script
@@ -96,7 +56,7 @@ namespace UI
             PrivateVariable.Battling = false;
             PrivateVariable.InMap = false;
             PrivateVariable.EventType = -1;
-            Variables.ScriptLog.Add(log);
+            Variables.ScriptLog(log);
         }
     }
 }

@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>ImageProcessor</RootNamespace>
     <AssemblyName>ImageProcessor</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>

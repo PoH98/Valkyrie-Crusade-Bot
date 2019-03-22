@@ -21,16 +21,12 @@ using System.Text;
 using System.Threading;
 using System.Security.Cryptography;
 using System.Windows.Forms;
-using Emgu.CV.Features2D;
-using Emgu.CV.Flann;
 
 namespace ImageProcessor
 {
     public class EmulatorController
     {
         public static IntPtr handle = IntPtr.Zero;
-        private static Thread cleaningthread = null;
-        
         /// <summary>
         /// The path to bot.ini
         /// </summary>
@@ -118,12 +114,12 @@ namespace ImageProcessor
             Process p = Process.Start(close);
             Variables.Proc = null;
             Variables.Controlled_Device = null;
-            Variables.ScriptLog.Add("Emulator Closed");
+            Variables.ScriptLog("Emulator Closed");
         }
         public static void RestartEmulator()
         {
             CloseEmulator("MEmuManage.exe");
-            Variables.ScriptLog.Add("Restarting Emulator...");
+            Variables.ScriptLog("Restarting Emulator...");
             Thread.Sleep(1000);
             StartEmulator();
         }
@@ -149,7 +145,7 @@ namespace ImageProcessor
                         IntPtr handle = DllImport.FindWindowEx(p.MainWindowHandle, IntPtr.Zero, classes, name);
                         Variables.Proc = p;
                         EmulatorController.handle = p.MainWindowHandle;
-                        Variables.ScriptLog.Add("Emulator ID: " + p.Id);
+                        Variables.ScriptLog("Emulator ID: " + p.Id);
                         break;
                     }
                 }
@@ -157,21 +153,6 @@ namespace ImageProcessor
             
         }
 
-        private static void CleanLog()
-        {
-            while (true)
-            {
-                Thread.Sleep(1000);
-                if (Variables.AdbLog.Count > 20)
-                {
-                    Variables.AdbLog.Clear();
-                }
-                if (Variables.ScriptLog.Count > 20)
-                {
-                    Variables.ScriptLog.Clear();
-                }
-            }
-        }
         /// <summary>
         /// Check Game is foreground and return a bool
         /// </summary>
@@ -201,7 +182,7 @@ namespace ImageProcessor
             }
             catch (AdbException ex)
             {
-                Variables.AdbLog.Add("Adb exception found!");
+                Variables.ScriptLog("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
                 CloseEmulator("MEmuManage.exe");
             }
@@ -212,12 +193,6 @@ namespace ImageProcessor
         /// </summary>
         public static bool StartAdb()
         {
-            if (cleaningthread == null)
-            {
-                cleaningthread = new Thread(CleanLog);
-                cleaningthread.Start();
-            }
-
             while (true)
             {
                 try
@@ -318,7 +293,7 @@ namespace ImageProcessor
             }
             catch (AdbException ex)
             {
-                Variables.AdbLog.Add("Adb exception found!");
+                Variables.ScriptLog("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
                 CloseEmulator("MEmuManage.exe");
             }
@@ -354,7 +329,7 @@ namespace ImageProcessor
             }
             catch (AdbException ex)
             {
-                Variables.AdbLog.Add("Adb exception found!");
+                Variables.ScriptLog("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
                 Variables.Controlled_Device = null;
                 Variables.Proc = null;
@@ -392,7 +367,7 @@ namespace ImageProcessor
             }
             catch (AdbException ex)
             {
-                Variables.AdbLog.Add("Adb exception found!");
+                Variables.ScriptLog("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
                 CloseEmulator("MEmuManage.exe");
             }
@@ -416,13 +391,13 @@ namespace ImageProcessor
                 var receiver = new ConsoleOutputReceiver();
                 if(Variables.Controlled_Device == null)
                 {
-                    Variables.AdbLog.Add("Waiting for device");
+                    Variables.AdbLog("Waiting for device");
                     return null;
                 }
                 AdbClient.Instance.ExecuteRemoteCommand("screencap /sdcard/Download/" + SHA256(Variables.AdbIpPort) + ".raw", Variables.Controlled_Device, receiver);
                 if (!File.Exists(path))
                 {
-                    Variables.AdbLog.Add("Unable to read rgba file because of file not exist!");
+                    Variables.AdbLog("Unable to read rgba file because of file not exist!");
                     return null;
                 }
                 path = path.Replace("\\\\", "\\");
@@ -449,7 +424,7 @@ namespace ImageProcessor
                     bmp.UnlockBits(bmpData);
                     img = null;
                     s.Stop();
-                    Variables.AdbLog.Add("Screenshot saved to memory stream. Used time: " + s.ElapsedMilliseconds + " ms");
+                    Variables.AdbLog("Screenshot saved to memory stream. Used time: " + s.ElapsedMilliseconds + " ms");
                     return Compress(bmp);
                 }
             }
@@ -463,7 +438,7 @@ namespace ImageProcessor
             }
             catch (AdbException ex)
             {
-                Variables.AdbLog.Add("Adb exception found!");
+                Variables.AdbLog("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
                 CloseEmulator("MEmuManage.exe");
             }
@@ -475,6 +450,7 @@ namespace ImageProcessor
         /// <param name="point">Posiition for clicking</param>
         public static void SendTap(Point point, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            Stopwatch s = Stopwatch.StartNew();
             Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             try
             {
@@ -492,7 +468,7 @@ namespace ImageProcessor
                 }
                 if (receiver.ToString().Contains("Error"))
                 {
-                    Variables.AdbLog.Add(receiver.ToString());
+                    Variables.AdbLog(receiver.ToString());
                 }
             }
             catch (InvalidOperationException)
@@ -505,10 +481,12 @@ namespace ImageProcessor
             }
             catch (AdbException ex)
             {
-                Variables.AdbLog.Add("Adb exception found!");
+                Variables.AdbLog("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
                 CloseEmulator("MEmuManage.exe");
             }
+            s.Stop();
+            Variables.AdbLog("Tap sended to point " + point.X + ":" + point.Y + ". Used time: " + s.ElapsedMilliseconds + "ms");
         }
         /// <summary>
         /// Swipe the screen
@@ -537,7 +515,7 @@ namespace ImageProcessor
                 }
                 if (receiver.ToString().Contains("Error"))
                 {
-                    Variables.AdbLog.Add(receiver.ToString());
+                    Variables.AdbLog(receiver.ToString());
                 }
             }
             catch (InvalidOperationException)
@@ -550,7 +528,7 @@ namespace ImageProcessor
             }
             catch (AdbException ex)
             {
-                Variables.AdbLog.Add("Adb exception found!");
+                Variables.AdbLog("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
                 CloseEmulator("MEmuManage.exe");
             }
@@ -561,6 +539,7 @@ namespace ImageProcessor
         /// <param name="point">Posiition for clicking</param>
         public static void SendTap(int x, int y, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            Stopwatch s = Stopwatch.StartNew();
             Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             try
             {
@@ -576,7 +555,7 @@ namespace ImageProcessor
                 }
                 if (receiver.ToString().Contains("Error"))
                 {
-                    Variables.AdbLog.Add(receiver.ToString());
+                    Variables.AdbLog(receiver.ToString());
                 }
             }
             catch (InvalidOperationException)
@@ -589,10 +568,12 @@ namespace ImageProcessor
             }
             catch (AdbException ex)
             {
-                Variables.AdbLog.Add("Adb exception found!");
+                Variables.AdbLog("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
                 CloseEmulator("MEmuManage.exe");
             }
+            s.Stop();
+            Variables.AdbLog("Tap sended to point " + x + ":" + y + ". Used time: " + s.ElapsedMilliseconds + "ms");
         }
         /// <summary>
         /// Swipe the screen
@@ -616,7 +597,7 @@ namespace ImageProcessor
                 }
                 if (receiver.ToString().Contains("Error"))
                 {
-                    Variables.AdbLog.Add(receiver.ToString());
+                    Variables.AdbLog(receiver.ToString());
                 }
             }
             catch (InvalidOperationException)
@@ -629,7 +610,7 @@ namespace ImageProcessor
             }
             catch (AdbException ex)
             {
-                Variables.AdbLog.Add("Adb exception found!");
+                Variables.AdbLog("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
                 CloseEmulator("MEmuManage.exe");
             }
@@ -679,7 +660,6 @@ namespace ImageProcessor
         /// Start Emulator accoring to Variables.Configure (Dictionary) Key "Emulator" and "Path"
         /// </summary>
         /// <param name="emulator">Emulator that is supported</param>
-        
         public static void StartEmulator([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
@@ -751,7 +731,7 @@ namespace ImageProcessor
             int i = ((y * Width + x) * step);
             if (i > pixel.Length)
             {
-                Variables.AdbLog.Add("index of pixel array out of range at GetPixel");
+                Variables.AdbLog("index of pixel array out of range at GetPixel");
                 return clr;
             }
             if (Depth == 32 || Depth == 24)
@@ -790,7 +770,7 @@ namespace ImageProcessor
             int Depth = Bitmap.GetPixelFormatSize(bmp.PixelFormat);
             if (Depth != 8 && Depth != 24 && Depth != 32)
             {
-                Variables.AdbLog.Add("Image bit per pixel format not supported");
+                Variables.AdbLog("Image bit per pixel format not supported");
                 return false;
             }
             BitmapData bd = bmp.LockBits(rect, ImageLockMode.ReadOnly, bmp.PixelFormat);
@@ -852,7 +832,7 @@ namespace ImageProcessor
             int Depth = Bitmap.GetPixelFormatSize(bmp.PixelFormat);
             if (Depth != 8 && Depth != 24 && Depth != 32)
             {
-                Variables.AdbLog.Add("Image bit per pixel format not supported");
+                Variables.AdbLog("Image bit per pixel format not supported");
                 return false;
             }
             BitmapData bd = bmp.LockBits(rect, ImageLockMode.ReadOnly, bmp.PixelFormat);
@@ -882,7 +862,7 @@ namespace ImageProcessor
                             }
                             else
                             {
-                                Variables.AdbLog.Add("The point " + point.X + ", " + point.Y + " color is " + clr.R + ", " + clr.G + ", " + clr.B);
+                                Variables.AdbLog("The point " + point.X + ", " + point.Y + " color is " + clr.R + ", " + clr.G + ", " + clr.B);
                             }
                         }
                     }
@@ -916,7 +896,7 @@ namespace ImageProcessor
             int Depth = Bitmap.GetPixelFormatSize(bmp.PixelFormat);
             if (Depth != 8 && Depth != 24 && Depth != 32)
             {
-                Variables.AdbLog.Add("Image bit per pixel format not supported");
+                Variables.AdbLog("Image bit per pixel format not supported");
                 return false;
             }
             BitmapData bd = bmp.LockBits(rect, ImageLockMode.ReadOnly, bmp.PixelFormat);
@@ -963,7 +943,7 @@ namespace ImageProcessor
             int Depth = Bitmap.GetPixelFormatSize(bmp.PixelFormat);
             if (Depth != 8 && Depth != 24 && Depth != 32)
             {
-                Variables.AdbLog.Add("Image bit per pixel format not supported");
+                Variables.AdbLog("Image bit per pixel format not supported");
                 point = null;
                 return false;
             }
@@ -1014,7 +994,7 @@ namespace ImageProcessor
             int Depth = Bitmap.GetPixelFormatSize(bmp.PixelFormat);
             if (Depth != 8 && Depth != 24 && Depth != 32)
             {
-                Variables.AdbLog.Add("Image bit per pixel format not supported");
+                Variables.AdbLog("Image bit per pixel format not supported");
                 point = null;
                 return false;
             }
@@ -1051,10 +1031,11 @@ namespace ImageProcessor
         /// <returns>Point or null</returns>
         public static Point? FindImage(byte[] screencapture, Bitmap find, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            Stopwatch s = Stopwatch.StartNew();
             Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             if (screencapture == null)
             {
-                Variables.AdbLog.Add("Result return null because of null original image");
+                Variables.AdbLog("Result return null because of null original image");
                 return null;
             }
             Bitmap original = new Bitmap(Decompress(screencapture));
@@ -1078,7 +1059,8 @@ namespace ImageProcessor
                         // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
                         if (maxValues[0] > 0.9)
                         {
-                            Variables.AdbLog.Add("Image matched");
+                            s.Stop();
+                            Variables.AdbLog("Image matched. Used time: " + s.Elapsed);
                             return maxLocations[0];
                         }
                     }
@@ -1096,7 +1078,8 @@ namespace ImageProcessor
                         // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
                         if (maxValues[0] > 0.9)
                         {
-                            Variables.AdbLog.Add("Image matched");
+                            s.Stop();
+                            Variables.AdbLog("Image matched. Used time: " + s.Elapsed);
                             return maxLocations[0];
                         }
                     }
@@ -1107,7 +1090,8 @@ namespace ImageProcessor
 
 
             }
-            Variables.AdbLog.Add("Image not match");
+            s.Stop();
+            Variables.AdbLog("Image not matched. Used time: " + s.Elapsed);
             return null;
         }
         
@@ -1119,16 +1103,17 @@ namespace ImageProcessor
         /// <returns>Point or null</returns>
         public static Point? FindImage(byte[] screencapture, string findPath, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            Stopwatch s = Stopwatch.StartNew();
             Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             if (screencapture == null)
             {
-                Variables.AdbLog.Add("Result return null because of null original image");
+                Variables.AdbLog("Result return null because of null original image");
                 return null;
             }
             Bitmap original = new Bitmap(Decompress(screencapture));
             if (!File.Exists(findPath))
             {
-                Variables.AdbLog.Add("Unable to find image " + findPath.Split('\\').Last() + ", image path not valid");
+                Variables.AdbLog("Unable to find image " + findPath.Split('\\').Last() + ", image path not valid");
                 return null;
             }
             try
@@ -1145,6 +1130,8 @@ namespace ImageProcessor
                         // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
                         if (maxValues[0] > 0.9)
                         {
+                            s.Stop();
+                            Variables.AdbLog("Image matched. Used time: " + s.Elapsed);
                             return maxLocations[0];
                         }
                     }
@@ -1162,6 +1149,8 @@ namespace ImageProcessor
                         // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
                         if (maxValues[0] > 0.9)
                         {
+                            s.Stop();
+                            Variables.AdbLog("Image matched. Used time: " + s.Elapsed);
                             return maxLocations[0];
                         }
                     }
@@ -1171,6 +1160,8 @@ namespace ImageProcessor
             {
 
             }
+            s.Stop();
+            Variables.AdbLog("Image not matched. Used time: " + s.Elapsed);
             return null;
         }
         /// <summary>
@@ -1181,10 +1172,11 @@ namespace ImageProcessor
         /// <returns>Point or null</returns>
         public static Point? FindImage(byte[] screencapture, byte[] image, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            Stopwatch s = Stopwatch.StartNew();
             Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             if (screencapture == null)
             {
-                Variables.AdbLog.Add("Result return null because of null original image");
+                Variables.AdbLog("Result return null because of null original image");
                 return null;
             }
             Bitmap original = new Bitmap(Decompress(screencapture));
@@ -1203,6 +1195,8 @@ namespace ImageProcessor
                         // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
                         if (maxValues[0] > 0.9)
                         {
+                            s.Stop();
+                            
                             return maxLocations[0];
                         }
                     }
@@ -1216,10 +1210,11 @@ namespace ImageProcessor
                         double[] minValues, maxValues;
                         Point[] minLocations, maxLocations;
                         result.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
-
                         // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
                         if (maxValues[0] > 0.9)
                         {
+                            s.Stop();
+                            Variables.AdbLog("Image matched. Used time: " + s.Elapsed);
                             return maxLocations[0];
                         }
                     }
@@ -1229,6 +1224,8 @@ namespace ImageProcessor
             {
 
             }
+            s.Stop();
+            Variables.AdbLog("Image not matched. Used time: " + s.Elapsed);
             return null;
         }
         /// <summary> 
@@ -1241,10 +1238,11 @@ namespace ImageProcessor
         /// <returns></returns>
         public static byte[] CropImage(byte[] original, Point start, Point End, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
+            Stopwatch s = Stopwatch.StartNew();
             Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
             if (original == null)
             {
-                Variables.AdbLog.Add("Result return null because of null original image");
+                Variables.AdbLog("Result return null because of null original image");
                 return null;
             }
             Image<Bgr, byte> imgInput = new Image<Bgr, byte>(new Bitmap(Decompress(original)));
@@ -1257,6 +1255,8 @@ namespace ImageProcessor
             Image<Bgr, byte> temp = imgInput.CopyBlank();
             imgInput.CopyTo(temp);
             imgInput.Dispose();
+            s.Stop();
+            Variables.AdbLog("Image cropped. Used time: " + s.Elapsed);
             return Compress(temp.Bitmap);
 
         }

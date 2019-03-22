@@ -30,23 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainScreen));
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.button1 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
             this.timer2 = new System.Windows.Forms.Timer(this.components);
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.button16 = new System.Windows.Forms.Button();
-            this.button15 = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.button5 = new System.Windows.Forms.Button();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.Adb_Log = new System.Windows.Forms.CheckBox();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
-            this.progressBar2 = new System.Windows.Forms.ProgressBar();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label4 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -58,9 +44,7 @@
             this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.checkBox8 = new System.Windows.Forms.CheckBox();
@@ -87,8 +71,6 @@
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.radioButton3 = new System.Windows.Forms.RadioButton();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.button2 = new System.Windows.Forms.Button();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -96,12 +78,8 @@
             this.label12 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
-            this.button14 = new System.Windows.Forms.Button();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.tabControl2 = new System.Windows.Forms.TabControl();
-            this.tabPage5 = new System.Windows.Forms.TabPage();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
             this.radioButton7 = new System.Windows.Forms.RadioButton();
             this.radioButton11 = new System.Windows.Forms.RadioButton();
@@ -115,13 +93,23 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.panel3 = new System.Windows.Forms.Panel();
-            this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
+            this.button1 = new MetroFramework.Controls.MetroButton();
+            this.button3 = new MetroFramework.Controls.MetroButton();
+            this.metroTabControl1 = new MetroFramework.Controls.MetroTabControl();
+            this.metroTabPage1 = new MetroFramework.Controls.MetroTabPage();
+            this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
+            this.metroTabPage3 = new MetroFramework.Controls.MetroTabPage();
+            this.metroTabPage4 = new MetroFramework.Controls.MetroTabPage();
+            this.metroTabPage5 = new MetroFramework.Controls.MetroTabPage();
+            this.metroButton1 = new MetroFramework.Controls.MetroButton();
+            this.metroButton2 = new MetroFramework.Controls.MetroButton();
+            this.progressBar1 = new MetroFramework.Controls.MetroProgressBar();
+            this.progressBar2 = new MetroFramework.Controls.MetroProgressBar();
+            this.metroLink1 = new MetroFramework.Controls.MetroLink();
+            this.checkBox1 = new MetroFramework.Controls.MetroCheckBox();
+            this.tabControl2 = new MetroFramework.Controls.MetroTabControl();
             this.groupBox8.SuspendLayout();
             this.groupBox9.SuspendLayout();
-            this.tabPage2.SuspendLayout();
             this.groupBox11.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -129,186 +117,26 @@
             this.groupBox6.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
-            this.tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             this.groupBox12.SuspendLayout();
             this.groupBox7.SuspendLayout();
-            this.tabPage4.SuspendLayout();
-            this.tabPage5.SuspendLayout();
             this.groupBox10.SuspendLayout();
+            this.metroTabControl1.SuspendLayout();
+            this.metroTabPage1.SuspendLayout();
+            this.metroTabPage2.SuspendLayout();
+            this.metroTabPage3.SuspendLayout();
+            this.metroTabPage4.SuspendLayout();
+            this.metroTabPage5.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // timer1
-            // 
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // button1
-            // 
-            this.button1.BackColor = System.Drawing.Color.Silver;
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Location = new System.Drawing.Point(6, 394);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(158, 32);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "开始挂机";
-            this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            this.button1.MouseEnter += new System.EventHandler(this.button1_MouseEnter);
-            this.button1.MouseLeave += new System.EventHandler(this.button1_MouseLeave);
-            // 
-            // button3
-            // 
-            this.button3.BackColor = System.Drawing.Color.Silver;
-            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button3.Location = new System.Drawing.Point(6, 432);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(158, 32);
-            this.button3.TabIndex = 5;
-            this.button3.Text = "停止";
-            this.button3.UseVisualStyleBackColor = false;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
-            this.button3.MouseEnter += new System.EventHandler(this.button3_MouseEnter);
-            this.button3.MouseLeave += new System.EventHandler(this.button3_MouseLeave);
             // 
             // timer2
             // 
             this.timer2.Interval = 900;
             this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
             // 
-            // panel1
-            // 
-            this.panel1.BackColor = System.Drawing.Color.Black;
-            this.panel1.Controls.Add(this.button16);
-            this.panel1.Controls.Add(this.button15);
-            this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.pictureBox1);
-            this.panel1.Controls.Add(this.button5);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(449, 22);
-            this.panel1.TabIndex = 12;
-            this.panel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseDown);
-            // 
-            // button16
-            // 
-            this.button16.BackColor = System.Drawing.Color.Black;
-            this.button16.Dock = System.Windows.Forms.DockStyle.Right;
-            this.button16.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.button16.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button16.ForeColor = System.Drawing.Color.White;
-            this.button16.Location = new System.Drawing.Point(376, 0);
-            this.button16.Name = "button16";
-            this.button16.Size = new System.Drawing.Size(24, 22);
-            this.button16.TabIndex = 4;
-            this.button16.Text = "<";
-            this.button16.UseVisualStyleBackColor = false;
-            this.button16.Click += new System.EventHandler(this.button16_Click);
-            this.button16.MouseEnter += new System.EventHandler(this.button15_MouseEnter);
-            this.button16.MouseLeave += new System.EventHandler(this.button15_MouseLeave);
-            // 
-            // button15
-            // 
-            this.button15.BackColor = System.Drawing.Color.Black;
-            this.button15.Dock = System.Windows.Forms.DockStyle.Right;
-            this.button15.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.button15.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button15.ForeColor = System.Drawing.Color.White;
-            this.button15.Location = new System.Drawing.Point(400, 0);
-            this.button15.Name = "button15";
-            this.button15.Size = new System.Drawing.Size(24, 22);
-            this.button15.TabIndex = 3;
-            this.button15.Text = "-";
-            this.button15.UseVisualStyleBackColor = false;
-            this.button15.Click += new System.EventHandler(this.button15_Click);
-            this.button15.MouseEnter += new System.EventHandler(this.button15_MouseEnter);
-            this.button15.MouseLeave += new System.EventHandler(this.button15_MouseLeave);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.ForeColor = System.Drawing.Color.White;
-            this.label3.Location = new System.Drawing.Point(23, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(184, 20);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "神女控挂机 (PoH98出品)";
-            this.label3.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseDown);
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(23, 22);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 1;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseDown);
-            // 
-            // button5
-            // 
-            this.button5.BackColor = System.Drawing.Color.Black;
-            this.button5.Dock = System.Windows.Forms.DockStyle.Right;
-            this.button5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.button5.ForeColor = System.Drawing.Color.White;
-            this.button5.Location = new System.Drawing.Point(424, 0);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(25, 22);
-            this.button5.TabIndex = 0;
-            this.button5.Text = "X";
-            this.button5.UseVisualStyleBackColor = false;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
-            this.button5.MouseEnter += new System.EventHandler(this.button5_MouseEnter);
-            this.button5.MouseLeave += new System.EventHandler(this.button5_MouseLeave);
-            // 
-            // tabControl1
-            // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Controls.Add(this.tabPage3);
-            this.tabControl1.Controls.Add(this.tabPage4);
-            this.tabControl1.Controls.Add(this.tabPage5);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.tabControl1.Location = new System.Drawing.Point(0, 22);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(441, 578);
-            this.tabControl1.TabIndex = 13;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.BackColor = System.Drawing.Color.Silver;
-            this.tabPage1.Controls.Add(this.Adb_Log);
-            this.tabPage1.Controls.Add(this.button3);
-            this.tabPage1.Controls.Add(this.button1);
-            this.tabPage1.Controls.Add(this.groupBox8);
-            this.tabPage1.Controls.Add(this.richTextBox1);
-            this.tabPage1.Controls.Add(this.checkBox2);
-            this.tabPage1.Controls.Add(this.webBrowser1);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(433, 552);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "主页";
-            this.tabPage1.ToolTipText = "主页都看不懂的话别活了";
-            // 
-            // Adb_Log
-            // 
-            this.Adb_Log.AutoSize = true;
-            this.Adb_Log.Location = new System.Drawing.Point(6, 496);
-            this.Adb_Log.Name = "Adb_Log";
-            this.Adb_Log.Size = new System.Drawing.Size(110, 17);
-            this.Adb_Log.TabIndex = 28;
-            this.Adb_Log.Text = "记录日志到硬盘";
-            this.Adb_Log.UseVisualStyleBackColor = true;
-            this.Adb_Log.CheckedChanged += new System.EventHandler(this.Adb_Log_CheckedChanged);
-            // 
             // groupBox8
             // 
+            this.groupBox8.BackColor = System.Drawing.Color.White;
             this.groupBox8.Controls.Add(this.groupBox9);
             this.groupBox8.Controls.Add(this.label16);
             this.groupBox8.Controls.Add(this.label17);
@@ -316,7 +144,7 @@
             this.groupBox8.Controls.Add(this.label14);
             this.groupBox8.Controls.Add(this.label9);
             this.groupBox8.Controls.Add(this.label8);
-            this.groupBox8.Location = new System.Drawing.Point(170, 394);
+            this.groupBox8.Location = new System.Drawing.Point(194, 387);
             this.groupBox8.Name = "groupBox8";
             this.groupBox8.Size = new System.Drawing.Size(254, 146);
             this.groupBox8.TabIndex = 27;
@@ -336,22 +164,6 @@
             this.groupBox9.Size = new System.Drawing.Size(128, 146);
             this.groupBox9.TabIndex = 42;
             this.groupBox9.TabStop = false;
-            // 
-            // progressBar2
-            // 
-            this.progressBar2.Location = new System.Drawing.Point(9, 91);
-            this.progressBar2.Maximum = 5;
-            this.progressBar2.Name = "progressBar2";
-            this.progressBar2.Size = new System.Drawing.Size(113, 23);
-            this.progressBar2.TabIndex = 34;
-            // 
-            // progressBar1
-            // 
-            this.progressBar1.Location = new System.Drawing.Point(9, 36);
-            this.progressBar1.Maximum = 5;
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(113, 23);
-            this.progressBar1.TabIndex = 33;
             // 
             // label4
             // 
@@ -447,55 +259,31 @@
             // 
             this.richTextBox1.BackColor = System.Drawing.Color.Black;
             this.richTextBox1.ForeColor = System.Drawing.Color.Lime;
-            this.richTextBox1.Location = new System.Drawing.Point(6, 151);
+            this.richTextBox1.Location = new System.Drawing.Point(5, 144);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(418, 237);
+            this.richTextBox1.Size = new System.Drawing.Size(443, 237);
             this.richTextBox1.TabIndex = 20;
             this.richTextBox1.Text = "";
             this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
             // 
-            // checkBox2
-            // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(6, 473);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(158, 17);
-            this.checkBox2.TabIndex = 21;
-            this.checkBox2.Text = "更详细日志（影响性能）";
-            this.checkBox2.UseVisualStyleBackColor = true;
-            // 
             // webBrowser1
             // 
-            this.webBrowser1.Location = new System.Drawing.Point(8, 6);
+            this.webBrowser1.Location = new System.Drawing.Point(3, 3);
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
             this.webBrowser1.ScrollBarsEnabled = false;
-            this.webBrowser1.Size = new System.Drawing.Size(416, 139);
+            this.webBrowser1.Size = new System.Drawing.Size(445, 139);
             this.webBrowser1.TabIndex = 18;
             this.webBrowser1.WebBrowserShortcutsEnabled = false;
             // 
-            // tabPage2
-            // 
-            this.tabPage2.BackColor = System.Drawing.Color.Silver;
-            this.tabPage2.Controls.Add(this.groupBox11);
-            this.tabPage2.Controls.Add(this.groupBox5);
-            this.tabPage2.Controls.Add(this.groupBox3);
-            this.tabPage2.Controls.Add(this.pictureBox2);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(433, 552);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "设置";
-            this.tabPage2.ToolTipText = "关卡与活动设置";
-            // 
             // groupBox11
             // 
+            this.groupBox11.BackColor = System.Drawing.Color.White;
             this.groupBox11.Controls.Add(this.comboBox2);
             this.groupBox11.Controls.Add(this.checkBox8);
             this.groupBox11.Controls.Add(this.checkBox12);
-            this.groupBox11.Location = new System.Drawing.Point(220, 106);
+            this.groupBox11.Location = new System.Drawing.Point(234, 117);
             this.groupBox11.Name = "groupBox11";
             this.groupBox11.Size = new System.Drawing.Size(202, 98);
             this.groupBox11.TabIndex = 13;
@@ -550,10 +338,11 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.BackColor = System.Drawing.Color.White;
             this.groupBox5.Controls.Add(this.textBox2);
             this.groupBox5.Controls.Add(this.label2);
             this.groupBox5.Controls.Add(this.button7);
-            this.groupBox5.Location = new System.Drawing.Point(220, 210);
+            this.groupBox5.Location = new System.Drawing.Point(234, 221);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(202, 116);
             this.groupBox5.TabIndex = 11;
@@ -588,12 +377,13 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.BackColor = System.Drawing.Color.White;
             this.groupBox3.Controls.Add(this.checkBox13);
             this.groupBox3.Controls.Add(this.groupBox13);
             this.groupBox3.Controls.Add(this.groupBox6);
             this.groupBox3.Controls.Add(this.checkBox6);
             this.groupBox3.Controls.Add(this.groupBox1);
-            this.groupBox3.Location = new System.Drawing.Point(6, 106);
+            this.groupBox3.Location = new System.Drawing.Point(3, 117);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(208, 425);
             this.groupBox3.TabIndex = 9;
@@ -792,42 +582,16 @@
             // pictureBox2
             // 
             this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
-            this.pictureBox2.Location = new System.Drawing.Point(10, 6);
+            this.pictureBox2.Location = new System.Drawing.Point(3, 17);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(412, 82);
+            this.pictureBox2.Size = new System.Drawing.Size(433, 82);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox2.TabIndex = 12;
             this.pictureBox2.TabStop = false;
             // 
-            // tabPage3
-            // 
-            this.tabPage3.BackColor = System.Drawing.Color.Silver;
-            this.tabPage3.Controls.Add(this.button2);
-            this.tabPage3.Controls.Add(this.pictureBox4);
-            this.tabPage3.Controls.Add(this.groupBox12);
-            this.tabPage3.Controls.Add(this.button14);
-            this.tabPage3.Controls.Add(this.groupBox7);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(433, 552);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Debug测试";
-            this.tabPage3.ToolTipText = "除错测试";
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(169, 49);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(129, 34);
-            this.button2.TabIndex = 27;
-            this.button2.Text = "OCR测试";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
             // pictureBox4
             // 
-            this.pictureBox4.Location = new System.Drawing.Point(9, 9);
+            this.pictureBox4.Location = new System.Drawing.Point(9, 20);
             this.pictureBox4.Name = "pictureBox4";
             this.pictureBox4.Size = new System.Drawing.Size(154, 222);
             this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -839,14 +603,15 @@
             // 
             // groupBox12
             // 
+            this.groupBox12.BackColor = System.Drawing.Color.White;
             this.groupBox12.Controls.Add(this.label1);
             this.groupBox12.Controls.Add(this.label13);
             this.groupBox12.Controls.Add(this.label12);
             this.groupBox12.Controls.Add(this.label11);
             this.groupBox12.Controls.Add(this.label10);
-            this.groupBox12.Location = new System.Drawing.Point(9, 237);
+            this.groupBox12.Location = new System.Drawing.Point(8, 248);
             this.groupBox12.Name = "groupBox12";
-            this.groupBox12.Size = new System.Drawing.Size(416, 301);
+            this.groupBox12.Size = new System.Drawing.Size(440, 281);
             this.groupBox12.TabIndex = 19;
             this.groupBox12.TabStop = false;
             this.groupBox12.Text = "系统资料";
@@ -891,67 +656,28 @@
             this.label10.TabIndex = 18;
             this.label10.Text = "当前.NET版本：";
             // 
-            // button14
-            // 
-            this.button14.Location = new System.Drawing.Point(169, 9);
-            this.button14.Name = "button14";
-            this.button14.Size = new System.Drawing.Size(129, 34);
-            this.button14.TabIndex = 17;
-            this.button14.Text = "模拟器资料";
-            this.button14.UseVisualStyleBackColor = true;
-            this.button14.Click += new System.EventHandler(this.button14_Click);
-            // 
             // groupBox7
             // 
+            this.groupBox7.BackColor = System.Drawing.Color.White;
             this.groupBox7.Controls.Add(this.textBox1);
-            this.groupBox7.Location = new System.Drawing.Point(304, 6);
+            this.groupBox7.Location = new System.Drawing.Point(302, 20);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(126, 225);
+            this.groupBox7.Size = new System.Drawing.Size(146, 225);
             this.groupBox7.TabIndex = 12;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "说明";
             // 
             // textBox1
             // 
+            this.textBox1.BackColor = System.Drawing.Color.White;
             this.textBox1.Location = new System.Drawing.Point(6, 20);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(117, 197);
+            this.textBox1.Size = new System.Drawing.Size(134, 197);
             this.textBox1.TabIndex = 0;
             this.textBox1.Text = "基于模拟器安卓版本可能不支持某些指令\r\n\r\n***************************\r\n请使用此页进行测试！！！\r\n****************" +
     "***********";
-            // 
-            // tabPage4
-            // 
-            this.tabPage4.BackColor = System.Drawing.Color.Gray;
-            this.tabPage4.Controls.Add(this.tabControl2);
-            this.tabPage4.Location = new System.Drawing.Point(4, 22);
-            this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(433, 552);
-            this.tabPage4.TabIndex = 3;
-            this.tabPage4.Text = "脚本";
-            // 
-            // tabControl2
-            // 
-            this.tabControl2.Location = new System.Drawing.Point(6, 6);
-            this.tabControl2.Name = "tabControl2";
-            this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(421, 532);
-            this.tabControl2.TabIndex = 0;
-            // 
-            // tabPage5
-            // 
-            this.tabPage5.Controls.Add(this.groupBox10);
-            this.tabPage5.Controls.Add(this.webBrowser3);
-            this.tabPage5.Location = new System.Drawing.Point(4, 22);
-            this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(433, 552);
-            this.tabPage5.TabIndex = 4;
-            this.tabPage5.Text = "资料库";
-            this.tabPage5.UseVisualStyleBackColor = true;
             // 
             // groupBox10
             // 
@@ -963,9 +689,9 @@
             this.groupBox10.Controls.Add(this.checkBox11);
             this.groupBox10.Controls.Add(this.radioButton8);
             this.groupBox10.Controls.Add(this.radioButton6);
-            this.groupBox10.Location = new System.Drawing.Point(8, 6);
+            this.groupBox10.Location = new System.Drawing.Point(3, 6);
             this.groupBox10.Name = "groupBox10";
-            this.groupBox10.Size = new System.Drawing.Size(419, 84);
+            this.groupBox10.Size = new System.Drawing.Size(439, 84);
             this.groupBox10.TabIndex = 0;
             this.groupBox10.TabStop = false;
             this.groupBox10.Text = "设置";
@@ -1062,10 +788,10 @@
             // webBrowser3
             // 
             this.webBrowser3.AllowWebBrowserDrop = false;
-            this.webBrowser3.Location = new System.Drawing.Point(8, 96);
+            this.webBrowser3.Location = new System.Drawing.Point(3, 96);
             this.webBrowser3.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser3.Name = "webBrowser3";
-            this.webBrowser3.Size = new System.Drawing.Size(419, 442);
+            this.webBrowser3.Size = new System.Drawing.Size(439, 433);
             this.webBrowser3.TabIndex = 21;
             this.webBrowser3.WebBrowserShortcutsEnabled = false;
             this.webBrowser3.NewWindow += new System.ComponentModel.CancelEventHandler(this.webBrowser3_NewWindow);
@@ -1078,39 +804,222 @@
             // 
             this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.panel3.BackColor = System.Drawing.Color.Black;
-            this.panel3.Location = new System.Drawing.Point(447, 28);
+            this.panel3.Location = new System.Drawing.Point(474, 63);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(0, 568);
+            this.panel3.Size = new System.Drawing.Size(0, 574);
             this.panel3.TabIndex = 31;
             this.panel3.Visible = false;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(5, 387);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(183, 32);
+            this.button1.TabIndex = 30;
+            this.button1.Text = "开始挂机";
+            this.button1.UseSelectable = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(5, 425);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(183, 32);
+            this.button3.TabIndex = 31;
+            this.button3.Text = "停止挂机";
+            this.button3.UseSelectable = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // metroTabControl1
+            // 
+            this.metroTabControl1.Controls.Add(this.metroTabPage1);
+            this.metroTabControl1.Controls.Add(this.metroTabPage2);
+            this.metroTabControl1.Controls.Add(this.metroTabPage3);
+            this.metroTabControl1.Controls.Add(this.metroTabPage4);
+            this.metroTabControl1.Controls.Add(this.metroTabPage5);
+            this.metroTabControl1.Location = new System.Drawing.Point(8, 63);
+            this.metroTabControl1.Name = "metroTabControl1";
+            this.metroTabControl1.SelectedIndex = 0;
+            this.metroTabControl1.Size = new System.Drawing.Size(460, 574);
+            this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Brown;
+            this.metroTabControl1.TabIndex = 32;
+            this.metroTabControl1.UseSelectable = true;
+            // 
+            // metroTabPage1
+            // 
+            this.metroTabPage1.Controls.Add(this.checkBox1);
+            this.metroTabPage1.Controls.Add(this.metroLink1);
+            this.metroTabPage1.Controls.Add(this.button3);
+            this.metroTabPage1.Controls.Add(this.button1);
+            this.metroTabPage1.Controls.Add(this.webBrowser1);
+            this.metroTabPage1.Controls.Add(this.groupBox8);
+            this.metroTabPage1.Controls.Add(this.richTextBox1);
+            this.metroTabPage1.HorizontalScrollbarBarColor = true;
+            this.metroTabPage1.HorizontalScrollbarHighlightOnWheel = false;
+            this.metroTabPage1.HorizontalScrollbarSize = 10;
+            this.metroTabPage1.Location = new System.Drawing.Point(4, 38);
+            this.metroTabPage1.Name = "metroTabPage1";
+            this.metroTabPage1.Size = new System.Drawing.Size(452, 532);
+            this.metroTabPage1.TabIndex = 0;
+            this.metroTabPage1.Text = "主页";
+            this.metroTabPage1.VerticalScrollbarBarColor = true;
+            this.metroTabPage1.VerticalScrollbarHighlightOnWheel = false;
+            this.metroTabPage1.VerticalScrollbarSize = 10;
+            // 
+            // metroTabPage2
+            // 
+            this.metroTabPage2.Controls.Add(this.groupBox11);
+            this.metroTabPage2.Controls.Add(this.groupBox5);
+            this.metroTabPage2.Controls.Add(this.groupBox3);
+            this.metroTabPage2.Controls.Add(this.pictureBox2);
+            this.metroTabPage2.HorizontalScrollbarBarColor = true;
+            this.metroTabPage2.HorizontalScrollbarHighlightOnWheel = false;
+            this.metroTabPage2.HorizontalScrollbarSize = 10;
+            this.metroTabPage2.Location = new System.Drawing.Point(4, 38);
+            this.metroTabPage2.Name = "metroTabPage2";
+            this.metroTabPage2.Size = new System.Drawing.Size(452, 532);
+            this.metroTabPage2.TabIndex = 1;
+            this.metroTabPage2.Text = "设置";
+            this.metroTabPage2.VerticalScrollbarBarColor = true;
+            this.metroTabPage2.VerticalScrollbarHighlightOnWheel = false;
+            this.metroTabPage2.VerticalScrollbarSize = 10;
+            // 
+            // metroTabPage3
+            // 
+            this.metroTabPage3.Controls.Add(this.metroButton2);
+            this.metroTabPage3.Controls.Add(this.metroButton1);
+            this.metroTabPage3.Controls.Add(this.pictureBox4);
+            this.metroTabPage3.Controls.Add(this.groupBox12);
+            this.metroTabPage3.Controls.Add(this.groupBox7);
+            this.metroTabPage3.HorizontalScrollbarBarColor = true;
+            this.metroTabPage3.HorizontalScrollbarHighlightOnWheel = false;
+            this.metroTabPage3.HorizontalScrollbarSize = 10;
+            this.metroTabPage3.Location = new System.Drawing.Point(4, 38);
+            this.metroTabPage3.Name = "metroTabPage3";
+            this.metroTabPage3.Size = new System.Drawing.Size(452, 532);
+            this.metroTabPage3.TabIndex = 2;
+            this.metroTabPage3.Text = "Debug测试";
+            this.metroTabPage3.VerticalScrollbarBarColor = true;
+            this.metroTabPage3.VerticalScrollbarHighlightOnWheel = false;
+            this.metroTabPage3.VerticalScrollbarSize = 10;
+            // 
+            // metroTabPage4
+            // 
+            this.metroTabPage4.Controls.Add(this.tabControl2);
+            this.metroTabPage4.HorizontalScrollbarBarColor = true;
+            this.metroTabPage4.HorizontalScrollbarHighlightOnWheel = false;
+            this.metroTabPage4.HorizontalScrollbarSize = 10;
+            this.metroTabPage4.Location = new System.Drawing.Point(4, 38);
+            this.metroTabPage4.Name = "metroTabPage4";
+            this.metroTabPage4.Size = new System.Drawing.Size(452, 532);
+            this.metroTabPage4.TabIndex = 3;
+            this.metroTabPage4.Text = "脚本";
+            this.metroTabPage4.VerticalScrollbarBarColor = true;
+            this.metroTabPage4.VerticalScrollbarHighlightOnWheel = false;
+            this.metroTabPage4.VerticalScrollbarSize = 10;
+            // 
+            // metroTabPage5
+            // 
+            this.metroTabPage5.Controls.Add(this.groupBox10);
+            this.metroTabPage5.Controls.Add(this.webBrowser3);
+            this.metroTabPage5.HorizontalScrollbarBarColor = true;
+            this.metroTabPage5.HorizontalScrollbarHighlightOnWheel = false;
+            this.metroTabPage5.HorizontalScrollbarSize = 10;
+            this.metroTabPage5.Location = new System.Drawing.Point(4, 38);
+            this.metroTabPage5.Name = "metroTabPage5";
+            this.metroTabPage5.Size = new System.Drawing.Size(452, 532);
+            this.metroTabPage5.TabIndex = 4;
+            this.metroTabPage5.Text = "资料";
+            this.metroTabPage5.VerticalScrollbarBarColor = true;
+            this.metroTabPage5.VerticalScrollbarHighlightOnWheel = false;
+            this.metroTabPage5.VerticalScrollbarSize = 10;
+            // 
+            // metroButton1
+            // 
+            this.metroButton1.Location = new System.Drawing.Point(169, 20);
+            this.metroButton1.Name = "metroButton1";
+            this.metroButton1.Size = new System.Drawing.Size(127, 37);
+            this.metroButton1.TabIndex = 28;
+            this.metroButton1.Text = "模拟器资料";
+            this.metroButton1.UseSelectable = true;
+            this.metroButton1.Click += new System.EventHandler(this.button14_Click);
+            // 
+            // metroButton2
+            // 
+            this.metroButton2.Location = new System.Drawing.Point(169, 63);
+            this.metroButton2.Name = "metroButton2";
+            this.metroButton2.Size = new System.Drawing.Size(127, 37);
+            this.metroButton2.TabIndex = 29;
+            this.metroButton2.Text = "OCR测试";
+            this.metroButton2.UseSelectable = true;
+            this.metroButton2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(6, 40);
+            this.progressBar1.Maximum = 5;
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(116, 23);
+            this.progressBar1.Style = MetroFramework.MetroColorStyle.Lime;
+            this.progressBar1.TabIndex = 33;
+            // 
+            // progressBar2
+            // 
+            this.progressBar2.Location = new System.Drawing.Point(6, 100);
+            this.progressBar2.Maximum = 5;
+            this.progressBar2.Name = "progressBar2";
+            this.progressBar2.Size = new System.Drawing.Size(116, 23);
+            this.progressBar2.Style = MetroFramework.MetroColorStyle.Pink;
+            this.progressBar2.TabIndex = 34;
+            // 
+            // metroLink1
+            // 
+            this.metroLink1.Location = new System.Drawing.Point(3, 513);
+            this.metroLink1.Name = "metroLink1";
+            this.metroLink1.Size = new System.Drawing.Size(127, 23);
+            this.metroLink1.TabIndex = 32;
+            this.metroLink1.Text = "Created by PoH98";
+            this.metroLink1.UseSelectable = true;
+            this.metroLink1.Click += new System.EventHandler(this.MetroLink1_Click);
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(5, 467);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(114, 15);
+            this.checkBox1.TabIndex = 33;
+            this.checkBox1.Text = "显示更详细日志";
+            this.checkBox1.UseSelectable = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged);
+            // 
+            // tabControl2
+            // 
+            this.tabControl2.Location = new System.Drawing.Point(3, 3);
+            this.tabControl2.Name = "tabControl2";
+            this.tabControl2.Size = new System.Drawing.Size(446, 519);
+            this.tabControl2.TabIndex = 2;
+            this.tabControl2.UseSelectable = true;
             // 
             // MainScreen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.DimGray;
-            this.ClientSize = new System.Drawing.Size(449, 600);
+            this.ClientSize = new System.Drawing.Size(477, 646);
+            this.Controls.Add(this.metroTabControl1);
             this.Controls.Add(this.panel3);
-            this.Controls.Add(this.tabControl1);
-            this.Controls.Add(this.panel1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.MinimizeBox = false;
             this.Name = "MainScreen";
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultLocation;
+            this.Style = MetroFramework.MetroColorStyle.Green;
             this.Text = "神女控强力挂机";
             this.Load += new System.EventHandler(this.MainScreen_Load);
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
             this.groupBox9.ResumeLayout(false);
             this.groupBox9.PerformLayout();
-            this.tabPage2.ResumeLayout(false);
             this.groupBox11.ResumeLayout(false);
             this.groupBox11.PerformLayout();
             this.groupBox5.ResumeLayout(false);
@@ -1124,33 +1033,26 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
-            this.tabPage3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
             this.groupBox12.ResumeLayout(false);
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
-            this.tabPage4.ResumeLayout(false);
-            this.tabPage5.ResumeLayout(false);
             this.groupBox10.ResumeLayout(false);
             this.groupBox10.PerformLayout();
+            this.metroTabControl1.ResumeLayout(false);
+            this.metroTabPage1.ResumeLayout(false);
+            this.metroTabPage1.PerformLayout();
+            this.metroTabPage2.ResumeLayout(false);
+            this.metroTabPage3.ResumeLayout(false);
+            this.metroTabPage4.ResumeLayout(false);
+            this.metroTabPage5.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Timer timer1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Timer timer2;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.WebBrowser webBrowser1;
-        private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.RadioButton radioButton4;
@@ -1162,11 +1064,9 @@
         private System.Windows.Forms.ComboBox comboBox3;
         private System.Windows.Forms.CheckBox checkBox6;
         private System.Windows.Forms.RadioButton radioButton5;
-        private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.GroupBox groupBox7;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.RichTextBox richTextBox1;
-        private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Label label2;
@@ -1175,8 +1075,6 @@
         private System.Windows.Forms.CheckBox checkBox8;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.GroupBox groupBox8;
-        private System.Windows.Forms.TabPage tabPage4;
-        private System.Windows.Forms.TabPage tabPage5;
         private System.Windows.Forms.GroupBox groupBox10;
         private System.Windows.Forms.RadioButton radioButton6;
         private System.Windows.Forms.CheckBox checkBox11;
@@ -1189,26 +1087,20 @@
         private System.Windows.Forms.CheckBox checkBox12;
         private System.Windows.Forms.WebBrowser webBrowser3;
         private System.Windows.Forms.Panel panel3;
-        private System.Windows.Forms.Button button14;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.GroupBox groupBox12;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.Button button15;
-        private System.Windows.Forms.Button button16;
         private System.Windows.Forms.GroupBox groupBox13;
         private System.Windows.Forms.RadioButton radioButton10;
         private System.Windows.Forms.RadioButton radioButton9;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox checkBox13;
         private System.Windows.Forms.RadioButton radioButton11;
-        private System.Windows.Forms.TabControl tabControl2;
         private System.Windows.Forms.CheckBox checkBox10;
         private System.Windows.Forms.RadioButton radioButton7;
         private System.Windows.Forms.PictureBox pictureBox4;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.CheckBox Adb_Log;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.Label label15;
@@ -1216,14 +1108,27 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.GroupBox groupBox9;
-        private System.Windows.Forms.ProgressBar progressBar2;
-        private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.ComboBox comboBox1;
+        private MetroFramework.Controls.MetroButton button3;
+        private MetroFramework.Controls.MetroButton button1;
+        private MetroFramework.Controls.MetroTabControl metroTabControl1;
+        private MetroFramework.Controls.MetroTabPage metroTabPage1;
+        private MetroFramework.Controls.MetroTabPage metroTabPage2;
+        private MetroFramework.Controls.MetroTabPage metroTabPage3;
+        private MetroFramework.Controls.MetroTabPage metroTabPage4;
+        private MetroFramework.Controls.MetroTabPage metroTabPage5;
+        private MetroFramework.Controls.MetroButton metroButton2;
+        private MetroFramework.Controls.MetroButton metroButton1;
+        private MetroFramework.Controls.MetroProgressBar progressBar2;
+        private MetroFramework.Controls.MetroProgressBar progressBar1;
+        private MetroFramework.Controls.MetroLink metroLink1;
+        private MetroFramework.Controls.MetroCheckBox checkBox1;
+        private MetroFramework.Controls.MetroTabControl tabControl2;
     }
 }
 
