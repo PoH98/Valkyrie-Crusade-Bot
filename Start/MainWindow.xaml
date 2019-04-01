@@ -1,0 +1,24 @@
+﻿<Window x:Class="Start.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Start"
+        mc:Ignorable="d"
+        Title="神女控挂机" Height="153.563" Width="266.216" ResizeMode="NoResize" Topmost="True" WindowStartupLocation="CenterScreen" FontFamily="STCaiyun" FontSize="14" Opacity="0.7" AllowsTransparency="True" WindowStyle="None">
+    <Window.Effect>
+        <DropShadowEffect/>
+    </Window.Effect>
+    <Grid>
+        <Grid.Effect>
+            <DropShadowEffect/>
+        </Grid.Effect>
+        <Button x:Name="逍遥模拟器" Content="逍遥模拟器" HorizontalAlignment="Left" Margin="32,44,0,0" VerticalAlignment="Top" Width="92" Click="逍遥模拟器_Click" Height="35"/>
+        <Button x:Name="夜神模拟器" Content="夜神模拟器" HorizontalAlignment="Left" Margin="143,44,0,0" VerticalAlignment="Top" Width="92" Click="夜神模拟器_Click" Height="35"/>
+        <Label x:Name="label" Content="手动选择模拟器" HorizontalAlignment="Left" Margin="28,10,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <Button x:Name="关闭" Content="X" HorizontalAlignment="Left" Margin="243,0,0,0" VerticalAlignment="Top" Width="23" Click="Button_Click"/>
+        <Button x:Name="自动判断" Content="自动判断" HorizontalAlignment="Left" Margin="143,96,0,0" VerticalAlignment="Top" Width="92" Click="自动判断_Click" Height="35"/>
+        <Button x:Name="木木模拟器" Content="木木模拟器" HorizontalAlignment="Left" Margin="32,96,0,0" VerticalAlignment="Top" Width="92" Click="木木模拟器_Click" Height="35"/>
+
+    </Grid>
+</Window>

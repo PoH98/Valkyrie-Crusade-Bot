@@ -33,6 +33,8 @@
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.progressBar2 = new MetroFramework.Controls.MetroProgressBar();
+            this.progressBar1 = new MetroFramework.Controls.MetroProgressBar();
             this.label4 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -97,17 +99,14 @@
             this.button3 = new MetroFramework.Controls.MetroButton();
             this.metroTabControl1 = new MetroFramework.Controls.MetroTabControl();
             this.metroTabPage1 = new MetroFramework.Controls.MetroTabPage();
+            this.checkBox1 = new MetroFramework.Controls.MetroCheckBox();
+            this.metroLink1 = new MetroFramework.Controls.MetroLink();
             this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
             this.metroTabPage3 = new MetroFramework.Controls.MetroTabPage();
-            this.metroTabPage4 = new MetroFramework.Controls.MetroTabPage();
-            this.metroTabPage5 = new MetroFramework.Controls.MetroTabPage();
-            this.metroButton1 = new MetroFramework.Controls.MetroButton();
             this.metroButton2 = new MetroFramework.Controls.MetroButton();
-            this.progressBar1 = new MetroFramework.Controls.MetroProgressBar();
-            this.progressBar2 = new MetroFramework.Controls.MetroProgressBar();
-            this.metroLink1 = new MetroFramework.Controls.MetroLink();
-            this.checkBox1 = new MetroFramework.Controls.MetroCheckBox();
+            this.metroTabPage4 = new MetroFramework.Controls.MetroTabPage();
             this.tabControl2 = new MetroFramework.Controls.MetroTabControl();
+            this.metroTabPage5 = new MetroFramework.Controls.MetroTabPage();
             this.groupBox8.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -164,6 +163,24 @@
             this.groupBox9.Size = new System.Drawing.Size(128, 146);
             this.groupBox9.TabIndex = 42;
             this.groupBox9.TabStop = false;
+            // 
+            // progressBar2
+            // 
+            this.progressBar2.Location = new System.Drawing.Point(6, 100);
+            this.progressBar2.Maximum = 5;
+            this.progressBar2.Name = "progressBar2";
+            this.progressBar2.Size = new System.Drawing.Size(116, 23);
+            this.progressBar2.Style = MetroFramework.MetroColorStyle.Pink;
+            this.progressBar2.TabIndex = 34;
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(6, 40);
+            this.progressBar1.Maximum = 5;
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(116, 23);
+            this.progressBar1.Style = MetroFramework.MetroColorStyle.Lime;
+            this.progressBar1.TabIndex = 33;
             // 
             // label4
             // 
@@ -794,6 +811,7 @@
             this.webBrowser3.Size = new System.Drawing.Size(439, 433);
             this.webBrowser3.TabIndex = 21;
             this.webBrowser3.WebBrowserShortcutsEnabled = false;
+            this.webBrowser3.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.WebBrowser3_DocumentCompleted);
             this.webBrowser3.NewWindow += new System.ComponentModel.CancelEventHandler(this.webBrowser3_NewWindow);
             // 
             // openFileDialog1
@@ -812,6 +830,7 @@
             // 
             // button1
             // 
+            this.button1.FontWeight = MetroFramework.MetroButtonWeight.Regular;
             this.button1.Location = new System.Drawing.Point(5, 387);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(183, 32);
@@ -822,6 +841,7 @@
             // 
             // button3
             // 
+            this.button3.FontWeight = MetroFramework.MetroButtonWeight.Regular;
             this.button3.Location = new System.Drawing.Point(5, 425);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(183, 32);
@@ -839,7 +859,7 @@
             this.metroTabControl1.Controls.Add(this.metroTabPage5);
             this.metroTabControl1.Location = new System.Drawing.Point(8, 63);
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 0;
+            this.metroTabControl1.SelectedIndex = 2;
             this.metroTabControl1.Size = new System.Drawing.Size(460, 574);
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Brown;
             this.metroTabControl1.TabIndex = 32;
@@ -866,6 +886,27 @@
             this.metroTabPage1.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage1.VerticalScrollbarSize = 10;
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(5, 467);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(114, 15);
+            this.checkBox1.TabIndex = 33;
+            this.checkBox1.Text = "显示更详细日志";
+            this.checkBox1.UseSelectable = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged);
+            // 
+            // metroLink1
+            // 
+            this.metroLink1.Location = new System.Drawing.Point(0, 513);
+            this.metroLink1.Name = "metroLink1";
+            this.metroLink1.Size = new System.Drawing.Size(127, 23);
+            this.metroLink1.TabIndex = 32;
+            this.metroLink1.Text = "Created by PoH98";
+            this.metroLink1.UseSelectable = true;
+            this.metroLink1.Click += new System.EventHandler(this.MetroLink1_Click);
+            // 
             // metroTabPage2
             // 
             this.metroTabPage2.Controls.Add(this.groupBox11);
@@ -887,7 +928,6 @@
             // metroTabPage3
             // 
             this.metroTabPage3.Controls.Add(this.metroButton2);
-            this.metroTabPage3.Controls.Add(this.metroButton1);
             this.metroTabPage3.Controls.Add(this.pictureBox4);
             this.metroTabPage3.Controls.Add(this.groupBox12);
             this.metroTabPage3.Controls.Add(this.groupBox7);
@@ -903,6 +943,17 @@
             this.metroTabPage3.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage3.VerticalScrollbarSize = 10;
             // 
+            // metroButton2
+            // 
+            this.metroButton2.FontWeight = MetroFramework.MetroButtonWeight.Regular;
+            this.metroButton2.Location = new System.Drawing.Point(169, 20);
+            this.metroButton2.Name = "metroButton2";
+            this.metroButton2.Size = new System.Drawing.Size(127, 37);
+            this.metroButton2.TabIndex = 29;
+            this.metroButton2.Text = "OCR测试";
+            this.metroButton2.UseSelectable = true;
+            this.metroButton2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // metroTabPage4
             // 
             this.metroTabPage4.Controls.Add(this.tabControl2);
@@ -917,6 +968,14 @@
             this.metroTabPage4.VerticalScrollbarBarColor = true;
             this.metroTabPage4.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage4.VerticalScrollbarSize = 10;
+            // 
+            // tabControl2
+            // 
+            this.tabControl2.Location = new System.Drawing.Point(3, 3);
+            this.tabControl2.Name = "tabControl2";
+            this.tabControl2.Size = new System.Drawing.Size(446, 519);
+            this.tabControl2.TabIndex = 2;
+            this.tabControl2.UseSelectable = true;
             // 
             // metroTabPage5
             // 
@@ -934,73 +993,6 @@
             this.metroTabPage5.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage5.VerticalScrollbarSize = 10;
             // 
-            // metroButton1
-            // 
-            this.metroButton1.Location = new System.Drawing.Point(169, 20);
-            this.metroButton1.Name = "metroButton1";
-            this.metroButton1.Size = new System.Drawing.Size(127, 37);
-            this.metroButton1.TabIndex = 28;
-            this.metroButton1.Text = "模拟器资料";
-            this.metroButton1.UseSelectable = true;
-            this.metroButton1.Click += new System.EventHandler(this.button14_Click);
-            // 
-            // metroButton2
-            // 
-            this.metroButton2.Location = new System.Drawing.Point(169, 63);
-            this.metroButton2.Name = "metroButton2";
-            this.metroButton2.Size = new System.Drawing.Size(127, 37);
-            this.metroButton2.TabIndex = 29;
-            this.metroButton2.Text = "OCR测试";
-            this.metroButton2.UseSelectable = true;
-            this.metroButton2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // progressBar1
-            // 
-            this.progressBar1.Location = new System.Drawing.Point(6, 40);
-            this.progressBar1.Maximum = 5;
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(116, 23);
-            this.progressBar1.Style = MetroFramework.MetroColorStyle.Lime;
-            this.progressBar1.TabIndex = 33;
-            // 
-            // progressBar2
-            // 
-            this.progressBar2.Location = new System.Drawing.Point(6, 100);
-            this.progressBar2.Maximum = 5;
-            this.progressBar2.Name = "progressBar2";
-            this.progressBar2.Size = new System.Drawing.Size(116, 23);
-            this.progressBar2.Style = MetroFramework.MetroColorStyle.Pink;
-            this.progressBar2.TabIndex = 34;
-            // 
-            // metroLink1
-            // 
-            this.metroLink1.Location = new System.Drawing.Point(3, 513);
-            this.metroLink1.Name = "metroLink1";
-            this.metroLink1.Size = new System.Drawing.Size(127, 23);
-            this.metroLink1.TabIndex = 32;
-            this.metroLink1.Text = "Created by PoH98";
-            this.metroLink1.UseSelectable = true;
-            this.metroLink1.Click += new System.EventHandler(this.MetroLink1_Click);
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(5, 467);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(114, 15);
-            this.checkBox1.TabIndex = 33;
-            this.checkBox1.Text = "显示更详细日志";
-            this.checkBox1.UseSelectable = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged);
-            // 
-            // tabControl2
-            // 
-            this.tabControl2.Location = new System.Drawing.Point(3, 3);
-            this.tabControl2.Name = "tabControl2";
-            this.tabControl2.Size = new System.Drawing.Size(446, 519);
-            this.tabControl2.TabIndex = 2;
-            this.tabControl2.UseSelectable = true;
-            // 
             // MainScreen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1011,10 +1003,13 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "MainScreen";
+            this.Resizable = false;
+            this.ShadowType = MetroFramework.Forms.MetroFormShadowType.AeroShadow;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultLocation;
             this.Style = MetroFramework.MetroColorStyle.Green;
             this.Text = "神女控强力挂机";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainScreen_FormClosing);
             this.Load += new System.EventHandler(this.MainScreen_Load);
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
@@ -1123,7 +1118,6 @@
         private MetroFramework.Controls.MetroTabPage metroTabPage4;
         private MetroFramework.Controls.MetroTabPage metroTabPage5;
         private MetroFramework.Controls.MetroButton metroButton2;
-        private MetroFramework.Controls.MetroButton metroButton1;
         private MetroFramework.Controls.MetroProgressBar progressBar2;
         private MetroFramework.Controls.MetroProgressBar progressBar1;
         private MetroFramework.Controls.MetroLink metroLink1;

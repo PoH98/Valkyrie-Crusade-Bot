@@ -44,7 +44,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Image = global::UI.Properties.Resources.img;
-            this.pictureBox1.Location = new System.Drawing.Point(9, 15);
+            this.pictureBox1.Location = new System.Drawing.Point(10, 63);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(367, 149);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -53,10 +53,11 @@
             // 
             // metroProgressBar1
             // 
-            this.metroProgressBar1.Location = new System.Drawing.Point(9, 170);
+            this.metroProgressBar1.Location = new System.Drawing.Point(10, 218);
             this.metroProgressBar1.Name = "metroProgressBar1";
             this.metroProgressBar1.ProgressBarStyle = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.metroProgressBar1.Size = new System.Drawing.Size(367, 23);
+            this.metroProgressBar1.Style = MetroFramework.MetroColorStyle.Black;
             this.metroProgressBar1.TabIndex = 3;
             this.metroProgressBar1.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroProgressBar1.UseCustomBackColor = true;
@@ -65,18 +66,20 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(387, 203);
+            this.ClientSize = new System.Drawing.Size(387, 250);
             this.ControlBox = false;
             this.Controls.Add(this.metroProgressBar1);
             this.Controls.Add(this.pictureBox1);
-            this.DisplayHeader = false;
             this.DoubleBuffered = false;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
+            this.Movable = false;
             this.Name = "Loading";
-            this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 20);
+            this.Resizable = false;
             this.ShowInTaskbar = false;
+            this.Style = MetroFramework.MetroColorStyle.White;
+            this.Text = "神女控挂机 (PoH98制作)";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 

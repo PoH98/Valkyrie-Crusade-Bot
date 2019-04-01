@@ -55,8 +55,7 @@ namespace UI
             PrivateVariable.InEventScreen = false;
             PrivateVariable.Battling = false;
             PrivateVariable.InMap = false;
-            PrivateVariable.EventType = -1;
-            Variables.ScriptLog(log);
+            Variables.ScriptLog(log,Color.Yellow);
         }
     }
 }

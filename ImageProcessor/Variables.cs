@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -17,33 +18,39 @@ namespace ImageProcessor
     /// </summary>
     public static class Variables
     {
+        public static string useemulator;
         /// <summary>
         /// Adb Ip:Port
         /// </summary>
         public static string AdbIpPort;
         /// <summary>
+        /// The path of screenshot saved in emulator
+        /// </summary>
+        public static string AndroidSharedPath;
+
+        public static EmulatorInterface emulator;
+        /// <summary>
         /// The emulator path that is installed at PC with outputing the emulator enum
         /// </summary>
-        public static string EmulatorPath(out EmulatorController.Emulators emu)
+        public static void EmulatorPath(string[] args)
         {
-            string path = "";
-            if (EmulatorsInstallationPath.MEmu(out path))
+            EmulatorController.LoadEmulatorInterface(args);
+            if (emulator == null)
             {
-                emu = EmulatorController.Emulators.MEmu;
-                return path + "\\MEmu\\MEmu.exe";
+                if (File.Exists("Updater.exe"))
+                {
+                    MessageBox.Show("正在自动下载模拟器...");
+                    Process p = Process.Start("Updater.exe", "http://dl.memuplay.com/download/backup/Memu-Setup-3.7.0.0.exe");
+                    p.WaitForExit();
+                }
+                MessageBox.Show("请安装完毕模拟器后再继续！");
+                Environment.Exit(0);
             }
-            if (EmulatorsInstallationPath.Bluestack(out path))
+            if (Instance == "")
             {
-                emu = EmulatorController.Emulators.Bluestack;
-                return path + "";
+                Instance = emulator.EmulatorName();
             }
-            if (EmulatorsInstallationPath.Nox(out path))
-            {
-                emu = EmulatorController.Emulators.Nox;
-                return path + "";
-            }
-            emu = EmulatorController.Emulators.Null;
-            return null;
+            EmulatorController.profilePath = Instance;
         }
 
         public static DeviceData Controlled_Device = null;
@@ -85,25 +92,41 @@ namespace ImageProcessor
         public static bool AdbLogShow = false;
         public static void AdbLog(string log, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            if (AdbLogShow)
+            try
+            {
+                if (AdbLogShow)
+                {
+                    richTextBox.Invoke((MethodInvoker)delegate
+                    {
+                        richTextBox.SelectionColor = Color.Red;
+                        richTextBox.AppendText("[" + DateTime.Now + "]:" + log + "\n");
+                    });
+                }
+            }
+            catch
+            {
+
+            }
+        }
+        public static void ScriptLog(string log, Color color, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        {
+            try
             {
                 richTextBox.Invoke((MethodInvoker)delegate
                 {
-                    richTextBox.SelectionColor = Color.Red;
-                    richTextBox.AppendText("\n[" + DateTime.Now + "]:" + log);
+                    richTextBox.SelectionColor = color;
+                    richTextBox.AppendText("[" + DateTime.Now + "]:" + log + "\n");
                 });
+                Debug_.WriteLine("ScriptLog: " + log, lineNumber, caller);
+            }
+            catch
+            {
+
             }
         }
-        
-        public static void ScriptLog(string log, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
-        {
-            richTextBox.Invoke((MethodInvoker)delegate
-            {
-                richTextBox.SelectionColor = Color.Lime;
-                richTextBox.AppendText("\n[" + DateTime.Now + "]:" + log);
-            });
-                Debug_.WriteLine("ScriptLog: "+log, lineNumber, caller);
-            
-        }
+        /// <summary>
+        /// Set if screencapture need to use pull function
+        /// </summary>
+        public static bool NeedPull = false;
     }
 }

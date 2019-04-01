@@ -12,7 +12,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Sockets;
+using System.Management;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
@@ -21,6 +21,7 @@ using System.Text;
 using System.Threading;
 using System.Security.Cryptography;
 using System.Windows.Forms;
+using System.Reflection;
 
 namespace ImageProcessor
 {
@@ -30,9 +31,52 @@ namespace ImageProcessor
         /// <summary>
         /// The path to bot.ini
         /// </summary>
-        public static string profilePath = "MEmu";
+        public static string profilePath = Variables.Instance;
         public static string path;
 
+        /// <summary>
+        /// Read emulators dll
+        /// </summary>
+        public static void LoadEmulatorInterface(string[] args)
+        {
+            List<EmulatorInterface> emulators = new List<EmulatorInterface>();
+            if (!Directory.Exists("Emulators"))
+            {
+                Directory.CreateDirectory("Emulators");
+            }
+            var dlls = Directory.GetFiles("Emulators", "*.dll");
+            if(dlls!=null)
+            {
+                foreach (var dll in dlls)
+                {
+                    Assembly a = Assembly.LoadFrom(dll);
+                    foreach (var t in a.GetTypes())
+                    {
+                        if (t.GetInterface("EmulatorInterface") != null)
+                        {
+                            emulators.Add(Activator.CreateInstance(t) as EmulatorInterface);
+                        }
+                    }
+                }
+            }
+            foreach (var emu in emulators)
+            {
+                if (args.Contains(emu.EmulatorName()))
+                {
+                    emu.LoadEmulatorSettings();
+                    Variables.emulator = emu;
+                    break;
+                }
+                else
+                {
+                    if (emu.LoadEmulatorSettings() && Variables.emulator == null)
+                    {
+                        Variables.emulator = emu;
+                        break;
+                    }
+                }
+            }
+        }
         [HandleProcessCorruptedStateExceptions]
         [SecurityCritical]
         public static byte[] Compress(Image image)
@@ -86,71 +130,41 @@ namespace ImageProcessor
         /// <summary>
         /// Close the emulator by using vBox command lines
         /// </summary>
-        public static void CloseEmulator(string VBoxController)
+        public static void CloseEmulator()
         {
-            ProcessStartInfo close = new ProcessStartInfo();
-            close.FileName = Variables.VBoxManagerPath + "\\" + VBoxController;
-            if(Variables.Instance.Length > 0)
-            {
-                close.Arguments = "controlvm " + Variables.Instance + " poweroff";
-            }
-           else
-            {
-                close.Arguments = "controlvm MEmu poweroff";
-            }
-            close.CreateNoWindow = true;
-            close.WindowStyle = ProcessWindowStyle.Hidden;
-            try
-            {
-                if (Variables.Proc != null)
-                {
-                    Variables.Proc.Kill();
-                }
-            }
-            catch
-            {
-
-            }
-            Process p = Process.Start(close);
+            Variables.emulator.CloseEmulator();
             Variables.Proc = null;
             Variables.Controlled_Device = null;
-            Variables.ScriptLog("Emulator Closed");
+            Variables.ScriptLog("Emulator Closed",Color.Red);
         }
         public static void RestartEmulator()
         {
-            CloseEmulator("MEmuManage.exe");
-            Variables.ScriptLog("Restarting Emulator...");
+            CloseEmulator();
+            Variables.ScriptLog("Restarting Emulator...",Color.Red);
             Thread.Sleep(1000);
             StartEmulator();
+        }
+        /// <summary>
+        /// Method for resizing emulators
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public static void ResizeEmulator(int x, int y)
+        {
+            CloseEmulator();
+            Variables.emulator.SetResolution(x,y);
+            Variables.ScriptLog("Restarting Emulator after setting size", Color.Lime);
+            StartEmulator();
+           
         }
         /// <summary>
         /// Refresh Variables.Proc and EmulatorController.Handle
         /// </summary>
         /// <param name="classes">for checking if the process is really emulator</param>
         /// <param name="name">for checking if the process is really emulator</param>
-        public static void ConnectAndroidEmulator(string classes, string name, string[] processName)
+        public static void ConnectAndroidEmulator()
         {
-            foreach(var n in processName)
-            {
-                string title = n;
-                if (Variables.Instance.Length > 0)
-                {
-                    title = Variables.Instance;
-                }
-                foreach (var p in Process.GetProcessesByName(processName[0]))
-                {
-                    Debug_.WriteLine(p.MainWindowTitle);
-                    if (p.MainWindowTitle == title)
-                    {
-                        IntPtr handle = DllImport.FindWindowEx(p.MainWindowHandle, IntPtr.Zero, classes, name);
-                        Variables.Proc = p;
-                        EmulatorController.handle = p.MainWindowHandle;
-                        Variables.ScriptLog("Emulator ID: " + p.Id);
-                        break;
-                    }
-                }
-            }
-            
+            Variables.emulator.ConnectEmulator();
         }
 
         /// <summary>
@@ -182,84 +196,40 @@ namespace ImageProcessor
             }
             catch (AdbException ex)
             {
-                Variables.ScriptLog("Adb exception found!");
+                Variables.ScriptLog("Adb exception found!",Color.Red);
                 Debug_.WriteLine(ex.Message);
-                CloseEmulator("MEmuManage.exe");
+                CloseEmulator();
             }
             return false;
         }
         /// <summary>
-        /// Start ADB server
+        /// Start ADB server, must be started emulator first!
         /// </summary>
         public static bool StartAdb()
         {
-            while (true)
+            string adbname = Environment.CurrentDirectory + "\\adb\\adb.exe";
+            AdbServer server = new AdbServer();
             {
-                try
+                if (!File.Exists(adbname))
                 {
-                    AdbServer server = new AdbServer();
-                    try
+                    Variables.Configure.TryGetValue("Path", out path);
+                    path = path.Remove(path.LastIndexOf('\\'));
+                    IEnumerable<string> exe = Directory.EnumerateFiles(path, "*.exe"); // lazy file system lookup
+                    foreach (var e in exe)
                     {
-                        string adbname, path;
-                        if (!Variables.Configure.TryGetValue("Adb_Path", out adbname))
+                        if (e.Contains("adb"))
                         {
-                            Variables.Configure.TryGetValue("Path", out path);
-                            path = path.Remove(path.LastIndexOf('\\'));
-                            IEnumerable<string> exe = Directory.EnumerateFiles(path, "*.exe"); // lazy file system lookup
-                            foreach (var e in exe)
-                            {
-                                if (e.Contains("adb"))
-                                {
-                                    adbname = Path.GetFullPath(e);
-                                    break;
-                                }
-                            }
-
+                            adbname = e;
+                            break;
                         }
-                        else
-                        {
-                            if (!File.Exists(adbname))
-                            {
-                                Variables.Configure.TryGetValue("Path", out path);
-                                path = path.Remove(path.LastIndexOf('\\'));
-                                IEnumerable<string> exe = Directory.EnumerateFiles(path, "*.exe"); // lazy file system lookup
-                                foreach (var e in exe)
-                                {
-                                    if (e.Contains("adb"))
-                                    {
-                                        adbname = e;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        string processname = adbname.Split('\\').Last();
-                        if (Process.GetProcessesByName(processname).Length < 1)
-                        {
-                            ProcessStartInfo adb = new ProcessStartInfo();
-                            adb.FileName = adbname;
-                            adb.CreateNoWindow = true;
-                            adb.WindowStyle = ProcessWindowStyle.Hidden;
-                            adb.UseShellExecute = true;
-                            Process.Start(adb);
-                        }
-                        var result = server.StartServer(adbname, true);
-                        return true;
                     }
-                    catch (Exception ex)
-                    {
-                        Debug_.WriteLine(ex.ToString());
-                        return false;
-                    }
-                }
-                catch
-                {
-
                 }
             }
-
+            StartServerResult result = server.StartServer(adbname, false);
+            var receiver = new ConsoleOutputReceiver();
+            EmulatorController.Push(Environment.CurrentDirectory + "//adb//minitouch", "/data/local/tmp/minitouch", 777);
+            return true;
         }
-
         /// <summary>
         /// Start Game by using CustomImg\Icon.png
         /// </summary>
@@ -293,9 +263,9 @@ namespace ImageProcessor
             }
             catch (AdbException ex)
             {
-                Variables.ScriptLog("Adb exception found!");
+                Variables.ScriptLog("Adb exception found!",Color.Red);
                 Debug_.WriteLine(ex.Message);
-                CloseEmulator("MEmuManage.exe");
+                CloseEmulator();
             }
             return false;
         }
@@ -329,10 +299,9 @@ namespace ImageProcessor
             }
             catch (AdbException ex)
             {
-                Variables.ScriptLog("Adb exception found!");
+                Variables.ScriptLog("Adb exception found!",Color.Red);
                 Debug_.WriteLine(ex.Message);
-                Variables.Controlled_Device = null;
-                Variables.Proc = null;
+                CloseEmulator();
             }
             return false;
         }
@@ -367,9 +336,37 @@ namespace ImageProcessor
             }
             catch (AdbException ex)
             {
-                Variables.ScriptLog("Adb exception found!");
+                Variables.ScriptLog("Adb exception found!",Color.Red);
                 Debug_.WriteLine(ex.Message);
-                CloseEmulator("MEmuManage.exe");
+                CloseEmulator();
+            }
+        }
+        /// <summary>
+        /// Kill All process tree
+        /// </summary>
+        /// <param name="pid"></param>
+        public static void KillProcessAndChildren(int pid)
+        {
+            // Cannot close 'system idle process'.
+            if (pid == 0)
+            {
+                return;
+            }
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher
+              ("Select * From Win32_Process Where ParentProcessID=" + pid);
+            ManagementObjectCollection moc = searcher.Get();
+            foreach (ManagementObject mo in moc)
+            {
+                KillProcessAndChildren(Convert.ToInt32(mo["ProcessID"]));
+            }
+            try
+            {
+                Process proc = Process.GetProcessById(pid);
+                proc.Kill();
+            }
+            catch (ArgumentException)
+            {
+                // Process already exited.
             }
         }
         /// <summary>
@@ -382,19 +379,43 @@ namespace ImageProcessor
                 if (!Directory.Exists(Variables.SharedPath))
                 {
                     MessageBox.Show("Warning, unable to find shared folder! Try to match it manually!");
-                    Process.Start("bot.ini");
                     Environment.Exit(0);
                 }
                 path = Variables.SharedPath + "\\" + SHA256(Variables.AdbIpPort) + ".raw";
                 Stopwatch s = Stopwatch.StartNew();
                 byte[] raw = null;
                 var receiver = new ConsoleOutputReceiver();
-                if(Variables.Controlled_Device == null)
+                if (Variables.Controlled_Device == null)
                 {
-                    Variables.AdbLog("Waiting for device");
-                    return null;
+                    foreach (var device in AdbClient.Instance.GetDevices())
+                    {
+                        string deviceadb = device.ToString();
+                        if (deviceadb == Variables.AdbIpPort)
+                        {
+                            Variables.Controlled_Device = device;
+                            break;
+                        }
+                    }
+                    Variables.DeviceChanged = true;
                 }
-                AdbClient.Instance.ExecuteRemoteCommand("screencap /sdcard/Download/" + SHA256(Variables.AdbIpPort) + ".raw", Variables.Controlled_Device, receiver);
+                int error = 0;
+                while(Variables.Controlled_Device.State == DeviceState.Offline)
+                {
+                    error++;
+                    if(error == 30)
+                    {
+                        RestartEmulator();
+                    }
+                }
+                AdbClient.Instance.ExecuteRemoteCommand("screencap " + Variables.AndroidSharedPath + SHA256(Variables.AdbIpPort) + ".raw", Variables.Controlled_Device, receiver);
+                if (Variables.NeedPull)
+                {
+                    if (File.Exists(path))
+                    {
+                        File.Delete(path);
+                    }
+                    Pull(Variables.AndroidSharedPath + SHA256(Variables.AdbIpPort) + ".raw", path);
+                }
                 if (!File.Exists(path))
                 {
                     Variables.AdbLog("Unable to read rgba file because of file not exist!");
@@ -413,6 +434,12 @@ namespace ImageProcessor
                     img[x - 11] = raw[x + 1];
                     img[x - 12] = raw[x + 2];
                     img[x - 9] = raw[x + 3];
+                }
+                int expectedsize = 1280 * 720 * 4;
+                if (img.Length > expectedsize + 1000|| img.Length < expectedsize - 1000000)
+                {
+                    ResizeEmulator(1280, 720);
+                    return null;
                 }
                 raw = null;
                 using (var stream = new MemoryStream(img))
@@ -440,7 +467,7 @@ namespace ImageProcessor
             {
                 Variables.AdbLog("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
-                CloseEmulator("MEmuManage.exe");
+                CloseEmulator();
             }
             return null;
         }
@@ -461,15 +488,9 @@ namespace ImageProcessor
                 {
                     return;
                 }
-
-                {
-                    AdbClient.Instance.ExecuteRemoteCommand("input tap " + x + " " + y, Variables.Controlled_Device, receiver);
-                    receiver.Flush();
-                }
-                if (receiver.ToString().Contains("Error"))
-                {
-                    Variables.AdbLog(receiver.ToString());
-                }
+                string filename = SHA256("execute_" + Variables.AdbIpPort);
+                File.WriteAllText(Variables.SharedPath + filename, "d 0 " + x + " " + y + " 100\nc\nu 0\nc");
+                AdbClient.Instance.ExecuteRemoteCommand("/data/local/tmp/minitouch -f /sdcard/Download/" + filename, Variables.Controlled_Device, receiver);
             }
             catch (InvalidOperationException)
             {
@@ -483,7 +504,7 @@ namespace ImageProcessor
             {
                 Variables.AdbLog("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
-                CloseEmulator("MEmuManage.exe");
+                CloseEmulator();
             }
             s.Stop();
             Variables.AdbLog("Tap sended to point " + point.X + ":" + point.Y + ". Used time: " + s.ElapsedMilliseconds + "ms");
@@ -530,7 +551,7 @@ namespace ImageProcessor
             {
                 Variables.AdbLog("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
-                CloseEmulator("MEmuManage.exe");
+                CloseEmulator();
             }
         }
         /// <summary>
@@ -548,15 +569,9 @@ namespace ImageProcessor
                 {
                     return;
                 }
-
-                {
-                    AdbClient.Instance.ExecuteRemoteCommand("input tap " + x + " " + y, Variables.Controlled_Device, receiver);
-                    receiver.Flush();
-                }
-                if (receiver.ToString().Contains("Error"))
-                {
-                    Variables.AdbLog(receiver.ToString());
-                }
+                string filename = SHA256("execute_" + Variables.AdbIpPort);
+                File.WriteAllText(Variables.SharedPath + filename, "d 0 " + x + " " + y + " 100\nc\nu 0\nc");
+                AdbClient.Instance.ExecuteRemoteCommand("/data/local/tmp/minitouch -f /sdcard/Download/" + filename, Variables.Controlled_Device, receiver);
             }
             catch (InvalidOperationException)
             {
@@ -570,10 +585,64 @@ namespace ImageProcessor
             {
                 Variables.AdbLog("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
-                CloseEmulator("MEmuManage.exe");
+                CloseEmulator();
             }
             s.Stop();
             Variables.AdbLog("Tap sended to point " + x + ":" + y + ". Used time: " + s.ElapsedMilliseconds + "ms");
+        }
+
+        public static void SendDoubleTap(int x1, int y1, int ex1, int ey1, int x2, int y2, int ex2, int ey2, int slowdownx, int slowdowny,[CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        {
+            Stopwatch s = Stopwatch.StartNew();
+            Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
+            try
+            {
+                var receiver = new ConsoleOutputReceiver();
+                if (Variables.Controlled_Device == null)
+                {
+                    return;
+                }
+                string filename = SHA256("execute_" + Variables.AdbIpPort);
+                File.WriteAllText(Variables.SharedPath + filename, "d 0 " + x1 + " " + y1 + " 100\nc\nd 1 " + x2 + " " + y2+" 100\nc\n");
+                while(x1 != ex1 && x2 != ex2)
+                {
+                    x1 += slowdownx;
+                    y1 += slowdowny;
+                    x2 += slowdownx;
+                    y2 += slowdowny;
+                    if(x1 > ex1)
+                    {
+                        x1 = ex1;
+                    }
+                    if(x2 > ex2)
+                    {
+                        x2 = ex2;
+                    }
+                    if (y1 > ey1)
+                    {
+                        y1 = ey1;
+                    }
+                    if (y2 > ey2)
+                    {
+                        y2 = ey2;
+                    }
+                    File.AppendAllText(Variables.SharedPath + filename, "m 0 " + x1 + " " + y1 + " 100\nc\nm 1 " + x2 + " " + y2 + " 100\nc\n");
+                }
+                File.AppendAllText(Variables.SharedPath + filename, "u 0\nc\nu 1\nc");
+                AdbClient.Instance.ExecuteRemoteCommand("/data/local/tmp/minitouch -f /sdcard/Download/" + filename, Variables.Controlled_Device, receiver);
+            }
+            catch
+            {
+
+            }
+        }
+        public static void Minitouch(string command)
+        {
+            string filename = SHA256("execute_" + Variables.AdbIpPort);
+            File.WriteAllText(Variables.SharedPath + filename, command);
+            var receiver = new ConsoleOutputReceiver();
+            AdbClient.Instance.ExecuteRemoteCommand("/data/local/tmp/minitouch -f /sdcard/Download/" + filename, Variables.Controlled_Device, receiver);
+            
         }
         /// <summary>
         /// Swipe the screen
@@ -612,7 +681,7 @@ namespace ImageProcessor
             {
                 Variables.AdbLog("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
-                CloseEmulator("MEmuManage.exe");
+                CloseEmulator();
             }
         }
         /// <summary>
@@ -646,15 +715,25 @@ namespace ImageProcessor
         /// <summary>
         /// Emulator supported by this dll
         /// </summary>
-        public enum Emulators
+        public static bool Is64BitOperatingSystem()
         {
-            /// <summary>
-            /// No emulator found in PC
-            /// </summary>
-            Null,
-            MEmu,
-            Bluestack,
-            Nox
+            // Check if this process is natively an x64 process. If it is, it will only run on x64 environments, thus, the environment must be x64.
+            if (IntPtr.Size == 8)
+                return true;
+            // Check if this process is an x86 process running on an x64 environment.
+            IntPtr moduleHandle = DllImport.GetModuleHandle("kernel32");
+            if (moduleHandle != IntPtr.Zero)
+            {
+                IntPtr processAddress = DllImport.GetProcAddress(moduleHandle, "IsWow64Process");
+                if (processAddress != IntPtr.Zero)
+                {
+                    bool result;
+                    if (DllImport.IsWow64Process(DllImport.GetCurrentProcess(), out result) && result)
+                        return true;
+                }
+            }
+            // The environment must be an x86 environment.
+            return false;
         }
         /// <summary>
         /// Start Emulator accoring to Variables.Configure (Dictionary) Key "Emulator" and "Path"
@@ -663,54 +742,16 @@ namespace ImageProcessor
         public static void StartEmulator([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
-            string temp = "";
-            if (Variables.Configure.TryGetValue("Path", out temp))
+            Variables.emulator.StartEmulator();
+            foreach (var device in AdbClient.Instance.GetDevices())
             {
-                try
+                if (device.ToString() == Variables.AdbIpPort)
                 {
-                    if (!File.Exists(temp))
-                    {
-                        MessageBox.Show("Unable to locate path of emulator!");
-                        Process.Start("Profiles\\" + profilePath + "\\bot.ini");
-                    }
-                    ProcessStartInfo info = new ProcessStartInfo();
-                    info.FileName = temp.Replace("MEmu.exe", "MEmuConsole.exe");
-                    if (Variables.Instance.Length > 0)
-                    {
-                        info.Arguments = Variables.Instance;
-                    }
-                    else
-                    {
-                        info.Arguments = "MEmu";
-                    }
-                    Process.Start(info);
-                    foreach(var device in AdbClient.Instance.GetDevices())
-                    {
-                        if(device.ToString() == Variables.AdbIpPort)
-                        {
-                            Variables.Controlled_Device = device;
-                            break;
-                        }
-                    }
-                    Variables.DeviceChanged = true;
-                }
-                catch (SocketException)
-                {
-
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error while starting emulator! Error message: " + ex.Message);
-                    Process.Start("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
-                    Environment.Exit(0);
+                    Variables.Controlled_Device = device;
+                    break;
                 }
             }
-            else
-            {
-                MessageBox.Show("Unable to locate path of emulator!");
-                Process.Start("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
-                Environment.Exit(0);
-            }
+            Variables.DeviceChanged = true;
         }
         /// <summary>
         /// Get color of location in screenshots
@@ -1060,7 +1101,7 @@ namespace ImageProcessor
                         if (maxValues[0] > 0.9)
                         {
                             s.Stop();
-                            Variables.AdbLog("Image matched. Used time: " + s.Elapsed);
+                            Variables.AdbLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms");
                             return maxLocations[0];
                         }
                     }
@@ -1079,7 +1120,7 @@ namespace ImageProcessor
                         if (maxValues[0] > 0.9)
                         {
                             s.Stop();
-                            Variables.AdbLog("Image matched. Used time: " + s.Elapsed);
+                            Variables.AdbLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms");
                             return maxLocations[0];
                         }
                     }
@@ -1091,10 +1132,65 @@ namespace ImageProcessor
 
             }
             s.Stop();
-            Variables.AdbLog("Image not matched. Used time: " + s.Elapsed);
+            Variables.AdbLog("Image not matched. Used time: " + s.ElapsedMilliseconds + " ms");
             return null;
         }
-        
+
+        public static Point? FindImage(Bitmap original, Bitmap find, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        {
+            Stopwatch s = Stopwatch.StartNew();
+            Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
+            try
+            {
+                if (GrayStyle)
+                {
+
+                    Image<Gray, byte> source = new Image<Gray, byte>(original);
+                    Image<Gray, byte> template = new Image<Gray, byte>(find);
+                    using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
+                    {
+                        double[] minValues, maxValues;
+                        Point[] minLocations, maxLocations;
+                        result.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
+
+                        // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
+                        if (maxValues[0] > 0.9)
+                        {
+                            s.Stop();
+                            Variables.AdbLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms");
+                            return maxLocations[0];
+                        }
+                    }
+                }
+                else
+                {
+                    Image<Bgr, byte> source = new Image<Bgr, byte>(original);
+                    Image<Bgr, byte> template = new Image<Bgr, byte>(find);
+                    using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
+                    {
+                        double[] minValues, maxValues;
+                        Point[] minLocations, maxLocations;
+                        result.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
+
+                        // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
+                        if (maxValues[0] > 0.9)
+                        {
+                            s.Stop();
+                            Variables.AdbLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms");
+                            return maxLocations[0];
+                        }
+                    }
+                }
+            }
+            catch
+            {
+
+
+            }
+            s.Stop();
+            Variables.AdbLog("Image not matched. Used time: " + s.ElapsedMilliseconds + " ms");
+            return null;
+        }
         /// <summary>
         /// Return a Point location of the image in Variables.Image (will return null if not found)
         /// </summary>
@@ -1131,7 +1227,7 @@ namespace ImageProcessor
                         if (maxValues[0] > 0.9)
                         {
                             s.Stop();
-                            Variables.AdbLog("Image matched. Used time: " + s.Elapsed);
+                            Variables.AdbLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms");
                             return maxLocations[0];
                         }
                     }
@@ -1150,7 +1246,7 @@ namespace ImageProcessor
                         if (maxValues[0] > 0.9)
                         {
                             s.Stop();
-                            Variables.AdbLog("Image matched. Used time: " + s.Elapsed);
+                            Variables.AdbLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms");
                             return maxLocations[0];
                         }
                     }
@@ -1161,7 +1257,7 @@ namespace ImageProcessor
 
             }
             s.Stop();
-            Variables.AdbLog("Image not matched. Used time: " + s.Elapsed);
+            Variables.AdbLog("Image not matched. Used time: " + s.ElapsedMilliseconds + " ms");
             return null;
         }
         /// <summary>
@@ -1214,7 +1310,7 @@ namespace ImageProcessor
                         if (maxValues[0] > 0.9)
                         {
                             s.Stop();
-                            Variables.AdbLog("Image matched. Used time: " + s.Elapsed);
+                            Variables.AdbLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms");
                             return maxLocations[0];
                         }
                     }
@@ -1225,7 +1321,7 @@ namespace ImageProcessor
 
             }
             s.Stop();
-            Variables.AdbLog("Image not matched. Used time: " + s.Elapsed);
+            Variables.AdbLog("Image not matched. Used time: " + s.ElapsedMilliseconds + " ms");
             return null;
         }
         /// <summary> 
@@ -1256,7 +1352,7 @@ namespace ImageProcessor
             imgInput.CopyTo(temp);
             imgInput.Dispose();
             s.Stop();
-            Variables.AdbLog("Image cropped. Used time: " + s.Elapsed);
+            Variables.AdbLog("Image cropped. Used time: " + s.ElapsedMilliseconds + " ms");
             return Compress(temp.Bitmap);
 
         }

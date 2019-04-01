@@ -29,8 +29,6 @@ namespace ImageProcessor
 
         static bool Docked = false;
 
-        public static string[] MEmu = {"MEmu","逍遥模拟器" };
-
         static System.Windows.Forms.Timer timeout = new System.Windows.Forms.Timer();
 
         static List<CheckBox> customScriptEnable = new List<CheckBox>();
@@ -101,7 +99,7 @@ namespace ImageProcessor
             // that 4.5 or later is installed.
             return "4.5 以上";
         }
-    
+
         private void MainScreen_Load(object sender, EventArgs e)
         {
             Thread load = new Thread(loading);
@@ -157,17 +155,9 @@ namespace ImageProcessor
             }
             string output = "";
             string[] args = Environment.GetCommandLineArgs();
-            foreach (var arg in args)
-            {
-                if (arg.Contains("MEmu"))
-                {
-                    EmulatorController.profilePath = arg;
-                }
-                label1.Text += arg.ToLower() + " ";
-            }
             if (File.Exists("bot.ini"))
             {
-                if(File.Exists(Environment.CurrentDirectory + "\\Profiles\\" + EmulatorController.profilePath + "\\bot.ini"))
+                if (File.Exists(Environment.CurrentDirectory + "\\Profiles\\" + EmulatorController.profilePath + "\\bot.ini"))
                 {
                     File.Delete(Environment.CurrentDirectory + "\\Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
                 }
@@ -181,142 +171,14 @@ namespace ImageProcessor
 
                 }
             }
+            Variables.EmulatorPath(args);
             EmulatorController.ReadConfig();
-            string path = "";
-            foreach (var arg in args)
+            label11.Text = "逍模拟器：" + Variables.emulator.EmulatorName();
+            label12.Text = "模拟器共享文件夹：" + Variables.SharedPath;
+            foreach(var a in args)
             {
-                if (arg.Contains("MEmu"))
-                {
-                    Variables.Instance = arg;
-                    this.Text += " (" + Variables.Instance + ")";
-                    break;
-                }
+                label1.Text += a;
             }
-            string startuppath = "C:";
-            RegistryKey reg = Registry.LocalMachine;
-            try
-            {
-                var r = reg.OpenSubKey("SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MEmu");
-                var result = r.GetValue("InstallLocation");
-                if (result != null)
-                {
-                    startuppath = result.ToString();
-                }
-            }
-            catch //Not able to locate registry, no MEmu found
-            {
-                MessageBox.Show("请安装逍遥模拟器再继续运行！");
-                if (File.Exists("Updater.exe"))
-                {
-                    Process p = Process.Start("Updater.exe", "http://dl.memuplay.com/download/backup/Memu-Setup-3.7.0.0.exe");
-                    p.WaitForExit();
-                }
-            }
-            openFileDialog1.InitialDirectory = startuppath;
-            if (Variables.Configure.TryGetValue("Path", out output))
-            {
-                if (!File.Exists(output))
-                {
-                    openFileDialog1.FileName = "";
-                    openFileDialog1.Title = "选择逍遥模拟器 (MEmu.exe)";
-                    openFileDialog1.Filter = "MEmu.exe|MEmu.exe";
-                    openFileDialog1.ShowDialog();
-                    if (openFileDialog1.CheckFileExists)
-                    {
-                        Variables.Configure["Path"] = openFileDialog1.FileName;
-                        var lines = File.ReadAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
-                        int x = 0;
-                        foreach (var l in lines)
-                        {
-                            if (l.Contains("Path="))
-                            {
-                                lines[x] = "Path=" + openFileDialog1.FileName;
-                                break;
-                            }
-                            x++;
-                        }
-                        output = openFileDialog1.FileName;
-                        File.WriteAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini", lines);
-                    }
-                }
-            }
-            else
-            {
-                openFileDialog1.FileName = "";
-                openFileDialog1.Title = "选择逍遥模拟器 (MEmu.exe)";
-                openFileDialog1.Filter = "MEmu.exe|MEmu.exe";
-                openFileDialog1.ShowDialog();
-                if (openFileDialog1.CheckFileExists)
-                {
-                    Variables.Configure.Add("Path",openFileDialog1.FileName);
-                    var lines = File.ReadAllText("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
-                    lines = lines + "\nPath=" + openFileDialog1.FileName;
-                    File.WriteAllText("Profiles\\" + EmulatorController.profilePath + "\\bot.ini", lines);
-                    output = openFileDialog1.FileName;
-                }
-            }
-            if (!output.Contains("MEmu.exe"))
-            {
-                MessageBox.Show("请安装逍遥模拟器再继续运行！");
-                if (File.Exists("Updater.exe"))
-                {
-                    Process p = Process.Start("Updater.exe", "http://dl.memuplay.com/download/backup/Memu-Setup-3.7.0.0.exe");
-                    p.WaitForExit();
-                }
-            }
-            Variables.VBoxManagerPath = output.Replace("\\MEmu\\MEmu.exe", "\\MEmuHyperv");
-            ProcessStartInfo fetch = new ProcessStartInfo(Variables.VBoxManagerPath + "\\MEmuManage.exe");
-            if (Variables.Instance.Length > 0)
-            {
-                fetch.Arguments = "showvminfo " + Variables.Instance;
-            }
-            else
-            {
-                fetch.Arguments = "showvminfo MEmu";
-            }
-            var codePage = Console.OutputEncoding.CodePage;
-            fetch.RedirectStandardOutput = true;
-            fetch.UseShellExecute = false;
-            fetch.CreateNoWindow = true;
-            fetch.StandardOutputEncoding = Encoding.GetEncoding(codePage);
-            while (Variables.SharedPath == null || Variables.AdbIpPort == null)
-            {
-                Process fetching = Process.Start(fetch);
-                string result = fetching.StandardOutput.ReadToEnd();
-                string[] splitted = result.Split('\n');
-                foreach (var s in splitted)
-                {
-                    if (s.Contains("Name: 'download', Host path:"))
-                    {
-                        string regexSearch = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
-                        Regex r = new Regex(string.Format("[{0}]", Regex.Escape(regexSearch)));
-                        path = s.ToLower().Replace("name: 'download', host path: '", "").Replace("' (machine mapping), writable", "");
-                        path = r.Replace(path, "\\");
-                        path = path.Replace("\\\\", ":\\");
-                        if (output != path)
-                        {
-                            Variables.SharedPath = path;
-                            WriteConfig("Shared_Path", path);
-                            if (!Directory.Exists(path))
-                            {
-                                MessageBox.Show("共享路径包含不允许字符，请重新设置模拟器的共享路径！");
-                                Environment.Exit(0);
-                            }
-                        }
-                        else
-                        {
-                            Variables.SharedPath = output;
-                        }
-                    }
-                    else if (s.Contains("name = ADB"))
-                    {
-                        var port = s.Substring(s.IndexOf("port = ") + 7, 5).Replace(" ", "");
-                        Variables.AdbIpPort = "127.0.0.1:" + port;
-                    }
-                }
-            }
-            label11.Text = "逍遥模拟器安装位置：" + output.ToLower(); ;
-            label12.Text = "逍遥模拟器共享文件夹：" + Variables.SharedPath;
             bool second = false;
             if (File.Exists("Archwitch.ini"))
             {
@@ -374,18 +236,18 @@ namespace ImageProcessor
             }
             else
             {
-                WriteConfig("Level","0");
+                WriteConfig("Level", "0");
             }
-            if(Variables.Configure.TryGetValue("Double_Event",out output))
+            if (Variables.Configure.TryGetValue("Double_Event", out output))
             {
-                if(output == "true")
+                if (output == "true")
                 {
                     checkBox8.Checked = true;
                 }
             }
-            if(Variables.Configure.TryGetValue("Treasure_Hunt",out output))
+            if (Variables.Configure.TryGetValue("Treasure_Hunt", out output))
             {
-                if(output != "-1")
+                if (output != "-1")
                 {
                     try
                     {
@@ -398,28 +260,28 @@ namespace ImageProcessor
                     }
                 }
             }
-            if(Variables.Configure.TryGetValue("Manual_Rune",out output))
+            if (Variables.Configure.TryGetValue("Manual_Rune", out output))
             {
-                if(output == "true")
+                if (output == "true")
                 {
                     radioButton10.Checked = true;
                     PrivateVariable.EnterRune = false;
                 }
             }
-            if(Variables.Configure.TryGetValue("Close_Emulator",out output))
+            if (Variables.Configure.TryGetValue("Close_Emulator", out output))
             {
-                if(output == "true")
+                if (output == "true")
                 {
                     checkBox13.Checked = true;
                 }
             }
-            if(Variables.Configure.TryGetValue("Archwitch",out output))
+            if (Variables.Configure.TryGetValue("Archwitch", out output))
             {
                 comboBox1.SelectedIndex = comboBox1.Items.IndexOf(output);
             }
-            if (EmulatorsInstallationPath.Is64BitOperatingSystem())
+            if (EmulatorController.Is64BitOperatingSystem())
             {
-                label13.Text = "系统资料：64位系统" ;
+                label13.Text = "系统资料：64位系统";
             }
             else
             {
@@ -430,7 +292,7 @@ namespace ImageProcessor
             PrivateVariable.nospam = DateTime.Now;
             string ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36";
             DllImport.UrlMkSetSessionOption(DllImport.URLMON_OPTION_USERAGENT, ua, ua.Length, 0);
-            html = Img.index;   
+            html = Img.index;
             WebClientOverride wc = new WebClientOverride();
             try
             {
@@ -469,7 +331,7 @@ namespace ImageProcessor
                 }
             }
             string n = "";
-            if(Variables.Configure.TryGetValue("Selected_Script", out n))
+            if (Variables.Configure.TryGetValue("Selected_Script", out n))
             {
                 try
                 {
@@ -489,7 +351,7 @@ namespace ImageProcessor
             {
                 customScriptEnable[0].Checked = true;
             }
-            if(GetEventXML.RandomImage!=null)
+            if (GetEventXML.RandomImage != null)
             {
                 var request = WebRequest.Create("http://www-valkyriecrusade.nubee.com/" + GetEventXML.RandomImage);
                 using (var response = request.GetResponse())
@@ -498,6 +360,7 @@ namespace ImageProcessor
                     pictureBox4.Image = Image.FromStream(stream);
                 }
             }
+            metroTabControl1.SelectedIndex = 0;
             checkBox10.Enabled = radioButton9.Checked;
             Loading.LoadCompleted = true;
             Thread mon = new Thread(DeviceConnected);
@@ -516,7 +379,7 @@ namespace ImageProcessor
             }
             foreach (var c in customScriptEnable)
             {
-                if(c != ck)
+                if (c != ck)
                 {
                     c.Checked = !ck.Checked;
                 }
@@ -550,7 +413,7 @@ namespace ImageProcessor
             try
             {
                 IPAddress loopback = null;
-                if(IPAddress.TryParse("127.0.0.1",out loopback))
+                if (IPAddress.TryParse("127.0.0.1", out loopback))
                 {
                     IAdbSocket sock = new AdbSocket(new IPEndPoint(loopback, AdbClient.AdbServerPort));
                     var monitor = new DeviceMonitor(sock);
@@ -558,11 +421,11 @@ namespace ImageProcessor
                     monitor.Start();
                 }
             }
-            catch(SocketException)
+            catch (SocketException)
             {
-                foreach(var adb in Process.GetProcessesByName("adb.exe"))
+                foreach (var adb in Process.GetProcessesByName("adb.exe"))
                 {
-                    adb.Kill();      
+                    adb.Kill();
                 }
                 EmulatorController.StartAdb();
                 DeviceConnected();
@@ -575,7 +438,7 @@ namespace ImageProcessor
 
         private static void OnDeviceConnected(object sender, DeviceDataEventArgs e)
         {
-            foreach(var device in AdbClient.Instance.GetDevices())
+            foreach (var device in AdbClient.Instance.GetDevices())
             {
                 if (device.ToString() == Variables.AdbIpPort)
                 {
@@ -608,7 +471,7 @@ namespace ImageProcessor
             {
                 comboBox1.SelectedIndex = 0;
             }
-            if (PrivateVariable.Archwitch.TryGetValue(comboBox1.Items[comboBox1.SelectedIndex].ToString(),out output))
+            if (PrivateVariable.Archwitch.TryGetValue(comboBox1.Items[comboBox1.SelectedIndex].ToString(), out output))
             {
                 Script.Archwitch_Stage = comboBox1.SelectedIndex;
                 WriteConfig("Second_Page", "false");
@@ -633,7 +496,7 @@ namespace ImageProcessor
                 }
                 try
                 {
-                    if(textBox2.Text.Length == 15)
+                    if (textBox2.Text.Length == 15)
                     {
                         Convert.ToInt64(textBox2.Text);
                     }
@@ -710,7 +573,7 @@ namespace ImageProcessor
             PrivateVariable.InEventScreen = false;
             PrivateVariable.InMainScreen = false;
             PrivateVariable.InMap = false;
-            Variables.ScriptLog("Script Stopped!");
+            Variables.ScriptLog("Script Stopped!",Color.White);
             if (Width > 480)
             {
                 Width -= 700;
@@ -719,7 +582,7 @@ namespace ImageProcessor
             if (EmulatorController.handle != null && Variables.Proc != null)
             {
                 DllImport.SetParent(EmulatorController.handle, IntPtr.Zero);
-                DllImport.MoveWindow(EmulatorController.handle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 1318 , 752, true);
+                DllImport.MoveWindow(EmulatorController.handle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 1318, 752, true);
                 EmulatorController.handle = IntPtr.Zero;
                 Docked = false;
             }
@@ -829,13 +692,23 @@ namespace ImageProcessor
                 {
                     if (EmulatorController.handle == IntPtr.Zero || EmulatorController.handle == null)
                     {
-                        EmulatorController.ConnectAndroidEmulator(String.Empty, String.Empty, MEmu);
+                        EmulatorController.ConnectAndroidEmulator();
                     }
                     if (!DllImport.IsWindow(EmulatorController.handle))
                     {
                         EmulatorController.handle = IntPtr.Zero;
                         Docked = false;
                     }
+                    if(Variables.emulator.EmulatorName() == "Nox")
+                    {
+                        var hide = DllImport.GetAllChildrenWindowHandles(IntPtr.Zero, "Qt5QWindowToolSaveBits", "Form", 2);
+                        foreach(var h in hide)
+                        {
+                            DllImport.ShowWindow(h, 0);
+                        }
+                    }
+
+
                     panel3.Invoke((MethodInvoker)delegate
                     {
                         if (DllImport.GetParent(EmulatorController.handle) != panel3.Handle)
@@ -879,17 +752,17 @@ namespace ImageProcessor
                     int error = 0;
                     while (Variables.Proc == null)
                     {
-                        EmulatorController.ConnectAndroidEmulator(String.Empty, String.Empty, MEmu);
+                        EmulatorController.ConnectAndroidEmulator();
                         error++;
                         Thread.Sleep(1000);
                         if (error > 60)
                         {
-                            EmulatorController.CloseEmulator("MEmuManage.exe");
+                            EmulatorController.CloseEmulator();
                             EmulatorController.StartEmulator();
                             error = 0;
                         }
                     }
-                    Variables.ScriptLog("Emulator Started");
+                    Variables.ScriptLog("Emulator Started",Color.White);
                 }
             }
         }
@@ -903,7 +776,368 @@ namespace ImageProcessor
             }
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void button7_Click(object sender, EventArgs e)
+        {
+            if (File.Exists("Updater.exe"))
+            {
+                Process.Start("Updater.exe", "http://dl.memuplay.com/download/backup/Memu-Setup-3.7.0.0.exe");
+            }
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            if (File.Exists("Updater.exe"))
+            {
+                Process.Start("Updater.exe", "https://github.com/PoH98/Bot/raw/master/神女控.apk");
+            }
+        }
+
+        private void button1_MouseEnter(object sender, EventArgs e)
+        {
+            button1.BackColor = Color.Lime;
+        }
+
+        private void button1_MouseLeave(object sender, EventArgs e)
+        {
+            button1.BackColor = Color.Silver;
+        }
+
+        private void button3_MouseEnter(object sender, EventArgs e)
+        {
+            button3.BackColor = Color.Red;
+        }
+
+        private void button3_MouseLeave(object sender, EventArgs e)
+        {
+            button3.BackColor = Color.Silver;
+        }
+
+        private void checkBox6_CheckedChanged(object sender, EventArgs e)
+        {
+            PrivateVariable.TakePartInNormalStage = checkBox6.Checked;
+            comboBox3.SelectedIndex = 0;
+        }
+
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            PrivateVariable.NormalStageNum = comboBox3.SelectedIndex + 1;
+        }
+
+        private void checkBox8_CheckedChanged(object sender, EventArgs e)
+        {
+            WriteConfig("Double_Event", checkBox8.Checked.ToString().ToLower());
+            if (checkBox8.Checked && !File.Exists("Img\\Event.png"))
+            {
+                MessageBox.Show("请截图好活动的进入按钮样貌，保存到Img文件夹内，命名为Event.png!");
+            }
+        }
+
+        private void checkBox8_MouseEnter(object sender, EventArgs e)
+        {
+            toolTip1.Show("如果在主城页面的左边选择活动区域拥有多个活动，影响挂机进入塔楼/魔女，请打勾这个！请慎用！", checkBox8);
+        }
+
+        private void checkBox8_MouseLeave(object sender, EventArgs e)
+        {
+            toolTip1.Hide(checkBox8);
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            if (File.Exists("battlescript.txt"))
+            {
+                Process.Start("battlescript.txt");
+            }
+            else
+            {
+                File.WriteAllText("battlescript.txt", "重返| | ");
+                Process.Start("battlescript.txt");
+            }
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            Script.GetEnergy();
+        }
+
+        private void radioButton8_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton8.Checked)
+            {
+                if (checkBox11.Checked)
+                {
+                    Process.Start("http://www.xldsdr.com/valkyriecrusade");
+                }
+                else
+                {
+                    if (webBrowser3.Url != new Uri("http://www.xldsdr.com/valkyriecrusade"))
+                    {
+                        webBrowser3.Navigate(new Uri("http://www.xldsdr.com/valkyriecrusade"));
+                    }
+                }
+            }
+
+        }
+
+        private void radioButton6_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton6.Checked)
+            {
+                if (checkBox11.Checked)
+                {
+                    Process.Start("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/sch/") + ".html");
+                }
+                else
+                {
+                    webBrowser3.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/sch/") + ".html"));
+                }
+
+            }
+
+        }
+
+        private void button11_Click_1(object sender, EventArgs e)
+        {
+            webBrowser3.Refresh();
+        }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            webBrowser3.GoBack();
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            webBrowser3.GoForward();
+        }
+
+        private void checkBox12_CheckedChanged(object sender, EventArgs e)
+        {
+            //comboBox2.Enabled = checkBox12.Checked;
+            MessageBox.Show("这是个测试的功能，如果发现有任何卡着不动或者瞎点的情况，请尽快汇报！");
+            if (!checkBox12.Checked)
+            {
+                WriteConfig("Treasure_Hunt", "-1");
+            }
+            else
+            {
+                comboBox2.SelectedIndex = 0;
+                WriteConfig("Treasure_Hunt", comboBox2.SelectedIndex.ToString());
+            }
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Script.TreasureHuntIndex = comboBox2.SelectedIndex;
+        }
+
+        private void radioButton9_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton9.Checked)
+            {
+                PrivateVariable.EnterRune = true;
+                WriteConfig("Manual_Rune", "false");
+                checkBox10.Enabled = radioButton9.Checked;
+            }
+        }
+
+        private void radioButton10_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton10.Checked)
+            {
+                PrivateVariable.EnterRune = false;
+                WriteConfig("Manual_Rune", "true");
+                checkBox10.Checked = false;
+                checkBox10.Enabled = false;
+            }
+        }
+
+        private void webBrowser3_NewWindow(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            webBrowser3.Navigate(webBrowser3.StatusText);
+            e.Cancel = true;
+        }
+
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton1.Checked)
+            {
+                WriteConfig("Level", "0");
+                Level = 0;
+            }
+        }
+
+        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton2.Checked)
+            {
+                WriteConfig("Level", "1");
+                Level = 1;
+            }
+        }
+
+        private void radioButton3_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton3.Checked)
+            {
+                WriteConfig("Level", "2");
+                Level = 2;
+            }
+        }
+
+        private void checkBox13_CheckedChanged(object sender, EventArgs e)
+        {
+            WriteConfig("Close_Emulator", checkBox13.Checked.ToString().ToLower());
+            PrivateVariable.CloseEmulator = checkBox13.Checked;
+        }
+
+        private void radioButton11_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton11.Checked)
+                webBrowser3.Navigate("https://jq.qq.com/?_wv=1027&k=51gVT8A");
+        }
+
+        private void checkBox10_CheckedChanged(object sender, EventArgs e)
+        {
+            WriteConfig("Use_Item", checkBox10.Checked.ToString().ToLower());
+            PrivateVariable.Use_Item = checkBox10.Checked;
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            WriteConfig("Archwitch", comboBox1.Items[comboBox1.SelectedIndex].ToString());
+        }
+
+        private void radioButton7_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton7.Checked)
+            {
+                if (checkBox11.Checked)
+                {
+                    Process.Start("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/sch/index.html");
+                }
+                else
+                {
+                    webBrowser3.Visible = true;
+                    webBrowser3.Navigate("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/sch/index.html");
+                }
+            }
+        }
+
+        private static void WriteConfig(string key, string value)
+        {
+            var config = File.ReadAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
+            int x = 0;
+            foreach (var c in config)
+            {
+                if (c.Contains(key + "="))
+                {
+                    config[x] = key + "=" + value;
+                    File.WriteAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini", config);
+                    return;
+                }
+                x++;
+            }
+            config[config.Length - 1] = config[config.Length - 1] + "\n" + key + "=" + value;
+            if (Variables.Configure.ContainsKey(key))
+            {
+                Variables.Configure[key] = value;
+            }
+            else
+            {
+                Variables.Configure.Add(key, value);
+            }
+            File.WriteAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini", config);
+        }
+
+        private void pictureBox4_Click(object sender, EventArgs e)
+        {
+            if (pictureBox4.Image != null)
+            {
+                SaveFileDialog s = new SaveFileDialog();
+                s.CheckPathExists = true;
+                s.OverwritePrompt = true;
+                s.AddExtension = false;
+                s.Filter = "(PNG)|*.png";
+                s.DefaultExt = "png";
+                s.AddExtension = true;
+                var result = s.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    pictureBox4.Image.Save(s.FileName);
+                }
+            }
+
+        }
+
+        private void pictureBox4_MouseEnter(object sender, EventArgs e)
+        {
+            toolTip1.Show("点击即可保存图片哦！", pictureBox4);
+        }
+
+        private void pictureBox4_MouseLeave(object sender, EventArgs e)
+        {
+            toolTip1.Hide(pictureBox4);
+        }
+
+        private void radioButton4_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton4.Checked)
+            {
+                WriteConfig("Level", "3");
+                Level = 3;
+            }
+        }
+
+        private void radioButton5_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton5.Checked)
+            {
+                WriteConfig("Level", "4");
+                Level = 4;
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (File.Exists("OCR.png"))
+            {
+                var img = EmulatorController.Compress(Image.FromFile("OCR.png"));
+                MessageBox.Show(OCR.OcrImage(img, "eng"));
+            }
+        }
+
+        private void CheckBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            Variables.AdbLogShow = checkBox1.Checked;
+        }
+
+        private void MetroLink1_Click(object sender, EventArgs e)
+        {
+            Process.Start("www.github.com/PoH98/");
+        }
+
+        private void WebBrowser3_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+            if (e.Url.ToString().Contains("http://www.xldsdr.com/valkyriecrusade"))
+            {
+                var divs = webBrowser3.Document.GetElementsByTagName("div");
+                foreach (HtmlElement div in divs)
+                {
+                    if (div.GetAttribute("className") == "more-info-box")
+                    {
+                        div.InnerText = "";
+                    }
+                }
+                foreach(HtmlElement footer in webBrowser3.Document.GetElementsByTagName("footer"))
+                {
+                    footer.InnerText = "";
+                }
+
+            }
+        }
+
+        private void MainScreen_FormClosing(object sender, FormClosingEventArgs e)
         {
             var lines = File.ReadAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
             if (radioButton1.Checked)
@@ -976,7 +1210,7 @@ namespace ImageProcessor
                     x++;
                 }
             }
-            
+
             if (checkBox12.Checked)
             {
                 int x = 0;
@@ -1011,370 +1245,6 @@ namespace ImageProcessor
                 button3_Click(sender, e);
             }
             Environment.Exit(0);
-        }
-
-        private void button7_Click(object sender, EventArgs e)
-        {
-            if (File.Exists("Updater.exe"))
-            {
-                Process.Start("Updater.exe", "http://dl.memuplay.com/download/backup/Memu-Setup-3.7.0.0.exe");
-            }
-        }
-
-        private void button8_Click(object sender, EventArgs e)
-        {
-            if (File.Exists("Updater.exe"))
-            {
-                Process.Start("Updater.exe", "https://github.com/PoH98/Bot/raw/master/神女控.apk");
-            }
-        }
-
-        private void button1_MouseEnter(object sender, EventArgs e)
-        {
-            button1.BackColor = Color.Lime;
-        }
-
-        private void button1_MouseLeave(object sender, EventArgs e)
-        {
-            button1.BackColor = Color.Silver;
-        }
-
-        private void button3_MouseEnter(object sender, EventArgs e)
-        {
-            button3.BackColor = Color.Red;
-        }
-
-        private void button3_MouseLeave(object sender, EventArgs e)
-        {
-            button3.BackColor = Color.Silver;
-        }
-
-        private void checkBox6_CheckedChanged(object sender, EventArgs e)
-        {
-            PrivateVariable.TakePartInNormalStage = checkBox6.Checked;
-            comboBox3.SelectedIndex = 0;
-        }
-
-        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            PrivateVariable.NormalStageNum = comboBox3.SelectedIndex + 1;
-        }
-
-        private void checkBox8_CheckedChanged(object sender, EventArgs e)
-        {
-            WriteConfig("Double_Event", checkBox8.Checked.ToString().ToLower());
-            if (checkBox8.Checked&& !File.Exists("Img\\Event.png"))
-            {
-                MessageBox.Show("请截图好活动的进入按钮样貌，保存到Img文件夹内，命名为Event.png!");
-            }
-        }
-
-        private void checkBox8_MouseEnter(object sender, EventArgs e)
-        {
-            toolTip1.Show("如果在主城页面的左边选择活动区域拥有多个活动，影响挂机进入塔楼/魔女，请打勾这个！请慎用！",checkBox8);
-        }
-
-        private void checkBox8_MouseLeave(object sender, EventArgs e)
-        {
-            toolTip1.Hide(checkBox8);
-        }
-
-        private void button9_Click(object sender, EventArgs e)
-        {
-            if (File.Exists("battlescript.txt"))
-            {
-                Process.Start("battlescript.txt");
-            }
-            else
-            {
-                File.WriteAllText("battlescript.txt","重返| | ");
-                Process.Start("battlescript.txt");
-            }
-        }
-
-        private void button11_Click(object sender, EventArgs e)
-        {
-            Script.GetEnergy();
-        }
-
-        private void radioButton8_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioButton8.Checked)
-            {
-                if (checkBox11.Checked)
-                {
-                    Process.Start("http://www.xldsdr.com/valkyriecrusade");
-                }
-                else
-                {
-                    webBrowser3.Visible = true;
-                    if(webBrowser3.Url != new Uri("http://www.xldsdr.com/valkyriecrusade"))
-                    {
-                        webBrowser3.Navigate(new Uri("http://www.xldsdr.com/valkyriecrusade"));
-                    }
-                }
-            }
-                
-        }
-
-        private void radioButton6_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioButton6.Checked)
-            {
-                if (checkBox11.Checked)
-                {
-                    Process.Start("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/sch/") + ".html");
-                }
-                else
-                {
-                    webBrowser3.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/sch/") + ".html"));
-                }
-                
-            }
-             
-        }
-
-        private void button11_Click_1(object sender, EventArgs e)
-        {
-             webBrowser3.Refresh();
-        }
-
-        private void button12_Click(object sender, EventArgs e)
-        {
-             webBrowser3.GoBack();
-        }
-
-        private void button13_Click(object sender, EventArgs e)
-        {
-             webBrowser3.GoForward();
-        }
-
-        private void checkBox12_CheckedChanged(object sender, EventArgs e)
-        {
-            //comboBox2.Enabled = checkBox12.Checked;
-            MessageBox.Show("这是个测试的功能，如果发现有任何卡着不动或者瞎点的情况，请尽快汇报！");
-            if (!checkBox12.Checked)
-            {
-                WriteConfig("Treasure_Hunt", "-1");
-            }
-            else
-            {
-                comboBox2.SelectedIndex = 0;
-                WriteConfig("Treasure_Hunt", comboBox2.SelectedIndex.ToString());
-            }
-        }
-
-        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Script.TreasureHuntIndex = comboBox2.SelectedIndex;
-        }
-
-        private void button14_Click(object sender, EventArgs e)
-        {
-            ProcessStartInfo fetch = new ProcessStartInfo(Variables.VBoxManagerPath + "\\MEmuManage.exe");
-            if (Variables.Instance.Length > 0)
-            {
-                fetch.Arguments = "showvminfo " + Variables.Instance;
-            }
-            else
-            {
-                fetch.Arguments = "showvminfo MEmu";
-            }
-            fetch.RedirectStandardOutput = true;
-            fetch.UseShellExecute = false;
-            fetch.CreateNoWindow = true;
-            fetch.StandardOutputEncoding = System.Text.Encoding.ASCII;
-            Process fetching = Process.Start(fetch);
-            string result = fetching.StandardOutput.ReadToEnd();
-            File.WriteAllText("debug.txt", result);
-            Process.Start("debug.txt");
-            
-        }
-
-        private void radioButton9_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioButton9.Checked)
-            {
-                PrivateVariable.EnterRune = true;
-                WriteConfig("Manual_Rune", "false");
-                checkBox10.Enabled = radioButton9.Checked;
-            }
-        }
-
-        private void radioButton10_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioButton10.Checked)
-            {
-                PrivateVariable.EnterRune = false;
-                WriteConfig("Manual_Rune", "true");
-                checkBox10.Checked = false;
-                checkBox10.Enabled = false;
-            }
-        }
-
-        private void webBrowser3_NewWindow(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            webBrowser3.Navigate(webBrowser3.StatusText);
-            e.Cancel = true;
-        }
-
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioButton1.Checked)
-            {
-                WriteConfig("Level","0");
-                Level = 0;
-            }
-        }
-
-        private void radioButton2_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioButton2.Checked)
-            {
-                WriteConfig("Level", "1");
-                Level = 1;
-            }
-        }
-
-        private void radioButton3_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioButton3.Checked)
-            {
-                WriteConfig("Level", "2");
-                Level = 2;
-            }
-        }
-
-        private void checkBox13_CheckedChanged(object sender, EventArgs e)
-        {
-            WriteConfig("Close_Emulator", checkBox13.Checked.ToString().ToLower());
-            PrivateVariable.CloseEmulator = checkBox13.Checked;
-        }
-
-        private void radioButton11_CheckedChanged(object sender, EventArgs e)
-        {
-            if(radioButton11.Checked)
-                webBrowser3.Navigate("https://jq.qq.com/?_wv=1027&k=51gVT8A");
-        }
-
-        private void checkBox10_CheckedChanged(object sender, EventArgs e)
-        {
-            WriteConfig("Use_Item", checkBox10.Checked.ToString().ToLower());
-            PrivateVariable.Use_Item = checkBox10.Checked;
-        }
-
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            WriteConfig("Archwitch",comboBox1.Items[comboBox1.SelectedIndex].ToString());
-        }
-
-        private void radioButton7_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioButton7.Checked)
-            {
-                if (checkBox11.Checked)
-                {
-                    Process.Start("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/sch/index.html");
-                }
-                else
-                {
-                    webBrowser3.Visible = true;
-                    webBrowser3.Navigate("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/sch/index.html");
-                }
-            }
-        }
-
-        private static void WriteConfig(string key, string value)
-        {
-            var config = File.ReadAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
-            int x = 0;
-            foreach (var c in config)
-            {
-                if (c.Contains(key + "="))
-                {
-                    config[x] = key + "=" + value;
-                    File.WriteAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini", config);
-                    return;
-                }
-                x++;
-            }
-            config[config.Length - 1] = config[config.Length - 1] + "\n" + key + "=" + value;
-            if (Variables.Configure.ContainsKey(key))
-            {
-                Variables.Configure[key] = value;
-            }
-            else
-            {
-                Variables.Configure.Add(key, value);
-            }
-            File.WriteAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini", config);
-        }
-
-        private void pictureBox4_Click(object sender, EventArgs e)
-        {
-            if(pictureBox4.Image != null)
-            {
-                SaveFileDialog s = new SaveFileDialog();
-                s.CheckPathExists = true;
-                s.OverwritePrompt = true;
-                s.AddExtension = false;
-                s.Filter = "(PNG)|*.png";
-                s.DefaultExt = "png";
-                s.AddExtension = true;
-                var result = s.ShowDialog();
-                if (result == DialogResult.OK)
-                {
-                    pictureBox4.Image.Save(s.FileName);
-                }
-            }
-            
-        }
-
-        private void pictureBox4_MouseEnter(object sender, EventArgs e)
-        {
-            toolTip1.Show("点击即可保存图片哦！", pictureBox4);
-        }
-
-        private void pictureBox4_MouseLeave(object sender, EventArgs e)
-        {
-            toolTip1.Hide(pictureBox4);
-        }
-
-        private void radioButton4_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioButton4.Checked)
-            {
-                WriteConfig("Level", "3");
-                Level = 3;
-            }
-        }
-
-        private void radioButton5_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioButton5.Checked)
-            {
-                WriteConfig("Level", "4");
-                Level = 4;
-            }
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            if (File.Exists("OCR.png"))
-            {
-                var img = EmulatorController.Compress(Image.FromFile("OCR.png"));
-                MessageBox.Show(OCR.OcrImage(img,"eng"));
-            }
-        }
-
-        private void CheckBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            Variables.AdbLogShow = checkBox1.Checked;
-        }
-
-        private void MetroLink1_Click(object sender, EventArgs e)
-        {
-            Process.Start("www.github.com/PoH98/");
         }
     }
 }

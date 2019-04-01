@@ -14,13 +14,27 @@ namespace ImageProcessor
 
         public static void PrepairDebug()
         {
-                if (FileName == null)
+            if (!Directory.Exists("Profiles\\" + Variables.Instance + "\\Logs\\"))
+            {
+                Directory.CreateDirectory(("Profiles\\" + Variables.Instance + "\\Logs\\"));
+            }
+            foreach (var file in Directory.GetFiles("Profiles\\" + Variables.Instance + "\\Logs\\"))
+            {
+                FileInfo fi = new FileInfo(file);
+                if (fi.Length < 10000)
                 {
-                    Debug_.FileName = "Profiles\\" + Variables.Instance + "\\Logs\\" + DateTime.Now.ToString().Replace(' ', '_').Replace('/', '_').Replace(':', '_') + ".log";
-                    if (!Directory.Exists("Profiles\\" + Variables.Instance + "\\Logs\\"))
-                        Directory.CreateDirectory("Profiles\\" + Variables.Instance + "\\Logs\\");
-                    if (!File.Exists(FileName))
-                        File.Create(FileName);
+                    File.Delete(file);
+                }
+                if ((DateTime.Now - fi.CreationTime).Days > 3)
+                {
+                    File.Delete(file);
+                }
+            }
+            if (FileName == null)
+            {
+                Debug_.FileName = "Profiles\\" + Variables.Instance + "\\Logs\\" + DateTime.Now.ToString().Replace(' ', '_').Replace('/', '_').Replace(':', '_') + ".log";
+                if (!Directory.Exists("Profiles\\" + Variables.Instance + "\\Logs\\"))
+                    Directory.CreateDirectory("Profiles\\" + Variables.Instance + "\\Logs\\");
             }
         }
 

@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Linq;
 using System.Net;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace UI
 {
@@ -30,121 +31,6 @@ namespace UI
         public static void Bot()
         {
             Debug_.WriteLine();
-            if (!CloseEmu)
-            {
-                Thread.Sleep(10);
-                if (Variables.Controlled_Device != null) //The Emulator is running
-                {
-                    while (Variables.Proc == null)//But not registred on our Proc value
-                    {
-                        Debug_.WriteLine("Variables.Proc is null");
-                        //so go on and find the emulator!
-                        EmulatorController.ConnectAndroidEmulator(string.Empty, string.Empty, MainScreen.MEmu);
-                        //MEmu found!
-                        if (Variables.Proc != null)
-                        {
-                            break;
-                        }
-                        //Maybe something is wrong, no process is same name as MEmu!
-                        EmulatorController.StartEmulator();
-                    }
-                }
-                else //The Emulator is not exist!
-                {
-                    EmulatorController.StartEmulator(); //Start our fxxking Emulator!!
-                    Thread.Sleep(10000); //Wait
-                    return; //Back to start of the loop
-                }
-                if (!EmulatorController.StartAdb())
-                {
-                    MessageBox.Show("Unable to start adb!");
-                    Environment.Exit(0);
-                }
-                int error = 0;
-                Thread.Sleep(10);
-                while (image == null) //Weird problem happens, we still cannot receive any image capture!
-                {
-                    if (!PrivateVariable.Run)
-                    {
-                        return;
-                    }
-                    Thread.Sleep(1000); //Wait forever?
-                    Variables.ScriptLog("Waiting for first tons of image buffer");
-                    error++;
-                    if (error > 30) //Nah, we only wait for 30 sec
-                    {
-                        MessageBox.Show("无法截图！出现怪异错误！");
-                        Environment.Exit(0);
-                    }
-                }
-                Thread.Sleep(10);
-                if (Variables.Instance.Length < 5)
-                {
-                    Variables.Instance = "MEmu";
-                }
-                string filename = EmulatorController.SHA256(Variables.AdbIpPort);
-                if (!Directory.Exists("C:\\ProgramData\\" + filename))
-                {
-                    Directory.CreateDirectory("C:\\ProgramData\\" + filename);
-                }
-
-                if (!File.Exists("C:\\ProgramData\\" + filename + "\\" + filename + ".xml"))
-                {
-                    if (!EmulatorController.Pull("/data/data/com.nubee.valkyriecrusade/shared_prefs/NUBEE_ID.xml", "C:\\ProgramData\\" + filename + "\\" + filename + ".xml"))
-                    {
-                        Variables.ScriptLog("Pull files failed");
-                    }
-                    else
-                    {
-                        Variables.ScriptLog("Backup saved");
-                    }
-                }
-                else
-                {
-                    if (!pushed)
-                    {
-                        EmulatorController.Push("C:\\ProgramData\\" + filename + "\\" + filename + ".xml", "/data/data/com.nubee.valkyriecrusade/shared_prefs/NUBEE_ID.xml", 660);
-                        pushed = true;
-                        Variables.ScriptLog("Restored backup xml");
-                        Thread.Sleep(1000);
-                    }
-                }
-                Image img = EmulatorController.Decompress(Script.image);
-                if (img.Height != 720 || img.Width != 1280)
-                {
-                    Debug_.WriteLine("Image size not correct: " + img.Width + "*" + img.Height);
-                    if (!PrivateVariable.Run)
-                    {
-                        return;
-                    }
-                    if (Variables.Proc != null)
-                    {
-                        Variables.ScriptLog("Emulator's screen size is not 1280*720! Detected size is " + img.Width + "*" + img.Height);
-                        Variables.Proc.Kill();
-                        Variables.Proc = null;
-                    }
-                    ProcessStartInfo server = new ProcessStartInfo();
-                    string path = "";
-                    Variables.Configure.TryGetValue("Path", out path);
-                    path = path.Replace("MEmu\\MEmu.exe", "MEmuHyperv\\cmd.bat");
-                    string text = "MEmuManage.exe guestproperty set MEmu resolution_height 720\nMEmuManage.exe guestproperty set MEmu resolution_width 1280";
-                    File.WriteAllText(path, text);
-                    server.FileName = path;
-                    server.UseShellExecute = true;
-                    server.WorkingDirectory = path.Replace("\\cmd.bat", "");
-                    server.CreateNoWindow = true;
-                    server.WindowStyle = ProcessWindowStyle.Hidden;
-                    Process p = Process.Start(server);
-                    while (!p.HasExited)
-                    {
-                        Thread.Sleep(200);
-                    }
-                    Variables.ScriptLog("Restarting Emulator after setting size");
-                    EmulatorController.StartEmulator();
-                    Thread.Sleep(30000);
-                    return;
-                }
-            }
             while (PrivateVariable.Run)
             {
                 if (DateTime.Now > GetEventXML.guildwar && DateTime.Now < GetEventXML.guildwar.AddDays(10))
@@ -154,43 +40,150 @@ namespace UI
                     var hour = time.Hours;
                     if (hour == 8 || hour == 12 || hour == 19 || hour == 22)
                     {
-                        Variables.ScriptLog("Guild War is running, waiting for end...");
-                        int seconds = 0;
+                        Console.Beep();
+                        ScriptErrorHandler.Reset("Guild War is running, waiting for end...");
+                        double seconds = 0;
+                        Console.Beep();
                         switch (hour)
                         {
                             case 8:
-                                seconds = (TimeSpan.Parse("8:59:59") - time).Milliseconds;
-                                Variables.ScriptLog("Will start game at Japan time 8:59:59");
+                                seconds = (TimeSpan.Parse("8:59:59") - time).TotalMilliseconds;
+                                Variables.ScriptLog("Will start game at Japan time 8:59:59",Color.YellowGreen);
                                 break;
                             case 12:
-                                seconds = (TimeSpan.Parse("12:59:59") - time).Milliseconds;
-                                Variables.ScriptLog("Will start game at Japan Time 12:59:59");
+                                seconds = (TimeSpan.Parse("12:59:59") - time).TotalMilliseconds;
+                                Variables.ScriptLog("Will start game at Japan Time 12:59:59",Color.YellowGreen);
                                 break;
                             case 19:
-                                seconds = (TimeSpan.Parse("19:59:59") - time).Milliseconds;
-                                Variables.ScriptLog("Will start game at Japan Time 19:59:59");
+                                seconds = (TimeSpan.Parse("19:59:59") - time).TotalMilliseconds;
+                                Variables.ScriptLog("Will start game at Japan Time 19:59:59",Color.YellowGreen);
                                 break;
                             case 22:
-                                seconds = (TimeSpan.Parse("23:59:59") - time).Milliseconds;
-                                Variables.ScriptLog("Will start game at Japan Time 23:59:59");
+                                seconds = (TimeSpan.Parse("23:59:59") - time).TotalMilliseconds;
+                                Variables.ScriptLog("Will start game at Japan Time 23:59:59",Color.YellowGreen);
                                 break;
                         }
                         EmulatorController.KillGame("com.nubee.valkyriecrusade");
-                        Thread.Sleep(seconds);
+                        Thread.Sleep(Convert.ToInt32(seconds));
+                    }
+                }
+                if (!CloseEmu)
+                {
+                    Thread.Sleep(10);
+                    if (Variables.Controlled_Device != null) //The Emulator is running
+                    {
+                        while (Variables.Proc == null)//But not registred on our Proc value
+                        {
+                            Debug_.WriteLine("Variables.Proc is null");
+                            //so go on and find the emulator!
+                            EmulatorController.ConnectAndroidEmulator();
+                            //MEmu found!
+                            if (Variables.Proc != null)
+                            {
+                                break;
+                            }
+                            //Maybe something is wrong, no process is same name as MEmu!
+                            EmulatorController.StartEmulator();
+                            Thread.Sleep(10000);
+                        }
+                    }
+                    else //The Emulator is not exist!
+                    {
+                        EmulatorController.StartEmulator(); //Start our fxxking Emulator!!
+                        Thread.Sleep(10000); //Wait
+                        continue; //Back to start of the loop
+                    }
+                    if (!EmulatorController.StartAdb())
+                    {
+                        MessageBox.Show("Unable to start adb!");
+                        Environment.Exit(0);
+                    }
+                    int error = 0;
+                    Thread.Sleep(10);
+                    while (image == null) //Weird problem happens, we still cannot receive any image capture!
+                    {
+                        if (!PrivateVariable.Run)
+                        {
+                            return;
+                        }
+                        Thread.Sleep(1000); //Wait forever?
+                        Variables.ScriptLog("Waiting for first tons of image buffer",Color.Yellow);
+                        error++;
+                        if (error > 30) //Nah, we only wait for 30 sec
+                        {
+                            MessageBox.Show("无法截图！出现怪异错误！");
+                            Environment.Exit(0);
+                        }
+                    }
+                    Thread.Sleep(10);
+                    if (Variables.Instance.Length < 5)
+                    {
+                        Variables.Instance = "MEmu";
+                    }
+                    string filename = EmulatorController.SHA256(Variables.AdbIpPort);
+                    if (!Directory.Exists("C:\\ProgramData\\" + filename))
+                    {
+                        Directory.CreateDirectory("C:\\ProgramData\\" + filename);
+                    }
+
+                    if (!File.Exists("C:\\ProgramData\\" + filename + "\\" + filename + ".xml"))
+                    {
+                        if (!EmulatorController.Pull("/data/data/com.nubee.valkyriecrusade/shared_prefs/NUBEE_ID.xml", "C:\\ProgramData\\" + filename + "\\" + filename + ".xml"))
+                        {
+                            Variables.ScriptLog("Pull files failed",Color.Red);
+                        }
+                        else
+                        {
+                            Variables.ScriptLog("Backup saved",Color.Lime);
+                        }
+                    }
+                    else
+                    {
+                        if (!pushed)
+                        {
+                            EmulatorController.Push("C:\\ProgramData\\" + filename + "\\" + filename + ".xml", "/data/data/com.nubee.valkyriecrusade/shared_prefs/NUBEE_ID.xml", 660);
+                            pushed = true;
+                            Variables.ScriptLog("Restored backup xml",Color.Lime);
+                            Thread.Sleep(1000);
+                        }
+                    }
+                    Image img = EmulatorController.Decompress(Script.image);
+                    if (img.Height != 720 || img.Width != 1280)
+                    {
+                        Debug_.WriteLine("Image size not correct: " + img.Width + "*" + img.Height);
+                        if (!PrivateVariable.Run)
+                        {
+                            return;
+                        }
+                        Variables.ScriptLog("Emulator's screen size is not 1280*720! Detected size is " + img.Width + "*" + img.Height, Color.LightYellow);
+                        EmulatorController.ResizeEmulator(1280,720);
+                        Thread.Sleep(30000);
+                        continue;
                     }
                 }
                 if (Stuck)
                 {
                     StuckRune();
                     Stuck = false;
-                    return;
+                    continue;
                 }
                 Thread.Sleep(10);
                 if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
-                    Variables.ScriptLog("Starting Game");
-                    EmulatorController.StartGame(Img.Icon, image);
-                    Thread.Sleep(1000);
+                    for (int e = 0; e < 10; e++)
+                    {
+                        Variables.ScriptLog("Starting Game", Color.Lime);
+                        EmulatorController.StartGame(Img.Icon, image);
+                        Thread.Sleep(5000);
+                        if (EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                        {
+                            break;
+                        }
+                        if (e == 9)
+                        {
+                            EmulatorController.RestartEmulator();
+                        }
+                    }
                 }
                 else
                 {
@@ -220,9 +213,9 @@ namespace UI
                                         Demon_Realm();
                                         break;
                                     default:
-                                        Variables.ScriptLog("Unknown error occur, unable to detect event type.");
+                                        Variables.ScriptLog("Unknown error occur, unable to detect event type.", Color.Red);
                                         PrivateVariable.InEventScreen = false;
-                                        return;
+                                        break;
                                 }
                             }
                             else
@@ -258,12 +251,13 @@ namespace UI
                 {
                     return;
                 }
-                Variables.ScriptLog("Main Screen not visible");
+                Variables.ScriptLog("Main Screen not visible",Color.White);
                 point = EmulatorController.FindImage(image, Img.Start_Game, true);
                 if (point != null)
                 {
-                    Variables.ScriptLog("Start Game Button Located!");
+                    Variables.ScriptLog("Start Game Button Located!",Color.Lime);
                     EmulatorController.SendTap(point.Value);
+                    error = 0;
                     return;
                 }
                 if (!PrivateVariable.Run)
@@ -321,10 +315,10 @@ namespace UI
                 point = EmulatorController.FindImage(image, Img.Back_to_Village, true);
                 if (point != null)
                 {
-                    Variables.ScriptLog("Going back to Main screen");
+                    Variables.ScriptLog("Going back to Main screen",Color.Lime);
                     EmulatorController.SendTap(point.Value);
                     PrivateVariable.InMainScreen = true;
-                    Variables.ScriptLog("Screen Located");
+                    Variables.ScriptLog("Screen Located",Color.Lime);
                 }
                 if (!PrivateVariable.Run)
                 {
@@ -338,7 +332,7 @@ namespace UI
                     {
                         if(error == 0)
                         {
-                            Variables.ScriptLog("Waiting for Main screen");
+                            Variables.ScriptLog("Waiting for Main screen",Color.White);
                         }
                         Thread.Sleep(1000);
                         error++;
@@ -359,7 +353,7 @@ namespace UI
                     }
                     EmulatorController.SendTap(point.Value);
                     Thread.Sleep(1000);
-                    Variables.ScriptLog("Returning main screen");
+                    Variables.ScriptLog("Returning main screen",Color.Lime);
                     EmulatorController.SendTap(942, 630);
                     Thread.Sleep(5000);
                 }
@@ -372,7 +366,7 @@ namespace UI
                 if (point != null)
                 {
                     EmulatorController.SendTap(point.Value);
-                    Variables.ScriptLog("Green Button Found!");
+                    Variables.ScriptLog("Green Button Found!",Color.Lime);
                 }
                 ScriptErrorHandler.ErrorHandle();
             }
@@ -382,7 +376,7 @@ namespace UI
                 if(Retry > 5)
                 {
                     PrivateVariable.InMainScreen = true;
-                    Variables.ScriptLog("Screen Located");
+                    Variables.ScriptLog("Screen Located",Color.White);
                     //Collect();
                     Retry = 0;
                 }
@@ -391,7 +385,7 @@ namespace UI
                     Thread.Sleep(1000);
                     if(Retry == 1)
                     {
-                        Variables.ScriptLog("Waiting for Login Bonus");
+                        Variables.ScriptLog("Waiting for Login Bonus",Color.White);
                     }
                 }
             }
@@ -400,7 +394,7 @@ namespace UI
         //Collect
         private static void Collect()
         {
-            Variables.ScriptLog("Collecting Resources");
+            Variables.ScriptLog("Collecting Resources",Color.Lime);
             for(int x = 0; x < 4; x++)
             {
                 switch (x)
@@ -485,10 +479,10 @@ namespace UI
             }
             if(p == null)
             {
-                Variables.ScriptLog("No Treasure Hunt Building found!");
+                Variables.ScriptLog("No Treasure Hunt Building found!",Color.Yellow);
                 return;
             }
-            Variables.ScriptLog("Treasure hunting...");
+            Variables.ScriptLog("Treasure hunting...",Color.Lime);
             EmulatorController.SendTap(p.Value);
             Thread.Sleep(1000);
             //Enter Treasure hunt
@@ -511,7 +505,7 @@ namespace UI
                 //If already hunting
                 if (EmulatorController.RGBComparer(Script.image,new Point(973, 344), Color.FromArgb(130, 0, 0),0))
                 {
-                    Variables.ScriptLog("Already in hunting, exit now!");
+                    Variables.ScriptLog("Already in hunting, exit now!",Color.Lime);
                     //Exit loop
                     EmulatorController.SendTap(1222, 56);
                     Thread.Sleep(5000);
@@ -589,11 +583,11 @@ namespace UI
                                 ScriptErrorHandler.ErrorHandle();
                                 continue;
                             }
-                            Variables.ScriptLog("Finding Event.png on screen");
+                            Variables.ScriptLog("Finding Event.png on screen",Color.White);
                             point = EmulatorController.FindImage(image, Environment.CurrentDirectory + "\\Img\\Event.png", true);
                             if (point !=null)
                             {
-                                Variables.ScriptLog("Image matched");
+                                Variables.ScriptLog("Image matched",Color.Lime);
                                 EmulatorController.SendTap(point.Value);
                                 break;
                             }
@@ -690,7 +684,7 @@ namespace UI
                 }
                 if (EmulatorController.RGBComparer(image, new Point(109, 705), Color.FromArgb(130, 130, 130), 5) && EmulatorController.RGBComparer(image, new Point(219, 705), Color.FromArgb(130, 130, 130), 5))
                 {
-                    Variables.ScriptLog("Rare error happens, still in main screen!");
+                    Variables.ScriptLog("Rare error happens, still in main screen!",Color.Red);
                     PrivateVariable.InMainScreen = false;
                     return;
                 }
@@ -701,7 +695,7 @@ namespace UI
                 crop = EmulatorController.CropImage(image, new Point(140, 0), new Point(1160, 720));
                 if (EmulatorController.FindImage(crop, Img.Red_Button, false) != null)
                 {
-                    Variables.ScriptLog("Battle Screen found. Starting battle!");
+                    Variables.ScriptLog("Battle Screen found. Starting battle!",Color.Lime);
                     PrivateVariable.Battling = true;
                     PrivateVariable.InEventScreen = true;
                     return;
@@ -723,7 +717,7 @@ namespace UI
         {
             Debug_.WriteLine();
             Thread.Sleep(1000);
-            RuneBoss = false;
+
             Point? point = null;
             //Nope, we are in the tower event main screen! So go on!
             point = EmulatorController.FindImage(image, Img.Close2, false);
@@ -736,12 +730,12 @@ namespace UI
             {
                 return;
             }
-            Variables.ScriptLog("Locating Tower Event UI!");
+            Variables.ScriptLog("Locating Tower Event UI!",Color.White);
             if (EmulatorController.FindImage(image, Img.Locate_Tower, true) != null)
             {
                 Tower_Floor = OCR.OcrImage(EmulatorController.CropImage(image, new Point(280, 110), new Point(440, 145)),"eng");
                 Tower_Rank = OCR.OcrImage(EmulatorController.CropImage(image, new Point(280, 140), new Point(410, 170)), "eng");
-                Variables.ScriptLog("Tower Event Found!");
+                Variables.ScriptLog("Tower Event Found!",Color.Lime);
                 PrivateVariable.InEventScreen = true;
             }
             else
@@ -756,14 +750,14 @@ namespace UI
             }
             runes = GetRune();
             energy = GetEnergy();
-            Variables.ScriptLog("Current have " + energy + " energy and " + runes + " runes");
+            Variables.ScriptLog("Current have " + energy + " energy and " + runes + " runes", Color.LightSkyBlue);
             if (!PrivateVariable.Run)
             {
                 return;
             }
             if (energy == 0)
             {
-                Variables.ScriptLog("Waiting for energy");
+                Variables.ScriptLog("Waiting for energy",Color.Yellow);
                 if (PrivateVariable.TakePartInNormalStage)
                 {
                     EmulatorController.SendTap(1218, 662);
@@ -776,11 +770,11 @@ namespace UI
                     {
                         if(runes == 5)
                         {
-                            Variables.ScriptLog("Use item as it is now rune!");
+                            Variables.ScriptLog("Use item as it is now rune!",Color.White);
                         }
                         else
                         {
-                            Variables.ScriptLog("Close game and wait for energy because of no energy left");
+                            Variables.ScriptLog("Close game and wait for energy because of no energy left",Color.White);
                             if (!PrivateVariable.Run)
                             {
                                 return;
@@ -794,7 +788,7 @@ namespace UI
                     }
                     else
                     {
-                        Variables.ScriptLog("Close game and wait for energy because of no energy left");
+                        Variables.ScriptLog("Close game and wait for energy because of no energy left",Color.White);
                         if (!PrivateVariable.Run)
                         {
                             return;
@@ -807,7 +801,7 @@ namespace UI
                     }
                 }
             }
-            Variables.ScriptLog("Entering Stage!");
+            Variables.ScriptLog("Entering Stage!",Color.Lime);
             switch (MainScreen.Level)
             {
                 case 0:
@@ -861,7 +855,7 @@ namespace UI
                 }
                 if (EmulatorController.RGBComparer(image, new Point(959, 656), 31, 102, 26, 4))
                 {
-                    Variables.ScriptLog("Start battle");
+                    Variables.ScriptLog("Start battle",Color.Lime);
                     EmulatorController.SendTap(new Point(959, 656));
                     Thread.Sleep(7000);
                     EmulatorController.SendTap(640, 400); //Tap away Round Battle Text
@@ -878,7 +872,7 @@ namespace UI
                     point = EmulatorController.FindImage(crop, Img.Red_Button, false);
                     if (point != null)
                     {
-                        Variables.ScriptLog("Rune boss found!");
+                        Variables.ScriptLog("Rune boss found!",Color.Yellow);
                         EmulatorController.SendTap(new Point(point.Value.X + 125, point.Value.Y));
                         RuneBoss = true;
                         Thread.Sleep(10000);
@@ -892,7 +886,6 @@ namespace UI
             while (!PrivateVariable.Battling);
 
         }
-
         //Demon Event
         private static void Demon_Realm()
         {
@@ -927,12 +920,12 @@ namespace UI
                     return;
                 }
                 point = EmulatorController.FindImage(image, Img.HellLoc, true);
-                Variables.ScriptLog("Locating Demon Realm Event UI!");
+                Variables.ScriptLog("Locating Demon Realm Event UI!",Color.White);
                 if (point != null)
                 {
                     Tower_Floor = OCR.OcrImage(EmulatorController.CropImage(image, new Point(300, 115), new Point(484, 142)), "eng");
                     Tower_Rank = OCR.OcrImage(EmulatorController.CropImage(image, new Point(300, 150), new Point(458, 170)), "eng");
-                    Variables.ScriptLog("Demon Realm Event Found!");
+                    Variables.ScriptLog("Demon Realm Event Found!",Color.Lime);
                     PrivateVariable.InEventScreen = true;
                     energy = GetEnergy();
                     runes = GetRune();
@@ -951,8 +944,8 @@ namespace UI
             
             if (energy == 0)
             {
-                Variables.ScriptLog("Waiting for energy");
-                Variables.ScriptLog("Close game and wait for energy because of no energy left");
+                Variables.ScriptLog("Waiting for energy",Color.Yellow);
+                Variables.ScriptLog("Close game and wait for energy because of no energy left",Color.Yellow);
                 if (!PrivateVariable.Run)
                 {
                     return;
@@ -968,22 +961,73 @@ namespace UI
                 StuckRune();
                 return;
             }
-            Variables.ScriptLog("Enterting Stage");
+            PrivateVariable.InEventScreen = true;
+            Variables.ScriptLog("Enterting Stage",Color.White);
             switch (MainScreen.Level)
             {
                 case 0:
                     EmulatorController.SendTap(250, 284);
                     break;
                 case 1:
+                    if(EmulatorController.RGBComparer(image,new Point(143, 355), Color.FromArgb(41,16, 4), 5))
+                    {
+                        Variables.ScriptLog("中级还没被解锁！自动往下挑战中！",Color.Red);
+                        EmulatorController.SendTap(250, 284);
+                        break;
+                    }
                     EmulatorController.SendTap(362, 283);
                     break;
                 case 2:
+                    if (EmulatorController.RGBComparer(image, new Point(143, 355), Color.FromArgb(41, 16, 4), 5))
+                    {
+                        Variables.ScriptLog("上级还没被解锁！自动往下挑战中！", Color.Red);
+                        if (EmulatorController.RGBComparer(image, new Point(324, 270), Color.FromArgb(41, 16, 4), 5))
+                        {
+                            Variables.ScriptLog("中级还没被解锁！自动往下挑战中！", Color.Red);
+                            EmulatorController.SendTap(250, 284);
+                            break;
+                        }
+                        EmulatorController.SendTap(362, 283);
+                        break;
+                    }
                     EmulatorController.SendTap(214, 370);
                     break;
                 case 3:
+                    if (EmulatorController.RGBComparer(image, new Point(324, 355), Color.FromArgb(41, 16, 4), 5))
+                    {
+                        Variables.ScriptLog("超上级还没被解锁！自动往下挑战中！", Color.Red);
+                        if (EmulatorController.RGBComparer(image, new Point(143, 355), Color.FromArgb(41, 16, 4), 5))
+                        {
+                            Variables.ScriptLog("上级还没被解锁！自动往下挑战中！", Color.Red);
+                            if (EmulatorController.RGBComparer(image, new Point(324, 270), Color.FromArgb(41, 16, 4), 5))
+                            {
+                                Variables.ScriptLog("中级还没被解锁！自动往下挑战中！", Color.Red);
+                                EmulatorController.SendTap(250, 284);
+                                break;
+                            }
+                            EmulatorController.SendTap(362, 283);
+                            break;
+                        }
+                    }
                     EmulatorController.SendTap(353, 371);
                     break;
                 case 4:
+                    if (EmulatorController.RGBComparer(image, new Point(324, 355), Color.FromArgb(41, 16, 4), 5))
+                    {
+                        Variables.ScriptLog("超上级还没被解锁！自动往下挑战中！", Color.Red);
+                        if (EmulatorController.RGBComparer(image, new Point(143, 355), Color.FromArgb(41, 16, 4), 5))
+                        {
+                            Variables.ScriptLog("上级还没被解锁！自动往下挑战中！", Color.Red);
+                            if (EmulatorController.RGBComparer(image, new Point(324, 270), Color.FromArgb(41, 16, 4), 5))
+                            {
+                                Variables.ScriptLog("中级还没被解锁！自动往下挑战中！", Color.Red);
+                                EmulatorController.SendTap(250, 284);
+                                break;
+                            }
+                            EmulatorController.SendTap(362, 283);
+                            break;
+                        }
+                    }
                     EmulatorController.SendTap(353, 371);
                     break;
             }
@@ -996,7 +1040,7 @@ namespace UI
                 }
                 if (EmulatorController.RGBComparer(image, new Point(959, 656), 31, 102, 26, 4))
                 {
-                    Variables.ScriptLog("Start battle");
+                    Variables.ScriptLog("Start battle",Color.Lime);
                     EmulatorController.SendTap(new Point(959, 656));
                     Thread.Sleep(2000);
                     EmulatorController.SendTap(new Point(758, 566));
@@ -1043,7 +1087,7 @@ namespace UI
                 Thread.Sleep(1000);
             }
             error = 0;
-            Variables.ScriptLog("Demon Realm Event Located");
+            Variables.ScriptLog("Demon Realm Event Located",Color.Lime);
             List<Point> BlackListedLocation = new List<Point>();
             Point? p = null;
             while (error < 20 && p == null)
@@ -1056,31 +1100,42 @@ namespace UI
                 {
                     return;
                 }
-                Variables.ScriptLog("Fetching stage images");
+                Variables.ScriptLog("Fetching stage images",Color.White);
                 List<Image> Stage = new List<Image>();
                 foreach(var file in Directory.GetFiles("Img\\DemonRealm","*.png").OrderBy(f => f))
                 {
                     Stage.Add(Image.FromFile(file));
                 }
                 var crop = EmulatorController.CropImage(image, new Point(0, 0), new Point(1280, 615));
-                Variables.ScriptLog("Trying to find stages to enter");
+                Variables.ScriptLog("Trying to find stages to enter",Color.LightSkyBlue);
+                Bitmap screen = (Bitmap)EmulatorController.Decompress(image);
                 foreach (var stage in Stage)
                 {
-                    p = EmulatorController.FindImage(crop, new Bitmap(stage), false);
+                    p = EmulatorController.FindImage(screen, (Bitmap)stage, false);
                     if (p != null)
                     {
                         if (!BlackListedLocation.Contains(p.Value))
                         {
-                            Variables.ScriptLog("Stage found!");
+                            Variables.ScriptLog("Stage found!",Color.Lime);
                             EmulatorController.SendTap(p.Value);
                             Thread.Sleep(1000);
                             EmulatorController.SendTap(768, 536);
                             Thread.Sleep(5000);
                             if (EmulatorController.FindImage(image, Img.Red_Button, false) != null)
                             {
-                                Variables.ScriptLog("Ops, looks like the stage is not able to enter!");
+                                Variables.ScriptLog("Ops, looks like the stage is not able to enter!",Color.Red);
                                 BlackListedLocation.Add(p.Value);
                                 p = null;
+                                using (Bitmap btm = screen)
+                                {
+                                    using (Graphics grf = Graphics.FromImage(btm))
+                                    {
+                                        using (Brush brsh = new SolidBrush(ColorTranslator.FromHtml("#FFFFFF")))
+                                        {
+                                            grf.FillEllipse(brsh, p.Value.X, p.Value.Y, 5, 5);
+                                        }
+                                    }
+                                }
                                 continue;
                             }
                             EmulatorController.SendTap(969, 614);
@@ -1103,7 +1158,7 @@ namespace UI
             }
             if(error > 18)
             {
-                Variables.ScriptLog("Looks like we are in the trouble!");
+                Variables.ScriptLog("Looks like we are in the trouble!",Color.Red);
                 error = 0;
                 ScriptErrorHandler.Reset("Restarting game as unable to detect stages properly!");
             }
@@ -1129,7 +1184,8 @@ namespace UI
             if (!EmulatorController.RGBComparer(image, new Point(10, 27), Color.FromArgb(200, 200, 200), 5))
             {
                 Debug_.WriteLine();
-                Variables.ScriptLog("HP bar not found. Finding UIs");
+                Variables.ScriptLog("HP bar not found. Finding UIs",Color.Yellow);
+                ScriptErrorHandler.ErrorHandle();
                 Point? point = EmulatorController.FindImage(image, Img.Close2, false);
                 if (point != null)
                 {
@@ -1150,9 +1206,9 @@ namespace UI
                 if (EmulatorController.FindImage(image, Img.Demon_Start, true) != null)
                 {
                     PrivateVariable.Battling = false;
-                    Variables.ScriptLog("Battle Ended!");
+                    Variables.ScriptLog("Battle Ended!",Color.Lime);
                     stop.Stop();
-                    Variables.ScriptLog("Battle used up " + stop.Elapsed);
+                    Variables.ScriptLog("Battle used up " + stop.Elapsed,Color.Lime);
                     stop.Reset();
                     EmulatorController.SendTap(1076, 106);
                     Attackable = false;
@@ -1165,9 +1221,9 @@ namespace UI
                 if (EmulatorController.FindImage(image, Img.Locate_Tower, true) != null)
                 {
                     PrivateVariable.Battling = false;
-                    Variables.ScriptLog("Battle Ended!");
+                    Variables.ScriptLog("Battle Ended!",Color.Lime);
                     stop.Stop();
-                    Variables.ScriptLog("Battle used up " + stop.Elapsed);
+                    Variables.ScriptLog("Battle used up " + stop.Elapsed,Color.Lime);
                     stop.Reset();
                     Attackable = false;
                     return;
@@ -1179,9 +1235,9 @@ namespace UI
                 if (EmulatorController.FindImage(image, Img.Demon_InEvent, true) != null)
                 {
                     PrivateVariable.Battling = false;
-                    Variables.ScriptLog("Battle Ended!");
+                    Variables.ScriptLog("Battle Ended!",Color.Lime);
                     stop.Stop();
-                    Variables.ScriptLog("Battle used up " + stop.Elapsed);
+                    Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                     stop.Reset();
                     Attackable = false;
                     return;
@@ -1194,7 +1250,7 @@ namespace UI
                 point = EmulatorController.FindImage(crop, Img.GreenButton, false);
                 if (point != null)
                 {
-                    Variables.ScriptLog("Green Button Found!");
+                    Variables.ScriptLog("Green Button Found!", Color.Lime);
                     if (PrivateVariable.EventType == 0)
                     {
                         if (EmulatorController.FindImage(image, Img.TowerFinished, true) != null && RuneBoss && runes >= 3 && runes != 5)
@@ -1203,9 +1259,9 @@ namespace UI
                             PrivateVariable.InMainScreen = false;
                             PrivateVariable.Battling = false;
                             Stuck = true;
-                            Variables.ScriptLog("Battle Ended!");
+                            Variables.ScriptLog("Battle Ended!", Color.Lime);
                             stop.Stop();
-                            Variables.ScriptLog("Battle used up " + stop.Elapsed);
+                            Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                             stop.Reset();
                             Attackable = false;
                             return;
@@ -1217,9 +1273,9 @@ namespace UI
                                 PrivateVariable.InEventScreen = false;
                                 PrivateVariable.InMainScreen = false;
                                 PrivateVariable.Battling = false;
-                                Variables.ScriptLog("Battle Ended!");
+                                Variables.ScriptLog("Battle Ended!", Color.Lime);
                                 stop.Stop();
-                                Variables.ScriptLog("Battle used up " + stop.Elapsed);
+                                Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                                 stop.Reset();
                                 Attackable = false;
                             }
@@ -1240,9 +1296,9 @@ namespace UI
                             PrivateVariable.InMainScreen = false;
                             PrivateVariable.Battling = false;
                             EmulatorController.SendTap(point.Value.X + 125, point.Value.Y);
-                            Variables.ScriptLog("Battle Ended!");
+                            Variables.ScriptLog("Battle Ended!", Color.Lime);
                             stop.Stop();
-                            Variables.ScriptLog("Battle used up " + stop.Elapsed);
+                            Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                             stop.Reset();
                             Attackable = false;
                             return;
@@ -1259,7 +1315,7 @@ namespace UI
                         var pt = EmulatorController.FindImage(crop, Img.PT, true);
                         if (pt != null)
                         {
-                            Variables.ScriptLog("Battle Ended!");
+                            Variables.ScriptLog("Battle Ended!", Color.Lime);
                             EmulatorController.SendTap(point.Value.X + 125, point.Value.Y);
                             Thread.Sleep(400);
                             EmulatorController.SendTap(point.Value.X + 125, point.Value.Y);
@@ -1272,7 +1328,7 @@ namespace UI
                             PrivateVariable.Battling = false;
                             PrivateVariable.InEventScreen = true;
                             stop.Stop();
-                            Variables.ScriptLog("Battle used up " + stop.Elapsed);
+                            Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                             stop.Reset();
                             Attackable = false;
                             return;
@@ -1294,15 +1350,15 @@ namespace UI
                         if (EmulatorController.RGBComparer(image, new Point(133, 35), Color.FromArgb(30, 30, 30), 10))
                         {
                             PrivateVariable.Battling = false;
-                            Variables.ScriptLog("Battle Ended!");
+                            Variables.ScriptLog("Battle Ended!", Color.Lime);
                             stop.Stop();
-                            Variables.ScriptLog("Battle used up " + stop.Elapsed);
+                            Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                             stop.Reset();
                             Attackable = false;
                             return;
                         }
                     }
-                    Variables.ScriptLog("Starting Battle");
+                    Variables.ScriptLog("Starting Battle", Color.Lime);
                     EmulatorController.SendTap(point.Value.X + 125, point.Value.Y);
                     PrivateVariable.Battling = true;
                     Thread.Sleep(900);
@@ -1347,13 +1403,12 @@ namespace UI
                 }
                 if (EmulatorController.RGBComparer(image, new Point(959, 656), 31, 102, 26, 4))
                 {
-                    Variables.ScriptLog("Start battle");
+                    Variables.ScriptLog("Start battle", Color.Lime);
                     EmulatorController.SendTap(959, 656);
                     PrivateVariable.Battling = true;
                     Attackable = false;
                     return;
                 }
-                ScriptErrorHandler.ErrorHandle();
             }
         }
         static bool Attackable = true;
@@ -1369,7 +1424,7 @@ namespace UI
                 if (EmulatorController.RGBComparer(enemy, Color.FromArgb(33, 106, 159)) || EmulatorController.RGBComparer(enemy, Color.FromArgb(171, 0, 21)))
                 {
                     EmulatorController.SendTap(640, 156); //Boss在中间，打Boss
-                    Variables.ScriptLog("Found Boss at center!");
+                    Variables.ScriptLog("Found Boss at center!", Color.LightPink);
                 }
                 else
                 {
@@ -1383,18 +1438,14 @@ namespace UI
                         if (point != null)
                         {
                             PrivateVariable.Battling = false;
-                            Variables.ScriptLog("Battle Ended!");
+                            Variables.ScriptLog("Battle Ended!", Color.Lime);
                             return;
                         }
                         Thread.Sleep(100);
                     }
-                        //找不到Boss血量条，可能剩下一丝血，所以先打中间试试水，再打小怪
-                        EmulatorController.SendTap(640, 156);//中间
-                        EmulatorController.SendTap(462, 176);//中左边
-                        EmulatorController.SendTap(820, 187);//中右边
-                        EmulatorController.SendTap(342, 183);//最左边
-                        EmulatorController.SendTap(955, 189);//最右边
-                        Variables.ScriptLog("Boss not found, trying to hit others");
+                    //找不到Boss血量条，可能剩下一丝血，所以先打中间试试水，再打小怪
+                    EmulatorController.Minitouch("d 0 640 156 100\nc\nu 0\nc\nd 0 462 176 100\nc\nu 0\nc\nd 0 485 192 100\nc\nu 0\nc\nd 0 820 187 100\nc\nu 0\nc\nd 0 342 183 100\nc\nu 0\nc\nd 0 955 189 100\nc\nu 0\nc\n");
+                    Variables.ScriptLog("Boss not found, trying to hit others", Color.LightPink);
                 }
             }
             Attackable = true;
@@ -1404,18 +1455,22 @@ namespace UI
         {
             do
             {
+                Attackable = true;
                 Debug_.WriteLine();
                 if (!PrivateVariable.Battling)
                 {
                     return;
                 }
                 LocateEnemy();
-                Variables.ScriptLog("Locating Skills and enemies");
-                if (PrivateVariable.BattleScript.Count > 0)
+                if (Attackable)
                 {
-                    PrivateVariable.BattleScript[PrivateVariable.Selected_Script].Attack();
+                    Variables.ScriptLog("Locating Skills and enemies",Color.Gold);
+                    if (PrivateVariable.BattleScript.Count > 0)
+                    {
+                        PrivateVariable.BattleScript[PrivateVariable.Selected_Script].Attack();
+                    }
+                    CheckEnemy();
                 }
-                CheckEnemy();
                 if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
                     ScriptErrorHandler.Reset("Game is closed! Restarting all!");
@@ -1592,7 +1647,6 @@ namespace UI
                 return num;
             }
         }
-        
         //Close Game and wait for energy in tower event for stucking rune time
         private static void StuckRune()
         {
@@ -1602,9 +1656,9 @@ namespace UI
                 Debug_.WriteLine();
                 int el = 5 - energy;
                 int wait = el * 2600000;
-                Variables.ScriptLog("Close game and stuck rune!");
+                Variables.ScriptLog("Close game and stuck rune!",Color.DarkGreen);
                 nextOnline = DateTime.Now.AddMilliseconds(wait);
-                Variables.ScriptLog("Estimate online time is " + nextOnline);
+                Variables.ScriptLog("Estimate online time is " + nextOnline, Color.Lime);
                 EmulatorController.KillGame("com.nubee.valkyriecrusade");
                 if (!PrivateVariable.EnterRune)
                 {
@@ -1619,13 +1673,13 @@ namespace UI
                             player.PlayLooping();
                         }
                     }
-                    EmulatorController.CloseEmulator("MEmuManage.exe");
+                    EmulatorController.CloseEmulator();
                     MessageBox.Show("正在卡符文！下次上线时间为" + nextOnline + "!");
                     Environment.Exit(0);
                 }
                 if (PrivateVariable.CloseEmulator)
                 {
-                    EmulatorController.CloseEmulator("MEmuManage.exe");
+                    EmulatorController.CloseEmulator();
                 }
                 Thread.Sleep(wait - 60000);
             }
@@ -1634,9 +1688,9 @@ namespace UI
                 Debug_.WriteLine();
                 int el = 5 - energy;
                 int wait = el * 2600000;
-                Variables.ScriptLog("Close game and stuck treasure map!");
+                Variables.ScriptLog("Close game and stuck treasure map!", Color.DarkGreen);
                 nextOnline = DateTime.Now.AddMilliseconds(wait);
-                Variables.ScriptLog("Estimate online time is " + nextOnline);
+                Variables.ScriptLog("Estimate online time is " + nextOnline, Color.Lime);
                 EmulatorController.KillGame("com.nubee.valkyriecrusade");
                 if (!PrivateVariable.EnterRune)
                 {
@@ -1651,13 +1705,13 @@ namespace UI
                             player.PlayLooping();
                         }
                     }
-                    EmulatorController.CloseEmulator("MEmuManage.exe");
+                    EmulatorController.CloseEmulator();
                     MessageBox.Show("已存3宝藏图碎片！下次上线时间为" + nextOnline + "!");
                     Environment.Exit(0);
                 }
                 if (PrivateVariable.CloseEmulator)
                 {
-                    EmulatorController.CloseEmulator("MEmuManage.exe");
+                    EmulatorController.CloseEmulator();
                 }
                 Thread.Sleep(wait - 60000);
             }
@@ -1672,13 +1726,13 @@ namespace UI
                 int el = 5 - energy;
                 int wait = el * 2500000;
                 nextOnline = DateTime.Now.AddMilliseconds(wait);
-                Variables.ScriptLog("Estimate online time is " + nextOnline);
+                Variables.ScriptLog("Estimate online time is " + nextOnline, Color.Lime);
                 EmulatorController.KillGame("com.nubee.valkyriecrusade");
                 ScriptErrorHandler.PauseErrorHandler = true;
                 if (PrivateVariable.CloseEmulator)
                 {
                     CloseEmu = true;
-                    EmulatorController.CloseEmulator("MEmuManage.exe");
+                    EmulatorController.CloseEmulator();
                 }
                 Thread.Sleep(wait - 70000);
                 ScriptErrorHandler.PauseErrorHandler = false;
@@ -1689,7 +1743,7 @@ namespace UI
                 ScriptErrorHandler.PauseErrorHandler = true;
                 EmulatorController.KillGame("com.nubee.valkyriecrusade");
                 nextOnline = DateTime.Now.AddMilliseconds(900000);
-                Variables.ScriptLog("Estimate online time is " + nextOnline);
+                Variables.ScriptLog("Estimate online time is " + nextOnline, Color.Lime);
                 Thread.Sleep(900000);
                 ScriptErrorHandler.PauseErrorHandler = false;
             }
