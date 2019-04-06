@@ -16,7 +16,11 @@ namespace DefaultScript
         private static List<ComboBox> toolParameterComboBoxes = new List<ComboBox>();
         public void Attack()
         {
-            EmulatorController.Minitouch("d 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\n");
+            for (int x = 0; x < 10; x++)
+            {
+                Thread.Sleep(100);
+                EmulatorController.SendTap(1, 1);
+            }
             foreach (var cb in toolParameterComboBoxes)
             {
                 int index = 0;
@@ -39,7 +43,11 @@ namespace DefaultScript
                                 {
                                     Variables.ScriptLog("Skill actived",Color.Blue);
                                     EmulatorController.SendSwipe(new Point(263, 473), new Point(264, 474), 1200);
-                                    EmulatorController.Minitouch("d 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\n");
+                                    for (int x = 0; x < 10; x++)
+                                    {
+                                        Thread.Sleep(100);
+                                        EmulatorController.SendTap(1, 1);
+                                    }
                                     break;
                                 }
                             }
@@ -65,7 +73,11 @@ namespace DefaultScript
                                 {
                                     Variables.ScriptLog("Skill actived", Color.Blue);
                                     EmulatorController.SendSwipe(new Point(448, 492), new Point(449, 493), 1200);
-                                    EmulatorController.Minitouch("d 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\n");
+                                    for (int x = 0; x < 10; x++)
+                                    {
+                                        Thread.Sleep(100);
+                                        EmulatorController.SendTap(1, 1);
+                                    }
                                     break;
                                 }
                             }
@@ -91,7 +103,11 @@ namespace DefaultScript
                                 {
                                     Variables.ScriptLog("Skill actived", Color.Blue);
                                     EmulatorController.SendSwipe(new Point(641, 473), new Point(642, 474), 1200);
-                                    EmulatorController.Minitouch("d 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\n");
+                                    for (int x = 0; x < 10; x++)
+                                    {
+                                        Thread.Sleep(100);
+                                        EmulatorController.SendTap(1, 1);
+                                    }
                                     break;
                                 }
                             }
@@ -117,7 +133,11 @@ namespace DefaultScript
                                 {
                                     Variables.ScriptLog("Skill actived", Color.Blue);
                                     EmulatorController.SendSwipe(new Point(834, 483), new Point(835, 484), 1200);
-                                    EmulatorController.Minitouch("d 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\n");
+                                    for (int x = 0; x < 10; x++)
+                                    {
+                                        Thread.Sleep(100);
+                                        EmulatorController.SendTap(1, 1);
+                                    }
                                     break;
                                 }
                             }
@@ -143,7 +163,11 @@ namespace DefaultScript
                                 {
                                     Variables.ScriptLog("Skill actived", Color.Blue);
                                     EmulatorController.SendSwipe(new Point(1017, 470), new Point(1018, 471), 1200);
-                                    EmulatorController.Minitouch("d 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\nd 0 1 1 100\nc\nu 0\nc\n");
+                                    for(int x = 0; x<10; x++)
+                                    {
+                                        Thread.Sleep(100);
+                                        EmulatorController.SendTap(1, 1);
+                                    }
                                     break;
                                 }
                             }
@@ -197,13 +221,12 @@ namespace DefaultScript
             {
                 try
                 {
-                    string[] c = Regex.Split(cboxselected, String.Empty);
                     int y =0;
-                    foreach(var ch in c)
+                    foreach(var ch in cboxselected)
                     {
                         try
                         {
-                            int x = Convert.ToInt16(ch);
+                            int x = Convert.ToInt32(ch.ToString());
                             switch (y)
                             {
                                 case 0:

@@ -33,6 +33,7 @@ namespace ImageProcessor
 
         static List<CheckBox> customScriptEnable = new List<CheckBox>();
 
+
         public MainScreen()
         {
             InitializeComponent();
@@ -363,8 +364,6 @@ namespace ImageProcessor
             metroTabControl1.SelectedIndex = 0;
             checkBox10.Enabled = radioButton9.Checked;
             Loading.LoadCompleted = true;
-            Thread mon = new Thread(DeviceConnected);
-            mon.Start();
             PrivateVariable.EventType = -1;
             timer2.Start();
         }
@@ -405,50 +404,6 @@ namespace ImageProcessor
             var wp = new WindowsPrincipal(wi);
             return wp.IsInRole(WindowsBuiltInRole.Administrator);
         }
-        /// <summary>
-        /// Line that await for new devices connected and refresh Variables.Devices_Connected
-        /// </summary>
-        public static void DeviceConnected()
-        {
-            try
-            {
-                IPAddress loopback = null;
-                if (IPAddress.TryParse("127.0.0.1", out loopback))
-                {
-                    IAdbSocket sock = new AdbSocket(new IPEndPoint(loopback, AdbClient.AdbServerPort));
-                    var monitor = new DeviceMonitor(sock);
-                    monitor.DeviceConnected += OnDeviceConnected;
-                    monitor.Start();
-                }
-            }
-            catch (SocketException)
-            {
-                foreach (var adb in Process.GetProcessesByName("adb.exe"))
-                {
-                    adb.Kill();
-                }
-                EmulatorController.StartAdb();
-                DeviceConnected();
-            }
-            catch
-            {
-                DeviceConnected();
-            }
-        }
-
-        private static void OnDeviceConnected(object sender, DeviceDataEventArgs e)
-        {
-            foreach (var device in AdbClient.Instance.GetDevices())
-            {
-                if (device.ToString() == Variables.AdbIpPort)
-                {
-                    Variables.Controlled_Device = device;
-                    break;
-                }
-            }
-            Variables.DeviceChanged = true;
-        }
-
         private void button1_Click(object sender, EventArgs e)
         {
             ScriptErrorHandler.errorImages.Clear();
@@ -707,8 +662,6 @@ namespace ImageProcessor
                             DllImport.ShowWindow(h, 0);
                         }
                     }
-
-
                     panel3.Invoke((MethodInvoker)delegate
                     {
                         if (DllImport.GetParent(EmulatorController.handle) != panel3.Handle)

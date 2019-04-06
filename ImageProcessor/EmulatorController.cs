@@ -22,6 +22,7 @@ using System.Threading;
 using System.Security.Cryptography;
 using System.Windows.Forms;
 using System.Reflection;
+using System.Net.Sockets;
 
 namespace ImageProcessor
 {
@@ -33,7 +34,9 @@ namespace ImageProcessor
         /// </summary>
         public static string profilePath = Variables.Instance;
         public static string path;
-
+        private static AdbServer server = new AdbServer();
+        public static int minitouchPort = 1111;
+        public static TcpSocket minitouchSocket;
         /// <summary>
         /// Read emulators dll
         /// </summary>
@@ -137,6 +140,9 @@ namespace ImageProcessor
             Variables.Controlled_Device = null;
             Variables.ScriptLog("Emulator Closed",Color.Red);
         }
+        /// <summary>
+        /// Restart emulator
+        /// </summary>
         public static void RestartEmulator()
         {
             CloseEmulator();
@@ -165,8 +171,36 @@ namespace ImageProcessor
         public static void ConnectAndroidEmulator()
         {
             Variables.emulator.ConnectEmulator();
+            Push(Environment.CurrentDirectory + "//adb//minitouch", "/data/local/tmp/minitouch", 777);
+            ConnectMinitouch();
         }
+        /// <summary>
+        /// Connect minitouch
+        /// </summary>
+        private static void ConnectMinitouch()
+        {
+            try
+            {
+                if(Variables.Controlled_Device == null)
+                {
+                    StartEmulator();
+                    Thread.Sleep(10000);
+                    ConnectAndroidEmulator();
+                    return;
+                }
+                ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
+                AdbClient.Instance.ExecuteRemoteCommandAsync("/data/local/tmp/minitouch", Variables.Controlled_Device, receiver, CancellationToken.None, int.MaxValue);
+                AdbClient.Instance.CreateForward(Variables.Controlled_Device, ForwardSpec.Parse($"tcp:{minitouchPort}"), ForwardSpec.Parse("localabstract:minitouch"), true);
+                minitouchSocket = new TcpSocket();
+                minitouchSocket.Connect(new IPEndPoint(IPAddress.Parse("127.0.0.1"),minitouchPort));
+            }
+            catch
+            {
+                minitouchPort++;
+                ConnectMinitouch();
+            }
 
+        }
         /// <summary>
         /// Check Game is foreground and return a bool
         /// </summary>
@@ -198,7 +232,11 @@ namespace ImageProcessor
             {
                 Variables.ScriptLog("Adb exception found!",Color.Red);
                 Debug_.WriteLine(ex.Message);
-                CloseEmulator();
+                if (!IsOnline())
+                {
+                    CloseEmulator();
+                    Thread.Sleep(10000);
+                }
             }
             return false;
         }
@@ -208,7 +246,6 @@ namespace ImageProcessor
         public static bool StartAdb()
         {
             string adbname = Environment.CurrentDirectory + "\\adb\\adb.exe";
-            AdbServer server = new AdbServer();
             {
                 if (!File.Exists(adbname))
                 {
@@ -225,9 +262,7 @@ namespace ImageProcessor
                     }
                 }
             }
-            StartServerResult result = server.StartServer(adbname, false);
-            var receiver = new ConsoleOutputReceiver();
-            EmulatorController.Push(Environment.CurrentDirectory + "//adb//minitouch", "/data/local/tmp/minitouch", 777);
+            server.StartServer(adbname, false);
             return true;
         }
         /// <summary>
@@ -265,7 +300,6 @@ namespace ImageProcessor
             {
                 Variables.ScriptLog("Adb exception found!",Color.Red);
                 Debug_.WriteLine(ex.Message);
-                CloseEmulator();
             }
             return false;
         }
@@ -301,7 +335,6 @@ namespace ImageProcessor
             {
                 Variables.ScriptLog("Adb exception found!",Color.Red);
                 Debug_.WriteLine(ex.Message);
-                CloseEmulator();
             }
             return false;
         }
@@ -338,7 +371,6 @@ namespace ImageProcessor
             {
                 Variables.ScriptLog("Adb exception found!",Color.Red);
                 Debug_.WriteLine(ex.Message);
-                CloseEmulator();
             }
         }
         /// <summary>
@@ -469,6 +501,10 @@ namespace ImageProcessor
                 Debug_.WriteLine(ex.Message);
                 CloseEmulator();
             }
+            catch(SocketException)
+            {
+
+            }
             return null;
         }
         /// <summary>
@@ -488,9 +524,9 @@ namespace ImageProcessor
                 {
                     return;
                 }
-                string filename = SHA256("execute_" + Variables.AdbIpPort);
-                File.WriteAllText(Variables.SharedPath + filename, "d 0 " + x + " " + y + " 100\nc\nu 0\nc");
-                AdbClient.Instance.ExecuteRemoteCommand("/data/local/tmp/minitouch -f /sdcard/Download/" + filename, Variables.Controlled_Device, receiver);
+                string cmd = $"d 0 {x} {y} 100\nc\nu 0\nc\n";
+                byte[] bytes = AdbClient.Encoding.GetBytes(cmd);
+                minitouchSocket.Send(bytes, 0, bytes.Length, SocketFlags.None);
             }
             catch (InvalidOperationException)
             {
@@ -505,6 +541,11 @@ namespace ImageProcessor
                 Variables.AdbLog("Adb exception found!");
                 Debug_.WriteLine(ex.Message);
                 CloseEmulator();
+            }
+            catch (SocketException)
+            {
+                minitouchPort++;
+                ConnectMinitouch();
             }
             s.Stop();
             Variables.AdbLog("Tap sended to point " + point.X + ":" + point.Y + ". Used time: " + s.ElapsedMilliseconds + "ms");
@@ -530,10 +571,10 @@ namespace ImageProcessor
                     return;
                 }
 
-                {
+                
                     AdbClient.Instance.ExecuteRemoteCommand("input touchscreen swipe " + x + " " + y + " " + ex + " " + ey + " " + usedTime, Variables.Controlled_Device, receiver);
                     receiver.Flush();
-                }
+                
                 if (receiver.ToString().Contains("Error"))
                 {
                     Variables.AdbLog(receiver.ToString());
@@ -569,9 +610,9 @@ namespace ImageProcessor
                 {
                     return;
                 }
-                string filename = SHA256("execute_" + Variables.AdbIpPort);
-                File.WriteAllText(Variables.SharedPath + filename, "d 0 " + x + " " + y + " 100\nc\nu 0\nc");
-                AdbClient.Instance.ExecuteRemoteCommand("/data/local/tmp/minitouch -f /sdcard/Download/" + filename, Variables.Controlled_Device, receiver);
+                string cmd = $"d 0 {x} {y} 100\nc\nu 0\nc\n";
+                byte[] bytes = AdbClient.Encoding.GetBytes(cmd);
+                minitouchSocket.Send(bytes, 0, bytes.Length, SocketFlags.None);
             }
             catch (InvalidOperationException)
             {
@@ -587,62 +628,31 @@ namespace ImageProcessor
                 Debug_.WriteLine(ex.Message);
                 CloseEmulator();
             }
+            catch (SocketException)
+            {
+                minitouchPort++;
+                ConnectMinitouch();
+            }
             s.Stop();
             Variables.AdbLog("Tap sended to point " + x + ":" + y + ". Used time: " + s.ElapsedMilliseconds + "ms");
         }
-
-        public static void SendDoubleTap(int x1, int y1, int ex1, int ey1, int x2, int y2, int ex2, int ey2, int slowdownx, int slowdowny,[CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
-        {
-            Stopwatch s = Stopwatch.StartNew();
-            Debug_.WriteLine("Called by Line " + lineNumber + " Caller: " + caller);
-            try
-            {
-                var receiver = new ConsoleOutputReceiver();
-                if (Variables.Controlled_Device == null)
-                {
-                    return;
-                }
-                string filename = SHA256("execute_" + Variables.AdbIpPort);
-                File.WriteAllText(Variables.SharedPath + filename, "d 0 " + x1 + " " + y1 + " 100\nc\nd 1 " + x2 + " " + y2+" 100\nc\n");
-                while(x1 != ex1 && x2 != ex2)
-                {
-                    x1 += slowdownx;
-                    y1 += slowdowny;
-                    x2 += slowdownx;
-                    y2 += slowdowny;
-                    if(x1 > ex1)
-                    {
-                        x1 = ex1;
-                    }
-                    if(x2 > ex2)
-                    {
-                        x2 = ex2;
-                    }
-                    if (y1 > ey1)
-                    {
-                        y1 = ey1;
-                    }
-                    if (y2 > ey2)
-                    {
-                        y2 = ey2;
-                    }
-                    File.AppendAllText(Variables.SharedPath + filename, "m 0 " + x1 + " " + y1 + " 100\nc\nm 1 " + x2 + " " + y2 + " 100\nc\n");
-                }
-                File.AppendAllText(Variables.SharedPath + filename, "u 0\nc\nu 1\nc");
-                AdbClient.Instance.ExecuteRemoteCommand("/data/local/tmp/minitouch -f /sdcard/Download/" + filename, Variables.Controlled_Device, receiver);
-            }
-            catch
-            {
-
-            }
-        }
+        /// <summary>
+        /// Send minitouch command to device
+        /// </summary>
+        /// <param name="command">Minitouch command such as d, c, u, m</param>
         public static void Minitouch(string command)
         {
-            string filename = SHA256("execute_" + Variables.AdbIpPort);
-            File.WriteAllText(Variables.SharedPath + filename, command);
-            var receiver = new ConsoleOutputReceiver();
-            AdbClient.Instance.ExecuteRemoteCommand("/data/local/tmp/minitouch -f /sdcard/Download/" + filename, Variables.Controlled_Device, receiver);
-            
+            try
+            {
+                byte[] bytes = AdbClient.Encoding.GetBytes(command);
+                minitouchSocket.Send(bytes, 0, bytes.Length, SocketFlags.None);
+            }
+            catch(SocketException)
+            {
+                minitouchPort++;
+                ConnectMinitouch();
+            }
+           
         }
         /// <summary>
         /// Swipe the screen
@@ -748,10 +758,13 @@ namespace ImageProcessor
                 if (device.ToString() == Variables.AdbIpPort)
                 {
                     Variables.Controlled_Device = device;
-                    break;
+                    Variables.DeviceChanged = true;
+                    Debug_.WriteLine("Device found, connection establish on " + Variables.AdbIpPort);
+                    return;
                 }
             }
-            Variables.DeviceChanged = true;
+            Variables.ScriptLog("Unable to connect to any device! ",Color.Red);
+
         }
         /// <summary>
         /// Get color of location in screenshots
@@ -1451,10 +1464,31 @@ namespace ImageProcessor
                 {
                     return;
                 }
-                using (SyncService service = new SyncService(new AdbSocket(new IPEndPoint(IPAddress.Loopback, AdbClient.AdbServerPort)), Variables.Controlled_Device))
-                using (Stream stream = File.OpenRead(from))
+                IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), AdbClient.AdbServerPort);
+                AdbSocket socket = new AdbSocket(endPoint);
+                for(int x = 0; x < 10; x++)
                 {
-                    service.Push(stream, to, permission, DateTime.Now, null, CancellationToken.None);
+                    if (!socket.Connected)
+                    {
+                        socket.Reconnect();
+                        Thread.Sleep(1000);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                if (!socket.Connected)
+                {
+                    Variables.ScriptLog("Unable to create push socket!",Color.Red);
+                    return;
+                }
+                using (SyncService service = new SyncService(socket, Variables.Controlled_Device))
+                {
+                    using (Stream stream = File.OpenRead(from))
+                    {
+                        service.Push(stream, to, permission, DateTime.Now, null, CancellationToken.None);
+                    }
                 }
             }
             catch(AdbException)
@@ -1514,6 +1548,80 @@ namespace ImageProcessor
                 hashString += String.Format("{0:x2}", x);
             }
             return hashString;
+        }
+        /// <summary>
+        /// Check device is online
+        /// </summary>
+        /// <returns></returns>
+        private static bool IsOnline()
+        {
+            bool online = false;
+            try
+            {
+                if (Variables.Controlled_Device != null)
+                {
+                    if (Variables.Controlled_Device.State == DeviceState.Online)
+                    {
+                        online = true;
+                    }
+                }
+                Variables.AdbLog("Checking device" + Variables.Controlled_Device + " online: " + online.ToString());
+            }
+            catch
+            {
+
+            }
+            return online;
+        }
+        /// <summary>
+        /// Add delays on script with human like randomize
+        /// </summary>
+        /// <param name="mintime">Minimum time to delay</param>
+        /// <param name="maxtime">Maximum time to delay</param>
+        public static void Delay(int mintime, int maxtime)
+        {
+            Random rnd = new Random();
+            Thread.Sleep(rnd.Next(mintime, maxtime));
+        }
+        /// <summary>
+        /// Add delays on script with human like randomize
+        /// </summary>
+        /// <param name="randomtime">A actual time for delay</param>
+        /// <param name="accurate">Real accurate or random about 200 miliseconds?</param>
+        public static void Delay(int randomtime, bool accurate)
+        {
+            if (accurate)
+            {
+                Thread.Sleep(randomtime);
+            }
+            else
+            {
+                Random rnd = new Random();
+                Thread.Sleep(rnd.Next(randomtime - 100, randomtime + 100));
+            }
+        }
+
+        public static void SendText(string text)
+        {
+            try
+            {
+                var receiver = new ConsoleOutputReceiver();
+                AdbClient.Instance.ExecuteRemoteCommand("input text \"" + text + "\"", Variables.Controlled_Device, receiver);
+            }
+            catch (InvalidOperationException)
+            {
+
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+
+            }
+            catch (AdbException ex)
+            {
+                Variables.AdbLog("Adb exception found!");
+                Debug_.WriteLine(ex.Message);
+                CloseEmulator();
+            }
         }
     }
 }

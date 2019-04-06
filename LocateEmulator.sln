@@ -19,8 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MEmu", "MEmu\MEmu.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nox", "Nox\Nox.csproj", "{F72008D2-5E58-4B53-9665-90B22BB787D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nemu", "Nemu\Nemu.csproj", "{01DD5C92-9406-4E97-AAB8-1E22F7689568}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,14 +91,6 @@ Global
 		{F72008D2-5E58-4B53-9665-90B22BB787D6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F72008D2-5E58-4B53-9665-90B22BB787D6}.Release|x86.ActiveCfg = Release|Any CPU
 		{F72008D2-5E58-4B53-9665-90B22BB787D6}.Release|x86.Build.0 = Release|Any CPU
-		{01DD5C92-9406-4E97-AAB8-1E22F7689568}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{01DD5C92-9406-4E97-AAB8-1E22F7689568}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{01DD5C92-9406-4E97-AAB8-1E22F7689568}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{01DD5C92-9406-4E97-AAB8-1E22F7689568}.Debug|x86.Build.0 = Debug|Any CPU
-		{01DD5C92-9406-4E97-AAB8-1E22F7689568}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{01DD5C92-9406-4E97-AAB8-1E22F7689568}.Release|Any CPU.Build.0 = Release|Any CPU
-		{01DD5C92-9406-4E97-AAB8-1E22F7689568}.Release|x86.ActiveCfg = Release|Any CPU
-		{01DD5C92-9406-4E97-AAB8-1E22F7689568}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
