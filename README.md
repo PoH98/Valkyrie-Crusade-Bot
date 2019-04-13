@@ -1,203 +1,30 @@
 # 神女控挂机
-QQ群号：809233738
+___
+Bug汇报：QQ群号：809233738
 
-__自定义脚本插件例子：__
+> 自定义脚本以及自定义模拟器支持都可以使用C#编写，此软件由学生制作因此充满bug
 
+# [挂机下载](https://github.com/PoH98/Valkyrie-Crusade-Bot/releases)
+___
+* 可使用EmulatorController进行一系列的模拟器操作，如果需要自行写别的游戏脚本，直接导入ImageProcessor.dll即可
+* 挂机自定义都是使用C# interface插件dll编写，因此方便修改以及增加。
+  * 自定义模拟器: EmulatorInterface (导入ImageProcessor.dll)
+  * 自定义脚本：BattleScript（导入VCweiyi.exe）
 
-    //class名字随意，但是必须加上 : BattleScript为后叠
-    public class defaultScript : BattleScript
-    {
-        //最主要的脚本操作
-        public void Attack()
-        {
-            byte[] crop = EmulatorController.CropImage(Script.image, new Point(176, 356), new Point(330, 611));
-            for (int x = 0; x < 10; x++)
-            {
-                EmulatorController.SendTap(1, 1);
-            }
-            foreach (var f in PrivateVariable.Skills)
-            {
-                if (!PrivateVariable.Run)
-                {
-                    return;
-                }
-                try
-                {
-                    Point? p = EmulatorController.FindImage(crop, new Bitmap(EmulatorController.Decompress(f)), false);
-                    if (p != null)
-                    {
-                        Variables.ScriptLog.Add("Skill actived");
-                        EmulatorController.SendSwipe(new Point(263, 473), new Point(264, 474), 1200);
-                        Thread.Sleep(1000);
-                        break;
-                    }
-                }
-                catch
-                {
+# 自定义模拟器
+___
+* 加载了EmulatorInterface后，必须注意的事项：
+  * CloseEmulator() 为关闭模拟器时需要干什么进行关闭，可使用Variables.Proc进行强制关闭(不建议)
+  * ConnectEmulator() 把模拟器的IntPtr以及程序加载进入EmulatorController.handle以及Variables.Proc为主的功能，根据每个模拟器不一样都需要不一样的方式进行加载
+  * EmulatorName() 模拟器名字，可以用于显示在挂机内
+  * LoadEmulatorSettings() 载入模拟器的安装路径，Adb端口，共享文件夹（安卓内:Variables.AndroidSharedPath以及电脑内Variables.SharedPath的路径都需要）
+  * SetResolution(int x, int y) 设置模拟器分辨率，DPI等等资料专用
+  * StartEmulator() 启动模拟器的方式，必须想办法支持启动可多开的模拟器，否则挂机会出错！
 
-                }
-            }
-            crop = EmulatorController.CropImage(Script.image, new Point(357, 356), new Point(543, 610));
-            foreach (var f in PrivateVariable.Skills)
-            {
-
-                if (!PrivateVariable.Run)
-                {
-                    return;
-                }
-                try
-                {
-                    Point? p = EmulatorController.FindImage(crop, new Bitmap(EmulatorController.Decompress(f)), false);
-                    if (p != null)
-                    {
-                        Variables.ScriptLog.Add("Skill actived");
-                        EmulatorController.SendSwipe(new Point(448, 492), new Point(449, 493), 1200);
-                        Thread.Sleep(1000);
-                        break;
-                    }
-                }
-                catch
-                {
-
-                }
-            }
-            crop = EmulatorController.CropImage(Script.image, new Point(546, 376), new Point(724, 597));
-            foreach (var f in PrivateVariable.Skills)
-            {
-                if (!PrivateVariable.Run)
-                {
-                    return;
-                }
-                try
-                {
-                    Point? p = EmulatorController.FindImage(crop, new Bitmap(EmulatorController.Decompress(f)), false);
-                    if (p != null)
-                    {
-                        Variables.ScriptLog.Add("Skill actived");
-                        EmulatorController.SendSwipe(new Point(641, 473), new Point(642, 474), 1200);
-                        Thread.Sleep(1000);
-                        break;
-                    }
-                }
-                catch
-                {
-
-                }
-            }
-            crop = EmulatorController.CropImage(Script.image, new Point(761, 356), new Point(921, 613));
-            foreach (var f in PrivateVariable.Skills)
-            {
-                if (!PrivateVariable.Run)
-                {
-                    return;
-                }
-                try
-                {
-                    Point? p = EmulatorController.FindImage(crop, new Bitmap(EmulatorController.Decompress(f)), false);
-                    if (p != null)
-                    {
-                        Variables.ScriptLog.Add("Skill actived");
-                        EmulatorController.SendSwipe(new Point(834, 483), new Point(835, 484), 1200);
-                        Thread.Sleep(1000);
-                        break;
-                    }
-                }
-                catch
-                {
-
-                }
-            }
-            crop = EmulatorController.CropImage(Script.image, new Point(934, 356), new Point(1090, 578));
-            foreach (var f in PrivateVariable.Skills)
-            {
-                if (!PrivateVariable.Run)
-                {
-                    return;
-                }
-                try
-                {
-                    Point? p = EmulatorController.FindImage(crop, new Bitmap(EmulatorController.Decompress(f)), false);
-                    if (p != null)
-                    {
-                        Variables.ScriptLog.Add("Skill actived");
-                        EmulatorController.SendSwipe(new Point(1017, 470), new Point(1018, 471), 1200);
-                        Thread.Sleep(1000);
-                        break;
-                    }
-                }
-                catch
-                {
-
-                }
-            }
-            if (Script.clickLocation != null)
-            {
-                EmulatorController.SendTap(Script.clickLocation.Value);
-            }
-            else
-            {
-                EmulatorController.SendTap(640, 156);
-                EmulatorController.SendTap(462, 176);
-                EmulatorController.SendTap(820, 187);
-                EmulatorController.SendTap(311, 190);
-                EmulatorController.SendTap(955, 189);
-            }
-        }
-        //创建UI设计
-        public Control[] CreateUI()
-        {
-            Label text = new Label();
-            text.Text = "Default Script by PoH98";
-            text.Width = 500;
-            text.Name = "lbl";
-            text.Location = new Point(10,10);
-            text.TabIndex = 1000;
-            RichTextBox txtBox = new RichTextBox();
-            txtBox.Location = new Point(10, 40);
-            txtBox.Height = 200;
-            txtBox.Width = 510;
-            txtBox.Text = "这个是默认的脚本战斗系统，将会自动应用到所有的战斗。如果想要自行创建脚本，请期待未来更新 CustomScript.dll 插件，或者到www.github.com/PoH98/Bot/了解如何自己创建脚本插件！";
-            txtBox.ReadOnly = true;
-            txtBox.TabIndex = 1001;
-            txtBox.BackColor = Color.Black;
-            txtBox.ForeColor = Color.Lime;
-            txtBox.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
-            txtBox.Name = "Description";
-            CheckBox chk = new CheckBox();
-            CheckBox chk = new CheckBox();
-            chk.Text = "使用脚本";
-            chk.Checked = true;
-            chk.EnabledChanged += Chk_EnabledChanged;
-            chk.Location = new Point(10,250);
-            chk.AutoSize = true;
-            if(PrivateVariable.BattleScript.Count == 1)
-            {
-                chk.Enabled = false; //只有默认脚本在，那就不让用户修改要不要用脚本了，不然是要在战斗的时候永久发呆？
-            }
-            WebBrowser wb = new WebBrowser();
-            wb.Location = new Point(10, 270);
-            wb.Height = 400;
-            wb.Width = 510;
-            wb.Navigate("www.github.com/PoH98/Bot/");
-            Control[] thingsToReturn = { text, txtBox ,chk,wb};
-            return thingsToReturn;
-        }
-        //创建的GUI可以另外增加功能
-        private void Chk_EnabledChanged(object sender, EventArgs e)
-        {
-            if((sender as CheckBox).Checked)
-            {
-                PrivateVariable.Selected_Script = 0;
-            }
-
-        }
-        //如果您的脚本有任何需要读取脚本资料的，可在这个地方加入，如File.ReadAllLines之类
-        public void ReadConfig()
-        {
-            
-        }
-        //脚本名字
-        public string ScriptName()
-        {
-            return "Default Script";
-        }
+# 自定义脚本
+___
+* 加载了BattleScript后，必须注意的事项：
+  * ReadConfig() 加载脚本所需设置，推荐使用Variables.Configure进行储存和获取资料，无需再创建大量储存资料的垃圾文件。
+  * CreateUI() 创建UI，并且显示在挂机主程序内，可以增加功能给
+  * ScriptName() 脚本名字
+  * Attack() 发动技能的方式，例如可一个个点或者默认的找图长按发动卡牌技能，看个人喜好
