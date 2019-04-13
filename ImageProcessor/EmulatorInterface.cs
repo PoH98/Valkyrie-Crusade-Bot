@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
-namespace ImageProcessor
+namespace BotFramework
 {
     public interface EmulatorInterface
     {

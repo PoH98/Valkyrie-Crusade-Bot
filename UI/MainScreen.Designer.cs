@@ -1,4 +1,4 @@
-﻿namespace ImageProcessor
+﻿namespace BotFramework
 {
     partial class MainScreen
     {

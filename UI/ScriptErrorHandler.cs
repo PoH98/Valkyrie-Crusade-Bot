@@ -1,4 +1,4 @@
-﻿using ImageProcessor;
+﻿using BotFramework;
 using SharpAdbClient;
 using System;
 using System.Collections.Generic;
@@ -31,13 +31,13 @@ namespace UI
                 {
                     Parallel.ForEach(errorImages, error => 
                     {
-                        var crop = EmulatorController.CropImage(Script.image, new Point(350, 180), new Point(980, 515));
+                        var crop = BotCore.CropImage(Script.image, new Point(350, 180), new Point(980, 515));
                         Thread.Sleep(1000);
-                        Point? p = EmulatorController.FindImage(crop, error, false);
+                        Point? p = BotCore.FindImage(crop, error, false);
                         if (p != null)
                         {
-                            EmulatorController.SendTap(p.Value);
-                            EmulatorController.KillGame("com.nubee.valkyriecrusade");
+                            BotCore.SendTap(p.Value);
+                            BotCore.KillGame("com.nubee.valkyriecrusade");
                             Reset("Error message found!");
                         }
                     });

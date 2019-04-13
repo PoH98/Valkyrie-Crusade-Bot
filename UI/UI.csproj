@@ -188,9 +188,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ImageProcessor\ImageProcessor.csproj">
+    <ProjectReference Include="..\ImageProcessor\BotFramework.csproj">
       <Project>{017b3cf6-ecc9-4867-b057-f9a69d682779}</Project>
-      <Name>ImageProcessor</Name>
+      <Name>BotFramework</Name>
     </ProjectReference>
     <ProjectReference Include="..\ImgXml\ImgXml.csproj">
       <Project>{e5f41ff6-b00f-4ebf-9d13-2d24bb232b65}</Project>

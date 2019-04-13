@@ -1,17 +1,14 @@
 ﻿using System.Drawing;
 using System.IO;
-using System.Threading;
 using System;
-using ImageProcessor;
+using BotFramework;
 using System.Diagnostics;
 using ImgXml;
 using System.Windows.Forms;
 using System.Media;
 using System.Reflection;
 using System.Linq;
-using System.Net;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace UI
 {
@@ -63,51 +60,51 @@ namespace UI
                                 Variables.ScriptLog("Will start game at Japan Time 23:59:59",Color.YellowGreen);
                                 break;
                         }
-                        EmulatorController.KillGame("com.nubee.valkyriecrusade");
-                        EmulatorController.Delay(Convert.ToInt32(seconds),true);
+                        BotCore.KillGame("com.nubee.valkyriecrusade");
+                        BotCore.Delay(Convert.ToInt32(seconds),true);
                     }
                 }
                 if (!CloseEmu)
                 {
-                    EmulatorController.Delay(10,true);
+                    BotCore.Delay(10,true);
                     if (Variables.Controlled_Device != null) //The Emulator is running
                     {
                         while (Variables.Proc == null)//But not registred on our Proc value
                         {
                             Debug_.WriteLine("Variables.Proc is null");
                             //so go on and find the emulator!
-                            EmulatorController.ConnectAndroidEmulator();
+                            BotCore.ConnectAndroidEmulator();
                             //MEmu found!
                             if (Variables.Proc != null)
                             {
                                 break;
                             }
                             //Maybe something is wrong, no process is same name as MEmu!
-                            EmulatorController.StartEmulator();
-                            EmulatorController.Delay(9000,12000);
+                            BotCore.StartEmulator();
+                            BotCore.Delay(9000,12000);
                         }
                     }
                     else //The Emulator is not exist!
                     {
-                        EmulatorController.StartEmulator(); //Start our fxxking Emulator!!
-                        EmulatorController.Delay(9000,12000); //Wait
-                        EmulatorController.ConnectAndroidEmulator();
+                        BotCore.StartEmulator(); //Start our fxxking Emulator!!
+                        BotCore.Delay(9000,12000); //Wait
+                        BotCore.ConnectAndroidEmulator();
                         continue;
                     }
-                    if (!EmulatorController.StartAdb())
+                    if (!BotCore.StartAdb())
                     {
                         MessageBox.Show("Unable to start adb!");
                         Environment.Exit(0);
                     }
                     int error = 0;
-                    EmulatorController.Delay(10,true);
+                    BotCore.Delay(10,true);
                     while (image == null) //Weird problem happens, we still cannot receive any image capture!
                     {
                         if (!PrivateVariable.Run)
                         {
                             return;
                         }
-                        EmulatorController.Delay(1000,false); //Wait forever?
+                        BotCore.Delay(1000,false); //Wait forever?
                         if(Variables.Controlled_Device == null) //Emulator not started, awaiting...
                         {
                             continue;
@@ -120,12 +117,12 @@ namespace UI
                             Environment.Exit(0);
                         }
                     }
-                    EmulatorController.Delay(10,true);
+                    BotCore.Delay(10,true);
                     if (Variables.Instance.Length < 5)
                     {
                         Variables.Instance = "MEmu";
                     }
-                    string filename = EmulatorController.SHA256(Variables.AdbIpPort);
+                    string filename = BotCore.SHA256(Variables.AdbIpPort);
                     if (!Directory.Exists("C:\\ProgramData\\" + filename))
                     {
                         Directory.CreateDirectory("C:\\ProgramData\\" + filename);
@@ -133,7 +130,7 @@ namespace UI
 
                     if (!File.Exists("C:\\ProgramData\\" + filename + "\\" + filename + ".xml"))
                     {
-                        if (!EmulatorController.Pull("/data/data/com.nubee.valkyriecrusade/shared_prefs/NUBEE_ID.xml", "C:\\ProgramData\\" + filename + "\\" + filename + ".xml"))
+                        if (!BotCore.Pull("/data/data/com.nubee.valkyriecrusade/shared_prefs/NUBEE_ID.xml", "C:\\ProgramData\\" + filename + "\\" + filename + ".xml"))
                         {
                             Variables.ScriptLog("Pull files failed",Color.Red);
                         }
@@ -146,13 +143,13 @@ namespace UI
                     {
                         if (!pushed)
                         {
-                            EmulatorController.Push("C:\\ProgramData\\" + filename + "\\" + filename + ".xml", "/data/data/com.nubee.valkyriecrusade/shared_prefs/NUBEE_ID.xml", 660);
+                            BotCore.Push("C:\\ProgramData\\" + filename + "\\" + filename + ".xml", "/data/data/com.nubee.valkyriecrusade/shared_prefs/NUBEE_ID.xml", 660);
                             pushed = true;
                             Variables.ScriptLog("Restored backup xml",Color.Lime);
-                            EmulatorController.Delay(1000,false);
+                            BotCore.Delay(1000,false);
                         }
                     }
-                    Image img = EmulatorController.Decompress(Script.image);
+                    Image img = BotCore.Decompress(Script.image);
                     if (img.Height != 720 || img.Width != 1280)
                     {
                         Debug_.WriteLine("Image size not correct: " + img.Width + "*" + img.Height);
@@ -161,8 +158,8 @@ namespace UI
                             return;
                         }
                         Variables.ScriptLog("Emulator's screen size is not 1280*720! Detected size is " + img.Width + "*" + img.Height, Color.LightYellow);
-                        EmulatorController.ResizeEmulator(1280,720);
-                        EmulatorController.Delay(20000,30000);
+                        BotCore.ResizeEmulator(1280,720);
+                        BotCore.Delay(20000,30000);
                         continue;
                     }
                 }
@@ -172,21 +169,21 @@ namespace UI
                     Stuck = false;
                     continue;
                 }
-                EmulatorController.Delay(10,true);
-                if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                BotCore.Delay(10,true);
+                if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
                     for (int e = 0; e < 10; e++)
                     {
                         Variables.ScriptLog("Starting Game", Color.Lime);
-                        EmulatorController.StartGame(Img.Icon, image);
-                        EmulatorController.Delay(5000,false);
-                        if (EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                        BotCore.StartGame(Img.Icon, image);
+                        BotCore.Delay(5000,false);
+                        if (BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                         {
                             break;
                         }
                         if (e == 9)
                         {
-                            EmulatorController.RestartEmulator();
+                            BotCore.RestartEmulator();
                         }
                     }
                 }
@@ -236,32 +233,32 @@ namespace UI
         public static void LocateMainScreen()
         {
             Debug_.WriteLine();
-            EmulatorController.Delay(1000,false);
+            BotCore.Delay(1000,false);
             PrivateVariable.InMainScreen = false;
             Point? point = null;
             if (!PrivateVariable.Run)
             {
                 return;
             }
-            EmulatorController.Delay(100,200);
-            var crop = EmulatorController.CropImage(image, new Point(315, 150), new Point(1005, 590));
-            point = EmulatorController.FindImage(crop, Img.GreenButton, false);
+            BotCore.Delay(100,200);
+            var crop = BotCore.CropImage(image, new Point(315, 150), new Point(1005, 590));
+            point = BotCore.FindImage(crop, Img.GreenButton, false);
             if (point != null)
             {
-                EmulatorController.SendTap(point.Value);
+                BotCore.SendTap(point.Value);
             }
-            if (!EmulatorController.RGBComparer(image,new Point(109, 705),Color.FromArgb(130,130,130), 5) && !EmulatorController.RGBComparer(image, new Point(219, 705), Color.FromArgb(130, 130, 130), 5))
+            if (!BotCore.RGBComparer(image,new Point(109, 705),Color.FromArgb(130,130,130), 5) && !BotCore.RGBComparer(image, new Point(219, 705), Color.FromArgb(130, 130, 130), 5))
             {
                 if (!PrivateVariable.Run)
                 {
                     return;
                 }
                 Variables.ScriptLog("Main Screen not visible",Color.White);
-                point = EmulatorController.FindImage(image, Img.Start_Game, true);
+                point = BotCore.FindImage(image, Img.Start_Game, true);
                 if (point != null)
                 {
                     Variables.ScriptLog("Start Game Button Located!",Color.Lime);
-                    EmulatorController.SendTap(point.Value);
+                    BotCore.SendTap(point.Value);
                     error = 0;
                     return;
                 }
@@ -269,46 +266,46 @@ namespace UI
                 {
                     return;
                 }
-                EmulatorController.Delay(100,200);
-                point = EmulatorController.FindImage(image, Img.Update_Complete, true);
+                BotCore.Delay(100,200);
+                point = BotCore.FindImage(image, Img.Update_Complete, true);
                 if (point != null)
                 {
-                    EmulatorController.SendTap(point.Value);
+                    BotCore.SendTap(point.Value);
                     return;
                 }
                 if (!PrivateVariable.Run)
                 {
                     return;
                 }
-                EmulatorController.Delay(100,200);
-                point = EmulatorController.FindImage(image, Img.Close2, true);
+                BotCore.Delay(100,200);
+                point = BotCore.FindImage(image, Img.Close2, true);
                 if (point != null)
                 {
-                    EmulatorController.SendTap(point.Value);
+                    BotCore.SendTap(point.Value);
                     return;
                 }
                 if (!PrivateVariable.Run)
                 {
                     return;
                 }
-                point = EmulatorController.FindImage(image, Img.Close, true);
+                point = BotCore.FindImage(image, Img.Close, true);
                 if (point != null)
                 {
-                    EmulatorController.SendTap(point.Value);
+                    BotCore.SendTap(point.Value);
                     return;
                 }
                 if (!PrivateVariable.Run)
                 {
                     return;
                 }
-                EmulatorController.Delay(100,200);
-                point = EmulatorController.FindImage(image, Img.Login_Reward, true);
+                BotCore.Delay(100,200);
+                point = BotCore.FindImage(image, Img.Login_Reward, true);
                 if (point != null)
                 {
                     for (int x = 0; x < 4; x++)
                     {
-                        EmulatorController.SendTap(new Point(600, 350));
-                        EmulatorController.Delay(1000,false);
+                        BotCore.SendTap(new Point(600, 350));
+                        BotCore.Delay(1000,false);
                     }
                     return;
                 }
@@ -316,12 +313,12 @@ namespace UI
                 {
                     return;
                 }
-                EmulatorController.Delay(100,200);
-                point = EmulatorController.FindImage(image, Img.Back_to_Village, true);
+                BotCore.Delay(100,200);
+                point = BotCore.FindImage(image, Img.Back_to_Village, true);
                 if (point != null)
                 {
                     Variables.ScriptLog("Going back to Main screen",Color.Lime);
-                    EmulatorController.SendTap(point.Value);
+                    BotCore.SendTap(point.Value);
                     PrivateVariable.InMainScreen = true;
                     Variables.ScriptLog("Screen Located",Color.Lime);
                 }
@@ -329,8 +326,8 @@ namespace UI
                 {
                     return;
                 }
-                EmulatorController.Delay(100,200);
-                point = EmulatorController.FindImage(image, Img.Menu, true);
+                BotCore.Delay(100,200);
+                point = BotCore.FindImage(image, Img.Menu, true);
                 if (point == null)
                 {
                     if (error < 30)
@@ -339,12 +336,12 @@ namespace UI
                         {
                             Variables.ScriptLog("Waiting for Main screen",Color.White);
                         }
-                        EmulatorController.Delay(1000,false);
+                        BotCore.Delay(1000,false);
                         error++;
                     }
                     else
                     {
-                        EmulatorController.KillGame("com.nubee.valkyriecrusade");
+                        BotCore.KillGame("com.nubee.valkyriecrusade");
                         ScriptErrorHandler.Reset("Unable to locate main screen. Restarting Game!");
                         error = 0;
                         return;
@@ -356,21 +353,21 @@ namespace UI
                     {
                         return;
                     }
-                    EmulatorController.SendTap(point.Value);
-                    EmulatorController.Delay(1000,false);
+                    BotCore.SendTap(point.Value);
+                    BotCore.Delay(1000,false);
                     Variables.ScriptLog("Returning main screen",Color.Lime);
-                    EmulatorController.SendTap(942, 630);
-                    EmulatorController.Delay(5000,false);
+                    BotCore.SendTap(942, 630);
+                    BotCore.Delay(5000,false);
                 }
-                EmulatorController.Delay(100,200);
+                BotCore.Delay(100,200);
                 if (!PrivateVariable.Run)
                 {
                     return;
                 }
-                point = EmulatorController.FindImage(image, Img.GreenButton, false);
+                point = BotCore.FindImage(image, Img.GreenButton, false);
                 if (point != null)
                 {
-                    EmulatorController.SendTap(point.Value);
+                    BotCore.SendTap(point.Value);
                     Variables.ScriptLog("Green Button Found!",Color.Lime);
                 }
                 ScriptErrorHandler.ErrorHandle();
@@ -387,7 +384,7 @@ namespace UI
                 }
                 else
                 {
-                    EmulatorController.Delay(1000,false);
+                    BotCore.Delay(1000,false);
                     if(Retry == 1)
                     {
                         Variables.ScriptLog("Waiting for Login Bonus",Color.DeepPink);
@@ -405,30 +402,30 @@ namespace UI
                 switch (x)
                 {
                     case 0:
-                        EmulatorController.SendSwipe(new Point(925, 576), new Point(614, 26),1000);
+                        BotCore.SendSwipe(new Point(925, 576), new Point(614, 26),1000);
                         break;
                     case 1:
-                        EmulatorController.SendSwipe(new Point(231, 562), new Point(877, 127), 1000);
+                        BotCore.SendSwipe(new Point(231, 562), new Point(877, 127), 1000);
                         break;
                     case 2:
-                        EmulatorController.SendSwipe(new Point(226, 175), new Point(997, 591), 1000);
+                        BotCore.SendSwipe(new Point(226, 175), new Point(997, 591), 1000);
                         break;
                     case 3:
-                        EmulatorController.SendSwipe(new Point(969, 128), new Point(260, 545), 1000);
+                        BotCore.SendSwipe(new Point(969, 128), new Point(260, 545), 1000);
                         break;
                 }
-                var crop = EmulatorController.CropImage(image, new Point(0, 0), new Point(1020, 720));
+                var crop = BotCore.CropImage(image, new Point(0, 0), new Point(1020, 720));
                 //Find image and collect
                 foreach (var img in Directory.GetFiles("Img\\Resources\\", "*.png"))
                 {
-                    Point? p = EmulatorController.FindImage(crop, img, false);
+                    Point? p = BotCore.FindImage(crop, img, false);
                     if (p != null)
                     {
-                        EmulatorController.SendTap(p.Value);
-                        EmulatorController.Delay(100,200);
+                        BotCore.SendTap(p.Value);
+                        BotCore.Delay(100,200);
                     }
                 }
-                EmulatorController.Delay(400,600);
+                BotCore.Delay(400,600);
 
             }
 
@@ -438,7 +435,7 @@ namespace UI
         {
             Debug_.WriteLine();
             Point? p = null;
-            p = EmulatorController.FindImage(Script.image, Img.TreasureHunt, true);
+            p = BotCore.FindImage(Script.image, Img.TreasureHunt, true);
             //Find for treasure hunt building!
             for (int find = 0; find < 5; find++)
             {
@@ -448,25 +445,25 @@ namespace UI
                 }
                 if (p == null)
                 {
-                    p = EmulatorController.FindImage(Script.image, Img.TreasureHunt2, true);
+                    p = BotCore.FindImage(Script.image, Img.TreasureHunt2, true);
                     if (p == null)
                     {
                         switch (find)
                         {
                             case 0:
-                                EmulatorController.SendSwipe(new Point(300, 500), new Point(1100, 50), 500);
+                                BotCore.SendSwipe(new Point(300, 500), new Point(1100, 50), 500);
                                 break;
                             case 1:
-                                EmulatorController.SendSwipe(new Point(1100, 600), new Point(100, 100), 500);
+                                BotCore.SendSwipe(new Point(1100, 600), new Point(100, 100), 500);
                                 break;
                             case 2:
-                                EmulatorController.SendSwipe(new Point(1100, 275), new Point(500, 500), 500);
+                                BotCore.SendSwipe(new Point(1100, 275), new Point(500, 500), 500);
                                 break;
                             case 3:
-                                EmulatorController.SendSwipe(new Point(400, 50), new Point(900, 600), 500);
+                                BotCore.SendSwipe(new Point(400, 50), new Point(900, 600), 500);
                                 break;
                             case 4:
-                                EmulatorController.SendSwipe(new Point(200, 500), new Point(500, 500), 500);
+                                BotCore.SendSwipe(new Point(200, 500), new Point(500, 500), 500);
                                 break;
                         }
                         
@@ -480,7 +477,7 @@ namespace UI
                 {
                     break;
                 }
-                EmulatorController.Delay(1000,false);
+                BotCore.Delay(1000,false);
             }
             if(p == null)
             {
@@ -488,15 +485,15 @@ namespace UI
                 return;
             }
             Variables.ScriptLog("Treasure hunting...",Color.Lime);
-            EmulatorController.SendTap(p.Value);
-            EmulatorController.Delay(1000,false);
+            BotCore.SendTap(p.Value);
+            BotCore.Delay(1000,false);
             //Enter Treasure hunt
             if (!PrivateVariable.Run)
             {
                 return;
             }
-            EmulatorController.SendTap(879, 642);
-            EmulatorController.Delay(20000,30000);
+            BotCore.SendTap(879, 642);
+            BotCore.Delay(20000,30000);
             if (!PrivateVariable.Run)
             {
                 return;
@@ -508,46 +505,46 @@ namespace UI
                     return;
                 }
                 //If already hunting
-                if (EmulatorController.RGBComparer(Script.image,new Point(973, 344), Color.FromArgb(130, 0, 0),0))
+                if (BotCore.RGBComparer(Script.image,new Point(973, 344), Color.FromArgb(130, 0, 0),0))
                 {
                     Variables.ScriptLog("Already in hunting, exit now!",Color.Lime);
                     //Exit loop
-                    EmulatorController.SendTap(1222, 56);
-                    EmulatorController.Delay(5000,false);
+                    BotCore.SendTap(1222, 56);
+                    BotCore.Delay(5000,false);
                     break;
                 }
                 else
                 {
-                    p = EmulatorController.FindImage(Script.image, Img.Red_Button, true);
+                    p = BotCore.FindImage(Script.image, Img.Red_Button, true);
                     if (p != null)
                     {
                         //Finished hunt, collect rewards
-                        EmulatorController.SendTap(p.Value);
-                        EmulatorController.Delay(5000,false);
-                        EmulatorController.SendTap(960, 621);
-                        EmulatorController.Delay(7000,false);
-                        p = EmulatorController.FindImage(Script.image, Img.Map, true);
+                        BotCore.SendTap(p.Value);
+                        BotCore.Delay(5000,false);
+                        BotCore.SendTap(960, 621);
+                        BotCore.Delay(7000,false);
+                        p = BotCore.FindImage(Script.image, Img.Map, true);
                         //if found treasure map
                         if (p != null)
                         {
                             //Just ignore that fxxking thing
-                            EmulatorController.SendTap(789, 626);
-                            EmulatorController.Delay(9000,12000);
-                            EmulatorController.SendTap(310, 137);
+                            BotCore.SendTap(789, 626);
+                            BotCore.Delay(9000,12000);
+                            BotCore.SendTap(310, 137);
                         }
                     }
                 }
-                EmulatorController.Delay(9000,12000);
+                BotCore.Delay(9000,12000);
                 //Back to top
-                EmulatorController.SendSwipe(new Point(600, 200), new Point(600, 600), 1000);
-                EmulatorController.Delay(3000,false);
+                BotCore.SendSwipe(new Point(600, 200), new Point(600, 600), 1000);
+                BotCore.Delay(3000,false);
                 //Tap and start another hunt
-                EmulatorController.SendTap(998, 340);
-                EmulatorController.Delay(1000,false);
-                EmulatorController.SendTap(771, 453);
+                BotCore.SendTap(998, 340);
+                BotCore.Delay(1000,false);
+                BotCore.SendTap(771, 453);
                 //Next Treasure hunt
-                EmulatorController.SendTap(1031, 50);
-                EmulatorController.Delay(3000,false);
+                BotCore.SendTap(1031, 50);
+                BotCore.Delay(3000,false);
             }
             while (true);
 
@@ -569,15 +566,15 @@ namespace UI
                 {
                     if (File.Exists("Img\\Event.png"))
                     {
-                        EmulatorController.SendTap(170, 630);
-                        EmulatorController.Delay(5000,false);
+                        BotCore.SendTap(170, 630);
+                        BotCore.Delay(5000,false);
                         for (int x = 0; x < 5; x++)
                         {
-                            Point? located = EmulatorController.FindImage(image, Environment.CurrentDirectory + "\\Img\\LocateEventSwitch.png", true);
+                            Point? located = BotCore.FindImage(image, Environment.CurrentDirectory + "\\Img\\LocateEventSwitch.png", true);
                             if (located == null)
                             {
                                 x = x - 1;
-                                EmulatorController.Delay(1000,false);
+                                BotCore.Delay(1000,false);
                                 if (error > 10)
                                 {
                                     ScriptErrorHandler.Reset("Unable to locate Event Switch screen! Returning main screen!");
@@ -589,21 +586,21 @@ namespace UI
                                 continue;
                             }
                             Variables.ScriptLog("Finding Event.png on screen",Color.White);
-                            point = EmulatorController.FindImage(image, Environment.CurrentDirectory + "\\Img\\Event.png", true);
+                            point = BotCore.FindImage(image, Environment.CurrentDirectory + "\\Img\\Event.png", true);
                             if (point !=null)
                             {
                                 Variables.ScriptLog("Image matched",Color.Lime);
-                                EmulatorController.SendTap(point.Value);
+                                BotCore.SendTap(point.Value);
                                 break;
                             }
                         }
                         if (point == null)
                         {
                             MessageBox.Show("Event.png可能有问题，请确保截图是正确的！");
-                            if (EmulatorController.handle != null && Variables.Proc != null)
+                            if (BotCore.handle != null && Variables.Proc != null)
                             {
-                                DllImport.SetParent(EmulatorController.handle, IntPtr.Zero);
-                                DllImport.MoveWindow(EmulatorController.handle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 1318,752, true);
+                                DllImport.SetParent(BotCore.handle, IntPtr.Zero);
+                                DllImport.MoveWindow(BotCore.handle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 1318,752, true);
                             }
                             Environment.Exit(0);
                         }
@@ -611,23 +608,23 @@ namespace UI
                     }
                     else
                     {
-                        EmulatorController.SendTap(130, 350);
+                        BotCore.SendTap(130, 350);
                     }
                 }
                 else
                 {
-                    EmulatorController.SendTap(130, 520);
+                    BotCore.SendTap(130, 520);
                 }
             }
             else
             {
-                EmulatorController.SendTap(130, 520);
+                BotCore.SendTap(130, 520);
             }
-            EmulatorController.Delay(9000,12000);
+            BotCore.Delay(9000,12000);
             error = 0;
             do
             {
-                if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
                     return;
                 }
@@ -635,17 +632,17 @@ namespace UI
                 {
                     return;
                 }
-                var crop = EmulatorController.CropImage(image, new Point(125, 0), new Point(900, 510));
-                if (EmulatorController.FindImage(crop, Img.GreenButton, false) != null)
+                var crop = BotCore.CropImage(image, new Point(125, 0), new Point(900, 510));
+                if (BotCore.FindImage(crop, Img.GreenButton, false) != null)
                 {
-                    EmulatorController.SendTap(point.Value);
+                    BotCore.SendTap(point.Value);
                     return;
                 }
                 if (!PrivateVariable.Run)
                 {
                     return;
                 }
-                if (EmulatorController.FindImage(image, Img.Locate_Tower, true) != null)
+                if (BotCore.FindImage(image, Img.Locate_Tower, true) != null)
                 {
                     //Is Tower Event
                     PrivateVariable.EventType = 0;
@@ -656,7 +653,7 @@ namespace UI
                 {
                     return;
                 }
-                if (EmulatorController.FindImage(image, Img.Archwitch_Rec, true) != null)
+                if (BotCore.FindImage(image, Img.Archwitch_Rec, true) != null)
                 {
                     //Is Archwitch
                     PrivateVariable.EventType = 1;
@@ -667,7 +664,7 @@ namespace UI
                 {
                     return;
                 }
-                if (EmulatorController.FindImage(image, Img.Demon_InEvent, true) != null)
+                if (BotCore.FindImage(image, Img.Demon_InEvent, true) != null)
                 {
                     PrivateVariable.EventType = 2;
                     PrivateVariable.InEventScreen = true;
@@ -677,7 +674,7 @@ namespace UI
                 {
                     return;
                 }
-                if (EmulatorController.FindImage(image, Img.HellLoc, true) != null)
+                if (BotCore.FindImage(image, Img.HellLoc, true) != null)
                 {
                     PrivateVariable.EventType = 2;
                     PrivateVariable.InEventScreen = true;
@@ -687,7 +684,7 @@ namespace UI
                 {
                     return;
                 }
-                if (EmulatorController.RGBComparer(image, new Point(109, 705), Color.FromArgb(130, 130, 130), 5) && EmulatorController.RGBComparer(image, new Point(219, 705), Color.FromArgb(130, 130, 130), 5))
+                if (BotCore.RGBComparer(image, new Point(109, 705), Color.FromArgb(130, 130, 130), 5) && BotCore.RGBComparer(image, new Point(219, 705), Color.FromArgb(130, 130, 130), 5))
                 {
                     Variables.ScriptLog("Rare error happens, still in main screen!",Color.Red);
                     PrivateVariable.InMainScreen = false;
@@ -697,8 +694,8 @@ namespace UI
                 {
                     return;
                 }
-                crop = EmulatorController.CropImage(image, new Point(140, 0), new Point(1160, 720));
-                if (EmulatorController.FindImage(crop, Img.Red_Button, false) != null)
+                crop = BotCore.CropImage(image, new Point(140, 0), new Point(1160, 720));
+                if (BotCore.FindImage(crop, Img.Red_Button, false) != null)
                 {
                     Variables.ScriptLog("Battle Screen found. Starting battle!",Color.Lime);
                     PrivateVariable.Battling = true;
@@ -707,7 +704,7 @@ namespace UI
                 }
                 if (error > 30)
                 {
-                    EmulatorController.KillGame("com.nubee.valkyriecrusade");
+                    BotCore.KillGame("com.nubee.valkyriecrusade");
                     ScriptErrorHandler.Reset("Critical error found! Trying to restart game!");
                     error = 0;
                     return;
@@ -721,25 +718,25 @@ namespace UI
         private static void Tower()
         {
             Debug_.WriteLine();
-            EmulatorController.Delay(1000,false);
+            BotCore.Delay(1000,false);
 
             Point? point = null;
             //Nope, we are in the tower event main screen! So go on!
-            point = EmulatorController.FindImage(image, Img.Close2, false);
+            point = BotCore.FindImage(image, Img.Close2, false);
             if (point != null)
             {
-                EmulatorController.SendTap(new Point(point.Value.X , point.Value.Y));
-                EmulatorController.Delay(1000,false);
+                BotCore.SendTap(new Point(point.Value.X , point.Value.Y));
+                BotCore.Delay(1000,false);
             }
             if (!PrivateVariable.Run)
             {
                 return;
             }
             Variables.ScriptLog("Locating Tower Event UI!",Color.White);
-            if (EmulatorController.FindImage(image, Img.Locate_Tower, true) != null)
+            if (BotCore.FindImage(image, Img.Locate_Tower, true) != null)
             {
-                Tower_Floor = OCR.OcrImage(EmulatorController.CropImage(image, new Point(280, 110), new Point(440, 145)),"eng");
-                Tower_Rank = OCR.OcrImage(EmulatorController.CropImage(image, new Point(280, 140), new Point(410, 170)), "eng");
+                Tower_Floor = OCR.OcrImage(BotCore.CropImage(image, new Point(280, 110), new Point(440, 145)),"eng");
+                Tower_Rank = OCR.OcrImage(BotCore.CropImage(image, new Point(280, 140), new Point(410, 170)), "eng");
                 Variables.ScriptLog("Tower Event Found!",Color.Lime);
                 PrivateVariable.InEventScreen = true;
             }
@@ -765,9 +762,9 @@ namespace UI
                 Variables.ScriptLog("Waiting for energy",Color.Yellow);
                 if (PrivateVariable.TakePartInNormalStage)
                 {
-                    EmulatorController.SendTap(1218, 662);
-                    EmulatorController.Delay(400,600);
-                    EmulatorController.SendTap(744, 622);
+                    BotCore.SendTap(1218, 662);
+                    BotCore.Delay(400,600);
+                    BotCore.SendTap(744, 622);
                 }
                 else
                 {
@@ -810,25 +807,25 @@ namespace UI
             switch (MainScreen.Level)
             {
                 case 0:
-                    EmulatorController.SendTap(196, 648);
+                    BotCore.SendTap(196, 648);
                     break;
                 case 1:
-                    EmulatorController.SendTap(391, 648);
+                    BotCore.SendTap(391, 648);
                     break;
                 case 2:
-                    EmulatorController.SendTap(581, 646);
+                    BotCore.SendTap(581, 646);
                     break;
                 case 3:
-                    EmulatorController.SendTap(741, 623);
+                    BotCore.SendTap(741, 623);
                     break;
                 case 4:
-                    EmulatorController.SendTap(921, 620);
+                    BotCore.SendTap(921, 620);
                     break;
             }
-            EmulatorController.Delay(3000,false);
+            BotCore.Delay(3000,false);
             do
             {
-                if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
                     return;
                 }
@@ -838,49 +835,49 @@ namespace UI
                 }
                 if (PrivateVariable.Use_Item && energy == 0 && runes == 5)
                 {
-                    if(EmulatorController.GetPixel(new Point(798,313),image) != Color.FromArgb(27, 95, 22))
+                    if(BotCore.GetPixel(new Point(798,313),image) != Color.FromArgb(27, 95, 22))
                     {
-                        EmulatorController.Delay(1000,false);
+                        BotCore.Delay(1000,false);
                         continue;
                     }
-                    EmulatorController.SendTap(798, 313);
-                    Point? p  = EmulatorController.FindImage(image, Img.GreenButton,false);
+                    BotCore.SendTap(798, 313);
+                    Point? p  = BotCore.FindImage(image, Img.GreenButton,false);
                     while(p == null)
                     {
-                        if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                        if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                         {
                             return;
                         }
-                        EmulatorController.Delay(400,600);
-                        p = EmulatorController.FindImage(image, Img.GreenButton, false);
+                        BotCore.Delay(400,600);
+                        p = BotCore.FindImage(image, Img.GreenButton, false);
                     }
-                    EmulatorController.SendTap(p.Value);
+                    BotCore.SendTap(p.Value);
                     energy = 5;
-                    EmulatorController.Delay(5000,false);
+                    BotCore.Delay(5000,false);
                 }
-                if (EmulatorController.RGBComparer(image, new Point(959, 656), 31, 102, 26, 4))
+                if (BotCore.RGBComparer(image, new Point(959, 656), 31, 102, 26, 4))
                 {
                     Variables.ScriptLog("Start battle",Color.Lime);
-                    EmulatorController.SendTap(new Point(959, 656));
-                    EmulatorController.Delay(7000,false);
-                    EmulatorController.SendTap(640, 400); //Tap away Round Battle Text
-                    EmulatorController.Delay(2000,false);
+                    BotCore.SendTap(new Point(959, 656));
+                    BotCore.Delay(7000,false);
+                    BotCore.SendTap(640, 400); //Tap away Round Battle Text
+                    BotCore.Delay(2000,false);
                     stop.Start();
                     PrivateVariable.Battling = true;
                     energy--; //Calculate Energy used
-                    EmulatorController.Delay(1000,false);
+                    BotCore.Delay(1000,false);
                     break;
                 }
                 else
                 {
-                    var crop = EmulatorController.CropImage(image, new Point(125, 600), new Point(1270, 10));
-                    point = EmulatorController.FindImage(crop, Img.Red_Button, false);
+                    var crop = BotCore.CropImage(image, new Point(125, 600), new Point(1270, 10));
+                    point = BotCore.FindImage(crop, Img.Red_Button, false);
                     if (point != null)
                     {
                         Variables.ScriptLog("Rune boss found!",Color.Yellow);
-                        EmulatorController.SendTap(new Point(point.Value.X + 125, point.Value.Y));
+                        BotCore.SendTap(new Point(point.Value.X + 125, point.Value.Y));
                         RuneBoss = true;
-                        EmulatorController.Delay(9000,12000);
+                        BotCore.Delay(9000,12000);
                     }
                     else
                     {
@@ -895,11 +892,11 @@ namespace UI
         private static void Demon_Realm()
         {
             Debug_.WriteLine();
-            Point? point = EmulatorController.FindImage(image, Img.Close2, false);
+            Point? point = BotCore.FindImage(image, Img.Close2, false);
             if (point != null)
             {
-                EmulatorController.SendTap(new Point(point.Value.X, point.Value.Y));
-                EmulatorController.Delay(1000,false);
+                BotCore.SendTap(new Point(point.Value.X, point.Value.Y));
+                BotCore.Delay(1000,false);
             }
             if (!PrivateVariable.Run)
             {
@@ -909,7 +906,7 @@ namespace UI
             int error = 0;
             while (point == null)
             {
-                if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
                     return;
                 }
@@ -917,19 +914,19 @@ namespace UI
                 {
                     return;
                 }
-                if (EmulatorController.RGBComparer(image, new Point(415, 678), Color.FromArgb(223, 192, 63), 10))
+                if (BotCore.RGBComparer(image, new Point(415, 678), Color.FromArgb(223, 192, 63), 10))
                 {
                     PrivateVariable.EventType = 2;
                     PrivateVariable.InEventScreen = true;
                     DemonStage_Enter();
                     return;
                 }
-                point = EmulatorController.FindImage(image, Img.HellLoc, true);
+                point = BotCore.FindImage(image, Img.HellLoc, true);
                 Variables.ScriptLog("Locating Demon Realm Event UI!",Color.White);
                 if (point != null)
                 {
-                    Tower_Floor = OCR.OcrImage(EmulatorController.CropImage(image, new Point(300, 115), new Point(484, 142)), "eng");
-                    Tower_Rank = OCR.OcrImage(EmulatorController.CropImage(image, new Point(300, 150), new Point(458, 170)), "eng");
+                    Tower_Floor = OCR.OcrImage(BotCore.CropImage(image, new Point(300, 115), new Point(484, 142)), "eng");
+                    Tower_Rank = OCR.OcrImage(BotCore.CropImage(image, new Point(300, 150), new Point(458, 170)), "eng");
                     Variables.ScriptLog("Demon Realm Event Found!",Color.Lime);
                     PrivateVariable.InEventScreen = true;
                     energy = GetEnergy();
@@ -937,7 +934,7 @@ namespace UI
                 }
                 else
                 {
-                    EmulatorController.Delay(1000,false);
+                    BotCore.Delay(1000,false);
                     error++;
                     if(error > 20)
                     {
@@ -971,69 +968,69 @@ namespace UI
             switch (MainScreen.Level)
             {
                 case 0:
-                    EmulatorController.SendTap(250, 284);
+                    BotCore.SendTap(250, 284);
                     break;
                 case 1:
-                    if(EmulatorController.RGBComparer(image,new Point(143, 355), Color.FromArgb(41,16, 4), 5))
+                    if(BotCore.RGBComparer(image,new Point(143, 355), Color.FromArgb(41,16, 4), 5))
                     {
                         Variables.ScriptLog("中级还没被解锁！自动往下挑战中！",Color.Red);
-                        EmulatorController.SendTap(250, 284);
+                        BotCore.SendTap(250, 284);
                         break;
                     }
-                    EmulatorController.SendTap(362, 283);
+                    BotCore.SendTap(362, 283);
                     break;
                 case 2:
-                    if (EmulatorController.RGBComparer(image, new Point(143, 355), Color.FromArgb(41, 16, 4), 5))
+                    if (BotCore.RGBComparer(image, new Point(143, 355), Color.FromArgb(41, 16, 4), 5))
                     {
                         Variables.ScriptLog("上级还没被解锁！自动往下挑战中！", Color.Red);
-                        if (EmulatorController.RGBComparer(image, new Point(324, 270), Color.FromArgb(41, 16, 4), 5))
+                        if (BotCore.RGBComparer(image, new Point(324, 270), Color.FromArgb(41, 16, 4), 5))
                         {
                             Variables.ScriptLog("中级还没被解锁！自动往下挑战中！", Color.Red);
-                            EmulatorController.SendTap(250, 284);
+                            BotCore.SendTap(250, 284);
                             break;
                         }
-                        EmulatorController.SendTap(362, 283);
+                        BotCore.SendTap(362, 283);
                         break;
                     }
-                    EmulatorController.SendTap(214, 370);
+                    BotCore.SendTap(214, 370);
                     break;
                 case 3:
-                    if (EmulatorController.RGBComparer(image, new Point(324, 355), Color.FromArgb(41, 16, 4), 5))
+                    if (BotCore.RGBComparer(image, new Point(324, 355), Color.FromArgb(41, 16, 4), 5))
                     {
                         Variables.ScriptLog("超上级还没被解锁！自动往下挑战中！", Color.Red);
-                        if (EmulatorController.RGBComparer(image, new Point(143, 355), Color.FromArgb(41, 16, 4), 5))
+                        if (BotCore.RGBComparer(image, new Point(143, 355), Color.FromArgb(41, 16, 4), 5))
                         {
                             Variables.ScriptLog("上级还没被解锁！自动往下挑战中！", Color.Red);
-                            if (EmulatorController.RGBComparer(image, new Point(324, 270), Color.FromArgb(41, 16, 4), 5))
+                            if (BotCore.RGBComparer(image, new Point(324, 270), Color.FromArgb(41, 16, 4), 5))
                             {
                                 Variables.ScriptLog("中级还没被解锁！自动往下挑战中！", Color.Red);
-                                EmulatorController.SendTap(250, 284);
+                                BotCore.SendTap(250, 284);
                                 break;
                             }
-                            EmulatorController.SendTap(362, 283);
+                            BotCore.SendTap(362, 283);
                             break;
                         }
                     }
-                    EmulatorController.SendTap(353, 371);
+                    BotCore.SendTap(353, 371);
                     break;
                 case 4:
-                    if (EmulatorController.RGBComparer(image, new Point(324, 355), Color.FromArgb(41, 16, 4), 5))
+                    if (BotCore.RGBComparer(image, new Point(324, 355), Color.FromArgb(41, 16, 4), 5))
                     {
                         Variables.ScriptLog("超上级还没被解锁！自动往下挑战中！", Color.Red);
-                        if (EmulatorController.RGBComparer(image, new Point(143, 355), Color.FromArgb(41, 16, 4), 5))
+                        if (BotCore.RGBComparer(image, new Point(143, 355), Color.FromArgb(41, 16, 4), 5))
                         {
                             Variables.ScriptLog("上级还没被解锁！自动往下挑战中！", Color.Red);
-                            if (EmulatorController.RGBComparer(image, new Point(324, 270), Color.FromArgb(41, 16, 4), 5))
+                            if (BotCore.RGBComparer(image, new Point(324, 270), Color.FromArgb(41, 16, 4), 5))
                             {
                                 Variables.ScriptLog("中级还没被解锁！自动往下挑战中！", Color.Red);
-                                EmulatorController.SendTap(250, 284);
+                                BotCore.SendTap(250, 284);
                                 break;
                             }
-                            EmulatorController.SendTap(362, 283);
+                            BotCore.SendTap(362, 283);
                             break;
                         }
                     }
-                    EmulatorController.SendTap(353, 371);
+                    BotCore.SendTap(353, 371);
                     break;
             }
             bool EnteredStage = false;
@@ -1043,26 +1040,26 @@ namespace UI
                 {
                     return;
                 }
-                if (EmulatorController.RGBComparer(image, new Point(959, 656), 31, 102, 26, 4))
+                if (BotCore.RGBComparer(image, new Point(959, 656), 31, 102, 26, 4))
                 {
                     Variables.ScriptLog("Start battle",Color.Lime);
-                    EmulatorController.SendTap(new Point(959, 656));
-                    EmulatorController.Delay(2000,false);
-                    EmulatorController.SendTap(new Point(758, 566));
-                    EmulatorController.Delay(6000,8000);
-                    EmulatorController.SendTap(640, 400); //Tap away Round Battle Text
-                    EmulatorController.Delay(2000,false);
+                    BotCore.SendTap(new Point(959, 656));
+                    BotCore.Delay(2000,false);
+                    BotCore.SendTap(new Point(758, 566));
+                    BotCore.Delay(6000,8000);
+                    BotCore.SendTap(640, 400); //Tap away Round Battle Text
+                    BotCore.Delay(2000,false);
                     stop.Start();
                     energy--; //Calculate Energy used
                     EnteredStage = true;
-                    EmulatorController.Delay(5000,false);
+                    BotCore.Delay(5000,false);
                     break;
                 }
                 else
                 {
-                    EmulatorController.Delay(200,1000);
+                    BotCore.Delay(200,1000);
                 }
-                if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
                     ScriptErrorHandler.Reset("Game is closed! Restarting all!");
                     return;
@@ -1075,9 +1072,9 @@ namespace UI
         private static void DemonStage_Enter()
         {
             int error = 0;
-            while (!EmulatorController.RGBComparer(image, new Point(415, 678), Color.FromArgb(223, 192, 63), 10))
+            while (!BotCore.RGBComparer(image, new Point(415, 678), Color.FromArgb(223, 192, 63), 10))
             {
-                if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
                     ScriptErrorHandler.Reset("Game close, restarting...");
                     return;
@@ -1086,10 +1083,10 @@ namespace UI
                 if (error > 10)
                 {
                     ScriptErrorHandler.Reset("Event Locate Failed!");
-                    EmulatorController.KillGame("com.nubee.valkyriecrusade");
+                    BotCore.KillGame("com.nubee.valkyriecrusade");
                     return;
                 }
-                EmulatorController.Delay(1000,false);
+                BotCore.Delay(1000,false);
             }
             error = 0;
             Variables.ScriptLog("Demon Realm Event Located",Color.Lime);
@@ -1097,7 +1094,7 @@ namespace UI
             Point? p = null;
             while (error < 20 && p == null)
             {
-                if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
                     return;
                 }
@@ -1111,22 +1108,22 @@ namespace UI
                 {
                     Stage.Add(Image.FromFile(file));
                 }
-                var crop = EmulatorController.CropImage(image, new Point(0, 0), new Point(1280, 615));
+                var crop = BotCore.CropImage(image, new Point(0, 0), new Point(1280, 615));
                 Variables.ScriptLog("Trying to find stages to enter",Color.LightSkyBlue);
-                Bitmap screen = (Bitmap)EmulatorController.Decompress(image);
+                Bitmap screen = (Bitmap)BotCore.Decompress(image);
                 foreach (var stage in Stage)
                 {
-                    p = EmulatorController.FindImage(screen, (Bitmap)stage, false);
+                    p = BotCore.FindImage(screen, (Bitmap)stage, false);
                     if (p != null)
                     {
                         if (!BlackListedLocation.Contains(p.Value))
                         {
                             Variables.ScriptLog("Stage found!", Color.Lime);
-                            EmulatorController.SendTap(p.Value);
-                            EmulatorController.Delay(2000,false);
-                            EmulatorController.SendTap(768, 536);
-                            EmulatorController.Delay(5000,false);
-                            if (EmulatorController.RGBComparer(image, new Point(1003, 658), Color.FromArgb(118, 0, 8), 5))
+                            BotCore.SendTap(p.Value);
+                            BotCore.Delay(2000,false);
+                            BotCore.SendTap(768, 536);
+                            BotCore.Delay(5000,false);
+                            if (BotCore.RGBComparer(image, new Point(1003, 658), Color.FromArgb(118, 0, 8), 5))
                             {
                                 Variables.ScriptLog("Ops, looks like the stage is not able to enter!", Color.Red);
                                 BlackListedLocation.Add(p.Value);
@@ -1141,18 +1138,18 @@ namespace UI
                                 p = null;
                                 continue;
                             }
-                            EmulatorController.SendTap(970, 614);
-                            EmulatorController.Delay(2000,false);
-                            EmulatorController.SendTap(753, 423);
+                            BotCore.SendTap(970, 614);
+                            BotCore.Delay(2000,false);
+                            BotCore.SendTap(753, 423);
                             break;
                         }
                     }
                 }
-                Point? p2 = EmulatorController.FindImage(image, Img.GreenButton, false);
+                Point? p2 = BotCore.FindImage(image, Img.GreenButton, false);
                 if (p2 != null)
                 {
-                    EmulatorController.SendTap(p2.Value);
-                    EmulatorController.Delay(1000,false);
+                    BotCore.SendTap(p2.Value);
+                    BotCore.Delay(1000,false);
                     continue;
                 }
                 error++;
@@ -1163,71 +1160,74 @@ namespace UI
                 error = 0;
                 ScriptErrorHandler.Reset("Restarting game as unable to detect stages properly!");
             }
-            EmulatorController.Delay(5000,false);
-            Point? point = EmulatorController.FindImage(image, Img.Red_Button, false);
+            BotCore.Delay(5000,false);
+            Point? point = BotCore.FindImage(image, Img.Red_Button, false);
             while(point == null)
             {
-                Point? p2 = EmulatorController.FindImage(image, Img.GreenButton, false);
+                Point? p2 = BotCore.FindImage(image, Img.GreenButton, false);
                 if (p2 != null)
                 {
-                    EmulatorController.SendTap(p2.Value);
-                    EmulatorController.Delay(1000,false);
+                    BotCore.SendTap(p2.Value);
+                    BotCore.Delay(1000,false);
                     continue;
                 }
-                if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
                     return;
                 }
-                point = EmulatorController.FindImage(image, Img.Red_Button, false);
-                EmulatorController.Delay(1000,false);
+                point = BotCore.FindImage(image, Img.Red_Button, false);
+                BotCore.Delay(1000,false);
             }
-            EmulatorController.SendTap(point.Value);
+            BotCore.SendTap(point.Value);
             PrivateVariable.Battling = true;
             stop.Start();
         }
-
+        static int locateUIError = 0;
         //Fighting and locate UI
         private static void LocateUI()
         {
-            
-            if (!EmulatorController.RGBComparer(image, new Point(10, 27), Color.FromArgb(200, 200, 200), 5))
+            if (!BotCore.RGBComparer(image, new Point(10, 27), Color.FromArgb(200, 200, 200), 5))
             {
                 Debug_.WriteLine();
                 Variables.ScriptLog("HP bar not found. Finding UIs",Color.Yellow);
                 ScriptErrorHandler.ErrorHandle();
-                Point? point = EmulatorController.FindImage(image, Img.Close2, false);
+                Point? point = BotCore.FindImage(image, Img.Close2, false);
                 if (point != null)
                 {
-                    EmulatorController.SendTap(point.Value);
-                    EmulatorController.Delay(400,600);
+                    BotCore.SendTap(point.Value);
+                    BotCore.Delay(400,600);
+                    locateUIError = 0;
                 }
-                if (EmulatorController.FindImage(image, Img.NoEnergy, true) != null)
+                if (BotCore.FindImage(image, Img.NoEnergy, true) != null)
                 {
                     ScriptErrorHandler.Reset("No Energy Left!");
                     NoEnergy();
                     Attackable = false;
+                    locateUIError = 0;
                     return;
                 }
                 if (!PrivateVariable.Battling)
                 {
                     return;
                 }
-                if (EmulatorController.FindImage(image, Img.Demon_Start, true) != null)
+                
+                if (BotCore.FindImage(image, Img.Demon_Start, true) != null)
                 {
                     PrivateVariable.Battling = false;
                     Variables.ScriptLog("Battle Ended!",Color.Lime);
                     stop.Stop();
                     Variables.ScriptLog("Battle used up " + stop.Elapsed,Color.Lime);
                     stop.Reset();
-                    EmulatorController.SendTap(1076, 106);
+                    BotCore.SendTap(1076, 106);
                     Attackable = false;
+                    locateUIError = 0;
                     return;
                 }
                 if (!PrivateVariable.Battling)
                 {
                     return;
                 }
-                if (EmulatorController.FindImage(image, Img.Locate_Tower, true) != null)
+                if (BotCore.FindImage(image, Img.Locate_Tower, true) != null)
                 {
                     PrivateVariable.Battling = false;
                     Variables.ScriptLog("Battle Ended!",Color.Lime);
@@ -1235,13 +1235,14 @@ namespace UI
                     Variables.ScriptLog("Battle used up " + stop.Elapsed,Color.Lime);
                     stop.Reset();
                     Attackable = false;
+                    locateUIError = 0;
                     return;
                 }
                 if (!PrivateVariable.Battling)
                 {
                     return;
                 }
-                if (EmulatorController.FindImage(image, Img.Demon_InEvent, true) != null)
+                if (BotCore.FindImage(image, Img.Demon_InEvent, true) != null)
                 {
                     PrivateVariable.Battling = false;
                     Variables.ScriptLog("Battle Ended!",Color.Lime);
@@ -1249,20 +1250,21 @@ namespace UI
                     Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                     stop.Reset();
                     Attackable = false;
+                    locateUIError = 0;
                     return;
                 }
                 if (!PrivateVariable.Battling)
                 {
                     return;
                 }
-                var crop = EmulatorController.CropImage(image, new Point(125, 0), new Point(1280, 720));
-                point = EmulatorController.FindImage(crop, Img.GreenButton, false);
+                var crop = BotCore.CropImage(image, new Point(125, 0), new Point(1280, 720));
+                point = BotCore.FindImage(crop, Img.GreenButton, false);
                 if (point != null)
                 {
                     Variables.ScriptLog("Green Button Found!", Color.Lime);
                     if (PrivateVariable.EventType == 0)
                     {
-                        if (EmulatorController.FindImage(image, Img.TowerFinished, true) != null && RuneBoss && runes >= 3 && runes != 5)
+                        if (BotCore.FindImage(image, Img.TowerFinished, true) != null && RuneBoss && runes >= 3 && runes != 5)
                         {
                             PrivateVariable.InEventScreen = false;
                             PrivateVariable.InMainScreen = false;
@@ -1273,11 +1275,12 @@ namespace UI
                             Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                             stop.Reset();
                             Attackable = false;
+                            locateUIError = 0;
                             return;
                         }
                         else
                         {
-                            if (EmulatorController.FindImage(image, Img.Locate_Tower, true) != null)
+                            if (BotCore.FindImage(image, Img.Locate_Tower, true) != null)
                             {
                                 PrivateVariable.InEventScreen = false;
                                 PrivateVariable.InMainScreen = false;
@@ -1287,52 +1290,56 @@ namespace UI
                                 Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                                 stop.Reset();
                                 Attackable = false;
+                                locateUIError = 0;
                             }
                             else
                             {
-                                EmulatorController.SendTap(point.Value.X + 125, point.Value.Y);
+                                BotCore.SendTap(point.Value.X + 125, point.Value.Y);
                                 Attackable = false;
+                                locateUIError = 0;
                                 return;
                             }
                         }
                     }
                     else if (PrivateVariable.EventType == 2)
                     {
-                        crop = EmulatorController.CropImage(image, new Point(147, 234), new Point(613, 299));
-                        if (EmulatorController.FindImage(crop, Img.DemonEnd, true) != null)
+                        crop = BotCore.CropImage(image, new Point(147, 234), new Point(613, 299));
+                        if (BotCore.FindImage(crop, Img.DemonEnd, true) != null)
                         {
                             PrivateVariable.InEventScreen = false;
                             PrivateVariable.InMainScreen = false;
                             PrivateVariable.Battling = false;
-                            EmulatorController.SendTap(point.Value.X + 125, point.Value.Y);
+                            BotCore.SendTap(point.Value.X + 125, point.Value.Y);
                             Variables.ScriptLog("Battle Ended!", Color.Lime);
                             stop.Stop();
                             Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                             stop.Reset();
                             Attackable = false;
+                            locateUIError = 0;
                             return;
                         }
                         else
                         {
-                            EmulatorController.SendTap(point.Value.X + 125, point.Value.Y);
+                            BotCore.SendTap(point.Value.X + 125, point.Value.Y);
                             Attackable = false;
+                            locateUIError = 0;
                             return;
                         }
                     }
                     else
                     {
-                        var pt = EmulatorController.FindImage(crop, Img.PT, true);
+                        var pt = BotCore.FindImage(crop, Img.PT, true);
                         if (pt != null)
                         {
                             Variables.ScriptLog("Battle Ended!", Color.Lime);
-                            EmulatorController.SendTap(point.Value.X + 125, point.Value.Y);
-                            EmulatorController.Delay(400, false);
-                            EmulatorController.SendTap(point.Value.X + 125, point.Value.Y);
-                            EmulatorController.Delay(400, false);
-                            EmulatorController.SendTap(point.Value.X + 125, point.Value.Y);
+                            BotCore.SendTap(point.Value.X + 125, point.Value.Y);
+                            BotCore.Delay(400, false);
+                            BotCore.SendTap(point.Value.X + 125, point.Value.Y);
+                            BotCore.Delay(400, false);
+                            BotCore.SendTap(point.Value.X + 125, point.Value.Y);
                             for (int x = 0; x < 5; x++)
                             {
-                                EmulatorController.SendTap(0, 0);
+                                BotCore.SendTap(0, 0);
                             }
                             PrivateVariable.Battling = false;
                             PrivateVariable.InEventScreen = true;
@@ -1340,23 +1347,25 @@ namespace UI
                             Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                             stop.Reset();
                             Attackable = false;
+                            locateUIError = 0;
                             return;
                         }
                         else
                         {
-                            EmulatorController.SendTap(point.Value.X + 125, point.Value.Y);
+                            BotCore.SendTap(point.Value.X + 125, point.Value.Y);
                             Attackable = false;
+                            locateUIError = 0;
                             return;
                         }
                     }
                 }
-                crop = EmulatorController.CropImage(image, new Point(125, 0), new Point(1280, 720));
-                point = EmulatorController.FindImage(crop, Img.Red_Button, false);
+                crop = BotCore.CropImage(image, new Point(125, 0), new Point(1280, 720));
+                point = BotCore.FindImage(crop, Img.Red_Button, false);
                 if (point != null)
                 {
                     if (PrivateVariable.EventType == 2)
                     {
-                        if (EmulatorController.RGBComparer(image, new Point(133, 35), Color.FromArgb(30, 30, 30), 10))
+                        if (BotCore.RGBComparer(image, new Point(133, 35), Color.FromArgb(30, 30, 30), 10))
                         {
                             PrivateVariable.Battling = false;
                             Variables.ScriptLog("Battle Ended!", Color.Lime);
@@ -1364,44 +1373,48 @@ namespace UI
                             Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                             stop.Reset();
                             Attackable = false;
+                            locateUIError = 0;
                             return;
                         }
                     }
                     Variables.ScriptLog("Starting Battle", Color.Lime);
-                    EmulatorController.SendTap(point.Value.X + 125, point.Value.Y);
+                    BotCore.SendTap(point.Value.X + 125, point.Value.Y);
                     PrivateVariable.Battling = true;
-                    EmulatorController.Delay(900,1000);
-                    crop = EmulatorController.CropImage(image, new Point(682, 544), new Point(905, 589));
-                    if (EmulatorController.RGBComparer(crop, Color.FromArgb(29, 98, 24)))
+                    BotCore.Delay(900,1000);
+                    crop = BotCore.CropImage(image, new Point(682, 544), new Point(905, 589));
+                    if (BotCore.RGBComparer(crop, Color.FromArgb(29, 98, 24)))
                     {
-                        EmulatorController.SendTap(793, 565);
-                        EmulatorController.Delay(1000,false);
+                        BotCore.SendTap(793, 565);
+                        BotCore.Delay(1000,false);
                     }
                     Attackable = false;
+                    locateUIError = 0;
                     return;
                 }
                 if (!PrivateVariable.Battling)
                 {
                     return;
                 }
-                point = EmulatorController.FindImage(image, Img.GarbageMessage, true);
+                point = BotCore.FindImage(image, Img.GarbageMessage, true);
                 if (point != null)
                 {
-                    EmulatorController.SendTap(point.Value);
+                    BotCore.SendTap(point.Value);
                     Attackable = false;
+                    locateUIError = 0;
                     return;
                 }
                 if (!PrivateVariable.Battling)
                 {
                     return;
                 }
-                point = EmulatorController.FindImage(image, Img.Love, true);
+                point = BotCore.FindImage(image, Img.Love, true);
                 if (point != null)
                 {
                     for (int x = 0; x < 10; x++)
                     {
-                        EmulatorController.SendTap(point.Value);
-                        EmulatorController.Delay(100,200);
+                        BotCore.SendTap(point.Value);
+                        BotCore.Delay(100,200);
+                        locateUIError = 0;
                     }
                     Attackable = false;
                     return;
@@ -1410,21 +1423,30 @@ namespace UI
                 {
                     return;
                 }
-                point = EmulatorController.FindImage(image, Img.Start_Game, true);
+                point = BotCore.FindImage(image, Img.Start_Game, true);
                 if (point != null)
                 {
-                    EmulatorController.SendTap(point.Value);
+                    BotCore.SendTap(point.Value);
                     PrivateVariable.Battling = false;
                     ScriptErrorHandler.Reset("Start Game Button Located!");
+                    locateUIError = 0;
                     return;
                 }
-                if (EmulatorController.RGBComparer(image, new Point(959, 656), 31, 102, 26, 4))
+                if (BotCore.RGBComparer(image, new Point(959, 656), 31, 102, 26, 4))
                 {
                     Variables.ScriptLog("Start battle", Color.Lime);
-                    EmulatorController.SendTap(959, 656);
+                    BotCore.SendTap(959, 656);
                     PrivateVariable.Battling = true;
                     Attackable = false;
+                    locateUIError = 0;
                     return;
+                }
+                locateUIError++;
+                if (locateUIError > 30)
+                {
+                    //Something wrong, we need to reset
+                    BotCore.KillGame("com.nubee.valkyriecrusade");
+                    ScriptErrorHandler.Reset("Error on finding UIs, no UI found and no battle screen found!");
                 }
             }
         }
@@ -1437,10 +1459,10 @@ namespace UI
             if (Attackable)
             {
                 Debug_.WriteLine();
-                var enemy = EmulatorController.CropImage(image, new Point(582, 258), new Point(715, 308));
-                if (EmulatorController.RGBComparer(enemy, Color.FromArgb(33, 106, 159)) || EmulatorController.RGBComparer(enemy, Color.FromArgb(171, 0, 21)))
+                var enemy = BotCore.CropImage(image, new Point(582, 258), new Point(715, 308));
+                if (BotCore.RGBComparer(enemy, Color.FromArgb(33, 106, 159)) || BotCore.RGBComparer(enemy, Color.FromArgb(171, 0, 21)))
                 {
-                    EmulatorController.SendTap(640, 156); //Boss在中间，打Boss
+                    BotCore.SendTap(640, 156); //Boss在中间，打Boss
                     Variables.ScriptLog("Found Boss at center!", Color.LightPink);
                 }
                 else
@@ -1451,25 +1473,25 @@ namespace UI
                     }
                     if (PrivateVariable.Battling == true && PrivateVariable.EventType == 2)
                     {
-                        var point = EmulatorController.FindImage(Script.image, "Img\\HellLoc.png", false);
+                        var point = BotCore.FindImage(Script.image, "Img\\HellLoc.png", false);
                         if (point != null)
                         {
                             PrivateVariable.Battling = false;
                             Variables.ScriptLog("Battle Ended!", Color.Lime);
                             return;
                         }
-                        EmulatorController.Delay(100, 500);
+                        BotCore.Delay(100, 500);
                     }
                     //找不到Boss血量条，可能剩下一丝血，所以先打中间试试水，再打小怪
-                    EmulatorController.SendTap(640,156);
-                    EmulatorController.Delay(100,500);
-                    EmulatorController.SendTap(462, 176);
-                    EmulatorController.Delay(100, 500);
-                    EmulatorController.SendTap(820,187);
-                    EmulatorController.Delay(100, 500);
-                    EmulatorController.SendTap(330, 202);
-                    EmulatorController.Delay(100, 500);
-                    EmulatorController.SendTap(952, 193);
+                    BotCore.SendTap(640,156);
+                    BotCore.Delay(100,500);
+                    BotCore.SendTap(462, 176);
+                    BotCore.Delay(100, 500);
+                    BotCore.SendTap(820,187);
+                    BotCore.Delay(100, 500);
+                    BotCore.SendTap(330, 202);
+                    BotCore.Delay(100, 500);
+                    BotCore.SendTap(952, 193);
                     Variables.ScriptLog("Boss not found, trying to hit others", Color.LightPink);
                 }
             }
@@ -1486,6 +1508,11 @@ namespace UI
                 {
                     return;
                 }
+                for(int x = 0; x < 10; x++)
+                {
+                    BotCore.SendTap(1, 1);
+                    BotCore.Delay(100, 500);
+                }
                 LocateUI();
                 if (Attackable)
                 {
@@ -1495,8 +1522,9 @@ namespace UI
                         PrivateVariable.BattleScript[PrivateVariable.Selected_Script].Attack();
                     }
                     CheckEnemy();
+                    BotCore.Delay(2000,false);
                 }
-                if (!EmulatorController.GameIsForeground("com.nubee.valkyriecrusade"))
+                if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
                     ScriptErrorHandler.Reset("Game is closed! Restarting all!");
                     return;
@@ -1516,7 +1544,7 @@ namespace UI
                 }
                 int num = 0;
                 Color energy = Color.FromArgb(50, 233, 34);
-                if (EmulatorController.RGBComparer(Script.image, new Point(417, 535), energy, 10))
+                if (BotCore.RGBComparer(Script.image, new Point(417, 535), energy, 10))
                 {
                     num++;
                 }
@@ -1524,7 +1552,7 @@ namespace UI
                 {
                     return 0;
                 }
-                if (EmulatorController.RGBComparer(Script.image, new Point(481, 535), energy, 10))
+                if (BotCore.RGBComparer(Script.image, new Point(481, 535), energy, 10))
                 {
                     num++;
                 }
@@ -1532,7 +1560,7 @@ namespace UI
                 {
                     return 0;
                 }
-                if (EmulatorController.RGBComparer(Script.image, new Point(546, 535), energy, 10))
+                if (BotCore.RGBComparer(Script.image, new Point(546, 535), energy, 10))
                 {
                     num++;
                 }
@@ -1540,7 +1568,7 @@ namespace UI
                 {
                     return 0;
                 }
-                if (EmulatorController.RGBComparer(Script.image, new Point(613, 535), energy, 10))
+                if (BotCore.RGBComparer(Script.image, new Point(613, 535), energy, 10))
                 {
                     num++;
                 }
@@ -1548,7 +1576,7 @@ namespace UI
                 {
                     return 0;
                 }
-                if (EmulatorController.RGBComparer(Script.image, new Point(677, 535), energy, 10))
+                if (BotCore.RGBComparer(Script.image, new Point(677, 535), energy, 10))
                 {
                     num++;
                 }
@@ -1562,7 +1590,7 @@ namespace UI
                 }
                 int num = 0;
                 Color energy = Color.FromArgb(104, 45, 22);
-                if (EmulatorController.RGBComparer(image, new Point(208, 445), energy, 10))
+                if (BotCore.RGBComparer(image, new Point(208, 445), energy, 10))
                 {
                     num++;
                 }
@@ -1570,7 +1598,7 @@ namespace UI
                 {
                     return 0;
                 }
-                if (EmulatorController.RGBComparer(image, new Point(253, 441), energy, 10))
+                if (BotCore.RGBComparer(image, new Point(253, 441), energy, 10))
                 {
                     num++;
                 }
@@ -1578,7 +1606,7 @@ namespace UI
                 {
                     return 0;
                 }
-                if (EmulatorController.RGBComparer(image, new Point(315, 445), energy, 10))
+                if (BotCore.RGBComparer(image, new Point(315, 445), energy, 10))
                 {
                     num++;
                 }
@@ -1586,7 +1614,7 @@ namespace UI
                 {
                     return 0;
                 }
-                if (EmulatorController.RGBComparer(image, new Point(351, 449), energy, 10))
+                if (BotCore.RGBComparer(image, new Point(351, 449), energy, 10))
                 {
                     num++;
                 }
@@ -1594,7 +1622,7 @@ namespace UI
                 {
                     return 0;
                 }
-                if (!EmulatorController.RGBComparer(image, new Point(410, 458), Color.FromArgb(27,24,29), 10))
+                if (!BotCore.RGBComparer(image, new Point(410, 458), Color.FromArgb(27,24,29), 10))
                 {
                     num++;
                 }
@@ -1612,7 +1640,7 @@ namespace UI
                     return 0;
                 }
                 int num = 5;
-                if (EmulatorController.RGBComparer(Script.image, new Point(945, 207), 118, 117, 118, 10))
+                if (BotCore.RGBComparer(Script.image, new Point(945, 207), 118, 117, 118, 10))
                 {
                     num--;
                 }
@@ -1620,7 +1648,7 @@ namespace UI
                 {
                     return 0;
                 }
-                if (EmulatorController.RGBComparer(Script.image, new Point(979, 308), 114, 114, 114, 10))
+                if (BotCore.RGBComparer(Script.image, new Point(979, 308), 114, 114, 114, 10))
                 {
                     num--;
                 }
@@ -1628,7 +1656,7 @@ namespace UI
                 {
                     return 0;
                 }
-                if (EmulatorController.RGBComparer(Script.image, new Point(1088, 309), 118, 117, 118, 10))
+                if (BotCore.RGBComparer(Script.image, new Point(1088, 309), 118, 117, 118, 10))
                 {
                     num--;
                 }
@@ -1636,7 +1664,7 @@ namespace UI
                 {
                     return 0;
                 }
-                if (EmulatorController.RGBComparer(Script.image, new Point(1121, 204), 113, 113, 113, 10))
+                if (BotCore.RGBComparer(Script.image, new Point(1121, 204), 113, 113, 113, 10))
                 {
                     num--;
                 }
@@ -1644,7 +1672,7 @@ namespace UI
                 {
                     return 0;
                 }
-                if (EmulatorController.RGBComparer(Script.image, new Point(1033, 140), 116, 115, 115, 10))
+                if (BotCore.RGBComparer(Script.image, new Point(1033, 140), 116, 115, 115, 10))
                 {
                     num--;
                 }
@@ -1653,19 +1681,19 @@ namespace UI
             else
             {
                 int num = 0;
-                if (EmulatorController.RGBComparer(image, new Point(966, 164), 154, 135, 110, 10))
+                if (BotCore.RGBComparer(image, new Point(966, 164), 154, 135, 110, 10))
                 {
                     num++;
                 }
-                if (EmulatorController.RGBComparer(image, new Point(1071, 173), 195, 178, 145, 10))
+                if (BotCore.RGBComparer(image, new Point(1071, 173), 195, 178, 145, 10))
                 {
                     num++;
                 }
-                if (EmulatorController.RGBComparer(image, new Point(980, 240), 142, 119, 97, 10))
+                if (BotCore.RGBComparer(image, new Point(980, 240), 142, 119, 97, 10))
                 {
                     num++;
                 }
-                if (!EmulatorController.RGBComparer(image, new Point(1067, 243), 56, 40, 45, 10))
+                if (!BotCore.RGBComparer(image, new Point(1067, 243), 56, 40, 45, 10))
                 {
                     num++;
                 }
@@ -1684,7 +1712,7 @@ namespace UI
                 Variables.ScriptLog("Close game and stuck rune!",Color.DarkGreen);
                 nextOnline = DateTime.Now.AddMilliseconds(wait);
                 Variables.ScriptLog("Estimate online time is " + nextOnline, Color.Lime);
-                EmulatorController.KillGame("com.nubee.valkyriecrusade");
+                BotCore.KillGame("com.nubee.valkyriecrusade");
                 if (!PrivateVariable.EnterRune)
                 {
                     PrivateVariable.Run = false;
@@ -1698,15 +1726,15 @@ namespace UI
                             player.PlayLooping();
                         }
                     }
-                    EmulatorController.CloseEmulator();
+                    BotCore.CloseEmulator();
                     MessageBox.Show("正在卡符文！下次上线时间为" + nextOnline + "!");
                     Environment.Exit(0);
                 }
                 if (PrivateVariable.CloseEmulator)
                 {
-                    EmulatorController.CloseEmulator();
+                    BotCore.CloseEmulator();
                 }
-                EmulatorController.Delay(wait - 70000,wait - 50000);
+                BotCore.Delay(wait - 70000,wait - 50000);
             }
             else
             {
@@ -1716,7 +1744,7 @@ namespace UI
                 Variables.ScriptLog("Close game and stuck treasure map!", Color.DarkGreen);
                 nextOnline = DateTime.Now.AddMilliseconds(wait);
                 Variables.ScriptLog("Estimate online time is " + nextOnline, Color.Lime);
-                EmulatorController.KillGame("com.nubee.valkyriecrusade");
+                BotCore.KillGame("com.nubee.valkyriecrusade");
                 if (!PrivateVariable.EnterRune)
                 {
                     PrivateVariable.Run = false;
@@ -1730,15 +1758,15 @@ namespace UI
                             player.PlayLooping();
                         }
                     }
-                    EmulatorController.CloseEmulator();
+                    BotCore.CloseEmulator();
                     MessageBox.Show("已存3宝藏图碎片！下次上线时间为" + nextOnline + "!");
                     Environment.Exit(0);
                 }
                 if (PrivateVariable.CloseEmulator)
                 {
-                    EmulatorController.CloseEmulator();
+                    BotCore.CloseEmulator();
                 }
-                EmulatorController.Delay(wait - 70000,wait - 50000);
+                BotCore.Delay(wait - 70000,wait - 50000);
             }
             ScriptErrorHandler.PauseErrorHandler = false;
         }
@@ -1752,24 +1780,24 @@ namespace UI
                 int wait = el * 2500000;
                 nextOnline = DateTime.Now.AddMilliseconds(wait);
                 Variables.ScriptLog("Estimate online time is " + nextOnline, Color.Lime);
-                EmulatorController.KillGame("com.nubee.valkyriecrusade");
+                BotCore.KillGame("com.nubee.valkyriecrusade");
                 ScriptErrorHandler.PauseErrorHandler = true;
                 if (PrivateVariable.CloseEmulator)
                 {
                     CloseEmu = true;
-                    EmulatorController.CloseEmulator();
+                    BotCore.CloseEmulator();
                 }
-                EmulatorController.Delay(wait - 70000, wait - 50000);
+                BotCore.Delay(wait - 70000, wait - 50000);
                 ScriptErrorHandler.PauseErrorHandler = false;
                 CloseEmu = false;
             }
             else if(PrivateVariable.EventType == 1)
             {
                 ScriptErrorHandler.PauseErrorHandler = true;
-                EmulatorController.KillGame("com.nubee.valkyriecrusade");
+                BotCore.KillGame("com.nubee.valkyriecrusade");
                 nextOnline = DateTime.Now.AddMilliseconds(900000);
                 Variables.ScriptLog("Estimate online time is " + nextOnline, Color.Lime);
-                EmulatorController.Delay(900000, 1000000);
+                BotCore.Delay(900000, 1000000);
                 ScriptErrorHandler.PauseErrorHandler = false;
             }
 

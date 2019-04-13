@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ImageProcessor
+namespace BotFramework
 {
     public static class DllImport
     {

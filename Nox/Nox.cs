@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ImageProcessor;
+using BotFramework;
 using Microsoft.Win32;
 
 namespace Nox
@@ -20,7 +20,7 @@ namespace Nox
         {
             if(Variables.Proc != null)
             {
-                EmulatorController.KillProcessAndChildren(Variables.Proc.Id);
+                BotCore.KillProcessAndChildren(Variables.Proc.Id);
             }
         }
 
@@ -52,7 +52,7 @@ namespace Nox
             {
 
             }
-            if (EmulatorController.Is64BitOperatingSystem())
+            if (BotCore.Is64BitOperatingSystem())
             {
                 r = reg.OpenSubKey("SOFTWARE\\Wow6432Node\\DuoDianOnline\\SetupInfo\\");
                 try
@@ -133,7 +133,7 @@ namespace Nox
                 if (!File.Exists(Variables.VBoxManagerPath))
                 {
                     MessageBox.Show("Unable to locate path of emulator!");
-                    Process.Start("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
+                    Process.Start("Profiles\\" + BotCore.profilePath + "\\bot.ini");
                 }
                 Process.Start(Variables.VBoxManagerPath);
                 Thread.Sleep(10000);
@@ -145,7 +145,7 @@ namespace Nox
             catch (Exception ex)
             {
                 MessageBox.Show("Error while starting emulator! Error message: " + ex.Message);
-                Process.Start("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
+                Process.Start("Profiles\\" + BotCore.profilePath + "\\bot.ini");
                 Environment.Exit(0);
             }
         }
@@ -186,7 +186,7 @@ namespace Nox
                 {
                     IntPtr handle = DllImport.FindWindowEx(p.MainWindowHandle, IntPtr.Zero, string.Empty, string.Empty);
                     Variables.Proc = p;
-                    EmulatorController.handle = p.MainWindowHandle;
+                    BotCore.handle = p.MainWindowHandle;
                     Variables.ScriptLog("Emulator ID: " + p.Id, Color.DarkGreen);
                     break;
                 }

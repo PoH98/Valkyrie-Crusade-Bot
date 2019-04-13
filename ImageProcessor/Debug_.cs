@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 
-namespace ImageProcessor
+namespace BotFramework
 {
     public class Debug_
     {
@@ -88,7 +88,7 @@ namespace ImageProcessor
         protected static string Encrypt(string log)
         {
             string newlog = "[" + DateTime.Now + "]: " + log;
-            return EmulatorController.Encrypt(newlog);
+            return BotCore.Encrypt(newlog);
         }
     }
 }

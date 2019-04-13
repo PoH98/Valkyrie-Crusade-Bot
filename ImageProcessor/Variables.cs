@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using SharpAdbClient;
 
-namespace ImageProcessor
+namespace BotFramework
 {
     /// <summary>
     /// Variables that are stored in memory for future usage
@@ -34,7 +34,7 @@ namespace ImageProcessor
         /// </summary>
         public static void EmulatorPath(string[] args)
         {
-            EmulatorController.LoadEmulatorInterface(args);
+            BotCore.LoadEmulatorInterface(args);
             if (emulator == null)
             {
                 if (File.Exists("Updater.exe"))
@@ -50,12 +50,12 @@ namespace ImageProcessor
             {
                 Instance = emulator.EmulatorName();
             }
-            EmulatorController.profilePath = Instance;
+            BotCore.profilePath = Instance;
         }
 
         public static DeviceData Controlled_Device = null;
         /// <summary>
-        /// Confiures of bot.ini, use EmulatorController.ReadConfig() to fill up values
+        /// Confiures of bot.ini, use BotCore.ReadConfig() to fill up values
         /// </summary>
         public static Dictionary<string, string> Configure = new Dictionary<string, string>();
         /// <summary>

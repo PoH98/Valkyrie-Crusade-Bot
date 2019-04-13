@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ImageProcessor;
+using BotFramework;
 using Microsoft.Win32;
 
 namespace MEmu
@@ -55,7 +55,7 @@ namespace MEmu
                 {
                     IntPtr handle = DllImport.FindWindowEx(p.MainWindowHandle, IntPtr.Zero, string.Empty, string.Empty);
                     Variables.Proc = p;
-                    EmulatorController.handle = p.MainWindowHandle;
+                    BotCore.handle = p.MainWindowHandle;
                     Variables.ScriptLog("Emulator ID: " + p.Id, Color.DarkGreen);
                     break;
                 }
@@ -73,7 +73,7 @@ namespace MEmu
             try
             {
                 RegistryKey r;
-                if (EmulatorController.Is64BitOperatingSystem())
+                if (BotCore.Is64BitOperatingSystem())
                 {
                     r = reg.OpenSubKey("SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MEmu");
                 }
@@ -156,7 +156,7 @@ namespace MEmu
                 if (!File.Exists(Variables.VBoxManagerPath))
                 {
                     MessageBox.Show("Unable to locate path of emulator!");
-                    Process.Start("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
+                    Process.Start("Profiles\\" + BotCore.profilePath + "\\bot.ini");
                 }
                 ProcessStartInfo info = new ProcessStartInfo();
                 info.FileName = Variables.VBoxManagerPath.Replace(@"\MEmuHyperv\MEmuManage.exe", @"\MEmu\MEmuConsole.exe");
@@ -180,7 +180,7 @@ namespace MEmu
             catch (Exception ex)
             {
                 MessageBox.Show("Error while starting emulator! Error message: " + ex.Message);
-                Process.Start("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
+                Process.Start("Profiles\\" + BotCore.profilePath + "\\bot.ini");
                 Environment.Exit(0);
             }
         }

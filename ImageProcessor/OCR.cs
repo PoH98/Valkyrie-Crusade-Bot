@@ -8,7 +8,7 @@ using System.IO;
 using System.Reflection;
 using System.IO.Compression;
 
-namespace ImageProcessor
+namespace BotFramework
 {
     public class OCR
     {
@@ -36,7 +36,7 @@ namespace ImageProcessor
                 }
                 t.Init("C:\\ProgramData\\", lang, OcrEngineMode.Default);
             }
-            Image<Bgr, byte> img = new Image<Bgr, byte>(new Bitmap(EmulatorController.Decompress(source)));
+            Image<Bgr, byte> img = new Image<Bgr, byte>(new Bitmap(BotCore.Decompress(source)));
              t.SetImage(img);
             return t.GetUTF8Text();
         }

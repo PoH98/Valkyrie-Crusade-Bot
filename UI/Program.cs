@@ -1,4 +1,4 @@
-﻿using ImageProcessor;
+﻿using BotFramework;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,10 +25,10 @@ namespace UI
         }
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            if (EmulatorController.handle != null && Variables.Proc != null)
+            if (BotCore.handle != null && Variables.Proc != null)
             {
-                DllImport.SetParent(EmulatorController.handle, IntPtr.Zero);
-                DllImport.MoveWindow(EmulatorController.handle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 1318, 752, true);
+                DllImport.SetParent(BotCore.handle, IntPtr.Zero);
+                DllImport.MoveWindow(BotCore.handle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 1318, 752, true);
             }
             Debug_.WriteLine(e.ExceptionObject.ToString());
             File.WriteAllText("error.log", e.ExceptionObject.ToString());
@@ -38,10 +38,10 @@ namespace UI
 
         private static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
-            if (EmulatorController.handle != null && Variables.Proc != null)
+            if (BotCore.handle != null && Variables.Proc != null)
             {
-                DllImport.SetParent(EmulatorController.handle, IntPtr.Zero);
-                DllImport.MoveWindow(EmulatorController.handle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 1318, 752, true);
+                DllImport.SetParent(BotCore.handle, IntPtr.Zero);
+                DllImport.MoveWindow(BotCore.handle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 1318, 752, true);
             }
             Debug_.WriteLine(e.Exception + " At: "+e.Exception.Source +" At: "+ e.Exception.TargetSite);
             File.WriteAllText("error.log", e.Exception.ToString());

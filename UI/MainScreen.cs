@@ -18,7 +18,7 @@ using System.ComponentModel;
 using MetroFramework.Forms;
 using System.Windows.Forms;
 
-namespace ImageProcessor
+namespace BotFramework
 {
     public partial class MainScreen : MetroForm
     {
@@ -158,13 +158,13 @@ namespace ImageProcessor
             string[] args = Environment.GetCommandLineArgs();
             if (File.Exists("bot.ini"))
             {
-                if (File.Exists(Environment.CurrentDirectory + "\\Profiles\\" + EmulatorController.profilePath + "\\bot.ini"))
+                if (File.Exists(Environment.CurrentDirectory + "\\Profiles\\" + BotCore.profilePath + "\\bot.ini"))
                 {
-                    File.Delete(Environment.CurrentDirectory + "\\Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
+                    File.Delete(Environment.CurrentDirectory + "\\Profiles\\" + BotCore.profilePath + "\\bot.ini");
                 }
                 try
                 {
-                    File.Copy("bot.ini", Environment.CurrentDirectory + "\\Profiles\\" + EmulatorController.profilePath + "\\bot.ini", true);
+                    File.Copy("bot.ini", Environment.CurrentDirectory + "\\Profiles\\" + BotCore.profilePath + "\\bot.ini", true);
                     File.Delete("bot.ini");
                 }
                 catch
@@ -173,7 +173,7 @@ namespace ImageProcessor
                 }
             }
             Variables.EmulatorPath(args);
-            EmulatorController.ReadConfig();
+            BotCore.ReadConfig();
             label11.Text = "逍模拟器：" + Variables.emulator.EmulatorName();
             label12.Text = "模拟器共享文件夹：" + Variables.SharedPath;
             foreach(var a in args)
@@ -280,7 +280,7 @@ namespace ImageProcessor
             {
                 comboBox1.SelectedIndex = comboBox1.Items.IndexOf(output);
             }
-            if (EmulatorController.Is64BitOperatingSystem())
+            if (BotCore.Is64BitOperatingSystem())
             {
                 label13.Text = "系统资料：64位系统";
             }
@@ -500,7 +500,7 @@ namespace ImageProcessor
                 using (Stream bmp = File.Open(f, FileMode.Open))
                 {
                     Image image = Image.FromStream(bmp);
-                    PrivateVariable.Skills.Add(EmulatorController.Compress(image));
+                    PrivateVariable.Skills.Add(BotCore.Compress(image));
                 }
             }
             if (panel3.Visible == false)
@@ -534,11 +534,11 @@ namespace ImageProcessor
                 Width -= 700;
                 panel3.Visible = false;
             }
-            if (EmulatorController.handle != null && Variables.Proc != null)
+            if (BotCore.handle != null && Variables.Proc != null)
             {
-                DllImport.SetParent(EmulatorController.handle, IntPtr.Zero);
-                DllImport.MoveWindow(EmulatorController.handle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 1318, 752, true);
-                EmulatorController.handle = IntPtr.Zero;
+                DllImport.SetParent(BotCore.handle, IntPtr.Zero);
+                DllImport.MoveWindow(BotCore.handle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 1318, 752, true);
+                BotCore.handle = IntPtr.Zero;
                 Docked = false;
             }
             Variables.start = null;
@@ -645,13 +645,13 @@ namespace ImageProcessor
                 Thread.Sleep(1000);
                 if (Variables.Proc != null)
                 {
-                    if (EmulatorController.handle == IntPtr.Zero || EmulatorController.handle == null)
+                    if (BotCore.handle == IntPtr.Zero || BotCore.handle == null)
                     {
-                        EmulatorController.ConnectAndroidEmulator();
+                        BotCore.ConnectAndroidEmulator();
                     }
-                    if (!DllImport.IsWindow(EmulatorController.handle))
+                    if (!DllImport.IsWindow(BotCore.handle))
                     {
-                        EmulatorController.handle = IntPtr.Zero;
+                        BotCore.handle = IntPtr.Zero;
                         Docked = false;
                     }
                     if(Variables.emulator.EmulatorName() == "Nox")
@@ -664,31 +664,31 @@ namespace ImageProcessor
                     }
                     panel3.Invoke((MethodInvoker)delegate
                     {
-                        if (DllImport.GetParent(EmulatorController.handle) != panel3.Handle)
+                        if (DllImport.GetParent(BotCore.handle) != panel3.Handle)
                         {
                             if (PrivateVariable.Run && !Docked)
                             {
                                 DllImport.Rect rect = new DllImport.Rect();
-                                DllImport.GetWindowRect(EmulatorController.handle, ref rect);
+                                DllImport.GetWindowRect(BotCore.handle, ref rect);
                                 PrivateVariable.EmuDefaultLocation = new Point(rect.left, rect.top);
-                                DllImport.SetParent(EmulatorController.handle, panel3.Handle);
-                                DllImport.MoveWindow(EmulatorController.handle, -1, -30, 736, 600, false);
+                                DllImport.SetParent(BotCore.handle, panel3.Handle);
+                                DllImport.MoveWindow(BotCore.handle, -1, -30, 736, 600, false);
                                 Docked = true;
                             }
                             else if (Docked)
                             {
                                 DllImport.Rect rect = new DllImport.Rect();
-                                DllImport.GetWindowRect(EmulatorController.handle, ref rect);
+                                DllImport.GetWindowRect(BotCore.handle, ref rect);
                                 if (rect.left != -1 || rect.top != -55)
                                 {
-                                    DllImport.MoveWindow(EmulatorController.handle, -1, -30, 736, 600, false);
+                                    DllImport.MoveWindow(BotCore.handle, -1, -30, 736, 600, false);
                                 }
                             }
                         }
                     });
                     try
                     {
-                        var newimage = EmulatorController.ImageCapture();
+                        var newimage = BotCore.ImageCapture();
                         if (newimage != null)
                         {
                             Script.image = newimage;
@@ -705,13 +705,13 @@ namespace ImageProcessor
                     int error = 0;
                     while (Variables.Proc == null)
                     {
-                        EmulatorController.ConnectAndroidEmulator();
+                        BotCore.ConnectAndroidEmulator();
                         error++;
                         Thread.Sleep(1000);
                         if (error > 60)
                         {
-                            EmulatorController.CloseEmulator();
-                            EmulatorController.StartEmulator();
+                            BotCore.CloseEmulator();
+                            BotCore.StartEmulator();
                             error = 0;
                         }
                     }
@@ -979,14 +979,14 @@ namespace ImageProcessor
 
         private static void WriteConfig(string key, string value)
         {
-            var config = File.ReadAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
+            var config = File.ReadAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini");
             int x = 0;
             foreach (var c in config)
             {
                 if (c.Contains(key + "="))
                 {
                     config[x] = key + "=" + value;
-                    File.WriteAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini", config);
+                    File.WriteAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini", config);
                     return;
                 }
                 x++;
@@ -1000,7 +1000,7 @@ namespace ImageProcessor
             {
                 Variables.Configure.Add(key, value);
             }
-            File.WriteAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini", config);
+            File.WriteAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini", config);
         }
 
         private void pictureBox4_Click(object sender, EventArgs e)
@@ -1055,7 +1055,7 @@ namespace ImageProcessor
         {
             if (File.Exists("OCR.png"))
             {
-                var img = EmulatorController.Compress(Image.FromFile("OCR.png"));
+                var img = BotCore.Compress(Image.FromFile("OCR.png"));
                 MessageBox.Show(OCR.OcrImage(img, "eng"));
             }
         }
@@ -1092,7 +1092,7 @@ namespace ImageProcessor
 
         private void MainScreen_FormClosing(object sender, FormClosingEventArgs e)
         {
-            var lines = File.ReadAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
+            var lines = File.ReadAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini");
             if (radioButton1.Checked)
             {
                 int x = 0;
@@ -1192,7 +1192,7 @@ namespace ImageProcessor
                     x++;
                 }
             }
-            File.WriteAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini", lines);
+            File.WriteAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini", lines);
             if (PrivateVariable.Run)
             {
                 button3_Click(sender, e);

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UI;
 using System.Windows.Forms;
-using ImageProcessor;
+using BotFramework;
 using System.Drawing;
 using System.Threading;
 using System.IO;
@@ -16,167 +16,167 @@ namespace DefaultScript
         private static List<ComboBox> toolParameterComboBoxes = new List<ComboBox>();
         public void Attack()
         {
-            for (int x = 0; x < 10; x++)
+            for (int y = 0; y < 2; y++)
             {
-                Thread.Sleep(100);
-                EmulatorController.SendTap(1, 1);
-            }
-            foreach (var cb in toolParameterComboBoxes)
-            {
-                int index = 0;
-                cb.Invoke((MethodInvoker)delegate { index = cb.SelectedIndex; });
-                switch (index)
+
+
+                foreach (var cb in toolParameterComboBoxes)
                 {
-                    case 0:
-                        byte[] crop = EmulatorController.CropImage(Script.image, new Point(176, 356), new Point(330, 611));
-                        foreach (var f in PrivateVariable.Skills)
-                        {
-                            if (!PrivateVariable.Run)
+                    int index = 0;
+                    cb.Invoke((MethodInvoker)delegate { index = cb.SelectedIndex; });
+                    switch (index)
+                    {
+                        case 0:
+                            byte[] crop = BotCore.CropImage(Script.image, new Point(176, 356), new Point(330, 611));
+                            foreach (var f in PrivateVariable.Skills)
                             {
-                                return;
-                            }
-                            try
-                            {
-                                Thread.Sleep(10);
-                                Point? p = EmulatorController.FindImage(crop, f, false);
-                                if (p != null)
+                                if (!PrivateVariable.Run)
                                 {
-                                    Variables.ScriptLog("Skill actived",Color.Blue);
-                                    EmulatorController.SendSwipe(new Point(263, 473), new Point(264, 474), 1200);
-                                    for (int x = 0; x < 10; x++)
+                                    return;
+                                }
+                                try
+                                {
+                                    Thread.Sleep(10);
+                                    Point? p = BotCore.FindImage(crop, f, false);
+                                    if (p != null)
                                     {
-                                        Thread.Sleep(100);
-                                        EmulatorController.SendTap(1, 1);
+                                        Variables.ScriptLog("Skill actived", Color.Blue);
+                                        BotCore.SendSwipe(new Point(263, 473), new Point(264, 474), 1200);
+                                        for (int x = 0; x < 10; x++)
+                                        {
+                                            Thread.Sleep(100);
+                                            BotCore.SendTap(1, 1);
+                                        }
+                                        break;
                                     }
-                                    break;
+                                }
+                                catch
+                                {
+
                                 }
                             }
-                            catch
+                            break;
+                        case 1:
+                            crop = BotCore.CropImage(Script.image, new Point(357, 356), new Point(543, 610));
+                            foreach (var f in PrivateVariable.Skills)
                             {
-
-                            }
-                        }
-                        break;
-                    case 1:
-                        crop = EmulatorController.CropImage(Script.image, new Point(357, 356), new Point(543, 610));
-                        foreach (var f in PrivateVariable.Skills)
-                        {
-                            if (!PrivateVariable.Run)
-                            {
-                                return;
-                            }
-                            try
-                            {
-                                Thread.Sleep(10);
-                                Point? p = EmulatorController.FindImage(crop, f, false);
-                                if (p != null)
+                                if (!PrivateVariable.Run)
                                 {
-                                    Variables.ScriptLog("Skill actived", Color.Blue);
-                                    EmulatorController.SendSwipe(new Point(448, 492), new Point(449, 493), 1200);
-                                    for (int x = 0; x < 10; x++)
+                                    return;
+                                }
+                                try
+                                {
+                                    Thread.Sleep(10);
+                                    Point? p = BotCore.FindImage(crop, f, false);
+                                    if (p != null)
                                     {
-                                        Thread.Sleep(100);
-                                        EmulatorController.SendTap(1, 1);
+                                        Variables.ScriptLog("Skill actived", Color.Blue);
+                                        BotCore.SendSwipe(new Point(448, 492), new Point(449, 493), 1200);
+                                        for (int x = 0; x < 10; x++)
+                                        {
+                                            Thread.Sleep(100);
+                                            BotCore.SendTap(1, 1);
+                                        }
+                                        break;
                                     }
-                                    break;
+                                }
+                                catch
+                                {
+
                                 }
                             }
-                            catch
+                            break;
+                        case 2:
+                            crop = BotCore.CropImage(Script.image, new Point(546, 376), new Point(724, 597));
+                            foreach (var f in PrivateVariable.Skills)
                             {
-
-                            }
-                        }
-                        break;
-                    case 2:
-                        crop = EmulatorController.CropImage(Script.image, new Point(546, 376), new Point(724, 597));
-                        foreach (var f in PrivateVariable.Skills)
-                        {
-                            if (!PrivateVariable.Run)
-                            {
-                                return;
-                            }
-                            try
-                            {
-                                Thread.Sleep(10);
-                                Point? p = EmulatorController.FindImage(crop, f, false);
-                                if (p != null)
+                                if (!PrivateVariable.Run)
                                 {
-                                    Variables.ScriptLog("Skill actived", Color.Blue);
-                                    EmulatorController.SendSwipe(new Point(641, 473), new Point(642, 474), 1200);
-                                    for (int x = 0; x < 10; x++)
+                                    return;
+                                }
+                                try
+                                {
+                                    Thread.Sleep(10);
+                                    Point? p = BotCore.FindImage(crop, f, false);
+                                    if (p != null)
                                     {
-                                        Thread.Sleep(100);
-                                        EmulatorController.SendTap(1, 1);
+                                        Variables.ScriptLog("Skill actived", Color.Blue);
+                                        BotCore.SendSwipe(new Point(641, 473), new Point(642, 474), 1200);
+                                        for (int x = 0; x < 10; x++)
+                                        {
+                                            Thread.Sleep(100);
+                                            BotCore.SendTap(1, 1);
+                                        }
+                                        break;
                                     }
-                                    break;
+                                }
+                                catch
+                                {
+
                                 }
                             }
-                            catch
+                            break;
+                        case 3:
+                            crop = BotCore.CropImage(Script.image, new Point(761, 356), new Point(921, 613));
+                            foreach (var f in PrivateVariable.Skills)
                             {
-
-                            }
-                        }
-                        break;
-                    case 3:
-                        crop = EmulatorController.CropImage(Script.image, new Point(761, 356), new Point(921, 613));
-                        foreach (var f in PrivateVariable.Skills)
-                        {
-                            if (!PrivateVariable.Run)
-                            {
-                                return;
-                            }
-                            try
-                            {
-                                Thread.Sleep(10);
-                                Point? p = EmulatorController.FindImage(crop, f, false);
-                                if (p != null)
+                                if (!PrivateVariable.Run)
                                 {
-                                    Variables.ScriptLog("Skill actived", Color.Blue);
-                                    EmulatorController.SendSwipe(new Point(834, 483), new Point(835, 484), 1200);
-                                    for (int x = 0; x < 10; x++)
+                                    return;
+                                }
+                                try
+                                {
+                                    Thread.Sleep(10);
+                                    Point? p = BotCore.FindImage(crop, f, false);
+                                    if (p != null)
                                     {
-                                        Thread.Sleep(100);
-                                        EmulatorController.SendTap(1, 1);
+                                        Variables.ScriptLog("Skill actived", Color.Blue);
+                                        BotCore.SendSwipe(new Point(834, 483), new Point(835, 484), 1200);
+                                        for (int x = 0; x < 10; x++)
+                                        {
+                                            Thread.Sleep(100);
+                                            BotCore.SendTap(1, 1);
+                                        }
+                                        break;
                                     }
-                                    break;
+                                }
+                                catch
+                                {
+
                                 }
                             }
-                            catch
+                            break;
+                        case 4:
+                            crop = BotCore.CropImage(Script.image, new Point(934, 356), new Point(1090, 578));
+                            foreach (var f in PrivateVariable.Skills)
                             {
-
-                            }
-                        }
-                        break;
-                    case 4:
-                        crop = EmulatorController.CropImage(Script.image, new Point(934, 356), new Point(1090, 578));
-                        foreach (var f in PrivateVariable.Skills)
-                        {
-                            if (!PrivateVariable.Run)
-                            {
-                                return;
-                            }
-                            try
-                            {
-                                Thread.Sleep(10);
-                                Point? p = EmulatorController.FindImage(crop, f, false);
-                                if (p != null)
+                                if (!PrivateVariable.Run)
                                 {
-                                    Variables.ScriptLog("Skill actived", Color.Blue);
-                                    EmulatorController.SendSwipe(new Point(1017, 470), new Point(1018, 471), 1200);
-                                    for(int x = 0; x<10; x++)
+                                    return;
+                                }
+                                try
+                                {
+                                    Thread.Sleep(10);
+                                    Point? p = BotCore.FindImage(crop, f, false);
+                                    if (p != null)
                                     {
-                                        Thread.Sleep(100);
-                                        EmulatorController.SendTap(1, 1);
+                                        Variables.ScriptLog("Skill actived", Color.Blue);
+                                        BotCore.SendSwipe(new Point(1017, 470), new Point(1018, 471), 1200);
+                                        for (int x = 0; x < 10; x++)
+                                        {
+                                            Thread.Sleep(100);
+                                            BotCore.SendTap(1, 1);
+                                        }
+                                        break;
                                     }
-                                    break;
+                                }
+                                catch
+                                {
+
                                 }
                             }
-                            catch
-                            {
-
-                            }
-                        }
-                        break;
+                            break;
+                    }
                 }
             }
         }
@@ -351,14 +351,14 @@ namespace DefaultScript
         }
         private static void WriteConfig(string key, string value)
         {
-            var config = File.ReadAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini");
+            var config = File.ReadAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini");
             int x = 0;
             foreach (var c in config)
             {
                 if (c.Contains(key + "="))
                 {
                     config[x] = key + "=" + value;
-                    File.WriteAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini", config);
+                    File.WriteAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini", config);
                     return;
                 }
                 x++;
@@ -372,7 +372,7 @@ namespace DefaultScript
             {
                 Variables.Configure.Add(key, value);
             }
-            File.WriteAllLines("Profiles\\" + EmulatorController.profilePath + "\\bot.ini", config);
+            File.WriteAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini", config);
         }
     }
 }

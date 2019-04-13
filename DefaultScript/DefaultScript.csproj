@@ -48,9 +48,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ImageProcessor\ImageProcessor.csproj">
+    <ProjectReference Include="..\ImageProcessor\BotFramework.csproj">
       <Project>{017b3cf6-ecc9-4867-b057-f9a69d682779}</Project>
-      <Name>ImageProcessor</Name>
+      <Name>BotFramework</Name>
     </ProjectReference>
     <ProjectReference Include="..\UI\UI.csproj">
       <Project>{b50cb70f-4a1b-49eb-9d3d-d874bd477543}</Project>
