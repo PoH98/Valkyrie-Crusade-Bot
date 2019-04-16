@@ -859,7 +859,7 @@
             this.metroTabControl1.Controls.Add(this.metroTabPage5);
             this.metroTabControl1.Location = new System.Drawing.Point(8, 63);
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 2;
+            this.metroTabControl1.SelectedIndex = 0;
             this.metroTabControl1.Size = new System.Drawing.Size(460, 574);
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Brown;
             this.metroTabControl1.TabIndex = 32;
@@ -1008,7 +1008,7 @@
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultLocation;
             this.Style = MetroFramework.MetroColorStyle.Green;
-            this.Text = "神女控强力挂机";
+            this.Text = "神女控强力挂机（最终版）";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainScreen_FormClosing);
             this.Load += new System.EventHandler(this.MainScreen_Load);
             this.groupBox8.ResumeLayout(false);

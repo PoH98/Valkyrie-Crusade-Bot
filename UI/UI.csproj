@@ -84,20 +84,19 @@
     <ApplicationIcon>file.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>false</SignManifests>
+    <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>038126CC236A4A60928F9CE8FB84CA025BFE671A</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>3622BB6E71EAC314CFA5CA2598ADC49B7509423A</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>selfsigncert.pfx</ManifestKeyFile>
+    <ManifestKeyFile>UI_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>VCweiyi.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>false</GenerateManifests>
@@ -183,6 +182,8 @@
     </EmbeddedResource>
     <None Include="app.manifest" />
     <None Include="packages.config" />
+    <None Include="UI_TemporaryKey.pfx" />
+    <None Include="VCweiyi.pfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -810,15 +810,75 @@ namespace UI
                     BotCore.SendTap(196, 648);
                     break;
                 case 1:
+                    if (BotCore.RGBComparer(image, new Point(328, 621), Color.FromArgb(13, 12,12), 5))
+                    {
+                        Variables.ScriptLog("中级还没被解锁！自动往下挑战中！", Color.Red);
+                        BotCore.SendTap(196, 648);
+                        break;
+                    }
                     BotCore.SendTap(391, 648);
                     break;
                 case 2:
+                    if (BotCore.RGBComparer(image, new Point(515, 625), Color.FromArgb(12, 11, 12), 5))
+                    {
+                        Variables.ScriptLog("上级还没被解锁！自动往下挑战中！", Color.Red);
+                        if (BotCore.RGBComparer(image, new Point(328, 621), Color.FromArgb(13, 12, 12), 5))
+                        {
+                            Variables.ScriptLog("中级还没被解锁！自动往下挑战中！", Color.Red);
+                            BotCore.SendTap(196, 648);
+                            break;
+                        }
+                        BotCore.SendTap(391, 648);
+                        break;
+                    }
                     BotCore.SendTap(581, 646);
                     break;
                 case 3:
+                    if (BotCore.RGBComparer(image, new Point(703, 622), Color.FromArgb(32, 30, 30), 5))
+                    {
+                        Variables.ScriptLog("超上级还没被解锁！自动往下挑战中！", Color.Red);
+                        if (BotCore.RGBComparer(image, new Point(515, 625), Color.FromArgb(12, 11, 12), 5))
+                        {
+                            Variables.ScriptLog("上级还没被解锁！自动往下挑战中！", Color.Red);
+                            if (BotCore.RGBComparer(image, new Point(328, 621), Color.FromArgb(13, 12, 12), 5))
+                            {
+                                Variables.ScriptLog("中级还没被解锁！自动往下挑战中！", Color.Red);
+                                BotCore.SendTap(196, 648);
+                                break;
+                            }
+                            BotCore.SendTap(391, 648);
+                            break;
+                        }
+                        BotCore.SendTap(581, 646);
+                        break;
+                    }
                     BotCore.SendTap(741, 623);
                     break;
                 case 4:
+                    if (BotCore.RGBComparer(image, new Point(885, 621), Color.FromArgb(15,14,14), 5))
+                    {
+                        Variables.ScriptLog("霸级还没被解锁！自动往下挑战中！", Color.Red);
+                        if (BotCore.RGBComparer(image, new Point(703, 622), Color.FromArgb(32, 30, 30), 5))
+                        {
+                            Variables.ScriptLog("超上级还没被解锁！自动往下挑战中！", Color.Red);
+                            if (BotCore.RGBComparer(image, new Point(515, 625), Color.FromArgb(12, 11, 12), 5))
+                            {
+                                Variables.ScriptLog("上级还没被解锁！自动往下挑战中！", Color.Red);
+                                if (BotCore.RGBComparer(image, new Point(328, 621), Color.FromArgb(13, 12, 12), 5))
+                                {
+                                    Variables.ScriptLog("中级还没被解锁！自动往下挑战中！", Color.Red);
+                                    BotCore.SendTap(196, 648);
+                                    break;
+                                }
+                                BotCore.SendTap(391, 648);
+                                break;
+                            }
+                            BotCore.SendTap(581, 646);
+                            break;
+                        }
+                        BotCore.SendTap(741, 623);
+                        break;
+                    }
                     BotCore.SendTap(921, 620);
                     break;
             }
@@ -1158,11 +1218,12 @@ namespace UI
             {
                 Variables.ScriptLog("Looks like we are in the trouble!",Color.Red);
                 error = 0;
+                BotCore.KillGame("com.nubee.valkyriecrusade");
                 ScriptErrorHandler.Reset("Restarting game as unable to detect stages properly!");
             }
             BotCore.Delay(5000,false);
             Point? point = BotCore.FindImage(image, Img.Red_Button, false);
-            while(point == null)
+            for(int x = 0; x < 20; x++)
             {
                 Point? p2 = BotCore.FindImage(image, Img.GreenButton, false);
                 if (p2 != null)
@@ -1177,6 +1238,12 @@ namespace UI
                 }
                 point = BotCore.FindImage(image, Img.Red_Button, false);
                 BotCore.Delay(1000,false);
+            }
+            if(point == null)
+            {
+                BotCore.KillGame("com.nubee.valkyriecrusade");
+                ScriptErrorHandler.Reset("No expected UI is shown, restarting game!");
+                return;
             }
             BotCore.SendTap(point.Value);
             PrivateVariable.Battling = true;
@@ -1522,7 +1589,7 @@ namespace UI
                         PrivateVariable.BattleScript[PrivateVariable.Selected_Script].Attack();
                     }
                     CheckEnemy();
-                    BotCore.Delay(2000,false);
+                    挂机框架.挂机核心.延时(2000,true);
                 }
                 if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
