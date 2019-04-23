@@ -18,6 +18,9 @@ namespace BotFramework
     /// </summary>
     public static class Variables
     {
+        /// <summary>
+        /// The emulator to be used
+        /// </summary>
         public static string useemulator;
         /// <summary>
         /// Adb Ip:Port

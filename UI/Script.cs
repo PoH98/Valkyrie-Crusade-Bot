@@ -150,18 +150,26 @@ namespace UI
                         }
                     }
                     Image img = BotCore.Decompress(Script.image);
-                    if (img.Height != 720 || img.Width != 1280)
+                    try
                     {
-                        Debug_.WriteLine("Image size not correct: " + img.Width + "*" + img.Height);
-                        if (!PrivateVariable.Run)
+                        if (img.Height != 720 || img.Width != 1280)
                         {
-                            return;
+                            Debug_.WriteLine("Image size not correct: " + img.Width + "*" + img.Height);
+                            if (!PrivateVariable.Run)
+                            {
+                                return;
+                            }
+                            Variables.ScriptLog("Emulator's screen size is not 1280*720! Detected size is " + img.Width + "*" + img.Height, Color.LightYellow);
+                            BotCore.ResizeEmulator(1280, 720);
+                            BotCore.Delay(20000, 30000);
+                            continue;
                         }
-                        Variables.ScriptLog("Emulator's screen size is not 1280*720! Detected size is " + img.Width + "*" + img.Height, Color.LightYellow);
-                        BotCore.ResizeEmulator(1280,720);
-                        BotCore.Delay(20000,30000);
+                    }
+                    catch
+                    {
                         continue;
                     }
+
                 }
                 if (Stuck)
                 {

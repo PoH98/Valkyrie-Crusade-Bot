@@ -2,7 +2,6 @@
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using SharpAdbClient;
-using Emgu.CV.Util;
 using SharpAdbClient.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -24,6 +23,7 @@ using System.Windows.Forms;
 using System.Reflection;
 using System.Net.Sockets;
 using BotFramework;
+using System.Threading.Tasks;
 
 namespace BotFramework
 {
@@ -409,84 +409,84 @@ namespace BotFramework
         {
             try
             {
-                if (!Directory.Exists(Variables.SharedPath))
-                {
-                    MessageBox.Show("Warning, unable to find shared folder! Try to match it manually!");
-                    Environment.Exit(0);
-                }
-                path = Variables.SharedPath + "\\" + SHA256(Variables.AdbIpPort) + ".raw";
-                Stopwatch s = Stopwatch.StartNew();
-                byte[] raw = null;
-                var receiver = new ConsoleOutputReceiver();
-                if (Variables.Controlled_Device == null)
-                {
-                    foreach (var device in AdbClient.Instance.GetDevices())
+                    if (!Directory.Exists(Variables.SharedPath))
                     {
-                        string deviceadb = device.ToString();
-                        if (deviceadb == Variables.AdbIpPort)
+                        MessageBox.Show("Warning, unable to find shared folder! Try to match it manually!");
+                        Environment.Exit(0);
+                    }
+                    path = Variables.SharedPath + "\\" + SHA256(Variables.AdbIpPort) + ".raw";
+                    Stopwatch s = Stopwatch.StartNew();
+                    byte[] raw = null;
+                    var receiver = new ConsoleOutputReceiver();
+                    if (Variables.Controlled_Device == null)
+                    {
+                        foreach (var device in AdbClient.Instance.GetDevices())
                         {
-                            Variables.Controlled_Device = device;
-                            break;
+                            string deviceadb = device.ToString();
+                            if (deviceadb == Variables.AdbIpPort)
+                            {
+                                Variables.Controlled_Device = device;
+                                break;
+                            }
+                        }
+                        Variables.DeviceChanged = true;
+                    }
+                    int error = 0;
+                    while (Variables.Controlled_Device.State == DeviceState.Offline)
+                    {
+                        error++;
+                        if (error == 30)
+                        {
+                            RestartEmulator();
                         }
                     }
-                    Variables.DeviceChanged = true;
-                }
-                int error = 0;
-                while(Variables.Controlled_Device.State == DeviceState.Offline)
-                {
-                    error++;
-                    if(error == 30)
+                    AdbClient.Instance.ExecuteRemoteCommand("screencap " + Variables.AndroidSharedPath + SHA256(Variables.AdbIpPort) + ".raw", Variables.Controlled_Device, receiver);
+                    if (Variables.NeedPull)
                     {
-                        RestartEmulator();
+                        if (File.Exists(path))
+                        {
+                            File.Delete(path);
+                        }
+                        Pull(Variables.AndroidSharedPath + SHA256(Variables.AdbIpPort) + ".raw", path);
                     }
-                }
-                AdbClient.Instance.ExecuteRemoteCommand("screencap " + Variables.AndroidSharedPath + SHA256(Variables.AdbIpPort) + ".raw", Variables.Controlled_Device, receiver);
-                if (Variables.NeedPull)
-                {
-                    if (File.Exists(path))
+                    if (!File.Exists(path))
                     {
-                        File.Delete(path);
+                        Variables.AdbLog("Unable to read rgba file because of file not exist!");
+                        return null;
                     }
-                    Pull(Variables.AndroidSharedPath + SHA256(Variables.AdbIpPort) + ".raw", path);
-                }
-                if (!File.Exists(path))
-                {
-                    Variables.AdbLog("Unable to read rgba file because of file not exist!");
-                    return null;
-                }
-                path = path.Replace("\\\\", "\\");
-                raw = File.ReadAllBytes(path);
-                if (raw.Length > int.MaxValue || raw.Length < 1)
-                {
-                    return null;
-                }
-                byte[] img = new byte[raw.Length - 12]; //remove header
-                for (int x = 12; x < raw.Length; x += 4)
-                {
-                    img[x - 10] = raw[x];
-                    img[x - 11] = raw[x + 1];
-                    img[x - 12] = raw[x + 2];
-                    img[x - 9] = raw[x + 3];
-                }
-                int expectedsize = 1280 * 720 * 4;
-                if (img.Length > expectedsize + 1000|| img.Length < expectedsize - 1000000)
-                {
-                    ResizeEmulator(1280, 720);
-                    return null;
-                }
-                raw = null;
-                using (var stream = new MemoryStream(img))
-                using (var bmp = new Bitmap(1280, 720, PixelFormat.Format32bppArgb))
-                {
-                    BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
-                    IntPtr pNative = bmpData.Scan0;
-                    Marshal.Copy(img, 0, pNative, img.Length);
-                    bmp.UnlockBits(bmpData);
-                    img = null;
-                    s.Stop();
-                    Variables.AdbLog("Screenshot saved to memory stream. Used time: " + s.ElapsedMilliseconds + " ms");
-                    return Compress(bmp);
-                }
+                    path = path.Replace("\\\\", "\\");
+                    raw = File.ReadAllBytes(path);
+                    if (raw.Length > int.MaxValue || raw.Length < 1)
+                    {
+                        return null;
+                    }
+                    byte[] img = new byte[raw.Length - 12]; //remove header
+                    for (int x = 12; x < raw.Length; x += 4)
+                    {
+                        img[x - 10] = raw[x];
+                        img[x - 11] = raw[x + 1];
+                        img[x - 12] = raw[x + 2];
+                        img[x - 9] = raw[x + 3];
+                    }
+                    int expectedsize = 1280 * 720 * 4;
+                    if (img.Length > expectedsize + 1000 || img.Length < expectedsize - 1000000)
+                    {
+                        ResizeEmulator(1280, 720);
+                        return null;
+                    }
+                    raw = null;
+                    using (var stream = new MemoryStream(img))
+                    using (var bmp = new Bitmap(1280, 720, PixelFormat.Format32bppArgb))
+                    {
+                        BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
+                        IntPtr pNative = bmpData.Scan0;
+                        Marshal.Copy(img, 0, pNative, img.Length);
+                        bmp.UnlockBits(bmpData);
+                        img = null;
+                        s.Stop();
+                        Variables.AdbLog("Screenshot saved to memory stream. Used time: " + s.ElapsedMilliseconds + " ms");
+                        return Compress(bmp);
+                    }
             }
             catch (IOException)
             {
@@ -502,12 +502,13 @@ namespace BotFramework
                 Debug_.WriteLine(ex.Message);
                 CloseEmulator();
             }
-            catch(SocketException)
+            catch (SocketException)
             {
 
             }
             return null;
         }
+        
         /// <summary>
         /// Left click adb command on the point for generating background click in emulators
         /// </summary>
