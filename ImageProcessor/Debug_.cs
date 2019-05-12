@@ -53,7 +53,6 @@ namespace BotFramework
                 {
 
                 }
-            
         }
 
         public static void WriteLine([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)

@@ -1,17 +1,12 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
-
-namespace BotFramework
+﻿namespace BotFramework
 {
+    /// <summary>
+    /// Emulator controlling interface for different emulators
+    /// </summary>
     public interface EmulatorInterface
     {
         /// <summary>
-        /// Load emulator settings here, such as adb port, shared path...
+        /// Load emulator settings here, such as adb port, shared path and etc
         /// </summary>
         bool LoadEmulatorSettings();
         /// <summary>
@@ -27,9 +22,15 @@ namespace BotFramework
         /// </summary>
         /// <returns>return as string</returns>
         string EmulatorName();
-
+        /// <summary>
+        /// Set Resolution of the emulator
+        /// </summary>
+        /// <param name="x">x value</param>
+        /// <param name="y">y value</param>
         void SetResolution(int x, int y);
-
+        /// <summary>
+        /// Connect Emulator's adb, Variables.Proc and etc
+        /// </summary>
         void ConnectEmulator();
     }
 }

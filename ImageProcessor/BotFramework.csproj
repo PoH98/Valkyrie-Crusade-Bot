@@ -25,6 +25,7 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>bin\Debug\BotFramework.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -68,7 +69,8 @@
     <ApplicationIcon>file.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>PoH98.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
@@ -114,12 +116,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DebugMiniCap.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DebugMiniCap.Designer.cs">
-      <DependentUpon>DebugMiniCap.cs</DependentUpon>
-    </Compile>
     <Compile Include="Debug_.cs" />
     <Compile Include="EmulatorController.cs" />
     <Compile Include="DllImport.cs" />
@@ -131,10 +127,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
+    <Compile Include="Script.cs" />
     <Compile Include="Variables.cs" />
     <None Include="app.config" />
     <None Include="packages.config" />
-    <None Include="PoH98.pfx" />
     <None Include="Resources\eng.zip" />
     <None Include="Resources\x64.zip" />
     <None Include="Resources\x86.zip" />
@@ -144,9 +140,6 @@
     <Content Include="License-LGPL.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DebugMiniCap.resx">
-      <DependentUpon>DebugMiniCap.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Resource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>

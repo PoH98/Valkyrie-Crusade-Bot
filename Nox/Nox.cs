@@ -186,7 +186,6 @@ namespace Nox
                 {
                     IntPtr handle = DllImport.FindWindowEx(p.MainWindowHandle, IntPtr.Zero, string.Empty, string.Empty);
                     Variables.Proc = p;
-                    BotCore.handle = p.MainWindowHandle;
                     Variables.ScriptLog("Emulator ID: " + p.Id, Color.DarkGreen);
                     break;
                 }

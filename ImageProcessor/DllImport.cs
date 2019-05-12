@@ -3,6 +3,9 @@ using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
+using System.Windows.Forms;
+using System.Linq;
 
 namespace BotFramework
 {
@@ -149,6 +152,16 @@ namespace BotFramework
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool IsWindow(IntPtr hWnd);
-    }
 
+        public static IEnumerable<Control> GetAll(Control control, Type type = null)
+        {
+            var controls = control.Controls.Cast<Control>();
+            //check the all value, if true then get all the controls
+            //otherwise get the controls of the specified type
+            if (type == null)
+                return controls.SelectMany(ctrl => GetAll(ctrl, type)).Concat(controls);
+            else
+                return controls.SelectMany(ctrl => GetAll(ctrl, type)).Concat(controls).Where(c => c.GetType() == type);
+        }
+    }
 }

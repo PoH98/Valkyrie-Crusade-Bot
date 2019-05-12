@@ -8,15 +8,13 @@ using System.Threading;
 using UI;
 using System.Net;
 using System.Text.RegularExpressions;
-using SharpAdbClient;
 using System.Text;
 using System.Security.Principal;
 using ImgXml;
-using System.Net.Sockets;
 using System.Collections.Generic;
-using System.ComponentModel;
 using MetroFramework.Forms;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace BotFramework
 {
@@ -33,13 +31,14 @@ namespace BotFramework
 
         static List<CheckBox> customScriptEnable = new List<CheckBox>();
 
-
+        public static Dictionary<string, string> UILanguage = new Dictionary<string, string>();
         public MainScreen()
         {
             InitializeComponent();
             Debug_.PrepairDebug();
+            OCR.PrepairOcr(whitelist: "$0123456789", blacklist: "!?@#$%&*()<>_-+=/:;'\"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
             Variables.richTextBox = richTextBox1;
-            timeout.Interval = 5000;
+            timeout.Interval = 15000;
             timeout.Tick += Timeout_Tick;
         }
 
@@ -52,10 +51,14 @@ namespace BotFramework
             }
         }
 
-        private static void loading()
+        private void loading()
         {
-            Loading load = new Loading();
+            Login load = new Login();
             load.ShowDialog();
+            if(load.DialogResult == DialogResult.Abort)
+            {
+                Environment.Exit(0);
+            }
         }
 
         private static string Get45PlusFromRegistry()
@@ -98,12 +101,13 @@ namespace BotFramework
                 return "4.5";
             // This code should never execute. A non-null release key should mean
             // that 4.5 or later is installed.
-            return "4.5 以上";
+            return "4.5+";
         }
 
         private void MainScreen_Load(object sender, EventArgs e)
         {
             Thread load = new Thread(loading);
+            load.SetApartmentState(ApartmentState.STA);
             load.Start();
             if (!IsRunAsAdministrator())
             {
@@ -128,11 +132,7 @@ namespace BotFramework
             {
                 Directory.CreateDirectory("Audio");
             }
-            string _NET = Get45PlusFromRegistry();
-            if (_NET.Length > 0)
-            {
-                label10.Text = "当前.NET版本：" + _NET;
-            }
+            comboBox1.Items.Clear();
             Variables.Background = true;
             Assembly assembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
@@ -156,6 +156,7 @@ namespace BotFramework
             }
             string output = "";
             string[] args = Environment.GetCommandLineArgs();
+            Variables.EmulatorPath(args);
             if (File.Exists("bot.ini"))
             {
                 if (File.Exists(Environment.CurrentDirectory + "\\Profiles\\" + BotCore.profilePath + "\\bot.ini"))
@@ -172,66 +173,56 @@ namespace BotFramework
 
                 }
             }
-            Variables.EmulatorPath(args);
             BotCore.ReadConfig();
-            label11.Text = "逍模拟器：" + Variables.emulator.EmulatorName();
-            label12.Text = "模拟器共享文件夹：" + Variables.SharedPath;
-            foreach(var a in args)
+            string _NET = Get45PlusFromRegistry();
+            if (!Directory.Exists("Language"))
             {
-                label1.Text += a;
+                MessageBox.Show("Lost files, please reinstall the bot!");
+                Environment.Exit(0);
             }
-            bool second = false;
-            if (File.Exists("Archwitch.ini"))
+            foreach(var lang in Directory.GetFiles("Language"))
             {
-                foreach (var line in File.ReadAllLines("Archwitch.ini"))
+                comboBox1.Items.Add(lang.Replace("Language\\","").Replace(".ini",""));
+            }
+            if (Variables.Configure.TryGetValue("Lang", out output))
+            {
+                int index = comboBox1.Items.IndexOf(output);
+                if (index < 0)
                 {
-                    try
-                    {
-                        if (line.Contains("[2]"))
-                        {
-                            second = true;
-                            continue;
-                        }
-                        else if (line.Contains("[1]"))
-                        {
-                            second = false;
-                            continue;
-                        }
-                        string key = line.Split('=')[0];
-                        Point value = new Point(Convert.ToInt32(line.Split('=')[1].Split(',')[0]), Convert.ToInt32(line.Split('=')[1].Split(',')[1]));
-                        comboBox1.Items.Add(key);
-                        if (!second)
-                        {
-                            PrivateVariable.Archwitch.Add(key, value);
-                        }
-                        else
-                        {
-                            PrivateVariable.Archwitch2.Add(key, value);
-                        }
-                    }
-                    catch
-                    {
-                        continue;
-                    }
+                    comboBox1.SelectedIndex = 0;
+                }
+                else
+                {
+                    comboBox1.SelectedIndex = index;
                 }
             }
             else
             {
-                MessageBox.Show("请重新安装挂机，挂机缺少了文件！");
-                Environment.Exit(0);
+                comboBox1.SelectedIndex = 0;
+            }
+            if (_NET.Length > 0)
+            {
+                label1.Text = UILanguage["txt_Framework"] + _NET;
+            }
+            label3.Text = Variables.emulator.EmulatorName();
+            label4.Text = Variables.SharedPath;
+            label5.Text = "";
+            foreach(var a in args)
+            {
+                label5.Text += a;
             }
             if (Variables.Configure.TryGetValue("Level", out output))
             {
                 switch (output)
                 {
                     case "0":
-                        radioButton1.Checked = true;
+                        chk_begin.Checked = true;
                         break;
                     case "1":
-                        radioButton2.Checked = true;
+                        chk_inter.Checked = true;
                         break;
                     case "2":
-                        radioButton3.Checked = true;
+                        chk_advan.Checked = true;
                         break;
                 }
             }
@@ -243,50 +234,24 @@ namespace BotFramework
             {
                 if (output == "true")
                 {
-                    checkBox8.Checked = true;
-                }
-            }
-            if (Variables.Configure.TryGetValue("Treasure_Hunt", out output))
-            {
-                if (output != "-1")
-                {
-                    try
-                    {
-                        checkBox12.Checked = true;
-                        comboBox2.SelectedIndex = Convert.ToInt32(output);
-                    }
-                    catch
-                    {
-
-                    }
+                    chk_twoE.Checked = true;
                 }
             }
             if (Variables.Configure.TryGetValue("Manual_Rune", out output))
             {
                 if (output == "true")
                 {
-                    radioButton10.Checked = true;
+                    chk_manuRT.Checked = true;
                     PrivateVariable.EnterRune = false;
                 }
             }
-            if (Variables.Configure.TryGetValue("Close_Emulator", out output))
-            {
-                if (output == "true")
-                {
-                    checkBox13.Checked = true;
-                }
-            }
-            if (Variables.Configure.TryGetValue("Archwitch", out output))
-            {
-                comboBox1.SelectedIndex = comboBox1.Items.IndexOf(output);
-            }
             if (BotCore.Is64BitOperatingSystem())
             {
-                label13.Text = "系统资料：64位系统";
+                label2.Text = UILanguage["64bit"];
             }
             else
             {
-                label13.Text = "系统资料：32位系统";
+                label2.Text = UILanguage["32bit"];
             }
             webBrowser1.ScriptErrorsSuppressed = true;
             webBrowser3.ScriptErrorsSuppressed = true;
@@ -297,13 +262,10 @@ namespace BotFramework
             WebClientOverride wc = new WebClientOverride();
             try
             {
-                html = wc.DownloadString(new Uri("https://d2n1d3zrlbtx8o.cloudfront.net/news/info/sch/index.html"));
+                html = wc.DownloadString(new Uri("https://d2n1d3zrlbtx8o.cloudfront.net/news/info/" + comboBox1.SelectedItem.ToString() + "/index.html"));
                 html = html.Replace("bgcolor=\"#000000\"　text color=\"#FFFFFF\"", "style=\"background - color:#303030; color:white\"");
-                html = html.Replace("<span class=\"iro4\">详细请前往菜单>新信息>消息</span><br /><br />", "");
-                html = html.Replace("<td height=\"40\"><span class=\"iro1\"><center><B>◆最新消息◆</B></center></span></td>", "");
-                html = html.Replace("<tr height=\"30\" background=\"img/btn.png\">", "");
-                html = html.Replace("<table width=\"200\">", "");
-                html = html.Replace("</table>", "");
+                html = html.Remove(html.IndexOf("<table width=\"200\">"),html.IndexOf("</table>") - html.IndexOf("<table width=\"200\">"));
+                html = Regex.Replace(html, "(\\<span class\\=\"iro4\"\\>.*</span>)", "");
             }
             catch
             {
@@ -313,8 +275,8 @@ namespace BotFramework
             webBrowser3.Navigating += OnNavigating;
             webBrowser3.Navigated += WebBrowser3_Navigated;
             GetEventXML.LoadXMLEvent();
-            webBrowser3.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/sch/") + ".html"));
-            Script.Read_Plugins();
+            webBrowser3.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/"+ comboBox1.SelectedItem.ToString() +"/") + ".html"));
+            UI.Script.Read_Plugins();
             foreach (var s in PrivateVariable.BattleScript)
             {
                 tabControl2.TabPages.Add(s.ScriptName());
@@ -362,10 +324,14 @@ namespace BotFramework
                 }
             }
             metroTabControl1.SelectedIndex = 0;
-            checkBox10.Enabled = radioButton9.Checked;
-            Loading.LoadCompleted = true;
+            chk_item.Enabled = chk_autoRT.Checked;
+            Login.LoadCompleted = true;
             PrivateVariable.EventType = -1;
             timer2.Start();
+            while (!Login.Verified)
+            {
+                Thread.Sleep(1000);
+            }
         }
 
         private void Chk_CheckedChanged(object sender, EventArgs e)
@@ -418,25 +384,7 @@ namespace BotFramework
             }
             if ((PrivateVariable.nospam - DateTime.Now).Duration() < TimeSpan.FromSeconds(4))
             {
-                MessageBox.Show("啊！亚麻跌！慢点！好疼啊！");
                 return;
-            }
-            Point output;
-            if (comboBox1.SelectedIndex == -1)
-            {
-                comboBox1.SelectedIndex = 0;
-            }
-            if (PrivateVariable.Archwitch.TryGetValue(comboBox1.Items[comboBox1.SelectedIndex].ToString(), out output))
-            {
-                Script.Archwitch_Stage = comboBox1.SelectedIndex;
-                WriteConfig("Second_Page", "false");
-                Script.archwitch_level_location = PrivateVariable.Archwitch[comboBox1.Items[comboBox1.SelectedIndex].ToString()];
-            }
-            else
-            {
-                Script.Archwitch_Stage = comboBox1.SelectedIndex - PrivateVariable.Archwitch.Count;
-                WriteConfig("Second_Page", "true");
-                Script.archwitch_level_location = PrivateVariable.Archwitch2[comboBox1.Items[comboBox1.SelectedIndex].ToString()];
             }
             PrivateVariable.nospam = DateTime.Now;
             PrivateVariable.Run = true;
@@ -479,16 +427,16 @@ namespace BotFramework
                 Process p = Process.Start(server);
             }
             richTextBox1.Text = "";
-            button1.Enabled = false;
-            if (radioButton1.Checked)
+            btn_Start.Enabled = false;
+            if (chk_begin.Checked)
             {
                 Level = 0;
             }
-            else if (radioButton2.Checked)
+            else if (chk_inter.Checked)
             {
                 Level = 1;
             }
-            else if (radioButton3.Checked)
+            else if (chk_advan.Checked)
             {
                 Level = 2;
             }
@@ -511,8 +459,7 @@ namespace BotFramework
             panel3.Enabled = false;
             Thread cap = new Thread(Capt);
             cap.Start();
-            Thread run = new Thread(Script.Bot);
-            run.Start();
+            ScriptRun.RunScript(true,Environment.CurrentDirectory);
         }
 
         private void richTextBox1_TextChanged(object sender, EventArgs e)
@@ -534,15 +481,14 @@ namespace BotFramework
                 Width -= 700;
                 panel3.Visible = false;
             }
-            if (BotCore.handle != null && Variables.Proc != null)
+            if ( Variables.Proc != null)
             {
-                DllImport.SetParent(BotCore.handle, IntPtr.Zero);
-                DllImport.MoveWindow(BotCore.handle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 1318, 752, true);
-                BotCore.handle = IntPtr.Zero;
+                DllImport.SetParent(Variables.Proc.MainWindowHandle, IntPtr.Zero);
+                DllImport.MoveWindow(Variables.Proc.MainWindowHandle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 1318, 752, true);
                 Docked = false;
             }
-            Variables.start = null;
-            button1.Enabled = true;
+            ScriptRun.StopScript();
+            btn_Start.Enabled = true;
         }
 
         private void timer2_Tick(object sender, EventArgs e)
@@ -550,79 +496,76 @@ namespace BotFramework
             GC.Collect();
             if (PrivateVariable.EventType == 0)
             {
-                groupBox8.Text = "塔楼活动";
-                progressBar1.Value = Script.energy;
-                progressBar2.Value = Script.runes;
-                label7.Text = Script.runes + "/5";
-                label6.Text = Script.energy + "/5";
-                if (Script.nextOnline != null)
+                ED_Box.Text = UILanguage["Tower"];
+                lbl_Rune.Text = UILanguage["Rune_Tower"];
+                progressBar1.Value = UI.Script.energy;
+                progressBar2.Value = UI.Script.runes;
+                label7.Text = UI.Script.runes + "/5";
+                label6.Text = UI.Script.energy + "/5";
+                if (UI.Script.nextOnline != null)
                 {
-                    if (Script.nextOnline > DateTime.Now)
+                    if (UI.Script.nextOnline > DateTime.Now)
                     {
-                        TimeSpan time = Script.nextOnline - DateTime.Now;
+                        TimeSpan time = UI.Script.nextOnline - DateTime.Now;
                         label9.Text = time.Hours.ToString("00") + " : " + time.Minutes.ToString("00") + " : " + time.Seconds.ToString("00");
                     }
                 }
-                if (Script.Tower_Floor.Length > 0)
+                if (UI.Script.Tower_Floor.Length > 0)
                 {
                     try
                     {
-                        label15.Text = Script.Tower_Floor.Replace(" ", "").Replace("F", " F");
+                        label15.Text = UI.Script.Tower_Floor.Replace(" ", "").Replace("F", " F");
                     }
                     catch
                     {
 
                     }
                 }
-                if (Script.Tower_Rank.Length > 0)
+                if (UI.Script.Tower_Rank.Length > 0)
                 {
                     try
                     {
-                        label16.Text = Script.Tower_Rank.Replace(" ", "");
+                        label16.Text = UI.Script.Tower_Rank.Replace(" ", "");
                     }
                     catch
                     {
 
                     }
                 }
-            }
-            else if (PrivateVariable.EventType == 1)
-            {
-                groupBox8.Text = "魔女讨伐";
             }
             else if (PrivateVariable.EventType == 2)
             {
-                groupBox8.Text = "魔界活动";
-                label5.Text = "地图碎片数量";
-                label7.Text = Script.runes + "/4";
-                label6.Text = Script.energy + "/5";
+                ED_Box.Text = UILanguage["Demon"];
+                lbl_Rune.Text = UILanguage["Rune_Demon"];
+                label7.Text = UI.Script.runes + "/4";
+                label6.Text = UI.Script.energy + "/5";
                 progressBar2.Maximum = 4;
-                progressBar1.Value = Script.energy;
-                progressBar2.Value = Script.runes;
-                if (Script.nextOnline != null)
+                progressBar1.Value = UI.Script.energy;
+                progressBar2.Value = UI.Script.runes;
+                if (UI.Script.nextOnline != null)
                 {
-                    if (Script.nextOnline > DateTime.Now)
+                    if (UI.Script.nextOnline > DateTime.Now)
                     {
-                        TimeSpan time = Script.nextOnline - DateTime.Now;
+                        TimeSpan time = UI.Script.nextOnline - DateTime.Now;
                         label9.Text = time.Hours.ToString("00") + " : " + time.Minutes.ToString("00") + " : " + time.Seconds.ToString("00");
                     }
                 }
-                if (Script.Tower_Floor.Length > 0)
+                if (UI.Script.Tower_Floor.Length > 0)
                 {
                     try
                     {
-                        label15.Text = Script.Tower_Floor.Replace(" ", "").Replace("F", " F");
+                        label15.Text = UI.Script.Tower_Floor.Replace(" ", "").Replace("F", " F");
                     }
                     catch
                     {
 
                     }
                 }
-                if (Script.Tower_Rank.Length > 0)
+                if (UI.Script.Tower_Rank.Length > 0)
                 {
                     try
                     {
-                        label16.Text = Script.Tower_Rank.Replace(" ", "");
+                        label16.Text = UI.Script.Tower_Rank.Replace(" ", "");
                     }
                     catch
                     {
@@ -632,7 +575,7 @@ namespace BotFramework
             }
             else
             {
-                groupBox8.Text = "未知的活动";
+                ED_Box.Text = UILanguage["Unknown"];
             }
         }
         /// <summary>
@@ -645,14 +588,11 @@ namespace BotFramework
                 Thread.Sleep(1000);
                 if (Variables.Proc != null)
                 {
-                    if (BotCore.handle == IntPtr.Zero || BotCore.handle == null)
+                    if (Variables.Proc.HasExited)
                     {
-                        BotCore.ConnectAndroidEmulator();
-                    }
-                    if (!DllImport.IsWindow(BotCore.handle))
-                    {
-                        BotCore.handle = IntPtr.Zero;
+                        Variables.Proc = null;
                         Docked = false;
+                        continue;
                     }
                     if(Variables.emulator.EmulatorName() == "Nox")
                     {
@@ -662,36 +602,43 @@ namespace BotFramework
                             DllImport.ShowWindow(h, 0);
                         }
                     }
-                    panel3.Invoke((MethodInvoker)delegate
+                    try
                     {
-                        if (DllImport.GetParent(BotCore.handle) != panel3.Handle)
+                        panel3.Invoke((MethodInvoker)delegate
                         {
-                            if (PrivateVariable.Run && !Docked)
+                            if (DllImport.GetParent(Variables.Proc.MainWindowHandle) != panel3.Handle)
                             {
-                                DllImport.Rect rect = new DllImport.Rect();
-                                DllImport.GetWindowRect(BotCore.handle, ref rect);
-                                PrivateVariable.EmuDefaultLocation = new Point(rect.left, rect.top);
-                                DllImport.SetParent(BotCore.handle, panel3.Handle);
-                                DllImport.MoveWindow(BotCore.handle, -1, -30, 736, 600, false);
-                                Docked = true;
-                            }
-                            else if (Docked)
-                            {
-                                DllImport.Rect rect = new DllImport.Rect();
-                                DllImport.GetWindowRect(BotCore.handle, ref rect);
-                                if (rect.left != -1 || rect.top != -55)
+                                if (PrivateVariable.Run && !Docked)
                                 {
-                                    DllImport.MoveWindow(BotCore.handle, -1, -30, 736, 600, false);
+                                    DllImport.Rect rect = new DllImport.Rect();
+                                    DllImport.GetWindowRect(Variables.Proc.MainWindowHandle, ref rect);
+                                    PrivateVariable.EmuDefaultLocation = new Point(rect.left, rect.top);
+                                    DllImport.SetParent(Variables.Proc.MainWindowHandle, panel3.Handle);
+                                    DllImport.MoveWindow(Variables.Proc.MainWindowHandle, -1, -30, 736, 600, false);
+                                    Docked = true;
+                                }
+                                else if (Docked)
+                                {
+                                    DllImport.Rect rect = new DllImport.Rect();
+                                    DllImport.GetWindowRect(Variables.Proc.MainWindowHandle, ref rect);
+                                    if (rect.left != -1 || rect.top != -55)
+                                    {
+                                        DllImport.MoveWindow(Variables.Proc.MainWindowHandle, -1, -30, 736, 600, false);
+                                    }
                                 }
                             }
-                        }
-                    });
+                        });
+                    }
+                    catch
+                    {
+
+                    }
                     try
                     {
                         var newimage = BotCore.ImageCapture();
                         if (newimage != null)
                         {
-                            Script.image = newimage;
+                            UI.Script.image = newimage;
                         }
                     }
                     catch (Exception ex)
@@ -702,30 +649,7 @@ namespace BotFramework
                 else
                 {
                     Docked = false;
-                    int error = 0;
-                    while (Variables.Proc == null)
-                    {
-                        BotCore.ConnectAndroidEmulator();
-                        error++;
-                        Thread.Sleep(1000);
-                        if (error > 60)
-                        {
-                            BotCore.CloseEmulator();
-                            BotCore.StartEmulator();
-                            error = 0;
-                        }
-                    }
-                    Variables.ScriptLog("Emulator Started",Color.White);
                 }
-            }
-        }
-
-        private void panel1_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                DllImport.ReleaseCapture();
-                DllImport.SendMessage(Handle, DllImport.WM_NCLBUTTONDOWN, DllImport.HT_CAPTION, 0);
             }
         }
 
@@ -737,49 +661,10 @@ namespace BotFramework
             }
         }
 
-        private void button8_Click(object sender, EventArgs e)
-        {
-            if (File.Exists("Updater.exe"))
-            {
-                Process.Start("Updater.exe", "https://github.com/PoH98/Bot/raw/master/神女控.apk");
-            }
-        }
-
-        private void button1_MouseEnter(object sender, EventArgs e)
-        {
-            button1.BackColor = Color.Lime;
-        }
-
-        private void button1_MouseLeave(object sender, EventArgs e)
-        {
-            button1.BackColor = Color.Silver;
-        }
-
-        private void button3_MouseEnter(object sender, EventArgs e)
-        {
-            button3.BackColor = Color.Red;
-        }
-
-        private void button3_MouseLeave(object sender, EventArgs e)
-        {
-            button3.BackColor = Color.Silver;
-        }
-
-        private void checkBox6_CheckedChanged(object sender, EventArgs e)
-        {
-            PrivateVariable.TakePartInNormalStage = checkBox6.Checked;
-            comboBox3.SelectedIndex = 0;
-        }
-
-        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            PrivateVariable.NormalStageNum = comboBox3.SelectedIndex + 1;
-        }
-
         private void checkBox8_CheckedChanged(object sender, EventArgs e)
         {
-            WriteConfig("Double_Event", checkBox8.Checked.ToString().ToLower());
-            if (checkBox8.Checked && !File.Exists("Img\\Event.png"))
+            WriteConfig("Double_Event", chk_twoE.Checked.ToString().ToLower());
+            if (chk_twoE.Checked && !File.Exists("Img\\Event.png"))
             {
                 MessageBox.Show("请截图好活动的进入按钮样貌，保存到Img文件夹内，命名为Event.png!");
             }
@@ -787,37 +672,19 @@ namespace BotFramework
 
         private void checkBox8_MouseEnter(object sender, EventArgs e)
         {
-            toolTip1.Show("如果在主城页面的左边选择活动区域拥有多个活动，影响挂机进入塔楼/魔女，请打勾这个！请慎用！", checkBox8);
+            toolTip1.Show("如果在主城页面的左边选择活动区域拥有多个活动，影响挂机进入塔楼/魔女，请打勾这个！请慎用！", chk_twoE);
         }
 
         private void checkBox8_MouseLeave(object sender, EventArgs e)
         {
-            toolTip1.Hide(checkBox8);
-        }
-
-        private void button9_Click(object sender, EventArgs e)
-        {
-            if (File.Exists("battlescript.txt"))
-            {
-                Process.Start("battlescript.txt");
-            }
-            else
-            {
-                File.WriteAllText("battlescript.txt", "重返| | ");
-                Process.Start("battlescript.txt");
-            }
-        }
-
-        private void button11_Click(object sender, EventArgs e)
-        {
-            Script.GetEnergy();
+            toolTip1.Hide(chk_twoE);
         }
 
         private void radioButton8_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioButton8.Checked)
+            if (rdb_card.Checked)
             {
-                if (checkBox11.Checked)
+                if (chk_browser.Checked)
                 {
                     Process.Start("http://www.xldsdr.com/valkyriecrusade");
                 }
@@ -834,15 +701,15 @@ namespace BotFramework
 
         private void radioButton6_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioButton6.Checked)
+            if (rdb_event.Checked)
             {
-                if (checkBox11.Checked)
+                if (chk_browser.Checked)
                 {
-                    Process.Start("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/sch/") + ".html");
+                    Process.Start("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/"+ comboBox1.SelectedItem.ToString() +"/") + ".html");
                 }
                 else
                 {
-                    webBrowser3.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/sch/") + ".html"));
+                    webBrowser3.Navigate("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/"+ comboBox1.SelectedItem.ToString() +"/") + ".html");
                 }
 
             }
@@ -864,44 +731,24 @@ namespace BotFramework
             webBrowser3.GoForward();
         }
 
-        private void checkBox12_CheckedChanged(object sender, EventArgs e)
-        {
-            //comboBox2.Enabled = checkBox12.Checked;
-            MessageBox.Show("这是个测试的功能，如果发现有任何卡着不动或者瞎点的情况，请尽快汇报！");
-            if (!checkBox12.Checked)
-            {
-                WriteConfig("Treasure_Hunt", "-1");
-            }
-            else
-            {
-                comboBox2.SelectedIndex = 0;
-                WriteConfig("Treasure_Hunt", comboBox2.SelectedIndex.ToString());
-            }
-        }
-
-        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Script.TreasureHuntIndex = comboBox2.SelectedIndex;
-        }
-
         private void radioButton9_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioButton9.Checked)
+            if (chk_autoRT.Checked)
             {
                 PrivateVariable.EnterRune = true;
                 WriteConfig("Manual_Rune", "false");
-                checkBox10.Enabled = radioButton9.Checked;
+                chk_item.Enabled = chk_autoRT.Checked;
             }
         }
 
         private void radioButton10_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioButton10.Checked)
+            if (chk_manuRT.Checked)
             {
                 PrivateVariable.EnterRune = false;
                 WriteConfig("Manual_Rune", "true");
-                checkBox10.Checked = false;
-                checkBox10.Enabled = false;
+                chk_item.Checked = false;
+                chk_item.Enabled = false;
             }
         }
 
@@ -913,7 +760,7 @@ namespace BotFramework
 
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioButton1.Checked)
+            if (chk_begin.Checked)
             {
                 WriteConfig("Level", "0");
                 Level = 0;
@@ -922,7 +769,7 @@ namespace BotFramework
 
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioButton2.Checked)
+            if (chk_inter.Checked)
             {
                 WriteConfig("Level", "1");
                 Level = 1;
@@ -931,41 +778,30 @@ namespace BotFramework
 
         private void radioButton3_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioButton3.Checked)
+            if (chk_advan.Checked)
             {
                 WriteConfig("Level", "2");
                 Level = 2;
             }
         }
 
-        private void checkBox13_CheckedChanged(object sender, EventArgs e)
-        {
-            WriteConfig("Close_Emulator", checkBox13.Checked.ToString().ToLower());
-            PrivateVariable.CloseEmulator = checkBox13.Checked;
-        }
-
         private void radioButton11_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioButton11.Checked)
+            if (rbd_QQ.Checked)
                 webBrowser3.Navigate("https://jq.qq.com/?_wv=1027&k=51gVT8A");
         }
 
         private void checkBox10_CheckedChanged(object sender, EventArgs e)
         {
-            WriteConfig("Use_Item", checkBox10.Checked.ToString().ToLower());
-            PrivateVariable.Use_Item = checkBox10.Checked;
-        }
-
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            WriteConfig("Archwitch", comboBox1.Items[comboBox1.SelectedIndex].ToString());
+            WriteConfig("Use_Item", chk_item.Checked.ToString().ToLower());
+            PrivateVariable.Use_Item = chk_item.Checked;
         }
 
         private void radioButton7_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioButton7.Checked)
+            if (rbd_help.Checked)
             {
-                if (checkBox11.Checked)
+                if (chk_browser.Checked)
                 {
                     Process.Start("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/sch/index.html");
                 }
@@ -1035,7 +871,7 @@ namespace BotFramework
 
         private void radioButton4_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioButton4.Checked)
+            if (chk_extre.Checked)
             {
                 WriteConfig("Level", "3");
                 Level = 3;
@@ -1044,7 +880,7 @@ namespace BotFramework
 
         private void radioButton5_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioButton5.Checked)
+            if (chk_ultim.Checked)
             {
                 WriteConfig("Level", "4");
                 Level = 4;
@@ -1062,7 +898,7 @@ namespace BotFramework
 
         private void CheckBox1_CheckedChanged(object sender, EventArgs e)
         {
-            Variables.AdbLogShow = checkBox1.Checked;
+            Variables.AdvanceLogShow = chk_Log.Checked;
         }
 
         private void MetroLink1_Click(object sender, EventArgs e)
@@ -1086,14 +922,15 @@ namespace BotFramework
                 {
                     footer.InnerText = "";
                 }
-
+                webBrowser3.Document.BackColor = Color.FromArgb(445561);
             }
+            webBrowser3.Show();
         }
 
         private void MainScreen_FormClosing(object sender, FormClosingEventArgs e)
         {
             var lines = File.ReadAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini");
-            if (radioButton1.Checked)
+            if (chk_begin.Checked)
             {
                 int x = 0;
                 foreach (var l in lines)
@@ -1107,7 +944,7 @@ namespace BotFramework
                     x++;
                 }
             }
-            else if (radioButton2.Checked)
+            else if (chk_inter.Checked)
             {
                 int x = 0;
                 foreach (var l in lines)
@@ -1121,7 +958,7 @@ namespace BotFramework
                     x++;
                 }
             }
-            else if (radioButton3.Checked)
+            else if (chk_advan.Checked)
             {
                 int x = 0;
                 foreach (var l in lines)
@@ -1163,41 +1000,71 @@ namespace BotFramework
                     x++;
                 }
             }
-
-            if (checkBox12.Checked)
-            {
-                int x = 0;
-                foreach (var l in lines)
-                {
-                    string key = l.Split('=')[0];
-                    if (key == "Treasure_Hunt")
-                    {
-                        lines[x] = "Treasure_Hunt=" + comboBox2.SelectedIndex;
-                        break;
-                    }
-                    x++;
-                }
-            }
-            else
-            {
-                int x = 0;
-                foreach (var l in lines)
-                {
-                    string key = l.Split('=')[0];
-                    if (key == "Treasure_Hunt")
-                    {
-                        lines[x] = "Treasure_Hunt=-1";
-                        break;
-                    }
-                    x++;
-                }
-            }
             File.WriteAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini", lines);
             if (PrivateVariable.Run)
             {
                 button3_Click(sender, e);
             }
             Environment.Exit(0);
+        }
+        
+        private void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ChangeLanguage(comboBox1.SelectedItem.ToString(), this);
+            WriteConfig("Lang",comboBox1.SelectedItem.ToString());
+        }
+        public void ChangeLanguage(string language, Control form)
+        {
+            if (!Directory.Exists("Language"))
+            {
+                MessageBox.Show("No language files located! Please redownload the bot!");
+                Environment.Exit(0);
+            }
+            if (File.Exists(Environment.CurrentDirectory + "\\Language\\" + language + ".ini"))
+            {
+                var buffer = File.ReadAllLines(Environment.CurrentDirectory + "\\Language\\" + language + ".ini",Encoding.Unicode);
+                foreach (var line in buffer)
+                {
+                    var split = line.Split('=');
+                    if (split.Length > 1)
+                    {
+                        if (UILanguage.Keys.Contains(split[0]))
+                        {
+                            UILanguage[split[0]] = split[1];
+                        }
+                        else
+                        {
+                            UILanguage.Add(split[0], split[1]);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Language " + language + " not found! No change is applied!");
+                Environment.Exit(0);
+            }
+            changeLang(form);
+        }
+        private void changeLang(Control form)
+        {
+            foreach (Control control in form.Controls)
+            {
+                string text = "";
+                if (UILanguage.TryGetValue(control.Name, out text))
+                {
+                    control.Text = text;
+                }
+                if (control.Controls.Count > 0)
+                {
+                    changeLang(control);
+                }
+            }
+        }
+
+        private void WebBrowser3_Navigating(object sender, WebBrowserNavigatingEventArgs e)
+        {
+            webBrowser3.Hide();
         }
     }
 }

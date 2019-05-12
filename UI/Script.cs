@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace UI
 {
-    public class Script
+    public class Script:ScriptInterface
     {
         public static Stopwatch stop = new Stopwatch();
         public static bool RuneBoss, Stuck, EnterWitchGate, Archwitch_Repeat, DisableAutoCheckEvent, CloseEmu = false, pushed = false;
@@ -24,219 +24,6 @@ namespace UI
         public static byte[] image = null;
         public static Point archwitch_level_location;
         public static DateTime nextOnline;
-        //Main Loop
-        public static void Bot()
-        {
-            Debug_.WriteLine();
-            while (PrivateVariable.Run)
-            {
-                if (DateTime.Now > GetEventXML.guildwar && DateTime.Now < GetEventXML.guildwar.AddDays(10))
-                {
-                    var Japan = TimeZoneInfo.FindSystemTimeZoneById("Tokyo Standard Time");
-                    var time = TimeZoneInfo.ConvertTime(DateTime.Now, Japan).TimeOfDay;
-                    var hour = time.Hours;
-                    if (hour == 8 || hour == 12 || hour == 19 || hour == 22)
-                    {
-                        Console.Beep();
-                        ScriptErrorHandler.Reset("Guild War is running, waiting for end...");
-                        double seconds = 0;
-                        Console.Beep();
-                        switch (hour)
-                        {
-                            case 8:
-                                seconds = (TimeSpan.Parse("8:59:59") - time).TotalMilliseconds;
-                                Variables.ScriptLog("Will start game at Japan time 8:59:59",Color.YellowGreen);
-                                break;
-                            case 12:
-                                seconds = (TimeSpan.Parse("12:59:59") - time).TotalMilliseconds;
-                                Variables.ScriptLog("Will start game at Japan Time 12:59:59",Color.YellowGreen);
-                                break;
-                            case 19:
-                                seconds = (TimeSpan.Parse("19:59:59") - time).TotalMilliseconds;
-                                Variables.ScriptLog("Will start game at Japan Time 19:59:59",Color.YellowGreen);
-                                break;
-                            case 22:
-                                seconds = (TimeSpan.Parse("23:59:59") - time).TotalMilliseconds;
-                                Variables.ScriptLog("Will start game at Japan Time 23:59:59",Color.YellowGreen);
-                                break;
-                        }
-                        BotCore.KillGame("com.nubee.valkyriecrusade");
-                        BotCore.Delay(Convert.ToInt32(seconds),true);
-                    }
-                }
-                if (!CloseEmu)
-                {
-                    BotCore.Delay(10,true);
-                    if (Variables.Controlled_Device != null) //The Emulator is running
-                    {
-                        while (Variables.Proc == null)//But not registred on our Proc value
-                        {
-                            Debug_.WriteLine("Variables.Proc is null");
-                            //so go on and find the emulator!
-                            BotCore.ConnectAndroidEmulator();
-                            //MEmu found!
-                            if (Variables.Proc != null)
-                            {
-                                break;
-                            }
-                            //Maybe something is wrong, no process is same name as MEmu!
-                            BotCore.StartEmulator();
-                            BotCore.Delay(9000,12000);
-                        }
-                    }
-                    else //The Emulator is not exist!
-                    {
-                        BotCore.StartEmulator(); //Start our fxxking Emulator!!
-                        BotCore.Delay(9000,12000); //Wait
-                        BotCore.ConnectAndroidEmulator();
-                        continue;
-                    }
-                    if (!BotCore.StartAdb())
-                    {
-                        MessageBox.Show("Unable to start adb!");
-                        Environment.Exit(0);
-                    }
-                    int error = 0;
-                    BotCore.Delay(10,true);
-                    while (image == null) //Weird problem happens, we still cannot receive any image capture!
-                    {
-                        if (!PrivateVariable.Run)
-                        {
-                            return;
-                        }
-                        BotCore.Delay(1000,false); //Wait forever?
-                        if(Variables.Controlled_Device == null) //Emulator not started, awaiting...
-                        {
-                            continue;
-                        }
-                        Variables.ScriptLog("Waiting for first tons of image buffer",Color.Yellow);
-                        error++;
-                        if (error > 30) //Nah, we only wait for 30 sec
-                        {
-                            MessageBox.Show("无法截图！出现怪异错误！");
-                            Environment.Exit(0);
-                        }
-                    }
-                    BotCore.Delay(10,true);
-                    if (Variables.Instance.Length < 5)
-                    {
-                        Variables.Instance = "MEmu";
-                    }
-                    string filename = BotCore.SHA256(Variables.AdbIpPort);
-                    if (!Directory.Exists("C:\\ProgramData\\" + filename))
-                    {
-                        Directory.CreateDirectory("C:\\ProgramData\\" + filename);
-                    }
-
-                    if (!File.Exists("C:\\ProgramData\\" + filename + "\\" + filename + ".xml"))
-                    {
-                        if (!BotCore.Pull("/data/data/com.nubee.valkyriecrusade/shared_prefs/NUBEE_ID.xml", "C:\\ProgramData\\" + filename + "\\" + filename + ".xml"))
-                        {
-                            Variables.ScriptLog("Pull files failed",Color.Red);
-                        }
-                        else
-                        {
-                            Variables.ScriptLog("Backup saved",Color.Lime);
-                        }
-                    }
-                    else
-                    {
-                        if (!pushed)
-                        {
-                            BotCore.Push("C:\\ProgramData\\" + filename + "\\" + filename + ".xml", "/data/data/com.nubee.valkyriecrusade/shared_prefs/NUBEE_ID.xml", 660);
-                            pushed = true;
-                            Variables.ScriptLog("Restored backup xml",Color.Lime);
-                            BotCore.Delay(1000,false);
-                        }
-                    }
-                    Image img = BotCore.Decompress(Script.image);
-                    try
-                    {
-                        if (img.Height != 720 || img.Width != 1280)
-                        {
-                            Debug_.WriteLine("Image size not correct: " + img.Width + "*" + img.Height);
-                            if (!PrivateVariable.Run)
-                            {
-                                return;
-                            }
-                            Variables.ScriptLog("Emulator's screen size is not 1280*720! Detected size is " + img.Width + "*" + img.Height, Color.LightYellow);
-                            BotCore.ResizeEmulator(1280, 720);
-                            BotCore.Delay(20000, 30000);
-                            continue;
-                        }
-                    }
-                    catch
-                    {
-                        continue;
-                    }
-
-                }
-                if (Stuck)
-                {
-                    StuckRune();
-                    Stuck = false;
-                    continue;
-                }
-                BotCore.Delay(10,true);
-                if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
-                {
-                    for (int e = 0; e < 10; e++)
-                    {
-                        Variables.ScriptLog("Starting Game", Color.Lime);
-                        BotCore.StartGame(Img.Icon, image);
-                        BotCore.Delay(5000,false);
-                        if (BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
-                        {
-                            break;
-                        }
-                        if (e == 9)
-                        {
-                            BotCore.RestartEmulator();
-                        }
-                    }
-                }
-                else
-                {
-                    if (!PrivateVariable.InMainScreen && !PrivateVariable.InEventScreen && !PrivateVariable.Battling)
-                    {
-                        LocateMainScreen();
-                    }
-                    else
-                    {
-                        if (!PrivateVariable.InEventScreen)
-                        {
-                            CheckEvent();
-                        }
-                        else
-                        {
-                            if (!PrivateVariable.Battling)
-                            {
-                                switch (PrivateVariable.EventType)
-                                {
-                                    case 0:
-                                        Tower();
-                                        break;
-                                    case 1:
-                                        //Archwitch();
-                                        break;
-                                    case 2:
-                                        Demon_Realm();
-                                        break;
-                                    default:
-                                        Variables.ScriptLog("Unknown error occur, unable to detect event type.", Color.Red);
-                                        PrivateVariable.InEventScreen = false;
-                                        break;
-                                }
-                            }
-                            else
-                            {
-                                Battle();
-                            }
-                        }
-                    }
-                }
-            }
-        }
         //Try Locate MainScreen
         public static void LocateMainScreen()
         {
@@ -249,157 +36,173 @@ namespace UI
                 return;
             }
             BotCore.Delay(100,200);
-            var crop = BotCore.CropImage(image, new Point(315, 150), new Point(1005, 590));
-            point = BotCore.FindImage(crop, Img.GreenButton, false);
-            if (point != null)
+            for (int x = 0; x < 30; x++)
             {
-                BotCore.SendTap(point.Value);
-            }
-            if (!BotCore.RGBComparer(image,new Point(109, 705),Color.FromArgb(130,130,130), 5) && !BotCore.RGBComparer(image, new Point(219, 705), Color.FromArgb(130, 130, 130), 5))
-            {
-                if (!PrivateVariable.Run)
+                if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
-                    return;
+                    BotCore.StartGame(Img.Icon, image);
+                    x = 0;
                 }
-                Variables.ScriptLog("Main Screen not visible",Color.White);
-                point = BotCore.FindImage(image, Img.Start_Game, true);
-                if (point != null)
+                while (BotCore.RGBComparer(image, new Point(520,355), Color.Black, 1))
                 {
-                    Variables.ScriptLog("Start Game Button Located!",Color.Lime);
-                    BotCore.SendTap(point.Value);
-                    error = 0;
-                    return;
+                    BotCore.Delay(1000,true);
                 }
-                if (!PrivateVariable.Run)
-                {
-                    return;
-                }
-                BotCore.Delay(100,200);
-                point = BotCore.FindImage(image, Img.Update_Complete, true);
+                var crop = BotCore.CropImage(image, new Point(315, 150), new Point(1005, 590));
+                point = BotCore.FindImage(crop, Img.GreenButton, false);
                 if (point != null)
                 {
                     BotCore.SendTap(point.Value);
-                    return;
                 }
-                if (!PrivateVariable.Run)
-                {
-                    return;
-                }
-                BotCore.Delay(100,200);
-                point = BotCore.FindImage(image, Img.Close2, true);
-                if (point != null)
-                {
-                    BotCore.SendTap(point.Value);
-                    return;
-                }
-                if (!PrivateVariable.Run)
-                {
-                    return;
-                }
-                point = BotCore.FindImage(image, Img.Close, true);
-                if (point != null)
-                {
-                    BotCore.SendTap(point.Value);
-                    return;
-                }
-                if (!PrivateVariable.Run)
-                {
-                    return;
-                }
-                BotCore.Delay(100,200);
-                point = BotCore.FindImage(image, Img.Login_Reward, true);
-                if (point != null)
-                {
-                    for (int x = 0; x < 4; x++)
-                    {
-                        BotCore.SendTap(new Point(600, 350));
-                        BotCore.Delay(1000,false);
-                    }
-                    return;
-                }
-                if (!PrivateVariable.Run)
-                {
-                    return;
-                }
-                BotCore.Delay(100,200);
-                point = BotCore.FindImage(image, Img.Back_to_Village, true);
-                if (point != null)
-                {
-                    Variables.ScriptLog("Going back to Main screen",Color.Lime);
-                    BotCore.SendTap(point.Value);
-                    PrivateVariable.InMainScreen = true;
-                    Variables.ScriptLog("Screen Located",Color.Lime);
-                }
-                if (!PrivateVariable.Run)
-                {
-                    return;
-                }
-                BotCore.Delay(100,200);
-                point = BotCore.FindImage(image, Img.Menu, true);
-                if (point == null)
-                {
-                    if (error < 30)
-                    {
-                        if(error == 0)
-                        {
-                            Variables.ScriptLog("Waiting for Main screen",Color.White);
-                        }
-                        BotCore.Delay(1000,false);
-                        error++;
-                    }
-                    else
-                    {
-                        BotCore.KillGame("com.nubee.valkyriecrusade");
-                        ScriptErrorHandler.Reset("Unable to locate main screen. Restarting Game!");
-                        error = 0;
-                        return;
-                    }
-                }
-                else
+                if (!BotCore.RGBComparer(image, new Point(109, 705), Color.FromArgb(130, 130, 130), 5) && !BotCore.RGBComparer(image, new Point(219, 705), Color.FromArgb(130, 130, 130), 5))
                 {
                     if (!PrivateVariable.Run)
                     {
                         return;
                     }
-                    BotCore.SendTap(point.Value);
-                    BotCore.Delay(1000,false);
-                    Variables.ScriptLog("Returning main screen",Color.Lime);
-                    BotCore.SendTap(942, 630);
-                    BotCore.Delay(5000,false);
-                }
-                BotCore.Delay(100,200);
-                if (!PrivateVariable.Run)
-                {
-                    return;
-                }
-                point = BotCore.FindImage(image, Img.GreenButton, false);
-                if (point != null)
-                {
-                    BotCore.SendTap(point.Value);
-                    Variables.ScriptLog("Green Button Found!",Color.Lime);
-                }
-                ScriptErrorHandler.ErrorHandle();
-            }
-            else
-            {
-                Retry++;
-                if(Retry > 5)
-                {
-                    PrivateVariable.InMainScreen = true;
-                    Variables.ScriptLog("Screen Located",Color.White);
-                    //Collect();
-                    Retry = 0;
+                    Variables.ScriptLog("Main Screen not visible", Color.White);
+                    point = BotCore.FindImage(image, Img.Start_Game, true);
+                    if (point != null)
+                    {
+                        Variables.ScriptLog("Start Game Button Located!", Color.Lime);
+                        BotCore.SendTap(point.Value);
+                        error = 0;
+                        return;
+                    }
+                    if (!PrivateVariable.Run)
+                    {
+                        return;
+                    }
+                    BotCore.Delay(100, 200);
+                    point = BotCore.FindImage(image, Img.Update_Complete, true);
+                    if (point != null)
+                    {
+                        BotCore.SendTap(point.Value);
+                        return;
+                    }
+                    if (!PrivateVariable.Run)
+                    {
+                        return;
+                    }
+                    BotCore.Delay(100, 200);
+                    point = BotCore.FindImage(image, Img.Close2, true);
+                    if (point != null)
+                    {
+                        BotCore.SendTap(point.Value);
+                        return;
+                    }
+                    if (!PrivateVariable.Run)
+                    {
+                        return;
+                    }
+                    point = BotCore.FindImage(image, Img.Close, true);
+                    if (point != null)
+                    {
+                        BotCore.SendTap(point.Value);
+                        return;
+                    }
+                    if (!PrivateVariable.Run)
+                    {
+                        return;
+                    }
+                    BotCore.Delay(100, 200);
+                    point = BotCore.FindImage(image, Img.Login_Reward, true);
+                    if (point != null)
+                    {
+                        for (int y = 0; y < 4; y++)
+                        {
+                            BotCore.SendTap(600, 350);
+                            BotCore.Delay(1000, false);
+                        }
+                        return;
+                    }
+                    if (!PrivateVariable.Run)
+                    {
+                        return;
+                    }
+                    BotCore.Delay(200, 300);
+                    point = BotCore.FindImage(image, Img.Back_to_Village, true);
+                    if (point != null)
+                    {
+                        Variables.ScriptLog("Going back to Main screen", Color.Lime);
+                        BotCore.SendTap(point.Value);
+                        PrivateVariable.InMainScreen = true;
+                        Variables.ScriptLog("Screen Located", Color.Lime);
+                    }
+                    if (!PrivateVariable.Run)
+                    {
+                        return;
+                    }
+                    BotCore.Delay(200, 300);
+                    point = BotCore.FindImage(image, Img.Menu, true);
+                    if (point == null)
+                    {
+                        if (error < 30)
+                        {
+                            if (error == 0)
+                            {
+                                Variables.ScriptLog("Waiting for Main screen", Color.White);
+                            }
+                            BotCore.Delay(1000, false);
+                            error++;
+                        }
+                        else
+                        {
+                            BotCore.KillGame("com.nubee.valkyriecrusade");
+                            ScriptErrorHandler.Reset("Unable to locate main screen. Restarting Game!");
+                            error = 0;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        if (!PrivateVariable.Run)
+                        {
+                            return;
+                        }
+                        BotCore.SendTap(point.Value);
+                        BotCore.Delay(1000, false);
+                        Variables.ScriptLog("Returning main screen", Color.Lime);
+                        BotCore.SendTap(942, 630);
+                        BotCore.Delay(5000, false);
+                    }
+                    BotCore.Delay(100, 200);
+                    if (!PrivateVariable.Run)
+                    {
+                        return;
+                    }
+                    point = BotCore.FindImage(image, Img.GreenButton, false);
+                    if (point != null)
+                    {
+                        BotCore.SendTap(point.Value);
+                        Variables.ScriptLog("Green Button Found!", Color.Lime);
+                    }
+                    ScriptErrorHandler.ErrorHandle();
                 }
                 else
                 {
-                    BotCore.Delay(1000,false);
-                    if(Retry == 1)
+                    Retry++;
+                    if (Retry > 5)
                     {
-                        Variables.ScriptLog("Waiting for Login Bonus",Color.DeepPink);
+                        PrivateVariable.InMainScreen = true;
+                        Variables.ScriptLog("Screen Located", Color.White);
+                        //Collect();
+                        Retry = 0;
+                        break;
+                    }
+                    else
+                    {
+                        BotCore.Delay(1000, false);
+                        if (Retry == 1)
+                        {
+                            Variables.ScriptLog("Waiting for Login Bonus", Color.DeepPink);
+                        }
                     }
                 }
+                if(x > 25)
+                {
+                    BotCore.KillGame("com.nubee.valkyriecrusade");
+                }
             }
-
         }
         //Collect
         private static void Collect()
@@ -604,15 +407,9 @@ namespace UI
                         }
                         if (point == null)
                         {
-                            MessageBox.Show("Event.png可能有问题，请确保截图是正确的！");
-                            if (BotCore.handle != null && Variables.Proc != null)
-                            {
-                                DllImport.SetParent(BotCore.handle, IntPtr.Zero);
-                                DllImport.MoveWindow(BotCore.handle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 1318,752, true);
-                            }
-                            Environment.Exit(0);
+                            Variables.ScriptLog("Event.png not found on screen, force enter event and check what event...", Color.Red);
+                            BotCore.SendTap(936, 100);
                         }
-
                     }
                     else
                     {
@@ -674,6 +471,7 @@ namespace UI
                 }
                 if (BotCore.FindImage(image, Img.Demon_InEvent, true) != null)
                 {
+                    //Is Demon Event
                     PrivateVariable.EventType = 2;
                     PrivateVariable.InEventScreen = true;
                     return;
@@ -684,6 +482,7 @@ namespace UI
                 }
                 if (BotCore.FindImage(image, Img.HellLoc, true) != null)
                 {
+                    //Is Demon Event
                     PrivateVariable.EventType = 2;
                     PrivateVariable.InEventScreen = true;
                     return;
@@ -758,8 +557,12 @@ namespace UI
             {
                 return;
             }
-            runes = GetRune();
+            while(!BotCore.RGBComparer(image,new Point(153, 233), 20, 61,90,10))
+            {
+                BotCore.Delay(1000,true);
+            }
             energy = GetEnergy();
+            runes = GetRune();
             Variables.ScriptLog("Current have " + energy + " energy and " + runes + " runes", Color.LightSkyBlue);
             if (!PrivateVariable.Run)
             {
@@ -1025,13 +828,7 @@ namespace UI
                 PrivateVariable.InMainScreen = false;
                 PrivateVariable.Battling = false;
                 return;
-            }
-            if(runes == 3 && energy < 4 && Stuck)
-            {
-                StuckRune();
-                return;
-            }
-            PrivateVariable.InEventScreen = true;
+            }            
             Variables.ScriptLog("Enterting Stage",Color.White);
             switch (MainScreen.Level)
             {
@@ -1113,6 +910,11 @@ namespace UI
                     Variables.ScriptLog("Start battle",Color.Lime);
                     BotCore.SendTap(new Point(959, 656));
                     BotCore.Delay(2000,false);
+                    if (runes == 4 && energy == 5)
+                    {
+                        BotCore.SendSwipe(new Point(640, 473), new Point(640, 280), 1000);
+                        BotCore.Delay(500, false);
+                    }
                     BotCore.SendTap(new Point(758, 566));
                     BotCore.Delay(6000,8000);
                     BotCore.SendTap(640, 400); //Tap away Round Battle Text
@@ -1159,8 +961,20 @@ namespace UI
             error = 0;
             Variables.ScriptLog("Demon Realm Event Located",Color.Lime);
             List<Point> BlackListedLocation = new List<Point>();
+            Variables.ScriptLog("Fetching stage images", Color.White);
+            List<Image> Stage = new List<Image>();
+            Image Boss = null;
+            foreach (var file in Directory.GetFiles("Img\\DemonRealm", "*.png").OrderBy(f => f))
+            {
+                if (file.Contains("Boss") || file.Contains("boss"))
+                {
+                    Boss = Image.FromFile(file);
+                    continue;
+                }
+                Stage.Add(Image.FromFile(file));
+            }
             Point? p = null;
-            while (error < 20 && p == null)
+            while (error < 10 && p == null)
             {
                 if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
@@ -1170,50 +984,80 @@ namespace UI
                 {
                     return;
                 }
-                Variables.ScriptLog("Fetching stage images",Color.White);
-                List<Image> Stage = new List<Image>();
-                foreach(var file in Directory.GetFiles("Img\\DemonRealm","*.png").OrderBy(f => f))
-                {
-                    Stage.Add(Image.FromFile(file));
-                }
                 var crop = BotCore.CropImage(image, new Point(0, 0), new Point(1280, 615));
                 Variables.ScriptLog("Trying to find stages to enter",Color.LightSkyBlue);
-                Bitmap screen = (Bitmap)BotCore.Decompress(image);
-                foreach (var stage in Stage)
+                Bitmap screen = (Bitmap)BotCore.Decompress(crop);
+                foreach(var blacklist in BlackListedLocation)
                 {
-                    p = BotCore.FindImage(screen, (Bitmap)stage, false);
-                    if (p != null)
+                    using (Graphics grf = Graphics.FromImage(screen))
                     {
-                        if (!BlackListedLocation.Contains(p.Value))
+                        using (Brush brsh = new SolidBrush(ColorTranslator.FromHtml("#000000")))
                         {
-                            Variables.ScriptLog("Stage found!", Color.Lime);
-                            BotCore.SendTap(p.Value);
-                            BotCore.Delay(2000,false);
-                            BotCore.SendTap(768, 536);
-                            BotCore.Delay(5000,false);
-                            if (BotCore.RGBComparer(image, new Point(1003, 658), Color.FromArgb(118, 0, 8), 5))
-                            {
-                                Variables.ScriptLog("Ops, looks like the stage is not able to enter!", Color.Red);
-                                BlackListedLocation.Add(p.Value);
-                                using (Graphics grf = Graphics.FromImage(screen))
-                                {
-                                    using (Brush brsh = new SolidBrush(ColorTranslator.FromHtml("#000000")))
-                                    {
-                                        grf.FillEllipse(brsh, p.Value.X, p.Value.Y, 5, 5);
-                                    }
-                                }
-
-                                p = null;
-                                continue;
-                            }
-                            BotCore.SendTap(970, 614);
-                            BotCore.Delay(2000,false);
-                            BotCore.SendTap(753, 423);
-                            break;
+                            grf.FillEllipse(brsh, blacklist.X, blacklist.Y, 5, 5);
                         }
                     }
                 }
-                Point? p2 = BotCore.FindImage(image, Img.GreenButton, false);
+                foreach (var stage in Stage)
+                {
+                    for(int x =0; x < 4; x++)
+                    {
+                        p = BotCore.FindImage(screen, (Bitmap)stage, false);
+                        if (p != null)
+                        {
+                            if (!BlackListedLocation.Contains(p.Value))
+                            {
+                                Variables.ScriptLog("Stage found!", Color.Lime);
+                                BotCore.SendTap(p.Value);
+                                BotCore.Delay(2000, false);
+                                BotCore.SendTap(768, 536);
+                                BotCore.Delay(5000, false);
+                                if (BotCore.RGBComparer(image, new Point(1003, 658), Color.FromArgb(118, 0, 8), 5))
+                                {
+                                    Variables.ScriptLog("Ops, looks like the stage is not able to enter!", Color.Red);
+                                    BlackListedLocation.Add(p.Value);
+                                    using (Graphics grf = Graphics.FromImage(screen))
+                                    {
+                                        using (Brush brsh = new SolidBrush(ColorTranslator.FromHtml("#000000")))
+                                        {
+                                            grf.FillEllipse(brsh, p.Value.X, p.Value.Y, 5, 5);
+                                        }
+                                    }
+                                    p = null;
+                                    continue;
+                                }
+                                BotCore.SendTap(970, 614);
+                                BotCore.Delay(2000, false);
+                                BotCore.SendTap(753, 423);
+                                break;
+                            }
+                        }
+                    }
+                    if(p != null)
+                    {
+                        break;
+                    }
+                }
+                if(Boss != null && p == null)
+                {
+                    p = BotCore.FindImage(screen, (Bitmap)Boss, false);
+                    if (p != null)
+                    {
+                        Variables.ScriptLog("Boss Stage found!", Color.Lime);
+                        if(runes == 3)
+                        {
+                            StuckRune();
+                            return;
+                        }
+                        BotCore.SendTap(p.Value);
+                        BotCore.Delay(2000, false);
+                        BotCore.SendTap(768, 536);
+                        BotCore.Delay(5000, false);
+                        BotCore.SendTap(970, 614);
+                        BotCore.Delay(2000, false);
+                        BotCore.SendTap(753, 423);
+                    }
+                }
+                Point? p2 = BotCore.FindImage(crop, Img.GreenButton, false);
                 if (p2 != null)
                 {
                     BotCore.SendTap(p2.Value);
@@ -1222,7 +1066,7 @@ namespace UI
                 }
                 error++;
             }
-            if(error > 18)
+            if(error > 9)
             {
                 Variables.ScriptLog("Looks like we are in the trouble!",Color.Red);
                 error = 0;
@@ -1233,6 +1077,7 @@ namespace UI
             Point? point = BotCore.FindImage(image, Img.Red_Button, false);
             for(int x = 0; x < 20; x++)
             {
+                var crop = BotCore.CropImage(image, new Point(0, 0), new Point(1280, 600));
                 Point? p2 = BotCore.FindImage(image, Img.GreenButton, false);
                 if (p2 != null)
                 {
@@ -1245,6 +1090,10 @@ namespace UI
                     return;
                 }
                 point = BotCore.FindImage(image, Img.Red_Button, false);
+                if(point != null)
+                {
+                    break;
+                }
                 BotCore.Delay(1000,false);
             }
             if(point == null)
@@ -1270,7 +1119,7 @@ namespace UI
                 if (point != null)
                 {
                     BotCore.SendTap(point.Value);
-                    BotCore.Delay(400,600);
+                    BotCore.Delay(1000,1200);
                     locateUIError = 0;
                 }
                 if (BotCore.FindImage(image, Img.NoEnergy, true) != null)
@@ -1357,8 +1206,6 @@ namespace UI
                         {
                             if (BotCore.FindImage(image, Img.Locate_Tower, true) != null)
                             {
-                                PrivateVariable.InEventScreen = false;
-                                PrivateVariable.InMainScreen = false;
                                 PrivateVariable.Battling = false;
                                 Variables.ScriptLog("Battle Ended!", Color.Lime);
                                 stop.Stop();
@@ -1381,8 +1228,6 @@ namespace UI
                         crop = BotCore.CropImage(image, new Point(147, 234), new Point(613, 299));
                         if (BotCore.FindImage(crop, Img.DemonEnd, true) != null)
                         {
-                            PrivateVariable.InEventScreen = false;
-                            PrivateVariable.InMainScreen = false;
                             PrivateVariable.Battling = false;
                             BotCore.SendTap(point.Value.X + 125, point.Value.Y);
                             Variables.ScriptLog("Battle Ended!", Color.Lime);
@@ -1417,7 +1262,6 @@ namespace UI
                                 BotCore.SendTap(0, 0);
                             }
                             PrivateVariable.Battling = false;
-                            PrivateVariable.InEventScreen = true;
                             stop.Stop();
                             Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                             stop.Reset();
@@ -1526,6 +1370,11 @@ namespace UI
             }
         }
         static bool Attackable = true;
+
+        public Script()
+        {
+        }
+
         /// <summary>
         /// Check is there any HP bar in game
         /// </summary>
@@ -1597,7 +1446,7 @@ namespace UI
                         PrivateVariable.BattleScript[PrivateVariable.Selected_Script].Attack();
                     }
                     CheckEnemy();
-                    挂机框架.挂机核心.延时(2000,true);
+                    BotCore.Delay(2000,true);
                 }
                 if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
@@ -1779,8 +1628,6 @@ namespace UI
         private static void StuckRune()
         {
             ScriptErrorHandler.PauseErrorHandler = true;
-            if (PrivateVariable.EventType == 0)
-            {
                 Debug_.WriteLine();
                 int el = 5 - energy;
                 int wait = el * 2600000;
@@ -1810,39 +1657,6 @@ namespace UI
                     BotCore.CloseEmulator();
                 }
                 BotCore.Delay(wait - 70000,wait - 50000);
-            }
-            else
-            {
-                Debug_.WriteLine();
-                int el = 5 - energy;
-                int wait = el * 2600000;
-                Variables.ScriptLog("Close game and stuck treasure map!", Color.DarkGreen);
-                nextOnline = DateTime.Now.AddMilliseconds(wait);
-                Variables.ScriptLog("Estimate online time is " + nextOnline, Color.Lime);
-                BotCore.KillGame("com.nubee.valkyriecrusade");
-                if (!PrivateVariable.EnterRune)
-                {
-                    PrivateVariable.Run = false;
-                    if (Directory.Exists(Environment.CurrentDirectory + "\\Audio\\"))
-                    {
-                        string[] path = Directory.GetFiles(Environment.CurrentDirectory + "\\Audio\\", "*.wav");
-                        if (path.Length > 0)
-                        {
-                            SoundPlayer player = new SoundPlayer();
-                            player.SoundLocation = path[0];
-                            player.PlayLooping();
-                        }
-                    }
-                    BotCore.CloseEmulator();
-                    MessageBox.Show("已存3宝藏图碎片！下次上线时间为" + nextOnline + "!");
-                    Environment.Exit(0);
-                }
-                if (PrivateVariable.CloseEmulator)
-                {
-                    BotCore.CloseEmulator();
-                }
-                BotCore.Delay(wait - 70000,wait - 50000);
-            }
             ScriptErrorHandler.PauseErrorHandler = false;
         }
         //No energy left so close game
@@ -1902,6 +1716,232 @@ namespace UI
                 foreach(var s in PrivateVariable.BattleScript)
                 {
                     s.ReadConfig();
+                }
+            }
+        }
+
+        void ScriptInterface.Script()
+        {
+            Debug_.WriteLine();
+            while (PrivateVariable.Run)
+            {
+                if (DateTime.Now > GetEventXML.guildwar && DateTime.Now < GetEventXML.guildwar.AddDays(10))
+                {
+                    var Japan = TimeZoneInfo.FindSystemTimeZoneById("Tokyo Standard Time");
+                    var time = TimeZoneInfo.ConvertTime(DateTime.Now, Japan).TimeOfDay;
+                    var hour = time.Hours;
+                    if (hour == 8 || hour == 12 || hour == 19 || hour == 22)
+                    {
+                        Console.Beep();
+                        ScriptErrorHandler.Reset("Guild War is running, waiting for end...");
+                        double seconds = 0;
+                        Console.Beep();
+                        switch (hour)
+                        {
+                            case 8:
+                                seconds = (TimeSpan.Parse("8:59:59") - time).TotalMilliseconds;
+                                Variables.ScriptLog("Will start game at Japan time 8:59:59", Color.YellowGreen);
+                                break;
+                            case 12:
+                                seconds = (TimeSpan.Parse("12:59:59") - time).TotalMilliseconds;
+                                Variables.ScriptLog("Will start game at Japan Time 12:59:59", Color.YellowGreen);
+                                break;
+                            case 19:
+                                seconds = (TimeSpan.Parse("19:59:59") - time).TotalMilliseconds;
+                                Variables.ScriptLog("Will start game at Japan Time 19:59:59", Color.YellowGreen);
+                                break;
+                            case 22:
+                                seconds = (TimeSpan.Parse("23:59:59") - time).TotalMilliseconds;
+                                Variables.ScriptLog("Will start game at Japan Time 23:59:59", Color.YellowGreen);
+                                break;
+                        }
+                        BotCore.KillGame("com.nubee.valkyriecrusade");
+                        BotCore.Delay(Convert.ToInt32(seconds), true);
+                    }
+                }
+                if (!CloseEmu)
+                {
+                    BotCore.Delay(10, true);
+                    if (Variables.Controlled_Device != null) //The Emulator is running
+                    {
+                        while (Variables.Proc == null)//But not registred on our Proc value
+                        {
+                            Debug_.WriteLine("Variables.Proc is null");
+                            //so go on and find the emulator!
+                            BotCore.ConnectAndroidEmulator();
+                            //MEmu found!
+                            if (Variables.Proc != null)
+                            {
+                                break;
+                            }
+                            //Maybe something is wrong, no process is same name as MEmu!
+                            BotCore.StartEmulator();
+                            BotCore.Delay(9000, 12000);
+                        }
+                    }
+                    else //The Emulator is not exist!
+                    {
+                        BotCore.RestartEmulator(); //Start our fxxking Emulator!!
+                        BotCore.Delay(9000, 12000); //Wait
+                        BotCore.ConnectAndroidEmulator();
+                        continue;
+                    }
+                    if (Variables.Proc.HasExited)
+                    {
+                        Variables.Proc = null;
+                        continue;
+                    }
+                    Variables.ScriptLog("Emulator Started", Color.White);
+                    if (!BotCore.StartAdb())
+                    {
+                        MessageBox.Show("Unable to start adb!");
+                        Environment.Exit(0);
+                    }
+                    int error = 0;
+                    BotCore.Delay(10, true);
+                    while (image == null) //Weird problem happens, we still cannot receive any image capture!
+                    {
+                        if (!PrivateVariable.Run)
+                        {
+                            return;
+                        }
+                        BotCore.Delay(1000, false); //Wait forever?
+                        if (Variables.Controlled_Device == null) //Emulator not started, awaiting...
+                        {
+                            BotCore.ConnectAndroidEmulator();
+                            continue;
+                        }
+                        if (Variables.Proc == null)
+                        {
+                            BotCore.StartEmulator();
+                            BotCore.ConnectAndroidEmulator();
+                            continue;
+                        }
+                        Variables.ScriptLog("Waiting for first tons of image buffer", Color.Yellow);
+                        error++;
+                        if (error > 30) //Nah, we only wait for 30 sec
+                        {
+                            BotCore.RestartEmulator();
+                            error = 0;
+                        }
+                    }
+                    BotCore.Delay(10, true);
+                    if (Variables.Instance.Length < 5)
+                    {
+                        Variables.Instance = "MEmu";
+                    }
+                    string filename = BotCore.SHA256(Variables.AdbIpPort);
+                    if (!Directory.Exists("C:\\ProgramData\\" + filename))
+                    {
+                        Directory.CreateDirectory("C:\\ProgramData\\" + filename);
+                    }
+
+                    if (!File.Exists("C:\\ProgramData\\" + filename + "\\" + filename + ".xml"))
+                    {
+                        if (!BotCore.Pull("/data/data/com.nubee.valkyriecrusade/shared_prefs/NUBEE_ID.xml", "C:\\ProgramData\\" + filename + "\\" + filename + ".xml"))
+                        {
+                            Variables.ScriptLog("Pull files failed", Color.Red);
+                        }
+                        else
+                        {
+                            Variables.ScriptLog("Backup saved", Color.Lime);
+                        }
+                    }
+                    else
+                    {
+                        if (!pushed)
+                        {
+                            BotCore.Push("C:\\ProgramData\\" + filename + "\\" + filename + ".xml", "/data/data/com.nubee.valkyriecrusade/shared_prefs/NUBEE_ID.xml", 660);
+                            pushed = true;
+                            Variables.ScriptLog("Restored backup xml", Color.Lime);
+                            BotCore.Delay(1000, false);
+                        }
+                    }
+                    Image img = BotCore.Decompress(Script.image);
+                    try
+                    {
+                        if (img.Height != 720 || img.Width != 1280)
+                        {
+                            Debug_.WriteLine("Image size not correct: " + img.Width + "*" + img.Height);
+                            if (!PrivateVariable.Run)
+                            {
+                                return;
+                            }
+                            Variables.ScriptLog("Emulator's screen size is not 1280*720! Detected size is " + img.Width + "*" + img.Height, Color.LightYellow);
+                            BotCore.ResizeEmulator(1280, 720);
+                            BotCore.Delay(20000, 30000);
+                            continue;
+                        }
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+
+                }
+                if (Stuck)
+                {
+                    StuckRune();
+                    Stuck = false;
+                    continue;
+                }
+                BotCore.Delay(10, true);
+                if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
+                {
+                    for (int e = 0; e < 10; e++)
+                    {
+                        Variables.ScriptLog("Starting Game", Color.Lime);
+                        BotCore.StartGame(Img.Icon, image);
+                        BotCore.Delay(5000, false);
+                        if (BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
+                        {
+                            break;
+                        }
+                        if (e == 9)
+                        {
+                            BotCore.RestartEmulator();
+                        }
+                    }
+                }
+                else
+                {
+                    if (!PrivateVariable.InMainScreen && !PrivateVariable.InEventScreen && !PrivateVariable.Battling)
+                    {
+                        LocateMainScreen();
+                    }
+                    else
+                    {
+                        if (!PrivateVariable.InEventScreen)
+                        {
+                            CheckEvent();
+                        }
+                        else
+                        {
+                            if (!PrivateVariable.Battling)
+                            {
+                                switch (PrivateVariable.EventType)
+                                {
+                                    case 0:
+                                        Tower();
+                                        break;
+                                    case 1:
+                                        //Archwitch();
+                                        break;
+                                    case 2:
+                                        Demon_Realm();
+                                        break;
+                                    default:
+                                        Variables.ScriptLog("Unknown error occur, unable to detect event type.", Color.Red);
+                                        PrivateVariable.InEventScreen = false;
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                Battle();
+                            }
+                        }
+                    }
                 }
             }
         }

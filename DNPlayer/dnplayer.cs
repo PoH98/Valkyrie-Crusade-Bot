@@ -12,7 +12,7 @@ namespace DNPlayer
     {
         public void CloseEmulator()
         {
-            throw new NotImplementedException();
+            BotCore.KillProcessAndChildren(Variables.Proc.Id);
         }
 
         public void ConnectEmulator()
