@@ -36,7 +36,6 @@ namespace BotFramework
         {
             InitializeComponent();
             Debug_.PrepairDebug();
-            OCR.PrepairOcr(whitelist: "$0123456789", blacklist: "!?@#$%&*()<>_-+=/:;'\"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
             Variables.richTextBox = richTextBox1;
             timeout.Interval = 15000;
             timeout.Tick += Timeout_Tick;
@@ -134,29 +133,9 @@ namespace BotFramework
             }
             comboBox1.Items.Clear();
             Variables.Background = true;
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-            this.Text = this.Text + "  v" + fvi.FileVersion;
-            if (File.Exists("Updater.exe"))
-            {
-                ProcessStartInfo updater = new ProcessStartInfo();
-                updater.FileName = "Updater.exe";
-                updater.WindowStyle = ProcessWindowStyle.Minimized;
-                updater.Arguments = fvi.FileVersion.ToString();
-                Process.Start(updater);
-            }
-            try
-            {
-                IntPtr ico = Img.Icon.GetHicon();
-                Icon = Icon.FromHandle(ico);
-            }
-            catch
-            {
-
-            }
+            OCR.PrepairOcr(whitelist: "$0123456789", blacklist: "!?@#$%&*()<>_-+=/:;'\"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
             string output = "";
-            string[] args = Environment.GetCommandLineArgs();
-            Variables.EmulatorPath(args);
+            Variables.EmulatorPath();
             if (File.Exists("bot.ini"))
             {
                 if (File.Exists(Environment.CurrentDirectory + "\\Profiles\\" + BotCore.profilePath + "\\bot.ini"))
@@ -200,17 +179,8 @@ namespace BotFramework
             {
                 comboBox1.SelectedIndex = 0;
             }
-            if (_NET.Length > 0)
-            {
-                label1.Text = UILanguage["txt_Framework"] + _NET;
-            }
-            label3.Text = Variables.emulator.EmulatorName();
+            label3.Text = Variables.VBoxManagerPath;
             label4.Text = Variables.SharedPath;
-            label5.Text = "";
-            foreach(var a in args)
-            {
-                label5.Text += a;
-            }
             if (Variables.Configure.TryGetValue("Level", out output))
             {
                 switch (output)
@@ -242,41 +212,18 @@ namespace BotFramework
                 if (output == "true")
                 {
                     chk_manuRT.Checked = true;
-                    PrivateVariable.EnterRune = false;
                 }
-            }
-            if (BotCore.Is64BitOperatingSystem())
-            {
-                label2.Text = UILanguage["64bit"];
-            }
-            else
-            {
-                label2.Text = UILanguage["32bit"];
             }
             webBrowser1.ScriptErrorsSuppressed = true;
             webBrowser3.ScriptErrorsSuppressed = true;
             PrivateVariable.nospam = DateTime.Now;
             string ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36";
             DllImport.UrlMkSetSessionOption(DllImport.URLMON_OPTION_USERAGENT, ua, ua.Length, 0);
-            html = Img.index;
-            WebClientOverride wc = new WebClientOverride();
-            try
-            {
-                html = wc.DownloadString(new Uri("https://d2n1d3zrlbtx8o.cloudfront.net/news/info/" + comboBox1.SelectedItem.ToString() + "/index.html"));
-                html = html.Replace("bgcolor=\"#000000\"　text color=\"#FFFFFF\"", "style=\"background - color:#303030; color:white\"");
-                html = html.Remove(html.IndexOf("<table width=\"200\">"),html.IndexOf("</table>") - html.IndexOf("<table width=\"200\">"));
-                html = Regex.Replace(html, "(\\<span class\\=\"iro4\"\\>.*</span>)", "");
-            }
-            catch
-            {
-
-            }
-            webBrowser1.DocumentText = html;
             webBrowser3.Navigating += OnNavigating;
             webBrowser3.Navigated += WebBrowser3_Navigated;
             GetEventXML.LoadXMLEvent();
             webBrowser3.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/"+ comboBox1.SelectedItem.ToString() +"/") + ".html"));
-            UI.Script.Read_Plugins();
+            VCBotScript.Read_Plugins();
             foreach (var s in PrivateVariable.BattleScript)
             {
                 tabControl2.TabPages.Add(s.ScriptName());
@@ -328,10 +275,6 @@ namespace BotFramework
             Login.LoadCompleted = true;
             PrivateVariable.EventType = -1;
             timer2.Start();
-            while (!Login.Verified)
-            {
-                Thread.Sleep(1000);
-            }
         }
 
         private void Chk_CheckedChanged(object sender, EventArgs e)
@@ -387,45 +330,6 @@ namespace BotFramework
                 return;
             }
             PrivateVariable.nospam = DateTime.Now;
-            PrivateVariable.Run = true;
-            if (textBox2.Text.Length > 0)
-            {
-                if (textBox2.Text.Contains("来点色图"))
-                {
-                    MessageBox.Show("恭喜您启动了隐藏的功能！");
-                    Suprise sup = new Suprise();
-                    sup.Show();
-                    return;
-                }
-                try
-                {
-                    if (textBox2.Text.Length == 15)
-                    {
-                        Convert.ToInt64(textBox2.Text);
-                    }
-                    else
-                    {
-                        MessageBox.Show("请输入正确的IMEI (只有数字)");
-                        return;
-                    }
-                }
-                catch
-                {
-                    MessageBox.Show("请输入正确的IMEI (只有数字)");
-                    return;
-                }
-                string path = "";
-                Variables.Configure.TryGetValue("Path", out path);
-                path = path.Replace("MEmu\\MEmu.exe", "MEmuHyperv\\cmd.bat");
-                string text = "MEmuManage.exe guestproperty set MEmu imei " + textBox2.Text;
-                ProcessStartInfo server = new ProcessStartInfo();
-                File.WriteAllText(path, text);
-                server.FileName = path;
-                server.UseShellExecute = true;
-                server.WorkingDirectory = path.Replace("\\cmd.bat", "");
-                server.CreateNoWindow = true;
-                Process p = Process.Start(server);
-            }
             richTextBox1.Text = "";
             btn_Start.Enabled = false;
             if (chk_begin.Checked)
@@ -457,9 +361,9 @@ namespace BotFramework
                 panel3.Visible = true;
             }
             panel3.Enabled = false;
+            ScriptRun.RunScript(true, (new VCBotScript() as ScriptInterface));
             Thread cap = new Thread(Capt);
             cap.Start();
-            ScriptRun.RunScript(true,Environment.CurrentDirectory);
         }
 
         private void richTextBox1_TextChanged(object sender, EventArgs e)
@@ -470,18 +374,18 @@ namespace BotFramework
         private void button3_Click(object sender, EventArgs e)
         {
             PrivateVariable.nospam = DateTime.Now;
-            PrivateVariable.Run = false;
             PrivateVariable.Battling = false;
             PrivateVariable.InEventScreen = false;
             PrivateVariable.InMainScreen = false;
             PrivateVariable.InMap = false;
+            BotCore.EjectSockets();
             Variables.ScriptLog("Script Stopped!",Color.White);
             if (Width > 480)
             {
                 Width -= 700;
                 panel3.Visible = false;
             }
-            if ( Variables.Proc != null)
+            if (Variables.Proc != null)
             {
                 DllImport.SetParent(Variables.Proc.MainWindowHandle, IntPtr.Zero);
                 DllImport.MoveWindow(Variables.Proc.MainWindowHandle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 1318, 752, true);
@@ -498,34 +402,34 @@ namespace BotFramework
             {
                 ED_Box.Text = UILanguage["Tower"];
                 lbl_Rune.Text = UILanguage["Rune_Tower"];
-                progressBar1.Value = UI.Script.energy;
-                progressBar2.Value = UI.Script.runes;
-                label7.Text = UI.Script.runes + "/5";
-                label6.Text = UI.Script.energy + "/5";
-                if (UI.Script.nextOnline != null)
+                progressBar1.Value = VCBotScript.energy;
+                progressBar2.Value = VCBotScript.runes;
+                label7.Text = VCBotScript.runes + "/5";
+                label6.Text = VCBotScript.energy + "/5";
+                if (VCBotScript.nextOnline != null)
                 {
-                    if (UI.Script.nextOnline > DateTime.Now)
+                    if (VCBotScript.nextOnline > DateTime.Now)
                     {
-                        TimeSpan time = UI.Script.nextOnline - DateTime.Now;
+                        TimeSpan time = VCBotScript.nextOnline - DateTime.Now;
                         label9.Text = time.Hours.ToString("00") + " : " + time.Minutes.ToString("00") + " : " + time.Seconds.ToString("00");
                     }
                 }
-                if (UI.Script.Tower_Floor.Length > 0)
+                if (VCBotScript.Tower_Floor.Length > 0)
                 {
                     try
                     {
-                        label15.Text = UI.Script.Tower_Floor.Replace(" ", "").Replace("F", " F");
+                        label15.Text = VCBotScript.Tower_Floor.Replace(" ", "").Replace("F", " F");
                     }
                     catch
                     {
 
                     }
                 }
-                if (UI.Script.Tower_Rank.Length > 0)
+                if (VCBotScript.Tower_Rank.Length > 0)
                 {
                     try
                     {
-                        label16.Text = UI.Script.Tower_Rank.Replace(" ", "");
+                        label16.Text = VCBotScript.Tower_Rank.Replace(" ", "");
                     }
                     catch
                     {
@@ -537,35 +441,35 @@ namespace BotFramework
             {
                 ED_Box.Text = UILanguage["Demon"];
                 lbl_Rune.Text = UILanguage["Rune_Demon"];
-                label7.Text = UI.Script.runes + "/4";
-                label6.Text = UI.Script.energy + "/5";
+                label7.Text = VCBotScript.runes + "/4";
+                label6.Text = VCBotScript.energy + "/5";
                 progressBar2.Maximum = 4;
-                progressBar1.Value = UI.Script.energy;
-                progressBar2.Value = UI.Script.runes;
-                if (UI.Script.nextOnline != null)
+                progressBar1.Value = VCBotScript.energy;
+                progressBar2.Value = VCBotScript.runes;
+                if (VCBotScript.nextOnline != null)
                 {
-                    if (UI.Script.nextOnline > DateTime.Now)
+                    if (VCBotScript.nextOnline > DateTime.Now)
                     {
-                        TimeSpan time = UI.Script.nextOnline - DateTime.Now;
+                        TimeSpan time = VCBotScript.nextOnline - DateTime.Now;
                         label9.Text = time.Hours.ToString("00") + " : " + time.Minutes.ToString("00") + " : " + time.Seconds.ToString("00");
                     }
                 }
-                if (UI.Script.Tower_Floor.Length > 0)
+                if (VCBotScript.Tower_Floor.Length > 0)
                 {
                     try
                     {
-                        label15.Text = UI.Script.Tower_Floor.Replace(" ", "").Replace("F", " F");
+                        label15.Text = VCBotScript.Tower_Floor.Replace(" ", "").Replace("F", " F");
                     }
                     catch
                     {
 
                     }
                 }
-                if (UI.Script.Tower_Rank.Length > 0)
+                if (VCBotScript.Tower_Rank.Length > 0)
                 {
                     try
                     {
-                        label16.Text = UI.Script.Tower_Rank.Replace(" ", "");
+                        label16.Text = VCBotScript.Tower_Rank.Replace(" ", "");
                     }
                     catch
                     {
@@ -581,9 +485,10 @@ namespace BotFramework
         /// <summary>
         /// Capture loop
         /// </summary>
+        
         private void Capt()
         {
-            while (PrivateVariable.Run)
+            do
             {
                 Thread.Sleep(1000);
                 if (Variables.Proc != null)
@@ -594,40 +499,37 @@ namespace BotFramework
                         Docked = false;
                         continue;
                     }
-                    if(Variables.emulator.EmulatorName() == "Nox")
+                    if (Variables.emulator.EmulatorName() == "Nox")
                     {
                         var hide = DllImport.GetAllChildrenWindowHandles(IntPtr.Zero, "Qt5QWindowToolSaveBits", "Form", 2);
-                        foreach(var h in hide)
+                        foreach (var h in hide)
                         {
                             DllImport.ShowWindow(h, 0);
                         }
                     }
                     try
                     {
-                        panel3.Invoke((MethodInvoker)delegate
+                        var handle = Variables.Proc.MainWindowHandle;
+                        var parent = DllImport.GetParent(handle);
+                        DllImport.Rect rect = new DllImport.Rect();
+                        DllImport.GetWindowRect(handle, ref rect);
+                        if (!Docked)
                         {
-                            if (DllImport.GetParent(Variables.Proc.MainWindowHandle) != panel3.Handle)
+                            if (!ScriptRun.Run)
                             {
-                                if (PrivateVariable.Run && !Docked)
-                                {
-                                    DllImport.Rect rect = new DllImport.Rect();
-                                    DllImport.GetWindowRect(Variables.Proc.MainWindowHandle, ref rect);
-                                    PrivateVariable.EmuDefaultLocation = new Point(rect.left, rect.top);
-                                    DllImport.SetParent(Variables.Proc.MainWindowHandle, panel3.Handle);
-                                    DllImport.MoveWindow(Variables.Proc.MainWindowHandle, -1, -30, 736, 600, false);
-                                    Docked = true;
-                                }
-                                else if (Docked)
-                                {
-                                    DllImport.Rect rect = new DllImport.Rect();
-                                    DllImport.GetWindowRect(Variables.Proc.MainWindowHandle, ref rect);
-                                    if (rect.left != -1 || rect.top != -55)
-                                    {
-                                        DllImport.MoveWindow(Variables.Proc.MainWindowHandle, -1, -30, 736, 600, false);
-                                    }
-                                }
+                                return;
                             }
-                        });
+                            PrivateVariable.EmuDefaultLocation = new Point(rect.left, rect.top);
+                            panel3.Invoke((MethodInvoker)delegate
+                            {
+                                DllImport.SetParent(Variables.Proc.MainWindowHandle, panel3.Handle);
+                            });
+                            Docked = true;
+                        }
+                        if (rect.left != -1 || rect.top != -55)
+                        {
+                            DllImport.MoveWindow(Variables.Proc.MainWindowHandle, -1, -30, 736, 600, false);
+                        }
                     }
                     catch
                     {
@@ -638,7 +540,7 @@ namespace BotFramework
                         var newimage = BotCore.ImageCapture();
                         if (newimage != null)
                         {
-                            UI.Script.image = newimage;
+                            VCBotScript.image = newimage;
                         }
                     }
                     catch (Exception ex)
@@ -650,7 +552,7 @@ namespace BotFramework
                 {
                     Docked = false;
                 }
-            }
+            } while (ScriptRun.Run);
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -680,42 +582,6 @@ namespace BotFramework
             toolTip1.Hide(chk_twoE);
         }
 
-        private void radioButton8_CheckedChanged(object sender, EventArgs e)
-        {
-            if (rdb_card.Checked)
-            {
-                if (chk_browser.Checked)
-                {
-                    Process.Start("http://www.xldsdr.com/valkyriecrusade");
-                }
-                else
-                {
-                    if (webBrowser3.Url != new Uri("http://www.xldsdr.com/valkyriecrusade"))
-                    {
-                        webBrowser3.Navigate(new Uri("http://www.xldsdr.com/valkyriecrusade"));
-                    }
-                }
-            }
-
-        }
-
-        private void radioButton6_CheckedChanged(object sender, EventArgs e)
-        {
-            if (rdb_event.Checked)
-            {
-                if (chk_browser.Checked)
-                {
-                    Process.Start("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/"+ comboBox1.SelectedItem.ToString() +"/") + ".html");
-                }
-                else
-                {
-                    webBrowser3.Navigate("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/"+ comboBox1.SelectedItem.ToString() +"/") + ".html");
-                }
-
-            }
-
-        }
-
         private void button11_Click_1(object sender, EventArgs e)
         {
             webBrowser3.Refresh();
@@ -735,7 +601,6 @@ namespace BotFramework
         {
             if (chk_autoRT.Checked)
             {
-                PrivateVariable.EnterRune = true;
                 WriteConfig("Manual_Rune", "false");
                 chk_item.Enabled = chk_autoRT.Checked;
             }
@@ -745,7 +610,6 @@ namespace BotFramework
         {
             if (chk_manuRT.Checked)
             {
-                PrivateVariable.EnterRune = false;
                 WriteConfig("Manual_Rune", "true");
                 chk_item.Checked = false;
                 chk_item.Enabled = false;
@@ -785,49 +649,36 @@ namespace BotFramework
             }
         }
 
-        private void radioButton11_CheckedChanged(object sender, EventArgs e)
-        {
-            if (rbd_QQ.Checked)
-                webBrowser3.Navigate("https://jq.qq.com/?_wv=1027&k=51gVT8A");
-        }
-
         private void checkBox10_CheckedChanged(object sender, EventArgs e)
         {
             WriteConfig("Use_Item", chk_item.Checked.ToString().ToLower());
             PrivateVariable.Use_Item = chk_item.Checked;
         }
 
-        private void radioButton7_CheckedChanged(object sender, EventArgs e)
-        {
-            if (rbd_help.Checked)
-            {
-                if (chk_browser.Checked)
-                {
-                    Process.Start("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/sch/index.html");
-                }
-                else
-                {
-                    webBrowser3.Visible = true;
-                    webBrowser3.Navigate("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/sch/index.html");
-                }
-            }
-        }
 
         private static void WriteConfig(string key, string value)
         {
-            var config = File.ReadAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini");
-            int x = 0;
-            foreach (var c in config)
+            if(!Directory.Exists("Profiles\\" + BotCore.profilePath))
             {
-                if (c.Contains(key + "="))
-                {
-                    config[x] = key + "=" + value;
-                    File.WriteAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini", config);
-                    return;
-                }
-                x++;
+                Directory.CreateDirectory("Profiles\\" + BotCore.profilePath);
             }
-            config[config.Length - 1] = config[config.Length - 1] + "\n" + key + "=" + value;
+            if (File.Exists("Profiles\\" + BotCore.profilePath + "\\bot.ini"))
+            {
+                var config = File.ReadAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini");
+                int x = 0;
+                foreach (var c in config)
+                {
+                    if (c.Contains(key + "="))
+                    {
+                        config[x] = key + "=" + value;
+                        File.WriteAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini", config);
+                        return;
+                    }
+                    x++;
+                }
+                config[config.Length - 1] = config[config.Length - 1] + "\n" + key + "=" + value;
+                            File.WriteAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini", config);
+            }
             if (Variables.Configure.ContainsKey(key))
             {
                 Variables.Configure[key] = value;
@@ -836,7 +687,6 @@ namespace BotFramework
             {
                 Variables.Configure.Add(key, value);
             }
-            File.WriteAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini", config);
         }
 
         private void pictureBox4_Click(object sender, EventArgs e)
@@ -1001,7 +851,7 @@ namespace BotFramework
                 }
             }
             File.WriteAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini", lines);
-            if (PrivateVariable.Run)
+            if (ScriptRun.Run)
             {
                 button3_Click(sender, e);
             }
@@ -1010,8 +860,22 @@ namespace BotFramework
         
         private void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            WriteConfig("Lang", comboBox1.SelectedItem.ToString());
             ChangeLanguage(comboBox1.SelectedItem.ToString(), this);
-            WriteConfig("Lang",comboBox1.SelectedItem.ToString());
+            html = Img.index;
+            WebClientOverride wc = new WebClientOverride();
+            try
+            {
+                html = wc.DownloadString(new Uri("https://d2n1d3zrlbtx8o.cloudfront.net/news/info/" + comboBox1.SelectedItem.ToString() + "/index.html"));
+                html = html.Replace("bgcolor=\"#000000\"　text color=\"#FFFFFF\"", "style=\"background - color:#303030; color:white\"");
+                html = html.Remove(html.IndexOf("<table width=\"200\">"), html.IndexOf("</table>") - html.IndexOf("<table width=\"200\">"));
+                html = Regex.Replace(html, "(\\<span class\\=\"iro4\"\\>.*</span>)", "");
+            }
+            catch
+            {
+
+            }
+            webBrowser1.DocumentText = html;
         }
         public void ChangeLanguage(string language, Control form)
         {
@@ -1065,6 +929,66 @@ namespace BotFramework
         private void WebBrowser3_Navigating(object sender, WebBrowserNavigatingEventArgs e)
         {
             webBrowser3.Hide();
+        }
+
+        private void Rdb_event_Click(object sender, EventArgs e)
+        {
+            if (rdb_event.Checked)
+            {
+                if (chk_browser.Checked)
+                {
+                    Process.Start("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/" + comboBox1.SelectedItem.ToString() + "/") + ".html");
+                }
+                else
+                {
+                    webBrowser3.Navigate("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/" + comboBox1.SelectedItem.ToString() + "/") + ".html");
+                }
+
+            }
+        }
+
+        private void Rdb_card_Click(object sender, EventArgs e)
+        {
+            if (comboBox1.Text == "sch")
+            {
+                if (rdb_card.Checked)
+                {
+                    if (chk_browser.Checked)
+                    {
+                        Process.Start("http://www.xldsdr.com/valkyriecrusade");
+                    }
+                    else
+                    {
+                        if (webBrowser3.Url != new Uri("http://www.xldsdr.com/valkyriecrusade"))
+                        {
+                            webBrowser3.Navigate(new Uri("http://www.xldsdr.com/valkyriecrusade"));
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (rdb_card.Checked)
+                {
+                    Process.Start("https://valkyriecrusade.fandom.com/wiki/Category:Cards");
+                }
+            }
+        }
+
+        private void Rbd_help_Click(object sender, EventArgs e)
+        {
+            if (rbd_help.Checked)
+            {
+                if (chk_browser.Checked)
+                {
+                    Process.Start("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/sch/index.html");
+                }
+                else
+                {
+                    webBrowser3.Visible = true;
+                    webBrowser3.Navigate("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/sch/index.html");
+                }
+            }
         }
     }
 }

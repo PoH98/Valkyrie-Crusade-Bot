@@ -9,18 +9,63 @@ using System.Linq;
 
 namespace BotFramework
 {
+    /// <summary>
+    /// C# dll imports
+    /// </summary>
     public static class DllImport
     {
+        /// <summary>
+        /// Set User agent for whole process of accessing internet
+        /// </summary>
+        /// <param name="dwOption">Use URLMON_OPTION_USERAGENT</param>
+        /// <param name="pBuffer"></param>
+        /// <param name="dwBufferLength"></param>
+        /// <param name="dwReserved"></param>
+        /// <returns></returns>
         [DllImport("urlmon.dll", CharSet = CharSet.Ansi)]
+        
         public static extern int UrlMkSetSessionOption( int dwOption, string pBuffer, int dwBufferLength, int dwReserved);
+        /// <summary>
+        /// Set user agent
+        /// </summary>
         public const int URLMON_OPTION_USERAGENT = 0x10000001;
+        /// <summary>
+        /// Set other IntPtr's parent to new IntPtr
+        /// </summary>
+        /// <param name="hwndChild"></param>
+        /// <param name="hwndNewParent"></param>
+        /// <returns></returns>
         [DllImport("user32.dll")]
         public static extern IntPtr SetParent(IntPtr hwndChild, IntPtr hwndNewParent);
+        /// <summary>
+        /// Move specific window to new location
+        /// </summary>
+        /// <param name="hwnd"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="nWidth"></param>
+        /// <param name="nHeight"></param>
+        /// <param name="bRepaint"></param>
+        /// <returns></returns>
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool MoveWindow(IntPtr hwnd, int x, int y, int nWidth, int nHeight, bool bRepaint);
+        /// <summary>
+        /// Return IntPtr of specific window, using class name and window text
+        /// </summary>
+        /// <param name="className"></param>
+        /// <param name="WindowText"></param>
+        /// <returns></returns>
         [DllImport("user32.dll")]
         public static extern IntPtr FindWindow(string className, string WindowText);
         private delegate bool EnumWindowProc(IntPtr hwnd, IntPtr lParam);
+        /// <summary>
+        /// Return IntPtr of specific window, using class name and window text, with parent handler
+        /// </summary>
+        /// <param name="parentHandle"></param>
+        /// <param name="childAfter"></param>
+        /// <param name="lclassName"></param>
+        /// <param name="windowTitle"></param>
+        /// <returns></returns>
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string lclassName, string windowTitle);
         [DllImport("user32.dll")]
@@ -47,6 +92,13 @@ namespace BotFramework
 
             return childHandles;
         }
+
+        [DllImport("user32.dll", PreserveSig = false)]
+        public static extern bool RegisterHotKey(IntPtr hWnd,int id,uint fsModifiers,Keys key);
+
+        [DllImport("user32.dll")]
+        public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+
         [DllImport("user32.dll", EntryPoint = "SendMessage", CharSet = CharSet.Auto)]
         public static extern bool SendMessage(IntPtr hWnd, uint Msg, int wParam, StringBuilder lParam);
 

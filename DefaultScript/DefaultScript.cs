@@ -18,8 +18,6 @@ namespace DefaultScript
         {
             for (int y = 0; y < 2; y++)
             {
-
-
                 foreach (var cb in toolParameterComboBoxes)
                 {
                     int index = 0;
@@ -27,10 +25,10 @@ namespace DefaultScript
                     switch (index)
                     {
                         case 0:
-                            byte[] crop = BotCore.CropImage(Script.image, new Point(176, 356), new Point(330, 611));
+                            byte[] crop = BotCore.CropImage(VCBotScript.image, new Point(176, 356), new Point(330, 611));
                             foreach (var f in PrivateVariable.Skills)
                             {
-                                if (!PrivateVariable.Run)
+                                if (!ScriptRun.Run)
                                 {
                                     return;
                                 }
@@ -45,7 +43,7 @@ namespace DefaultScript
                                         for (int x = 0; x < 10; x++)
                                         {
                                             Thread.Sleep(100);
-                                            BotCore.SendTap(1, 1);
+                                            BotCore.SendTap(10, 10);
                                         }
                                         break;
                                     }
@@ -57,10 +55,10 @@ namespace DefaultScript
                             }
                             break;
                         case 1:
-                            crop = BotCore.CropImage(Script.image, new Point(357, 356), new Point(543, 610));
+                            crop = BotCore.CropImage(VCBotScript.image, new Point(357, 356), new Point(543, 610));
                             foreach (var f in PrivateVariable.Skills)
                             {
-                                if (!PrivateVariable.Run)
+                                if (!ScriptRun.Run)
                                 {
                                     return;
                                 }
@@ -75,7 +73,7 @@ namespace DefaultScript
                                         for (int x = 0; x < 10; x++)
                                         {
                                             Thread.Sleep(100);
-                                            BotCore.SendTap(1, 1);
+                                            BotCore.SendTap(10, 10);
                                         }
                                         break;
                                     }
@@ -87,10 +85,10 @@ namespace DefaultScript
                             }
                             break;
                         case 2:
-                            crop = BotCore.CropImage(Script.image, new Point(546, 376), new Point(724, 597));
+                            crop = BotCore.CropImage(VCBotScript.image, new Point(546, 376), new Point(724, 597));
                             foreach (var f in PrivateVariable.Skills)
                             {
-                                if (!PrivateVariable.Run)
+                                if (!ScriptRun.Run)
                                 {
                                     return;
                                 }
@@ -105,7 +103,7 @@ namespace DefaultScript
                                         for (int x = 0; x < 10; x++)
                                         {
                                             Thread.Sleep(100);
-                                            BotCore.SendTap(1, 1);
+                                            BotCore.SendTap(10, 10);
                                         }
                                         break;
                                     }
@@ -117,10 +115,10 @@ namespace DefaultScript
                             }
                             break;
                         case 3:
-                            crop = BotCore.CropImage(Script.image, new Point(761, 356), new Point(921, 613));
+                            crop = BotCore.CropImage(VCBotScript.image, new Point(761, 356), new Point(921, 613));
                             foreach (var f in PrivateVariable.Skills)
                             {
-                                if (!PrivateVariable.Run)
+                                if (!ScriptRun.Run)
                                 {
                                     return;
                                 }
@@ -135,7 +133,7 @@ namespace DefaultScript
                                         for (int x = 0; x < 10; x++)
                                         {
                                             Thread.Sleep(100);
-                                            BotCore.SendTap(1, 1);
+                                            BotCore.SendTap(10, 10);
                                         }
                                         break;
                                     }
@@ -147,10 +145,10 @@ namespace DefaultScript
                             }
                             break;
                         case 4:
-                            crop = BotCore.CropImage(Script.image, new Point(934, 356), new Point(1090, 578));
+                            crop = BotCore.CropImage(VCBotScript.image, new Point(934, 356), new Point(1090, 578));
                             foreach (var f in PrivateVariable.Skills)
                             {
-                                if (!PrivateVariable.Run)
+                                if (!ScriptRun.Run)
                                 {
                                     return;
                                 }
@@ -165,7 +163,7 @@ namespace DefaultScript
                                         for (int x = 0; x < 10; x++)
                                         {
                                             Thread.Sleep(100);
-                                            BotCore.SendTap(1, 1);
+                                            BotCore.SendTap(10, 10);
                                         }
                                         break;
                                     }
@@ -193,7 +191,7 @@ namespace DefaultScript
             txtBox.Location = new Point(10, 40);
             txtBox.Height = 200;
             txtBox.Width = 400;
-            txtBox.Text = "这个是默认的脚本战斗系统，将会自动应用到所有的战斗。如果想要自行创建脚本，请期待未来更新 CustomScript.dll 插件，或者到www.github.com/PoH98/Bot/了解如何自己创建脚本插件！";
+            txtBox.Text = "这个是默认的脚本战斗系统，将会自动应用到所有的战斗。如果想要自行创建脚本，请期待未来更新 CustomVCBotScript.dll 插件，或者到www.github.com/PoH98/Bot/了解如何自己创建脚本插件！";
             txtBox.ReadOnly = true;
             txtBox.TabIndex = 1001;
             txtBox.BackColor = Color.Black;
@@ -274,25 +272,24 @@ namespace DefaultScript
             }
 
             box2.Width = box3.Width = box4.Width = box5.Width = box1.Width = 45;
-            box1.Location = new Point(10, 310);
-            box2.Location = new Point(65, 310);
-            box3.Location = new Point(120, 310);
-            box4.Location = new Point(175, 310);
-            box5.Location = new Point(230, 310);
+            box1.Location = new Point(10, 300);
+            box2.Location = new Point(65, 300);
+            box3.Location = new Point(120, 300);
+            box4.Location = new Point(175, 300);
+            box5.Location = new Point(230, 300);
             box1.SelectedIndexChanged += Cards_SelectedIndexChanged;
             box2.SelectedIndexChanged += Cards_SelectedIndexChanged;
             box3.SelectedIndexChanged += Cards_SelectedIndexChanged;
             box4.SelectedIndexChanged += Cards_SelectedIndexChanged;
             box5.SelectedIndexChanged += Cards_SelectedIndexChanged;
+            box1.SelectionLength = 0;
+            box2.SelectionLength = 0;
+            box3.SelectionLength = 0;
+            box4.SelectionLength = 0;
+            box5.SelectionLength = 0;
             var Cards = new ComboBox[] { box1, box2, box3, box4, box5 };
             toolParameterComboBoxes = Cards.ToList();
-            Button Create = new Button();
-            Create.Location = new Point(10, 370);
-            Create.Click += Create_Click;
-            Create.Text = "创建脚本 (C#语言）";
-            Create.Width = 380;
-            Create.Height = 50;
-            Control[] thingsToReturn = { text, txtBox, Create, lbl, box1, box2, box3, box4, box5 };
+            Control[] thingsToReturn = { text, txtBox, lbl, box1, box2, box3, box4, box5 };
             Variables.ScriptLog("Default script loaded",Color.Cyan);
             return thingsToReturn;
         }

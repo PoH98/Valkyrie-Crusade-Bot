@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Security.Permissions;
 using System.Threading;
@@ -21,53 +23,108 @@ namespace BotFramework
     /// </summary>
     public class ScriptRun
     {
-        private static Thread t;
         /// <summary>
-        /// Run the script!
+        /// Set whether the scipt run or stop
         /// </summary>
-        /// <param name="KeepRunning">Keep running or run once?</param>
-        /// <param name="dllPath">The path to the script interface dll. Do not include the Dll's name! Only PATH!!</param>
-        public static void RunScript(bool KeepRunning, string dllPath)
+        public static bool Run { get; private set; }
+        private static Thread t;
+        private static List<ScriptInterface> scripts = new List<ScriptInterface>();
+        private static List<string> scriptsname = new List<string>();
+        /// <summary>
+        /// Read all dlls or exe file that contains scripts inside dllpath
+        /// </summary>
+        /// <param name="dllPath">The path to be readed</param>
+        public static void ReadScript(string dllPath)
         {
-            t.IsBackground = true;
-            t = new Thread(delegate () { _RunScript(KeepRunning,dllPath); });
-            t.Start();
-        }
-
-        private static void _RunScript(bool KeepRunning, string dllPath)
-        {
-            ScriptInterface script = null;
-            var dlls = Directory.GetFiles(dllPath);
+            DirectoryInfo dinfo = new DirectoryInfo(dllPath);
+            FileInfo[] dlls = new string[] { "*.dll", "*.exe" }.SelectMany(i => dinfo.GetFiles(i)).ToArray();
             if (dlls != null)
             {
                 foreach (var dll in dlls)
                 {
-                    Assembly a = Assembly.LoadFrom(dll);
-                    foreach (var t in a.GetTypes())
+                    try
                     {
-                        if (t.GetInterface("ScriptInterface") != null)
+                        Assembly a = Assembly.LoadFrom(dll.FullName);
+                        foreach (var t in a.GetTypes())
                         {
-                            script = Activator.CreateInstance(t) as ScriptInterface;
-                            break;
+                            if (t.GetInterface("ScriptInterface") != null)
+                            {
+                                scripts.Add(Activator.CreateInstance(t) as ScriptInterface);
+                                scriptsname.Add(t.Name);
+                            }
                         }
                     }
-                    if(script != null)
+                    catch (BadImageFormatException)
                     {
-                        break;
+
+                    }
+                    catch (ReflectionTypeLoadException)
+                    {
+
                     }
                 }
             }
+        }
+        /// <summary>
+        /// Run the script!
+        /// </summary>
+        /// <param name="KeepRunning">Keep running or run once?</param>
+        /// <param name="script">The script for running</param>
+        public static void RunScript(bool KeepRunning, ScriptInterface script)
+        {
+            if(!Run)
+            {
+                t = new Thread(delegate () { _RunScript(KeepRunning, script); });
+                t.IsBackground = true;
+                Run = true;
+                t.Start();
+            }
+            else
+            {
+                Variables.AdvanceLog("Stop first before run again!");
+            }
+        }
+        /// <summary>
+        /// Run the script!
+        /// </summary>
+        /// <param name="KeepRunning">Keep running or run once?</param>
+        /// <param name="scriptname">The name of the class of the script that extends scriptinterface, if already loaded using ReadScript</param>
+        public static void RunScript(bool KeepRunning, string scriptname)
+        {
+            int index = scriptsname.IndexOf(scriptname);
+            ScriptInterface script = scripts[index];
+            RunScript(KeepRunning, script);
+        }
+        /// <summary>
+        /// Check the script is running
+        /// </summary>
+        /// <returns></returns>
+        public static bool ScriptRunning()
+        {
+            try
+            {
+                return t.ThreadState == ThreadState.Running;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        private static void _RunScript(bool KeepRunning, ScriptInterface script)
+        {
             if (script != null)
             {
-                while (KeepRunning)
+                do
                 {
                     script.Script();
                 }
+                while (KeepRunning && Run);
             }
             else
             {
                 throw new Exception("No script dll found!");
             }
+            Run = false;
         }
         /// <summary>
         /// Stop the script! Now!
@@ -77,10 +134,9 @@ namespace BotFramework
         {
             try
             {
-                while (t.IsAlive)
-                {
-                    t.Abort();
-                }
+                Run = false;
+                t.Abort();
+                t = null;
             }
             catch
             {

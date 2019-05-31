@@ -5,19 +5,20 @@ using Emgu.CV.Structure;
 using Emgu.CV;
 using System.Windows.Forms;
 using System.IO;
-using System.Reflection;
-using System.IO.Compression;
-using System.Security.Cryptography;
+using System.Net;
 
 namespace BotFramework
 {
+    /// <summary>
+    /// Used to regonize text on images
+    /// </summary>
     public class OCR
     {
         private static Tesseract t;
-        
         /// <summary>
-        /// Prepair to OCR
+        /// OCR the image. Need Prepair OCR first!
         /// </summary>
+        /// <param name="source"></param>
         /// <param name="lang"></param>
         /// <returns></returns>
         public static string OcrImage(byte[] source, string lang)
@@ -30,7 +31,13 @@ namespace BotFramework
              t.SetImage(img);
             return t.GetUTF8Text();
         }
-       
+        /// <summary>
+        /// Prepair to OCR
+        /// </summary>
+        /// <param name="lang">Language for OCR</param>
+        /// <param name="blacklist">Blacklisted characters while OCR</param>
+        /// <param name="whitelist">Only allow these specific characters while OCR</param>
+        /// <returns></returns>
         public static void PrepairOcr(string whitelist = "", string blacklist = "", string lang = "eng")
         {
             if (t == null)
@@ -40,25 +47,11 @@ namespace BotFramework
                 {
                     Directory.CreateDirectory("C:\\ProgramData\\tessdata");
                 }
-                try
+                if (!File.Exists($"C:\\ProgramData\\tessdata\\{lang}.traineddata"))
                 {
-                    if (File.Exists("C:\\ProgramData\\tessdata\\eng.traineddata"))
-                    {
-                        if (CheckSUM("C:\\ProgramData\\tessdata\\eng.traineddata") != "57E0DF3D84FED9FBF8C7A8E589F8F012")
-                        {
-                            File.Delete("C:\\ProgramData\\tessdata\\eng.traineddata");
-                        }
-                    }
-                }
-                catch
-                {
-
-                }
-                if (!File.Exists("C:\\ProgramData\\tessdata\\eng.traineddata"))
-                {
-                    File.WriteAllBytes("C:\\ProgramData\\tessdata\\temp.zip", Resource.eng);
-                    ZipFile.ExtractToDirectory("C:\\ProgramData\\tessdata\\temp.zip", "C:\\ProgramData\\tessdata\\");
-                    File.Delete("C:\\ProgramData\\tessdata\\temp.zip");
+                    MessageBox.Show("Currently starting download OCR extention packages...");
+                    WebClient wc = new WebClient();
+                    wc.DownloadFile($"https://github.com/tesseract-ocr/tessdata/raw/master/{lang}.traineddata", $"C:\\ProgramData\\tessdata\\{lang}.traineddata");
                 }
                 if(whitelist.Length > 0)
                 {
@@ -69,17 +62,6 @@ namespace BotFramework
                     t.SetVariable("tessedit_char_blacklist", blacklist);
                 }
                 t.Init("C:\\ProgramData\\tessdata\\", lang, OcrEngineMode.TesseractOnly);
-            }
-        }
-        private static string CheckSUM(string filename)
-        {
-            using (var md5 = MD5.Create())
-            {
-                using (var stream = File.OpenRead(filename))
-                {
-                    var hash = md5.ComputeHash(stream);
-                    return BitConverter.ToString(hash).Replace("-", "").ToUpper();
-                }
             }
         }
     }

@@ -16,7 +16,7 @@ namespace UI
 
         public static List<byte[]> Skills = new List<byte[]>();
 
-        public static bool Run, Battling, InEventScreen, InMainScreen, InMap;
+        public static bool Battling, InEventScreen, InMainScreen, InMap;
 
         public static List<int> ProcessID = new List<int>();
 
@@ -35,8 +35,6 @@ namespace UI
         public static bool CustomScript = false;
 
         public static DateTime nospam;
-
-        public static bool EnterRune;
         /// <summary>
         /// The real main window of MEmu
         /// </summary>

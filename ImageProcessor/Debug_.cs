@@ -10,7 +10,8 @@ namespace BotFramework
 {
     public class Debug_
     {
-        protected static string FileName;
+        private static string FileName;
+        static StreamWriter s;
 
         public static void PrepairDebug()
         {
@@ -35,53 +36,41 @@ namespace BotFramework
                 Debug_.FileName = "Profiles\\" + Variables.Instance + "\\Logs\\" + DateTime.Now.ToString().Replace(' ', '_').Replace('/', '_').Replace(':', '_') + ".log";
                 if (!Directory.Exists("Profiles\\" + Variables.Instance + "\\Logs\\"))
                     Directory.CreateDirectory("Profiles\\" + Variables.Instance + "\\Logs\\");
+                s = File.AppendText(FileName);
             }
         }
 
-        protected static Thread t, controller;
-
         public static void WriteLine(string log_, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-                try
-                {
-                    using (StreamWriter s = File.AppendText(FileName))
-                    {
-                        s.WriteLine(Encrypt(log_ + " Line: " + lineNumber + " Caller: " + caller as string));
-                    }
-                }
-                catch
-                {
+            if (!ScriptRun.Run)
+            {
+                return;
+            }
+            try
+            {
+                s.WriteLine(Encrypt(log_ + " Line: " + lineNumber + " Caller: " + caller as string));
+            }
+            catch
+            {
 
-                }
+            }
         }
 
         public static void WriteLine([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-                try
-                {
-                    using (StreamWriter s = File.AppendText(FileName))
-                    {
-                        s.WriteLine(Encrypt("Debug Called. Line: " + lineNumber + " Caller: " + caller));
-                    }
-                }
-                catch
-                {
+            if (!ScriptRun.Run)
+            {
+                return;
+            }
+            try
+            {
+                s.WriteLine(Encrypt("Line: " + lineNumber + " Called by : " + caller as string));
+            }
+            catch
+            {
 
-                }
-            
-        }
+            }
 
-        public static void WriteLine(byte[] img)
-        {
-                try
-                {
-                    File.WriteAllBytes(FileName.Remove(FileName.LastIndexOf('\\'))+ "\\debug.png",img);
-                }
-                catch
-                {
-
-                }
-            
         }
 
         protected static string Encrypt(string log)

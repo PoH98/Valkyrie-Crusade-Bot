@@ -1,11 +1,6 @@
 ﻿using BotFramework;
-using SharpAdbClient;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -31,7 +26,7 @@ namespace UI
                 {
                     Parallel.ForEach(errorImages, error => 
                     {
-                        var crop = BotCore.CropImage(Script.image, new Point(350, 180), new Point(980, 515));
+                        var crop = BotCore.CropImage(VCBotScript.image, new Point(350, 180), new Point(980, 515));
                         Thread.Sleep(1000);
                         Point? p = BotCore.FindImage(crop, error, false);
                         if (p != null)

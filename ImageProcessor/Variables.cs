@@ -37,9 +37,9 @@ namespace BotFramework
         /// <summary>
         /// The emulator path that is installed at PC with outputing the emulator enum
         /// </summary>
-        public static void EmulatorPath(string[] args)
+        public static void EmulatorPath()
         {
-            BotCore.LoadEmulatorInterface(args);
+            BotCore.LoadEmulatorInterface();
             if (emulator == null)
             {
                 if (File.Exists("Updater.exe"))
@@ -117,6 +117,7 @@ namespace BotFramework
                             richTextBox.AppendText("[" + DateTime.Now.ToLongTimeString() + "]:" + log + "\n");
                         });
                     }
+                    Debug_.WriteLine(log);
                 }
                 catch
                 {
@@ -150,6 +151,17 @@ namespace BotFramework
                 }
             }
             
+        }
+        /// <summary>
+        /// Script log for showing
+        /// </summary>
+        /// <param name="log">The log</param>
+        /// <param name="color">The color of log</param>
+        /// <param name="lineNumber"></param>
+        /// <param name="caller"></param>
+        public static void ScriptLog(string log, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        {
+            ScriptLog(log, Color.Black, lineNumber, caller);
         }
         /// <summary>
         /// Set if screencapture need to use pull function

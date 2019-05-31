@@ -50,10 +50,7 @@
             this.M_Box = new System.Windows.Forms.GroupBox();
             this.chk_twoE = new System.Windows.Forms.CheckBox();
             this.Etc_Box = new System.Windows.Forms.GroupBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.IMEI = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.btn_DownMEmu = new System.Windows.Forms.Button();
             this.label19 = new System.Windows.Forms.Label();
             this.E_Box = new System.Windows.Forms.GroupBox();
             this.groupBox13 = new System.Windows.Forms.GroupBox();
@@ -69,19 +66,12 @@
             this.chk_inter = new System.Windows.Forms.RadioButton();
             this.chk_advan = new System.Windows.Forms.RadioButton();
             this.sysd_box = new System.Windows.Forms.GroupBox();
-            this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.lbl_elps = new System.Windows.Forms.Label();
-            this.lbl_sysd = new System.Windows.Forms.Label();
             this.lbl_esph = new System.Windows.Forms.Label();
             this.lbl_eins = new System.Windows.Forms.Label();
-            this.lbl_NetV = new System.Windows.Forms.Label();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
             this.rbd_help = new System.Windows.Forms.RadioButton();
-            this.rbd_QQ = new System.Windows.Forms.RadioButton();
             this.Foward = new System.Windows.Forms.Button();
             this.Back = new System.Windows.Forms.Button();
             this.Refresh = new System.Windows.Forms.Button();
@@ -89,15 +79,12 @@
             this.rdb_card = new System.Windows.Forms.RadioButton();
             this.rdb_event = new System.Windows.Forms.RadioButton();
             this.webBrowser3 = new System.Windows.Forms.WebBrowser();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.panel3 = new System.Windows.Forms.Panel();
             this.btn_Start = new MetroFramework.Controls.MetroButton();
             this.btn_Stop = new MetroFramework.Controls.MetroButton();
             this.metroTabControl1 = new MetroFramework.Controls.MetroTabControl();
             this.Log = new MetroFramework.Controls.MetroTabPage();
-            this.chk_Log = new MetroFramework.Controls.MetroCheckBox();
-            this.metroLink1 = new MetroFramework.Controls.MetroLink();
             this.Settings = new MetroFramework.Controls.MetroTabPage();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.Debug = new MetroFramework.Controls.MetroTabPage();
@@ -107,6 +94,8 @@
             this.tabControl2 = new MetroFramework.Controls.MetroTabControl();
             this.Info = new MetroFramework.Controls.MetroTabPage();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.chk_Log = new MetroFramework.Controls.MetroCheckBox();
+            this.metroLink1 = new MetroFramework.Controls.MetroLink();
             this.ED_Box.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.M_Box.SuspendLayout();
@@ -261,25 +250,12 @@
             // Etc_Box
             // 
             this.Etc_Box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
-            this.Etc_Box.Controls.Add(this.textBox2);
-            this.Etc_Box.Controls.Add(this.IMEI);
             this.Etc_Box.Controls.Add(this.comboBox1);
-            this.Etc_Box.Controls.Add(this.btn_DownMEmu);
             this.Etc_Box.Controls.Add(this.label19);
             this.Etc_Box.ForeColor = System.Drawing.Color.White;
             resources.ApplyResources(this.Etc_Box, "Etc_Box");
             this.Etc_Box.Name = "Etc_Box";
             this.Etc_Box.TabStop = false;
-            // 
-            // textBox2
-            // 
-            resources.ApplyResources(this.textBox2, "textBox2");
-            this.textBox2.Name = "textBox2";
-            // 
-            // IMEI
-            // 
-            resources.ApplyResources(this.IMEI, "IMEI");
-            this.IMEI.Name = "IMEI";
             // 
             // comboBox1
             // 
@@ -287,13 +263,6 @@
             resources.ApplyResources(this.comboBox1, "comboBox1");
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.ComboBox1_SelectedIndexChanged);
-            // 
-            // btn_DownMEmu
-            // 
-            resources.ApplyResources(this.btn_DownMEmu, "btn_DownMEmu");
-            this.btn_DownMEmu.Name = "btn_DownMEmu";
-            this.btn_DownMEmu.UseVisualStyleBackColor = true;
-            this.btn_DownMEmu.Click += new System.EventHandler(this.button7_Click);
             // 
             // label19
             // 
@@ -307,6 +276,7 @@
             this.E_Box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
             this.E_Box.Controls.Add(this.groupBox13);
             this.E_Box.Controls.Add(this.groupBox1);
+            this.E_Box.Controls.Add(this.M_Box);
             this.E_Box.ForeColor = System.Drawing.Color.White;
             resources.ApplyResources(this.E_Box, "E_Box");
             this.E_Box.Name = "E_Box";
@@ -412,25 +382,14 @@
             // sysd_box
             // 
             this.sysd_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
-            this.sysd_box.Controls.Add(this.label5);
             this.sysd_box.Controls.Add(this.label4);
             this.sysd_box.Controls.Add(this.label3);
-            this.sysd_box.Controls.Add(this.label2);
-            this.sysd_box.Controls.Add(this.label1);
-            this.sysd_box.Controls.Add(this.lbl_elps);
-            this.sysd_box.Controls.Add(this.lbl_sysd);
             this.sysd_box.Controls.Add(this.lbl_esph);
             this.sysd_box.Controls.Add(this.lbl_eins);
-            this.sysd_box.Controls.Add(this.lbl_NetV);
             this.sysd_box.ForeColor = System.Drawing.Color.White;
             resources.ApplyResources(this.sysd_box, "sysd_box");
             this.sysd_box.Name = "sysd_box";
             this.sysd_box.TabStop = false;
-            // 
-            // label5
-            // 
-            resources.ApplyResources(this.label5, "label5");
-            this.label5.Name = "label5";
             // 
             // label4
             // 
@@ -442,26 +401,6 @@
             resources.ApplyResources(this.label3, "label3");
             this.label3.Name = "label3";
             // 
-            // label2
-            // 
-            resources.ApplyResources(this.label2, "label2");
-            this.label2.Name = "label2";
-            // 
-            // label1
-            // 
-            resources.ApplyResources(this.label1, "label1");
-            this.label1.Name = "label1";
-            // 
-            // lbl_elps
-            // 
-            resources.ApplyResources(this.lbl_elps, "lbl_elps");
-            this.lbl_elps.Name = "lbl_elps";
-            // 
-            // lbl_sysd
-            // 
-            resources.ApplyResources(this.lbl_sysd, "lbl_sysd");
-            this.lbl_sysd.Name = "lbl_sysd";
-            // 
             // lbl_esph
             // 
             resources.ApplyResources(this.lbl_esph, "lbl_esph");
@@ -472,16 +411,10 @@
             resources.ApplyResources(this.lbl_eins, "lbl_eins");
             this.lbl_eins.Name = "lbl_eins";
             // 
-            // lbl_NetV
-            // 
-            resources.ApplyResources(this.lbl_NetV, "lbl_NetV");
-            this.lbl_NetV.Name = "lbl_NetV";
-            // 
             // groupBox10
             // 
             this.groupBox10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(16)))), ((int)(((byte)(16)))));
             this.groupBox10.Controls.Add(this.rbd_help);
-            this.groupBox10.Controls.Add(this.rbd_QQ);
             this.groupBox10.Controls.Add(this.Foward);
             this.groupBox10.Controls.Add(this.Back);
             this.groupBox10.Controls.Add(this.Refresh);
@@ -499,15 +432,7 @@
             this.rbd_help.Name = "rbd_help";
             this.rbd_help.TabStop = true;
             this.rbd_help.UseVisualStyleBackColor = true;
-            this.rbd_help.CheckedChanged += new System.EventHandler(this.radioButton7_CheckedChanged);
-            // 
-            // rbd_QQ
-            // 
-            resources.ApplyResources(this.rbd_QQ, "rbd_QQ");
-            this.rbd_QQ.Name = "rbd_QQ";
-            this.rbd_QQ.TabStop = true;
-            this.rbd_QQ.UseVisualStyleBackColor = true;
-            this.rbd_QQ.CheckedChanged += new System.EventHandler(this.radioButton11_CheckedChanged);
+            this.rbd_help.Click += new System.EventHandler(this.Rbd_help_Click);
             // 
             // Foward
             // 
@@ -542,7 +467,7 @@
             this.rdb_card.Name = "rdb_card";
             this.rdb_card.TabStop = true;
             this.rdb_card.UseVisualStyleBackColor = true;
-            this.rdb_card.CheckedChanged += new System.EventHandler(this.radioButton8_CheckedChanged);
+            this.rdb_card.Click += new System.EventHandler(this.Rdb_card_Click);
             // 
             // rdb_event
             // 
@@ -551,7 +476,7 @@
             this.rdb_event.Name = "rdb_event";
             this.rdb_event.TabStop = true;
             this.rdb_event.UseVisualStyleBackColor = true;
-            this.rdb_event.CheckedChanged += new System.EventHandler(this.radioButton6_CheckedChanged);
+            this.rdb_event.Click += new System.EventHandler(this.Rdb_event_Click);
             // 
             // webBrowser3
             // 
@@ -562,10 +487,6 @@
             this.webBrowser3.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.WebBrowser3_DocumentCompleted);
             this.webBrowser3.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.WebBrowser3_Navigating);
             this.webBrowser3.NewWindow += new System.ComponentModel.CancelEventHandler(this.webBrowser3_NewWindow);
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "openFileDialog1";
             // 
             // panel3
             // 
@@ -600,19 +521,14 @@
             this.metroTabControl1.Controls.Add(this.Info);
             resources.ApplyResources(this.metroTabControl1, "metroTabControl1");
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 4;
+            this.metroTabControl1.SelectedIndex = 0;
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Brown;
             this.metroTabControl1.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroTabControl1.UseSelectable = true;
             // 
             // Log
             // 
-            this.Log.Controls.Add(this.chk_Log);
-            this.Log.Controls.Add(this.metroLink1);
-            this.Log.Controls.Add(this.btn_Stop);
-            this.Log.Controls.Add(this.btn_Start);
             this.Log.Controls.Add(this.webBrowser1);
-            this.Log.Controls.Add(this.ED_Box);
             this.Log.Controls.Add(this.richTextBox1);
             this.Log.HorizontalScrollbarBarColor = true;
             this.Log.HorizontalScrollbarHighlightOnWheel = false;
@@ -624,27 +540,8 @@
             this.Log.VerticalScrollbarHighlightOnWheel = false;
             this.Log.VerticalScrollbarSize = 10;
             // 
-            // chk_Log
-            // 
-            resources.ApplyResources(this.chk_Log, "chk_Log");
-            this.chk_Log.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
-            this.chk_Log.ForeColor = System.Drawing.Color.White;
-            this.chk_Log.Name = "chk_Log";
-            this.chk_Log.Theme = MetroFramework.MetroThemeStyle.Dark;
-            this.chk_Log.UseSelectable = true;
-            this.chk_Log.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged);
-            // 
-            // metroLink1
-            // 
-            resources.ApplyResources(this.metroLink1, "metroLink1");
-            this.metroLink1.Name = "metroLink1";
-            this.metroLink1.Theme = MetroFramework.MetroThemeStyle.Dark;
-            this.metroLink1.UseSelectable = true;
-            this.metroLink1.Click += new System.EventHandler(this.MetroLink1_Click);
-            // 
             // Settings
             // 
-            this.Settings.Controls.Add(this.M_Box);
             this.Settings.Controls.Add(this.Etc_Box);
             this.Settings.Controls.Add(this.E_Box);
             this.Settings.Controls.Add(this.pictureBox2);
@@ -738,12 +635,35 @@
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.TabStop = false;
             // 
+            // chk_Log
+            // 
+            resources.ApplyResources(this.chk_Log, "chk_Log");
+            this.chk_Log.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
+            this.chk_Log.ForeColor = System.Drawing.Color.White;
+            this.chk_Log.Name = "chk_Log";
+            this.chk_Log.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.chk_Log.UseSelectable = true;
+            this.chk_Log.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged);
+            // 
+            // metroLink1
+            // 
+            resources.ApplyResources(this.metroLink1, "metroLink1");
+            this.metroLink1.Name = "metroLink1";
+            this.metroLink1.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroLink1.UseSelectable = true;
+            this.metroLink1.Click += new System.EventHandler(this.MetroLink1_Click);
+            // 
             // MainScreen
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.metroTabControl1);
             this.Controls.Add(this.panel3);
+            this.Controls.Add(this.chk_Log);
+            this.Controls.Add(this.ED_Box);
+            this.Controls.Add(this.btn_Stop);
+            this.Controls.Add(this.btn_Start);
+            this.Controls.Add(this.metroLink1);
             this.MaximizeBox = false;
             this.Name = "MainScreen";
             this.Resizable = false;
@@ -772,7 +692,6 @@
             this.groupBox10.PerformLayout();
             this.metroTabControl1.ResumeLayout(false);
             this.Log.ResumeLayout(false);
-            this.Log.PerformLayout();
             this.Settings.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.Debug.ResumeLayout(false);
@@ -781,6 +700,7 @@
             this.Info.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -796,11 +716,7 @@
         private System.Windows.Forms.GroupBox E_Box;
         private System.Windows.Forms.RadioButton chk_ultim;
         private System.Windows.Forms.RichTextBox richTextBox1;
-        private System.Windows.Forms.Button btn_DownMEmu;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.Label IMEI;
         private System.Windows.Forms.PictureBox pictureBox2;
-        private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.CheckBox chk_twoE;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.GroupBox ED_Box;
@@ -814,16 +730,12 @@
         private System.Windows.Forms.GroupBox M_Box;
         private System.Windows.Forms.WebBrowser webBrowser3;
         private System.Windows.Forms.Panel panel3;
-        private System.Windows.Forms.Label lbl_NetV;
         private System.Windows.Forms.GroupBox sysd_box;
         private System.Windows.Forms.Label lbl_eins;
         private System.Windows.Forms.Label lbl_esph;
-        private System.Windows.Forms.Label lbl_sysd;
         private System.Windows.Forms.GroupBox groupBox13;
         private System.Windows.Forms.RadioButton chk_manuRT;
         private System.Windows.Forms.RadioButton chk_autoRT;
-        private System.Windows.Forms.Label lbl_elps;
-        private System.Windows.Forms.RadioButton rbd_QQ;
         private System.Windows.Forms.CheckBox chk_item;
         private System.Windows.Forms.RadioButton rbd_help;
         private System.Windows.Forms.PictureBox pictureBox4;
@@ -856,11 +768,8 @@
         private System.Windows.Forms.Label D_Box;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.PictureBox pictureBox1;
     }
 }
