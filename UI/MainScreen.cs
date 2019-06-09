@@ -535,18 +535,6 @@ namespace BotFramework
                     {
 
                     }
-                    try
-                    {
-                        var newimage = BotCore.ImageCapture();
-                        if (newimage != null)
-                        {
-                            VCBotScript.image = newimage;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        File.WriteAllText("error.log", ex.ToString());
-                    }
                 }
                 else
                 {

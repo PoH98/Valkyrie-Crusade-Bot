@@ -54,7 +54,7 @@ namespace BotFramework
         /// </summary>
         public static void LoadEmulatorInterface()
         {
-            if(!new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator))
+            if (!new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator))
             {
                 MessageBox.Show("Admin needed to run this framework!");
                 Environment.Exit(0);
@@ -65,7 +65,7 @@ namespace BotFramework
                 Directory.CreateDirectory("Emulators");
             }
             var dlls = Directory.GetFiles("Emulators", "*.dll");
-            if(dlls!=null)
+            if (dlls != null)
             {
                 foreach (var dll in dlls)
                 {
@@ -79,15 +79,74 @@ namespace BotFramework
                     }
                 }
             }
-            foreach (var emu in emulators)
+            bool[] installed = new bool[emulators.Count];
+            for (int x = 0; x < emulators.Count; x++)
             {
-                if (emu.LoadEmulatorSettings() && Variables.emulator == null)
+                installed[x] = emulators[x].LoadEmulatorSettings();
+                if (installed[x])
                 {
-                    Variables.emulator = emu;
-                    break;
+                    Variables.AdvanceLog("Detected emulator " + emulators[x].EmulatorName());
+                    EmuSelection_Resource.emu.Add(emulators[x]);
                 }
             }
-            Variables.AdvanceLog("Detected emulator "+Variables.emulator.EmulatorName());
+            if (installed.Count(b => b) > 1) //More than one installed
+            {
+                if (!File.Exists("Emulators\\Use_Emulator.ini"))
+                {
+                    Emulator_Selection em = new Emulator_Selection();
+                    em.ShowDialog();
+                    if (em.DialogResult == DialogResult.OK)
+                    {
+                        foreach (var e in emulators)
+                        {
+                            if (e.EmulatorName() == EmuSelection_Resource.selected)
+                            {
+                                Variables.emulator = e;
+                                e.LoadEmulatorSettings();
+                                File.WriteAllText("Emulators\\Use_Emulator.ini", "use=" + e.EmulatorName());
+                                break;
+                            }
+                        }
+                    }
+                    else //No selection
+                    {
+                        for (int x = 0; x < emulators.Count(); x++)
+                        {
+                            if (installed[x])
+                            {
+                                Variables.emulator = emulators[x];
+                                emulators[x].LoadEmulatorSettings();
+                                File.WriteAllText("Emulators\\Use_Emulator.ini","use="+emulators[x].EmulatorName());
+                                break;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    var line = File.ReadAllLines("Emulators\\Use_Emulator.ini")[0].Replace("use=","");
+                    foreach(var e in emulators)
+                    {
+                        if(e.EmulatorName() == line)
+                        {
+                            Variables.emulator = e;
+                            e.LoadEmulatorSettings();
+                            break;
+                        }
+                    }
+                    if(Variables.emulator == null)
+                    {
+                        //loop all emulator but not found same data
+                        MessageBox.Show("Please install any supported emulator first or install extentions to support your current installed emulator!", "No supported emulator found!");
+                        Environment.Exit(0);
+                    }
+                }
+            }
+            else if (installed.Count(b => b) == 0) //No installed
+            {
+                MessageBox.Show("Please install any supported emulator first or install extentions to support your current installed emulator!","No supported emulator found!");
+                Environment.Exit(0);
+            }
         }
         /// <summary>
         /// Compress image into byte array to avoid conflict while multiple function trying to access the image
@@ -234,6 +293,13 @@ namespace BotFramework
                 }
                 goto Connect;
             }
+            else
+            {
+                if (Variables.Proc.HasExited)
+                {
+                    StartEmulator();
+                }
+            }
             try
             {
                 socket = new AdbSocket(new IPEndPoint(IPAddress.Parse("127.0.0.1"), Adb.CurrentPort));
@@ -291,7 +357,7 @@ namespace BotFramework
             {
                 if(minitouchSocket != null)
                 {
-                    minitouchSocket.Dispose();
+                    minitouchSocket = null;
                 }
             }
             catch
@@ -324,10 +390,18 @@ namespace BotFramework
         /// </summary>
         private static void ConnectMinitouch()
         {
-            if (minitouchSocket != null)
+            try
             {
-                minitouchSocket.Dispose();
+                if (minitouchSocket != null)
+                {
+                    minitouchSocket = null;
+                }
             }
+            catch
+            {
+
+            }
+            Thread.Sleep(100);
             try
             {
                 var path = Path.GetTempPath() + "minitouch";
@@ -341,6 +415,10 @@ namespace BotFramework
                             if (minitouchPort == Convert.ToInt32(port))
                             {
                                 minitouchPort++;
+                            }
+                            else
+                            {
+                                break;
                             }
                         }
                     }

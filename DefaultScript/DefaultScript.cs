@@ -16,8 +16,7 @@ namespace DefaultScript
         private static List<ComboBox> toolParameterComboBoxes = new List<ComboBox>();
         public void Attack()
         {
-            for (int y = 0; y < 2; y++)
-            {
+
                 foreach (var cb in toolParameterComboBoxes)
                 {
                     int index = 0;
@@ -40,7 +39,7 @@ namespace DefaultScript
                                     {
                                         Variables.ScriptLog("Skill actived", Color.Blue);
                                         BotCore.SendSwipe(new Point(263, 473), new Point(264, 474), 1200);
-                                        for (int x = 0; x < 10; x++)
+                                        for (int x = 0; x < 6; x++)
                                         {
                                             Thread.Sleep(100);
                                             BotCore.SendTap(10, 10);
@@ -70,7 +69,7 @@ namespace DefaultScript
                                     {
                                         Variables.ScriptLog("Skill actived", Color.Blue);
                                         BotCore.SendSwipe(new Point(448, 492), new Point(449, 493), 1200);
-                                        for (int x = 0; x < 10; x++)
+                                        for (int x = 0; x < 6; x++)
                                         {
                                             Thread.Sleep(100);
                                             BotCore.SendTap(10, 10);
@@ -100,7 +99,7 @@ namespace DefaultScript
                                     {
                                         Variables.ScriptLog("Skill actived", Color.Blue);
                                         BotCore.SendSwipe(new Point(641, 473), new Point(642, 474), 1200);
-                                        for (int x = 0; x < 10; x++)
+                                        for (int x = 0; x < 6; x++)
                                         {
                                             Thread.Sleep(100);
                                             BotCore.SendTap(10, 10);
@@ -130,7 +129,7 @@ namespace DefaultScript
                                     {
                                         Variables.ScriptLog("Skill actived", Color.Blue);
                                         BotCore.SendSwipe(new Point(834, 483), new Point(835, 484), 1200);
-                                        for (int x = 0; x < 10; x++)
+                                        for (int x = 0; x < 6; x++)
                                         {
                                             Thread.Sleep(100);
                                             BotCore.SendTap(10, 10);
@@ -160,7 +159,7 @@ namespace DefaultScript
                                     {
                                         Variables.ScriptLog("Skill actived", Color.Blue);
                                         BotCore.SendSwipe(new Point(1017, 470), new Point(1018, 471), 1200);
-                                        for (int x = 0; x < 10; x++)
+                                        for (int x = 0; x < 6; x++)
                                         {
                                             Thread.Sleep(100);
                                             BotCore.SendTap(10, 10);
@@ -176,7 +175,7 @@ namespace DefaultScript
                             break;
                     }
                 }
-            }
+            
         }
         string cboxselected ="";
         public Control[] CreateUI()

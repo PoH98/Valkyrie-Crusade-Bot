@@ -1,10 +1,7 @@
 ﻿using BotFramework;
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace UI

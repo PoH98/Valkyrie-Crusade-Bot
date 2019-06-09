@@ -121,6 +121,12 @@
     <Compile Include="EmulatorController.cs" />
     <Compile Include="DllImport.cs" />
     <Compile Include="EmulatorInterface.cs" />
+    <Compile Include="Emulator_Selection.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Emulator_Selection.Designer.cs">
+      <DependentUpon>Emulator_Selection.cs</DependentUpon>
+    </Compile>
     <Compile Include="OCR.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Script.cs" />
@@ -134,6 +140,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Emulator_Selection.resx">
+      <DependentUpon>Emulator_Selection.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\EMGU.CV.4.0.1.3373\build\EMGU.CV.targets" Condition="Exists('..\packages\EMGU.CV.4.0.1.3373\build\EMGU.CV.targets')" />
