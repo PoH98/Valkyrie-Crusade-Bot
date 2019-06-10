@@ -99,7 +99,7 @@ namespace MEmu
                         fetch.CreateNoWindow = true;
                         fetch.RedirectStandardOutput = true;
                         fetch.UseShellExecute = false;
-                        while (Variables.SharedPath == null || Variables.AdbIpPort == null)
+                        do
                         {
                             Process fetching = Process.Start(fetch);
                             string result = fetching.StandardOutput.ReadToEnd();
@@ -127,6 +127,7 @@ namespace MEmu
                                 }
                             }
                         }
+                        while (Variables.SharedPath == null || Variables.AdbIpPort == null);
                         Variables.AndroidSharedPath = "/sdcard/Download/";
                         return true;
                     }

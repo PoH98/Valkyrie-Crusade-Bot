@@ -89,7 +89,12 @@ namespace BotFramework
                     EmuSelection_Resource.emu.Add(emulators[x]);
                 }
             }
-            if (installed.Count(b => b) > 1) //More than one installed
+            Variables.AdbIpPort = "";
+            Variables.AndroidSharedPath = "";
+            Variables.SharedPath = "";
+            Variables.VBoxManagerPath = "";
+            int installedamount = installed.Count(b => b);
+            if (installedamount > 1) //More than one installed
             {
                 if (!File.Exists("Emulators\\Use_Emulator.ini"))
                 {
@@ -104,7 +109,7 @@ namespace BotFramework
                                 Variables.emulator = e;
                                 e.LoadEmulatorSettings();
                                 File.WriteAllText("Emulators\\Use_Emulator.ini", "use=" + e.EmulatorName());
-                                break;
+                                return;
                             }
                         }
                     }
@@ -117,7 +122,7 @@ namespace BotFramework
                                 Variables.emulator = emulators[x];
                                 emulators[x].LoadEmulatorSettings();
                                 File.WriteAllText("Emulators\\Use_Emulator.ini","use="+emulators[x].EmulatorName());
-                                break;
+                                return;
                             }
                         }
                     }
@@ -131,7 +136,7 @@ namespace BotFramework
                         {
                             Variables.emulator = e;
                             e.LoadEmulatorSettings();
-                            break;
+                            return;
                         }
                     }
                     if(Variables.emulator == null)
@@ -142,10 +147,14 @@ namespace BotFramework
                     }
                 }
             }
-            else if (installed.Count(b => b) == 0) //No installed
+            else if (installedamount < 1) //No installed
             {
                 MessageBox.Show("Please install any supported emulator first or install extentions to support your current installed emulator!","No supported emulator found!");
                 Environment.Exit(0);
+            }
+            else
+            {
+                Variables.emulator = emulators[0];
             }
         }
         /// <summary>
