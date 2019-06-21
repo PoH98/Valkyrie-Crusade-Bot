@@ -9,25 +9,19 @@ namespace UI
     class ScriptErrorHandler
     {
         public static List<Bitmap> errorImages = new List<Bitmap>();
-        public static bool PauseErrorHandler;
         /// <summary>
         /// Check some error message that need to restart the game
         /// </summary>
         public static void ErrorHandle()
         {
-            if (PauseErrorHandler)
-            {
-                Thread.Sleep(1000);
-                return;
-            }
             if (Variables.Proc != null)
             {
                 try
                 {
-                    Parallel.ForEach(errorImages, error => 
+                    var crop = BotCore.CropImage(VCBotScript.image, new Point(350, 180), new Point(980, 515));
+                    foreach(var error in errorImages)
                     {
-                        var crop = BotCore.CropImage(VCBotScript.image, new Point(350, 180), new Point(980, 515));
-                        Thread.Sleep(1000);
+                        BotCore.Delay(100);
                         Point? p = BotCore.FindImage(crop, error, false);
                         if (p != null)
                         {
@@ -35,7 +29,7 @@ namespace UI
                             BotCore.KillGame("com.nubee.valkyriecrusade");
                             Reset("Error message found!");
                         }
-                    });
+                    }
                 }
                 catch
                 {

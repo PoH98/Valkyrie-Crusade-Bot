@@ -281,11 +281,7 @@ namespace DefaultScript
             box3.SelectedIndexChanged += Cards_SelectedIndexChanged;
             box4.SelectedIndexChanged += Cards_SelectedIndexChanged;
             box5.SelectedIndexChanged += Cards_SelectedIndexChanged;
-            box1.SelectionLength = 0;
-            box2.SelectionLength = 0;
-            box3.SelectionLength = 0;
-            box4.SelectionLength = 0;
-            box5.SelectionLength = 0;
+            text.Focus();
             var Cards = new ComboBox[] { box1, box2, box3, box4, box5 };
             toolParameterComboBoxes = Cards.ToList();
             Control[] thingsToReturn = { text, txtBox, lbl, box1, box2, box3, box4, box5 };

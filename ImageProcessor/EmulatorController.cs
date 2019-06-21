@@ -18,7 +18,6 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 using System.Threading;
-using System.Security.Cryptography;
 using System.Windows.Forms;
 using System.Reflection;
 using System.Net.Sockets;
@@ -36,7 +35,10 @@ namespace BotFramework
         /// </summary>
         public static string profilePath = Variables.Instance;
         private static string path;
-        static readonly AdbServer server = new AdbServer();
+        /// <summary>
+        /// Adb Server
+        /// </summary>
+        public static readonly AdbServer server = new AdbServer();
         static readonly AdbClient client = new AdbClient();
         static IAdbSocket socket;
         static bool StartingEmulator; //To confirm only start the emulator once in the same time!
@@ -93,8 +95,7 @@ namespace BotFramework
             Variables.AndroidSharedPath = "";
             Variables.SharedPath = "";
             Variables.VBoxManagerPath = "";
-            int installedamount = installed.Count(b => b);
-            if (installedamount > 1) //More than one installed
+            if (EmuSelection_Resource.emu.Count() > 1) //More than one installed
             {
                 if (!File.Exists("Emulators\\Use_Emulator.ini"))
                 {
@@ -147,15 +148,17 @@ namespace BotFramework
                     }
                 }
             }
-            else if (installedamount < 1) //No installed
+            else if (EmuSelection_Resource.emu.Count() < 1) //No installed
             {
                 MessageBox.Show("Please install any supported emulator first or install extentions to support your current installed emulator!","No supported emulator found!");
                 Environment.Exit(0);
             }
             else
             {
-                Variables.emulator = emulators[0];
+                Variables.emulator = EmuSelection_Resource.emu[0];
+                Variables.emulator.LoadEmulatorSettings();
             }
+
         }
         /// <summary>
         /// Compress image into byte array to avoid conflict while multiple function trying to access the image
@@ -209,7 +212,7 @@ namespace BotFramework
             try
             {
                 var receiver = new ConsoleOutputReceiver();
-                client.ExecuteRemoteCommand("adb install " + path, Variables.Controlled_Device, receiver);
+                client.ExecuteRemoteCommand("adb install " + path, (Variables.Controlled_Device as DeviceData), receiver);
             }
             catch (InvalidOperationException)
             {
@@ -267,7 +270,7 @@ namespace BotFramework
            
         }
         /// <summary>
-        /// Refresh Variables.Controlled_Device, Variables.Proc and BotCore.Handle, following with connection with Minitouch
+        /// Refresh (Variables.Controlled_Device as DeviceData), Variables.Proc and BotCore.Handle, following with connection with Minitouch
         /// </summary>
         public static void ConnectAndroidEmulator()
         {
@@ -477,8 +480,8 @@ namespace BotFramework
                 }
                 Cm:
                 ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
-                client.ExecuteRemoteCommandAsync("/data/local/tmp/minitouch", Variables.Controlled_Device, receiver, CancellationToken.None, int.MaxValue);
-                client.CreateForward(Variables.Controlled_Device, ForwardSpec.Parse($"tcp:{minitouchPort}"), ForwardSpec.Parse("localabstract:minitouch"), true);
+                client.ExecuteRemoteCommandAsync("/data/local/tmp/minitouch", (Variables.Controlled_Device as DeviceData), receiver, CancellationToken.None, int.MaxValue);
+                client.CreateForward((Variables.Controlled_Device as DeviceData), ForwardSpec.Parse($"tcp:{minitouchPort}"), ForwardSpec.Parse("localabstract:minitouch"), true);
                 minitouchSocket = new TcpSocket();
                 minitouchSocket.Connect(new IPEndPoint(IPAddress.Parse("127.0.0.1"),minitouchPort));
                 if (minitouchSocket.Connected)
@@ -508,16 +511,10 @@ namespace BotFramework
             {
                 if(ex is AdbException)
                 {
-                    if(!IsOnline())
-                    {
-                        RestartEmulator();
-                        minitouchPort = 1111;
-                        return;
-                    }
-                    else
-                    {
-                        server.RestartServer();
-                    }
+                    server.RestartServer();
+                    RestartEmulator();
+                    minitouchPort = 1111;
+                    return;
                 }
                 Variables.AdvanceLog(ex.ToString());
                 minitouchPort++;
@@ -542,7 +539,7 @@ namespace BotFramework
                 {
                     return false;
                 }
-                client.ExecuteRemoteCommand("dumpsys window windows | grep -E 'mCurrentFocus'", Variables.Controlled_Device, receiver);
+                client.ExecuteRemoteCommand("dumpsys window windows | grep -E 'mCurrentFocus'", (Variables.Controlled_Device as DeviceData), receiver);
                 if (receiver.ToString().Contains(packagename))
                 {
                     return true;
@@ -555,20 +552,6 @@ namespace BotFramework
             catch (ArgumentOutOfRangeException)
             {
 
-            }
-            catch (AdbException ex)
-            {
-                Variables.ScriptLog("Adb exception found!" ,Color.Red);
-                Variables.AdvanceLog(ex.Message);
-                if (!IsOnline())
-                {
-                    CloseEmulator();
-                    Thread.Sleep(10000);
-                }
-                else
-                {
-                    server.RestartServer();
-                }
             }
             return false;
         }
@@ -616,7 +599,7 @@ namespace BotFramework
                 }
                     var receiver = new ConsoleOutputReceiver();
 
-                    client.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", Variables.Controlled_Device, receiver);
+                    client.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", (Variables.Controlled_Device as DeviceData), receiver);
                     Thread.Sleep(1000);
                     var ico = FindImage(img, icon, true);
                     if (ico != null)
@@ -633,11 +616,6 @@ namespace BotFramework
             catch (ArgumentOutOfRangeException)
             {
                 
-            }
-            catch (AdbException ex)
-            {
-                Variables.ScriptLog("Adb exception found!",Color.Red);
-                Variables.AdvanceLog(ex.Message);
             }
             return false;
         }
@@ -659,9 +637,9 @@ namespace BotFramework
                     return false;
                 }
                     var receiver = new ConsoleOutputReceiver();
-                    client.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", Variables.Controlled_Device, receiver);
+                    client.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", (Variables.Controlled_Device as DeviceData), receiver);
                     Thread.Sleep(1000);
-                    client.ExecuteRemoteCommand("am start -n " + packagename, Variables.Controlled_Device, receiver);
+                    client.ExecuteRemoteCommand("am start -n " + packagename, (Variables.Controlled_Device as DeviceData), receiver);
                     Thread.Sleep(1000);
                     return GameIsForeground(packagename);
             }
@@ -672,11 +650,6 @@ namespace BotFramework
             catch (ArgumentOutOfRangeException)
             {
 
-            }
-            catch (AdbException ex)
-            {
-                Variables.ScriptLog("Adb exception found!",Color.Red);
-                Variables.AdvanceLog(ex.Message);
             }
             return false;
         }
@@ -699,9 +672,9 @@ namespace BotFramework
 
                 {
                     var receiver = new ConsoleOutputReceiver();
-                    client.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", Variables.Controlled_Device, receiver);
+                    client.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", (Variables.Controlled_Device as DeviceData), receiver);
                     Thread.Sleep(1000);
-                    client.ExecuteRemoteCommand("am force-stop " + packagename, Variables.Controlled_Device, receiver);
+                    client.ExecuteRemoteCommand("am force-stop " + packagename, (Variables.Controlled_Device as DeviceData), receiver);
                 }
             }
             catch (InvalidOperationException)
@@ -711,11 +684,6 @@ namespace BotFramework
             catch (ArgumentOutOfRangeException)
             {
 
-            }
-            catch (AdbException ex)
-            {
-                Variables.ScriptLog("Adb exception found!",Color.Red);
-                Variables.AdvanceLog(ex.Message);
             }
         }
         /// <summary>
@@ -761,7 +729,7 @@ namespace BotFramework
                     MessageBox.Show("Warning, unable to find shared folder! Try to match it manually!");
                     Environment.Exit(0);
                 }
-                path = Variables.SharedPath + "\\" + SHA256(Variables.AdbIpPort) + ".raw";
+                path = Variables.SharedPath + "\\" + Encryption.SHA256(Variables.AdbIpPort) + ".raw";
                 path = path.Replace("\\\\", "\\");
                 Stopwatch s = Stopwatch.StartNew();
                 byte[] raw = null;
@@ -772,7 +740,7 @@ namespace BotFramework
                     ConnectAndroidEmulator();
                     return null;
                 }
-                if (Variables.Controlled_Device.State == DeviceState.Offline)
+                if ((Variables.Controlled_Device as DeviceData).State == DeviceState.Offline)
                 {
                     if (JustStarted)
                     {
@@ -789,14 +757,14 @@ namespace BotFramework
                 {
                     return null;
                 }
-                client.ExecuteRemoteCommand("screencap " + Variables.AndroidSharedPath + SHA256(Variables.AdbIpPort) + ".raw", Variables.Controlled_Device, receiver);
+                client.ExecuteRemoteCommand("screencap " + Variables.AndroidSharedPath + Encryption.SHA256(Variables.AdbIpPort) + ".raw", (Variables.Controlled_Device as DeviceData), receiver);
                 if (Variables.NeedPull)
                 {
                     if (File.Exists(path))
                     {
                         File.Delete(path);
                     }
-                    Pull(Variables.AndroidSharedPath + SHA256(Variables.AdbIpPort) + ".raw", path);
+                    Pull(Variables.AndroidSharedPath + Encryption.SHA256(Variables.AdbIpPort) + ".raw", path);
                 }
                 if (!File.Exists(path))
                 {
@@ -845,39 +813,19 @@ namespace BotFramework
             {
 
             }
-            catch (AdbException ex)
-            {
-                Variables.AdvanceLog("Adb exception found!");
-                Variables.AdvanceLog(ex.Message);
-                if (!IsOnline())
-                {
-                    CloseEmulator();
-                    Thread.Sleep(10000);
-                }
-                else
-                {
-                    server.RestartServer();
-                }
-            }
-            catch (SocketException)
-            {
-
-            }
             return null;
         }
         /// <summary>
         /// Tap at location
         /// </summary>
         /// <param name="point">The location</param>
-        /// <param name="lineNumber"></param>
-        /// <param name="caller"></param>
-        public static void SendTap(Point point, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static void SendTap(Point point)
         {
             if (!ScriptRun.Run)
             {
                 return;
             }
-            SendTap(point.X, point.Y, lineNumber,caller);
+            SendTap(point.X, point.Y);
         }
         /// <summary>
         /// Swipe the screen
@@ -885,17 +833,12 @@ namespace BotFramework
         /// <param name="start">Swiping start position</param>
         /// <param name="end">Swiping end position</param>
         /// <param name="usedTime">The time used for swiping, milliseconds</param>
-        /// /// <param name="lineNumber"></param>
-        /// <param name="caller"></param>
-        public static void SendSwipe(Point start, Point end, int usedTime, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static void SendSwipe(Point start, Point end, int usedTime)
         {
             if (!ScriptRun.Run)
             {
                 return;
             }
-            
-            try
-            {
                 var receiver = new ConsoleOutputReceiver();
                 int x = start.X;
                 int y = start.Y;
@@ -905,60 +848,37 @@ namespace BotFramework
                 {
                     return;
                 }
-                client.ExecuteRemoteCommand("input touchscreen swipe " + x + " " + y + " " + ex + " " + ey + " " + usedTime, Variables.Controlled_Device, receiver);
+                client.ExecuteRemoteCommand("input touchscreen swipe " + x + " " + y + " " + ex + " " + ey + " " + usedTime, (Variables.Controlled_Device as DeviceData), receiver);
                 if (receiver.ToString().Contains("Error"))
                 {
                     Variables.AdvanceLog(receiver.ToString());
                 }
-            }
-            catch (AdbException ex)
-            {
-                Variables.AdvanceLog("Adb exception found!");
-                Variables.AdvanceLog(ex.Message);
-                CloseEmulator();
-            }
         }
         /// <summary>
         /// Left click adb command on the point for generating background click in emulators
         /// </summary>
         /// <param name="x">X Posiition for clicking</param>
         /// <param name="y">Y Position for clicking</param>
-        /// <param name="lineNumber"></param>
-        /// <param name="caller"></param>
-        public static void SendTap(int x, int y, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static void SendTap(int x, int y)
         {
             if (!ScriptRun.Run)
             {
                 return;
             }
             Stopwatch s = Stopwatch.StartNew();
-            try
+            if (minitouchSocket == null)
             {
-                if (minitouchSocket == null)
-                {
-                    ConnectMinitouch();
-                    return;
-                }
-                var receiver = new ConsoleOutputReceiver();
-                if (Variables.Controlled_Device == null)
-                {
-                    return;
-                }
-                string cmd = $"d 0 {x} {y} 100\nc\nu 0\nc\n";
-                byte[] bytes = AdbClient.Encoding.GetBytes(cmd);
-                minitouchSocket.Send(bytes, 0, bytes.Length, SocketFlags.None);
-            }
-            catch (AdbException ex)
-            {
-                Variables.AdvanceLog("Adb exception found!");
-                Variables.AdvanceLog(ex.Message);
-                CloseEmulator();
-            }
-            catch (SocketException)
-            {
-                minitouchPort++;
                 ConnectMinitouch();
+                return;
             }
+            var receiver = new ConsoleOutputReceiver();
+            if (Variables.Controlled_Device == null)
+            {
+                return;
+            }
+            string cmd = $"d 0 {x} {y} 100\nc\nu 0\nc\n";
+            byte[] bytes = AdbClient.Encoding.GetBytes(cmd);
+            minitouchSocket.Send(bytes, 0, bytes.Length, SocketFlags.None);
             s.Stop();
             Variables.AdvanceLog("Tap sended to point " + x + ":" + y + ". Used time: " + s.ElapsedMilliseconds + "ms");
         }
@@ -987,7 +907,6 @@ namespace BotFramework
                 ConnectMinitouch();
                 Minitouch(command);
             }
-           
         }
         /// <summary>
         /// Swipe the screen
@@ -997,42 +916,31 @@ namespace BotFramework
         /// <param name="endX">Swiping end position</param>
         /// <param name="endY">Swiping end position</param>
         /// <param name="usedTime">The time used for swiping, milliseconds</param>
-        /// /// <param name="lineNumber"></param>
-        /// <param name="caller"></param>
-        public static void SendSwipe(int startX, int startY, int endX, int endY, int usedTime, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static void SendSwipe(int startX, int startY, int endX, int endY, int usedTime)
         {
             if (!ScriptRun.Run)
             {
                 return;
             }
-            
-            try
-            {
-                if (Variables.Controlled_Device == null)
-                {
-                    return;
-                }
-                var receiver = new ConsoleOutputReceiver();
 
-                {
-                    client.ExecuteRemoteCommand("input touchscreen swipe " + startX + " " + startY + " " + endX + " " + endY + " " + usedTime, Variables.Controlled_Device, receiver);
-                }
-                if (receiver.ToString().Contains("Error"))
-                {
-                    Variables.AdvanceLog(receiver.ToString());
-                }
-            }
-            catch (AdbException ex)
+            if (Variables.Controlled_Device == null)
             {
-                Variables.AdvanceLog("Adb exception found!");
-                Variables.AdvanceLog(ex.Message);
-                CloseEmulator();
+                return;
+            }
+            var receiver = new ConsoleOutputReceiver();
+
+            {
+                client.ExecuteRemoteCommand("input touchscreen swipe " + startX + " " + startY + " " + endX + " " + endY + " " + usedTime, (Variables.Controlled_Device as DeviceData), receiver);
+            }
+            if (receiver.ToString().Contains("Error"))
+            {
+                Variables.AdvanceLog(receiver.ToString());
             }
         }
         /// <summary>
         /// Read Configure in Bot.ini and save it into Variables.Configure (Dictionary)
         /// </summary>
-        public static void ReadConfig([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static void ReadConfig()
         {
             
             if (!Directory.Exists("Profiles\\" + profilePath))
@@ -1108,9 +1016,7 @@ namespace BotFramework
         /// <summary>
         /// Start Emulator according to EmulatorInterface
         /// </summary>
-        /// <param name="lineNumber"></param>
-        /// <param name="caller"></param>
-        public static void StartEmulator([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static void StartEmulator()
         {
             if (StartingEmulator)
             {
@@ -1121,7 +1027,6 @@ namespace BotFramework
             {
                 return;
             }
-            
             Variables.emulator.StartEmulator();
             Variables.ScriptLog("Starting Emulator...", Color.LimeGreen);
             StartingEmulator = false;
@@ -1131,10 +1036,8 @@ namespace BotFramework
         /// </summary>
         /// <param name="position">The position of image</param>
         /// <param name="rawimage">The image that need to return color</param>
-        /// /// <param name="lineNumber"></param>
-        /// <param name="caller"></param>
-        /// <returns></returns>
-        public static Color GetPixel(Point position, byte[] rawimage, [CallerLineNumber] int lineNumber = 0,[CallerMemberName] string caller = null)
+        /// <returns>color</returns>
+        public static Color GetPixel(Point position, byte[] rawimage)
         {
             if (!ScriptRun.Run)
             {
@@ -1145,7 +1048,7 @@ namespace BotFramework
             return new Bitmap(image).GetPixel(position.X, position.Y);
         }
 
-        private static Color GetPixel(int x, int y, IntPtr ptr, int step, int Width, int Height, int Depth, byte[] pixel)
+        private static Color GetPixel(int x, int y, int step, int Width, int Depth, byte[] pixel)
         {
             if (!ScriptRun.Run)
             {
@@ -1179,10 +1082,8 @@ namespace BotFramework
         /// <param name="point">The point to check for color</param>
         /// <param name="color">The color to check at point is true or false</param>
         /// <param name="tolerance">The tolerance on color, larger will more inaccurate</param>
-        /// <param name="lineNumber"></param>
-        /// <param name="caller"></param>
         /// <returns>bool</returns>
-        public static bool RGBComparer(byte[] image, Point point, Color color, int tolerance,[CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static bool RGBComparer(byte[] image, Point point, Color color, int tolerance)
         {
             if (!ScriptRun.Run)
             {
@@ -1204,10 +1105,8 @@ namespace BotFramework
         /// <param name="blue">Blue value of color</param>
         /// <param name="green">Green value of color</param>
         /// <param name="red">Red value of color</param>
-        /// <param name="lineNumber"></param>
-        /// <param name="caller"></param>
         /// <returns>bool</returns>
-        public static bool RGBComparer(byte[] image, Point point, int red, int green, int blue, int tolerance, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static bool RGBComparer(byte[] image, Point point, int red, int green, int blue, int tolerance)
         {
             if (!ScriptRun.Run)
             {
@@ -1237,7 +1136,7 @@ namespace BotFramework
                 byte[] pixel = new byte[PixelCount * step];
                 IntPtr ptr = bd.Scan0;
                 Marshal.Copy(ptr, pixel, 0, pixel.Length);
-                Color clr = GetPixel(point.X, point.Y, ptr, step, Width, Height, Depth, pixel);
+                Color clr = GetPixel(point.X, point.Y, step, Width, Depth, pixel);
                 if (clr.R == red && clr.G == green && clr.B == blue)
                 {
                     bmp.UnlockBits(bd);
@@ -1274,7 +1173,7 @@ namespace BotFramework
         /// Compare point RGB from image
         /// </summary>
         /// <returns>bool</returns>
-        public static bool RGBComparer(byte[] rawimage, Color color, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static bool RGBComparer(byte[] rawimage, Color color)
         {
             if (!ScriptRun.Run)
             {
@@ -1307,7 +1206,7 @@ namespace BotFramework
                 for (int j = 0; j < image.Width; j++)
                 {
                     //Get the color at each pixel
-                    Color now_color = GetPixel(j, i, ptr, step, Width, Height, Depth, pixel);
+                    Color now_color = GetPixel(j, i, step, Width, Depth, pixel);
 
                     //Compare Pixel's Color ARGB property with the picked color's ARGB property 
                     if (now_color.ToArgb() == color.ToArgb())
@@ -1324,7 +1223,7 @@ namespace BotFramework
         /// Compare point RGB from image
         /// </summary>
         /// <returns>bool</returns>
-        public static bool RGBComparer(byte[] rawimage, Color color, Point start, Point end, out Point? point, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static bool RGBComparer(byte[] rawimage, Color color, Point start, Point end, out Point? point)
         {
             if (!ScriptRun.Run)
             {
@@ -1344,7 +1243,7 @@ namespace BotFramework
         /// Compare point RGB from image
         /// </summary>
         /// <returns>bool</returns>
-        public static bool RGBComparer(byte[] rawimage, Color color, out Point? point, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static bool RGBComparer(byte[] rawimage, Color color, out Point? point)
         {
             if (!ScriptRun.Run)
             {
@@ -1379,7 +1278,7 @@ namespace BotFramework
                 for (int j = 0; j < image.Width; j++)
                 {
                     //Get the color at each pixel
-                    Color now_color = GetPixel(j, i, ptr, step, Width, Height, Depth, pixel);
+                    Color now_color = GetPixel(j, i,  step, Width, Depth, pixel);
 
                     //Compare Pixel's Color ARGB property with the picked color's ARGB property 
                     if (now_color.ToArgb() == color.ToArgb())
@@ -1400,10 +1299,8 @@ namespace BotFramework
         /// <param name="find">The smaller image for matching</param>
         /// <param name="screencapture">Original image that need to get the point on it</param>
         /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
-        /// <param name="lineNumber"></param>
-        /// <param name="caller"></param>
         /// <returns>Point or null</returns>
-        public static Point? FindImage(byte[] screencapture, Bitmap find, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static Point? FindImage(byte[] screencapture, Bitmap find, bool GrayStyle)
         {
             if (!ScriptRun.Run)
             {
@@ -1423,11 +1320,9 @@ namespace BotFramework
         /// <param name="find">The smaller image for matching</param>
         /// <param name="original">Original image that need to get the point on it</param>
         /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
-        /// <param name="lineNumber"></param>
-        /// <param name="caller"></param>
         /// <returns>Point or null</returns>
         /// <returns></returns>
-        public static Point? FindImage(Bitmap original, Bitmap find, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static Point? FindImage(Bitmap original, Bitmap find, bool GrayStyle)
         {
             if (!ScriptRun.Run)
             {
@@ -1488,10 +1383,8 @@ namespace BotFramework
         /// <param name="findPath">The path of smaller image for matching</param>
         /// <param name="screencapture">Original image that need to get the point on it</param>
         /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
-        /// <param name="lineNumber"></param>
-        /// <param name="caller"></param>
         /// <returns>Point or null</returns>
-        public static Point? FindImage(byte[] screencapture, string findPath, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static Point? FindImage(byte[] screencapture, string findPath, bool GrayStyle)
         {
             if (!ScriptRun.Run)
             {
@@ -1560,10 +1453,8 @@ namespace BotFramework
         /// <param name="image">The smaller image for matching</param>
         /// <param name="screencapture">Original image that need to get the point on it</param>
         /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
-        /// <param name="lineNumber"></param>
-        /// <param name="caller"></param>
         /// <returns>Point or null</returns>
-        public static Point? FindImage(byte[] screencapture, byte[] image, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static Point? FindImage(byte[] screencapture, byte[] image, bool GrayStyle)
         {
             if (!ScriptRun.Run)
             {
@@ -1584,10 +1475,8 @@ namespace BotFramework
         /// <param name="original">Image that need to be cropped</param>
         /// <param name="start">Starting Point</param>
         /// <param name="End">Ending Point</param>
-        /// <param name="lineNumber"></param>
-        /// <param name="caller"></param>
         /// <returns></returns>
-        public static byte[] CropImage(byte[] original, Point start, Point End, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static byte[] CropImage(byte[] original, Point start, Point End)
         {
             if (!ScriptRun.Run)
             {
@@ -1627,10 +1516,10 @@ namespace BotFramework
             {
                 return;
             }
-            if (Variables.Controlled_Device.State == DeviceState.Online)
+            if ((Variables.Controlled_Device as DeviceData).State == DeviceState.Online)
             {
-                client.ExecuteRemoteCommand("content insert --uri content://settings/system --bind name:s:accelerometer_rotation --bind value:i:0", Variables.Controlled_Device, receiver);
-                client.ExecuteRemoteCommand("content insert --uri content://settings/system --bind name:s:user_rotation --bind value:i:0", Variables.Controlled_Device, receiver);
+                client.ExecuteRemoteCommand("content insert --uri content://settings/system --bind name:s:accelerometer_rotation --bind value:i:0", (Variables.Controlled_Device as DeviceData), receiver);
+                client.ExecuteRemoteCommand("content insert --uri content://settings/system --bind name:s:user_rotation --bind value:i:0", (Variables.Controlled_Device as DeviceData), receiver);
                 receiver.Flush();
             }
         }
@@ -1671,26 +1560,19 @@ namespace BotFramework
             {
                 return false;
             }
-            try
+            if (Variables.Controlled_Device == null)
             {
-                if (Variables.Controlled_Device == null)
-                {
-                    return false;
-                }
-                socket = new AdbSocket(new IPEndPoint(IPAddress.Parse("127.0.0.1"), Adb.CurrentPort));
-                using (SyncService service = new SyncService(socket, Variables.Controlled_Device))
-                using (Stream stream = File.OpenWrite(to))
-                {
-                    service.Pull(from, stream, null, CancellationToken.None);
-                }
-                if (File.Exists(to))
-                {
-                    return true;
-                }
+                return false;
             }
-            catch (AdbException)
+            socket = new AdbSocket(new IPEndPoint(IPAddress.Parse("127.0.0.1"), Adb.CurrentPort));
+            using (SyncService service = new SyncService(socket, (Variables.Controlled_Device as DeviceData)))
+            using (Stream stream = File.OpenWrite(to))
             {
-
+                service.Pull(from, stream, null, CancellationToken.None);
+            }
+            if (File.Exists(to))
+            {
+                return true;
             }
             return false;
         }
@@ -1706,98 +1588,14 @@ namespace BotFramework
             {
                 return;
             }
-            try
+            socket = new AdbSocket(new IPEndPoint(IPAddress.Parse("127.0.0.1"), Adb.CurrentPort));
+            using (SyncService service = new SyncService(socket, (Variables.Controlled_Device as DeviceData)))
             {
-                socket = new AdbSocket(new IPEndPoint(IPAddress.Parse("127.0.0.1"), Adb.CurrentPort));
-                using (SyncService service = new SyncService(socket, Variables.Controlled_Device))
+                using (Stream stream = File.OpenRead(from))
                 {
-                    using (Stream stream = File.OpenRead(from))
-                    {
-                        service.Push(stream, to, permission, DateTime.Now, null, CancellationToken.None);
-                    }
+                    service.Push(stream, to, permission, DateTime.Now, null, CancellationToken.None);
                 }
             }
-            catch(AdbException ex)
-            {
-                Variables.AdvanceLog(ex.ToString());
-            }
-        }
-        /// <summary>
-        /// Encrypt text
-        /// </summary>
-        /// <param name="text">text for encryption</param>
-        /// <returns></returns>
-        public static string Encrypt(string text)
-        {
-            if (text == null)
-            {
-                return "";
-            }
-            StringBuilder sb = new StringBuilder();
-            foreach (char c in text)
-            {
-                char enc = c;
-                char y = (char)(Convert.ToUInt16(enc) + 14);
-                sb.Append(y);
-            }
-            return sb.ToString();
-        }
-        /// <summary>
-        /// Decrypt text
-        /// </summary>
-        /// <param name="text">text for decryption</param>
-        /// <returns></returns>
-        public static string Decrypt(string text)
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (char c in text)
-            {
-                char enc = c;
-                char y = (char)(Convert.ToUInt16(enc) - 14);
-                sb.Append(y);
-            }
-            return sb.ToString();
-        }
-        /// <summary>
-        /// Calculate SHA256 of string
-        /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        public static string SHA256(string text)
-        {
-            byte[] bytes = Encoding.Unicode.GetBytes(text);
-            SHA256Managed hashstring = new SHA256Managed();
-            byte[] hash = hashstring.ComputeHash(bytes);
-            string hashString = string.Empty;
-            foreach (byte x in hash)
-            {
-                hashString += String.Format("{0:x2}", x);
-            }
-            return hashString;
-        }
-        /// <summary>
-        /// Check device is online
-        /// </summary>
-        /// <returns></returns>
-        private static bool IsOnline()
-        {
-            bool online = false;
-            try
-            {
-                if (Variables.Controlled_Device != null)
-                {
-                    if (Variables.Controlled_Device.State == DeviceState.Online)
-                    {
-                        online = true;
-                    }
-                }
-                Variables.AdvanceLog("Checking device " + Variables.Controlled_Device + " online: " + online.ToString());
-            }
-            catch
-            {
-
-            }
-            return online;
         }
 
         private static readonly Random rnd = new Random();
@@ -1842,6 +1640,22 @@ namespace BotFramework
             }
         }
         /// <summary>
+        /// Delay for specific time
+        /// </summary>
+        /// <param name="time">miliseconds</param>
+        public static void Delay(int time)
+        {
+            Thread.Sleep(time);
+        }
+        /// <summary>
+        /// Delay for specific time
+        /// </summary>
+        /// <param name="time">time</param>
+        public static void Delay(TimeSpan time)
+        {
+            Delay(Convert.ToInt32(time.TotalMilliseconds));
+        }
+        /// <summary>
         /// Send text to android emulator, can be used for typing but only ENGLISH!!
         /// </summary>
         /// <param name="text">The text needed to be sent</param>
@@ -1854,7 +1668,7 @@ namespace BotFramework
             try
             {
                 var receiver = new ConsoleOutputReceiver();
-                client.ExecuteRemoteCommand("input text \"" + text.Replace(" ", "%s") + "\"", Variables.Controlled_Device, receiver);
+                client.ExecuteRemoteCommand("input text \"" + text.Replace(" ", "%s") + "\"", (Variables.Controlled_Device as DeviceData), receiver);
             }
             catch (InvalidOperationException)
             {
@@ -1863,12 +1677,6 @@ namespace BotFramework
             catch (ArgumentOutOfRangeException)
             {
 
-            }
-            catch (AdbException ex)
-            {
-                Variables.AdvanceLog("Adb exception found!");
-                Variables.AdvanceLog(ex.Message);
-                CloseEmulator();
             }
         }
     }

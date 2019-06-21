@@ -1,7 +1,10 @@
-﻿using System;
+﻿using SharpAdbClient;
+using SharpAdbClient.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Security.Permissions;
 using System.Threading;
@@ -116,7 +119,32 @@ namespace BotFramework
             {
                 do
                 {
-                    script.Script();
+                    try
+                    {
+                        script.Script();
+                    }
+                    catch (SocketException)
+                    {
+                        BotCore.server.RestartServer();
+                        if (!CheckDeviceOnline())
+                        {
+                            BotCore.RestartEmulator();
+                        }
+                        BotCore.Delay(10000);
+                        BotCore.ConnectAndroidEmulator();
+                        continue;
+                    }
+                    catch (DeviceNotFoundException)
+                    {
+                        BotCore.server.RestartServer();
+                        if (!CheckDeviceOnline())
+                        {
+                            BotCore.RestartEmulator();
+                        }
+                        BotCore.Delay(10000);
+                        BotCore.ConnectAndroidEmulator();
+                        continue;
+                    }
                 }
                 while (KeepRunning && Run);
             }
@@ -141,6 +169,39 @@ namespace BotFramework
             catch
             {
 
+            }
+        }
+
+        private static bool CheckDeviceOnline()
+        {
+            if(Variables.Proc != null)
+            {
+                if (Variables.Proc.HasExited || !Variables.Proc.Responding)
+                {
+                    return false;
+                }
+                else
+                {
+                    if (Variables.Controlled_Device != null)
+                    {
+                        if((Variables.Controlled_Device as DeviceData).State == DeviceState.Online)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                return false;
             }
         }
     }

@@ -251,9 +251,7 @@ namespace ImgXml {
         ///&lt;p&gt;挂机无法获取任何神女控活动资料！可能造成游戏内网络连接不稳定！
         ///&lt;br&gt;
         ///您还是可以继续使用此软件，只不过游戏很可能经常断线。建议尽快修复您的网络连接！
-        ///&lt;/p&gt;
-        ///&lt;/body&gt;
-        ///&lt;/html&gt; [rest of string was truncated]&quot;;.
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         public static string index {
             get {
@@ -447,6 +445,16 @@ namespace ImgXml {
         public static System.Drawing.Bitmap Update_Complete {
             get {
                 object obj = ResourceManager.GetObject("Update_Complete", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap White {
+            get {
+                object obj = ResourceManager.GetObject("White", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

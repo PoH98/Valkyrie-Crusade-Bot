@@ -1,19 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
 
 namespace BotFramework
 {
+    /// <summary>
+    /// Logs writing
+    /// </summary>
     public class Debug_
     {
         private static string FileName;
-        static StreamWriter s;
-
-        public static void PrepairDebug()
+        private static StreamWriter s;
+        private static bool EncryptLog;
+        /// <summary>
+        /// Get a log file prepaired
+        /// <param name="encrypt">Check if log have to be encrypted from users!</param>
+        /// </summary>
+        public static void PrepairDebug(bool encrypt)
         {
             if (!Directory.Exists("Profiles\\" + Variables.Instance + "\\Logs\\"))
             {
@@ -33,13 +36,19 @@ namespace BotFramework
             }
             if (FileName == null)
             {
-                Debug_.FileName = "Profiles\\" + Variables.Instance + "\\Logs\\" + DateTime.Now.ToString().Replace(' ', '_').Replace('/', '_').Replace(':', '_') + ".log";
+                FileName = "Profiles\\" + Variables.Instance + "\\Logs\\" + DateTime.Now.ToString().Replace(' ', '_').Replace('/', '_').Replace(':', '_') + ".log";
                 if (!Directory.Exists("Profiles\\" + Variables.Instance + "\\Logs\\"))
                     Directory.CreateDirectory("Profiles\\" + Variables.Instance + "\\Logs\\");
                 s = File.AppendText(FileName);
             }
+            EncryptLog = encrypt;
         }
-
+        /// <summary>
+        /// Write Log to log file. Needed to be prepaired log file first!
+        /// </summary>
+        /// <param name="log_"></param>
+        /// <param name="lineNumber"></param>
+        /// <param name="caller"></param>
         public static void WriteLine(string log_, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
@@ -48,14 +57,28 @@ namespace BotFramework
             }
             try
             {
-                s.WriteLine(Encrypt(log_ + " Line: " + lineNumber + " Caller: " + caller as string));
+                if(s != null)
+                {
+                    if (EncryptLog)
+                    {
+                        s.WriteLine(Encrypt(log_ + " Line: " + lineNumber + " Caller: " + caller as string));
+                    }
+                    else
+                    {
+                        s.WriteLine(log_ + " Line: " + lineNumber + " Caller: " + caller as string);
+                    }
+                }
             }
             catch
             {
 
             }
         }
-
+        /// <summary>
+        /// Write Log to log file. Needed to be prepaired log file first!
+        /// </summary>
+        /// <param name="lineNumber"></param>
+        /// <param name="caller"></param>
         public static void WriteLine([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
@@ -64,7 +87,17 @@ namespace BotFramework
             }
             try
             {
-                s.WriteLine(Encrypt("Line: " + lineNumber + " Called by : " + caller as string));
+                if(s != null)
+                {
+                    if (EncryptLog)
+                    {
+                        s.WriteLine(Encrypt("Line: " + lineNumber + " Called by : " + caller as string));
+                    }
+                    else
+                    {
+                        s.WriteLine("Line: " + lineNumber + " Called by : " + caller as string);
+                    }
+                }
             }
             catch
             {
@@ -73,10 +106,10 @@ namespace BotFramework
 
         }
 
-        protected static string Encrypt(string log)
+        private static string Encrypt(string log)
         {
             string newlog = "[" + DateTime.Now + "]: " + log;
-            return BotCore.Encrypt(newlog);
+            return Encryption.Encrypt(newlog);
         }
     }
 }

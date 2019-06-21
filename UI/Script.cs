@@ -9,6 +9,7 @@ using System.Media;
 using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace UI
 {
@@ -30,7 +31,6 @@ namespace UI
             Debug_.WriteLine();
             BotCore.Delay(1000, false);
             PrivateVariable.InMainScreen = false;
-            Point? point = null;
             BotCore.Delay(100, 200);
             for (int x = 0; x < 30; x++)
             {
@@ -50,7 +50,7 @@ namespace UI
                 BotCore.Delay(100,true);
                 image = BotCore.ImageCapture();
                 var crop = BotCore.CropImage(image, new Point(315, 150), new Point(1005, 590));
-                point = BotCore.FindImage(crop, Img.GreenButton, false);
+                Point? point = BotCore.FindImage(crop, Img.GreenButton, false);
                 if (point != null)
                 {
                     BotCore.SendTap(point.Value);
@@ -207,17 +207,68 @@ namespace UI
             }
            
         }
+        //Archwitch
+        private static void Archwitch()
+        {
+            //return mainscreen before enter
+            LocateMainScreen();
+            //Enter battle screen
+            BotCore.SendTap(170, 630);
+            BotCore.Delay(5000, false);
+            for (int x = 0; x < 5; x++)
+            {
+                image = BotCore.ImageCapture();
+                Point? located = BotCore.FindImage(image, Environment.CurrentDirectory + "\\Img\\LocateEventSwitch.png", true);
+                if (located == null)
+                {
+                    x -= 1;
+                    BotCore.Delay(1000, false);
+                    if (error > 10)
+                    {
+                        ScriptErrorHandler.Reset("Unable to locate Event Switch screen! Returning main screen!");
+                        error = 0;
+                        return;
+                    }
+                    error++;
+                    ScriptErrorHandler.ErrorHandle();
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            BotCore.SendTap(925, 430);
+            BotCore.Delay(5000, true);
+            //Detect is in event screen?
+
+            //Just enter stage 1 and repeat!
+
+            //Keep looping to detect is it already auto moving and await for archwitch
+
+            //Fight archwitch when found, enter Battle()
+
+            //Detect final boss exist, click auto at the right down side.
+
+            //Boss dead, back to mainscreen, await for energy to continue main event
+        }
         //Guild wars
         private static void GuildWar()
         {
+            image = BotCore.ImageCapture();
+            //Detect which color is still exist
 
+            //Click on color tile and start battle
+
+            //Enter Battle()
+
+            //Exited battle, continue go on back to start of loop
         }
         //Treasure hunt!
         private static void TreasureHunt()
         {
             Debug_.WriteLine();
-            Point? p = null;
-            p = BotCore.FindImage(image, Img.TreasureHunt, true);
+            var p = BotCore.FindImage(image, Img.TreasureHunt, true);
             //Find for treasure hunt building!
             for (int find = 0; find < 4; find++)
             {
@@ -359,6 +410,7 @@ namespace UI
                                 BotCore.SendTap(point.Value);
                                 break;
                             }
+                            ScriptErrorHandler.ErrorHandle();
                         }
                     }
                     if (point == null)
@@ -450,9 +502,8 @@ namespace UI
         {
             Debug_.WriteLine();
             BotCore.Delay(1000, false);
-            Point? point = null;
             image = BotCore.ImageCapture();
-            point = BotCore.FindImage(image, Img.Close2, false);
+            Point? point = BotCore.FindImage(image, Img.Close2, false);
             if (point != null)
             {
                 BotCore.SendTap(new Point(point.Value.X, point.Value.Y));
@@ -644,7 +695,11 @@ namespace UI
                     stop.Start();
                     PrivateVariable.Battling = true;
                     energy--; //Calculate Energy used
-                    nextOnline.AddMinutes(45);
+                    if(nextOnline < DateTime.Now)
+                    {
+                        nextOnline = DateTime.Now;
+                    }
+                    nextOnline = nextOnline.AddMinutes(45);
                     BotCore.Delay(1000, false);
                     break;
                 }
@@ -821,7 +876,7 @@ namespace UI
                     BotCore.Delay(2000, false);
                     stop.Start();
                     energy--; //Calculate Energy used
-                    nextOnline.AddMinutes(45);
+                    nextOnline = nextOnline.AddMinutes(45);
                     EnteredStage = true;
                     BotCore.Delay(5000, false);
                     break;
@@ -1016,6 +1071,7 @@ namespace UI
         //Fighting and locate UI
         private static void LocateUI()
         {
+            BotCore.Delay(1000);
             image = BotCore.ImageCapture();
             if (!BotCore.RGBComparer(image, new Point(10, 27), Color.FromArgb(200, 200, 200), 5))
             {
@@ -1028,6 +1084,7 @@ namespace UI
                     BotCore.SendTap(point.Value);
                     BotCore.Delay(1000, 1200);
                     locateUIError = 0;
+                    image = BotCore.ImageCapture();
                 }
                 if (BotCore.FindImage(image, Img.NoEnergy, true) != null)
                 {
@@ -1337,24 +1394,10 @@ namespace UI
                 {
                     return;
                 }
-                Stopwatch delay = Stopwatch.StartNew();
-                for (int x = 0; x < 7; x++)
-                {
-                    image = BotCore.ImageCapture();
-                    if(BotCore.RGBComparer(image,new Point(723, 675), Color.FromArgb(220, 220, 222), 5))
-                    {
-                        break;
-                    }
-                    BotCore.SendTap(10, 10);
-                    if(delay.ElapsedMilliseconds > 6000)
-                    {
-                        break;
-                    }
-                }
-                delay.Stop();
                 LocateUI();
                 if (Attackable)
                 {
+                   
                     Variables.ScriptLog("Locating Skills and enemies", Color.Gold);
                     if (PrivateVariable.BattleScript.Count > 0)
                     {
@@ -1362,7 +1405,22 @@ namespace UI
                         PrivateVariable.BattleScript[PrivateVariable.Selected_Script].Attack();
                     }
                     CheckEnemy();
-                    BotCore.Delay(2000, true);
+                    Stopwatch delay = Stopwatch.StartNew();
+                    for (int x = 0; x < 7; x++)
+                    {
+                        image = BotCore.ImageCapture();
+                        var crop = BotCore.CropImage(image, new Point(209, 648), new Point(492, 693));
+                        if (BotCore.FindImage(crop, Img.White, true) != null)
+                        {
+                            break;
+                        }
+                        if (delay.ElapsedMilliseconds > 5250)
+                        {
+                            break;
+                        }
+                        BotCore.SendTap(10, 10);
+                    }
+                    delay.Stop();
                 }
                 if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
@@ -1488,10 +1546,22 @@ namespace UI
         //Close Game and wait for energy in tower event for stucking rune time
         private static void StuckRune()
         {
-            ScriptErrorHandler.PauseErrorHandler = true;
             Debug_.WriteLine();
             Variables.ScriptLog("Close game and stuck rune!", Color.DarkGreen);
             Variables.ScriptLog("Estimate online time is " + nextOnline, Color.Lime);
+            string filename = Encryption.SHA256(Variables.AdbIpPort);
+            if (!Directory.Exists("C:\\ProgramData\\" + filename))
+            {
+                Directory.CreateDirectory("C:\\ProgramData\\" + filename);
+            }
+            if (!BotCore.Pull("/data/data/com.nubee.valkyriecrusade/shared_prefs/NUBEE_ID.xml", "C:\\ProgramData\\" + filename + "\\" + filename + ".xml"))
+            {
+                Variables.ScriptLog("Pull files failed", Color.Red);
+            }
+            else
+            {
+                Variables.ScriptLog("Backup saved", Color.Lime);
+            }
             BotCore.KillGame("com.nubee.valkyriecrusade");
             Variables.Configure.TryGetValue("Manual_Rune", out string output);
             if (output == "true")
@@ -1512,13 +1582,21 @@ namespace UI
                 MessageBox.Show("正在卡符文！下次上线时间为" + nextOnline + "!");
                 Environment.Exit(0);
             }
-            if (PrivateVariable.CloseEmulator)
+            if (Variables.Configure.TryGetValue("Suspend_PC", out string suspend))
             {
-                BotCore.CloseEmulator();
+                if (suspend == "true")
+                {
+                    SleepWake.SetWakeTimer(nextOnline);
+                }
+                else
+                {
+                    BotCore.Delay(Convert.ToInt32((nextOnline - DateTime.Now).TotalMilliseconds));
+                }
             }
-            var wait = (nextOnline - DateTime.Now);
-            BotCore.Delay((int)wait.TotalMilliseconds, true);
-            ScriptErrorHandler.PauseErrorHandler = false;
+            else
+            {
+                BotCore.Delay(Convert.ToInt32((nextOnline - DateTime.Now).TotalMilliseconds));
+            }
             energy = 5;
         }
         //No energy left so close game
@@ -1529,25 +1607,41 @@ namespace UI
             {
                 Variables.ScriptLog("Estimate online time is " + nextOnline, Color.Lime);
                 BotCore.KillGame("com.nubee.valkyriecrusade");
-                ScriptErrorHandler.PauseErrorHandler = true;
-                if (PrivateVariable.CloseEmulator)
+                string filename = Encryption.SHA256(Variables.AdbIpPort);
+                if (!Directory.Exists("C:\\ProgramData\\" + filename))
                 {
-                    CloseEmu = true;
-                    BotCore.CloseEmulator();
+                    Directory.CreateDirectory("C:\\ProgramData\\" + filename);
                 }
-                var wait = (nextOnline - DateTime.Now);
-                BotCore.Delay((int)wait.TotalMilliseconds,true);
-                ScriptErrorHandler.PauseErrorHandler = false;
-                CloseEmu = false;
+                if (!BotCore.Pull("/data/data/com.nubee.valkyriecrusade/shared_prefs/NUBEE_ID.xml", "C:\\ProgramData\\" + filename + "\\" + filename + ".xml"))
+                {
+                    Variables.ScriptLog("Pull files failed", Color.Red);
+                }
+                else
+                {
+                    Variables.ScriptLog("Backup saved", Color.Lime);
+                }
+                if (Variables.Configure.TryGetValue("Suspend_PC", out string suspend))
+                {
+                    if (suspend == "true")
+                    {
+                        SleepWake.SetWakeTimer(nextOnline);
+                    }
+                    else
+                    {
+                        BotCore.Delay(Convert.ToInt32((nextOnline - DateTime.Now).TotalMilliseconds));
+                    }
+                }
+                else
+                {
+                    BotCore.Delay(Convert.ToInt32((nextOnline - DateTime.Now).TotalMilliseconds));
+                }
             }
             else if (PrivateVariable.EventType == 1)
             {
-                ScriptErrorHandler.PauseErrorHandler = true;
                 BotCore.KillGame("com.nubee.valkyriecrusade");
                 nextOnline = DateTime.Now.AddMilliseconds(900000);
                 Variables.ScriptLog("Estimate online time is " + nextOnline, Color.Lime);
                 BotCore.Delay(900000, 1000000);
-                ScriptErrorHandler.PauseErrorHandler = false;
             }
 
         }
@@ -1631,12 +1725,12 @@ namespace UI
                         Debug_.WriteLine("Variables.Proc is null");
                         //so go on and find the emulator!
                         BotCore.ConnectAndroidEmulator();
-                        //MEmu found!
+                        //Emulator found!
                         if (Variables.Proc != null)
                         {
                             break;
                         }
-                        //Maybe something is wrong, no process is same name as MEmu!
+                        //Maybe something is wrong, no process is connected!
                         BotCore.StartEmulator();
                         BotCore.Delay(9000, 12000);
                     }
@@ -1644,7 +1738,7 @@ namespace UI
                 else //The Emulator is not exist!
                 {
                     BotCore.StartEmulator(); //Start our fxxking Emulator!!
-                    BotCore.Delay(9000, 12000); //Wait
+                    BotCore.Delay(10000); //Wait
                     BotCore.ConnectAndroidEmulator();
                     return;
                 }
@@ -1679,7 +1773,7 @@ namespace UI
                     }
                 }
                 BotCore.Delay(10, true);
-                string filename = BotCore.SHA256(Variables.AdbIpPort);
+                string filename = Encryption.SHA256(Variables.AdbIpPort);
                 if (!Directory.Exists("C:\\ProgramData\\" + filename))
                 {
                     Directory.CreateDirectory("C:\\ProgramData\\" + filename);
@@ -1738,7 +1832,7 @@ namespace UI
                     image = BotCore.ImageCapture();
                     Variables.ScriptLog("Starting Game", Color.Lime);
                     BotCore.StartGame(Img.Icon, image);
-                    BotCore.Delay(5000, false);
+                    BotCore.Delay(5000);
                     if (BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                     {
                         nextOnline = DateTime.Now;

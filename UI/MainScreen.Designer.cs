@@ -50,6 +50,7 @@
             this.M_Box = new System.Windows.Forms.GroupBox();
             this.chk_twoE = new System.Windows.Forms.CheckBox();
             this.Etc_Box = new System.Windows.Forms.GroupBox();
+            this.Suspend_Chk = new System.Windows.Forms.CheckBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label19 = new System.Windows.Forms.Label();
             this.E_Box = new System.Windows.Forms.GroupBox();
@@ -88,6 +89,7 @@
             this.Settings = new MetroFramework.Controls.MetroTabPage();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.Debug = new MetroFramework.Controls.MetroTabPage();
+            this.metroButton1 = new MetroFramework.Controls.MetroButton();
             this.btn_OCR = new MetroFramework.Controls.MetroButton();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.Script = new MetroFramework.Controls.MetroTabPage();
@@ -250,12 +252,20 @@
             // Etc_Box
             // 
             this.Etc_Box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
+            this.Etc_Box.Controls.Add(this.Suspend_Chk);
             this.Etc_Box.Controls.Add(this.comboBox1);
             this.Etc_Box.Controls.Add(this.label19);
             this.Etc_Box.ForeColor = System.Drawing.Color.White;
             resources.ApplyResources(this.Etc_Box, "Etc_Box");
             this.Etc_Box.Name = "Etc_Box";
             this.Etc_Box.TabStop = false;
+            // 
+            // Suspend_Chk
+            // 
+            resources.ApplyResources(this.Suspend_Chk, "Suspend_Chk");
+            this.Suspend_Chk.Name = "Suspend_Chk";
+            this.Suspend_Chk.UseVisualStyleBackColor = true;
+            this.Suspend_Chk.CheckedChanged += new System.EventHandler(this.Suspend_Chk_CheckedChanged);
             // 
             // comboBox1
             // 
@@ -521,7 +531,7 @@
             this.metroTabControl1.Controls.Add(this.Info);
             resources.ApplyResources(this.metroTabControl1, "metroTabControl1");
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 0;
+            this.metroTabControl1.SelectedIndex = 1;
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Brown;
             this.metroTabControl1.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroTabControl1.UseSelectable = true;
@@ -563,6 +573,7 @@
             // 
             // Debug
             // 
+            this.Debug.Controls.Add(this.metroButton1);
             this.Debug.Controls.Add(this.btn_OCR);
             this.Debug.Controls.Add(this.sysd_box);
             this.Debug.Controls.Add(this.pictureBox4);
@@ -575,6 +586,14 @@
             this.Debug.VerticalScrollbarBarColor = true;
             this.Debug.VerticalScrollbarHighlightOnWheel = false;
             this.Debug.VerticalScrollbarSize = 10;
+            // 
+            // metroButton1
+            // 
+            this.metroButton1.FontWeight = MetroFramework.MetroButtonWeight.Regular;
+            resources.ApplyResources(this.metroButton1, "metroButton1");
+            this.metroButton1.Name = "metroButton1";
+            this.metroButton1.UseSelectable = true;
+            this.metroButton1.Click += new System.EventHandler(this.MetroButton1_Click);
             // 
             // btn_OCR
             // 
@@ -771,6 +790,8 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private MetroFramework.Controls.MetroButton metroButton1;
+        private System.Windows.Forms.CheckBox Suspend_Chk;
     }
 }
 

@@ -60,7 +60,7 @@ namespace BotFramework
         /// <summary>
         /// The controlled device
         /// </summary>
-        public static DeviceData Controlled_Device = null;
+        public static Object Controlled_Device = null;
         /// <summary>
         /// Confiures of bot.ini, use BotCore.ReadConfig() to fill up values
         /// </summary>
@@ -117,7 +117,7 @@ namespace BotFramework
                             richTextBox.AppendText("[" + DateTime.Now.ToLongTimeString() + "]:" + log + "\n");
                         });
                     }
-                    Debug_.WriteLine(log);
+                    Debug_.WriteLine(log,lineNumber,caller);
                 }
                 catch
                 {
@@ -156,7 +156,6 @@ namespace BotFramework
         /// Script log for showing
         /// </summary>
         /// <param name="log">The log</param>
-        /// <param name="color">The color of log</param>
         /// <param name="lineNumber"></param>
         /// <param name="caller"></param>
         public static void ScriptLog(string log, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)

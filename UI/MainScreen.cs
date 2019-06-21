@@ -35,7 +35,7 @@ namespace BotFramework
         public MainScreen()
         {
             InitializeComponent();
-            Debug_.PrepairDebug();
+            Debug_.PrepairDebug(true);
             Variables.richTextBox = richTextBox1;
             timeout.Interval = 15000;
             timeout.Tick += Timeout_Tick;
@@ -212,6 +212,13 @@ namespace BotFramework
                 if (output == "true")
                 {
                     chk_manuRT.Checked = true;
+                }
+            }
+            if(Variables.Configure.TryGetValue("Suspend_PC",out output))
+            {
+                if(output == "true")
+                {
+                    Suspend_Chk.Checked = true;
                 }
             }
             webBrowser1.ScriptErrorsSuppressed = true;
@@ -977,6 +984,17 @@ namespace BotFramework
                     webBrowser3.Navigate("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/sch/index.html");
                 }
             }
+        }
+
+        private void MetroButton1_Click(object sender, EventArgs e)
+        {
+            SleepWake.SetWakeTimer(DateTime.Now.AddMinutes(1));
+            PCController.DoMouseClick(100,100);
+        }
+
+        private void Suspend_Chk_CheckedChanged(object sender, EventArgs e)
+        {
+            WriteConfig("Suspend_PC",Suspend_Chk.Checked.ToString().ToLower());
         }
     }
 }

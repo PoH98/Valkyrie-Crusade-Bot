@@ -40,7 +40,6 @@ namespace UI
         /// </summary>
         public static IntPtr MEmu_MainWindow;
 
-        public static bool CloseEmulator = false;
         //public static List<byte[]> Enemies = new List<byte[]>();
         public static List<BattleScript> BattleScript = new List<UI.BattleScript>();
 
