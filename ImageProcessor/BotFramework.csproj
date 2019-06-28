@@ -120,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adb.cs" />
+    <Compile Include="Compiler.cs" />
     <Compile Include="Debug_.cs" />
     <Compile Include="EmulatorController.cs" />
     <Compile Include="DllImport.cs" />

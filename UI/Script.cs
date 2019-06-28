@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace UI
 {
@@ -34,7 +35,6 @@ namespace UI
             BotCore.Delay(100, 200);
             for (int x = 0; x < 30; x++)
             {
-                image = BotCore.ImageCapture();
                 if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
                     BotCore.StartGame(Img.Icon, image);
@@ -47,8 +47,6 @@ namespace UI
                     BotCore.Delay(1000, true);
                     image = BotCore.ImageCapture();
                 }
-                BotCore.Delay(100,true);
-                image = BotCore.ImageCapture();
                 var crop = BotCore.CropImage(image, new Point(315, 150), new Point(1005, 590));
                 Point? point = BotCore.FindImage(crop, Img.GreenButton, false);
                 if (point != null)
@@ -94,6 +92,12 @@ namespace UI
                             BotCore.Delay(1000, false);
                         }
                         return;
+                    }
+                    point = BotCore.FindImage(crop, Img.Red_Button, false);
+                    if (point != null)
+                    {
+                        BotCore.SendTap(point.Value);
+                        Variables.ScriptLog("Found Red Button!", Color.Lime);
                     }
                     point = BotCore.FindImage(image, Img.Back_to_Village, true);
                     if (point != null)
@@ -255,14 +259,38 @@ namespace UI
         //Guild wars
         private static void GuildWar()
         {
-            image = BotCore.ImageCapture();
-            //Detect which color is still exist
-
-            //Click on color tile and start battle
-
-            //Enter Battle()
-
-            //Exited battle, continue go on back to start of loop
+            for(int x = 0; x < 60; x++)
+            {
+                image = BotCore.ImageCapture();
+                var point = BotCore.FindImage(image, Img.GreenButton, false);
+                if(point != null)
+                {
+                    BotCore.SendTap(point.Value);
+                    BotCore.Delay(500);
+                    x--;
+                    continue;
+                }
+                if (BotCore.FindImage(image, "Img\\GuildWar\\Locate.png", false) != null)
+                {
+                    break;
+                }
+                if(x > 50)
+                {
+                    Variables.ScriptLog("Somehing is not right! No guild war locate found! Lets go back!");
+                    GetEventXML.guildwar = DateTime.MinValue;
+                    return;
+                }
+            }
+            //Read energy
+            if (BotCore.RGBComparer(image, new Point(877, 560), Color.FromArgb(50, 233,34), 10))
+            {
+                PrivateVariable.Battling = true;
+                Battle();
+            }
+            else
+            {
+                BotCore.Delay(2700000);
+            }
         }
         //Treasure hunt!
         private static void TreasureHunt()
@@ -720,6 +748,8 @@ namespace UI
                         ScriptErrorHandler.ErrorHandle();
                     }
                 }
+                image = BotCore.ImageCapture();
+                ScriptErrorHandler.ErrorHandle();
             }
             while (!PrivateVariable.Battling);
 
@@ -1223,7 +1253,7 @@ namespace UI
                             BotCore.SendTap(point.Value.X + 125, point.Value.Y);
                             for (int x = 0; x < 5; x++)
                             {
-                                BotCore.SendTap(0, 0);
+                                BotCore.SendTap(10, 10);
                             }
                             PrivateVariable.Battling = false;
                             stop.Stop();
@@ -1397,7 +1427,6 @@ namespace UI
                 LocateUI();
                 if (Attackable)
                 {
-                   
                     Variables.ScriptLog("Locating Skills and enemies", Color.Gold);
                     if (PrivateVariable.BattleScript.Count > 0)
                     {
@@ -1406,17 +1435,21 @@ namespace UI
                     }
                     CheckEnemy();
                     Stopwatch delay = Stopwatch.StartNew();
-                    for (int x = 0; x < 7; x++)
+                    for (int x = 0; x < 15; x++)
                     {
-                        image = BotCore.ImageCapture();
-                        var crop = BotCore.CropImage(image, new Point(209, 648), new Point(492, 693));
-                        if (BotCore.FindImage(crop, Img.White, true) != null)
+                        BotCore.Delay(10,100);
+                        if(x > 10)
                         {
-                            break;
-                        }
-                        if (delay.ElapsedMilliseconds > 5250)
-                        {
-                            break;
+                            image = BotCore.ImageCapture();
+                            var crop = BotCore.CropImage(image, new Point(209, 648), new Point(492, 693));
+                            if (BotCore.FindImage(crop, Img.White, true) != null)
+                            {
+                                break;
+                            }
+                            if (delay.ElapsedMilliseconds > 3000)
+                            {
+                                break;
+                            }
                         }
                         BotCore.SendTap(10, 10);
                     }
@@ -1620,6 +1653,26 @@ namespace UI
                 {
                     Variables.ScriptLog("Backup saved", Color.Lime);
                 }
+                if (DateTime.Now > GetEventXML.guildwar && DateTime.Now < GetEventXML.guildwar.AddDays(9))
+                {
+                    //Guild war! Online immediately!
+                    if(nextOnline.Hour > 9 && nextOnline.Hour < 11)
+                    {
+                        nextOnline = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 7, 59, 30);
+                    }
+                    else if (nextOnline.Hour > 13 && nextOnline.Hour < 18)
+                    {
+                        nextOnline = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 11, 59, 30);
+                    }
+                    else if (nextOnline.Hour > 20 && nextOnline.Hour < 21)
+                    {
+                        nextOnline = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 18, 59, 30);
+                    }
+                    else if (nextOnline.Hour > 23)
+                    {
+                        nextOnline = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 21, 59, 30);
+                    }
+                }
                 if (Variables.Configure.TryGetValue("Suspend_PC", out string suspend))
                 {
                     if (suspend == "true")
@@ -1636,14 +1689,6 @@ namespace UI
                     BotCore.Delay(Convert.ToInt32((nextOnline - DateTime.Now).TotalMilliseconds));
                 }
             }
-            else if (PrivateVariable.EventType == 1)
-            {
-                BotCore.KillGame("com.nubee.valkyriecrusade");
-                nextOnline = DateTime.Now.AddMilliseconds(900000);
-                Variables.ScriptLog("Estimate online time is " + nextOnline, Color.Lime);
-                BotCore.Delay(900000, 1000000);
-            }
-
         }
         //Read battle script plugins
         public static void Read_Plugins()
@@ -1674,6 +1719,7 @@ namespace UI
             }
         }
 
+        static bool Muted_Device = false;
         void ScriptInterface.Script()
         {
             Debug_.WriteLine();
@@ -1683,10 +1729,10 @@ namespace UI
             {
                 GetEventXML.LoadXMLEvent();
             }
-            if (DateTime.Now > GetEventXML.guildwar && DateTime.Now < GetEventXML.guildwar.AddDays(10))
+            if (DateTime.Now > GetEventXML.guildwar && DateTime.Now < GetEventXML.guildwar.AddDays(9))
             {
                 var hour = time.Hours;
-                if (hour == 8 || hour == 12 || hour == 19 || hour == 22)
+                if(hour == 8 || hour == 12 || hour == 19 || hour == 22)
                 {
                     Console.Beep();
                     ScriptErrorHandler.Reset("Guild War is running, waiting for end...");
@@ -1714,6 +1760,33 @@ namespace UI
                     BotCore.KillGame("com.nubee.valkyriecrusade");
                     BotCore.Delay(Convert.ToInt32(seconds), true);
                 }
+                /*switch (hour)
+                {
+                    case 8:
+                    case 12:
+                    case 19:
+                    case 22:
+                        ScriptErrorHandler.Reset("Guild War is running!");
+                        var point = BotCore.FindImage(image, Img.GreenButton, false);
+                        if (point == null)
+                        {
+                            BotCore.SendTap(155, 663);
+                            BotCore.Delay(5000);
+                            BotCore.SendTap(628, 96);
+                            BotCore.Delay(5000);
+                        }
+                        else
+                        {
+                            BotCore.SendTap(point.Value);
+                        }
+                        do
+                        {
+                            Variables.ScriptLog("Entering Guild War!", Color.White);
+                            GuildWar();
+                        } while (hour == 8 || hour == 12 || hour == 19 || hour == 22);
+                        break;
+                }
+                */
             }
             if (!CloseEmu)
             {
@@ -1749,7 +1822,7 @@ namespace UI
                 }
                 int error = 0;
                 BotCore.Delay(10, true);
-                while (image == null) 
+                do
                 {
                     BotCore.Delay(1200, false);
                     image = BotCore.ImageCapture();
@@ -1771,7 +1844,27 @@ namespace UI
                         BotCore.RestartEmulator();
                         error = 0;
                     }
-                }
+                    Image img = BotCore.Decompress(image);
+                    try
+                    {
+                        if (img.Height != 720 || img.Width != 1280)
+                        {
+                            Debug_.WriteLine("Image size not correct: " + img.Width + "*" + img.Height);
+                            Variables.ScriptLog("Emulator's screen size is not 1280*720! Detected size is " + img.Width + "*" + img.Height, Color.LightYellow);
+                            BotCore.ResizeEmulator(1280, 720);
+                            BotCore.Delay(20000, 30000);
+                            return;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    catch
+                    {
+                        return;
+                    }
+                } while (image == null);
                 BotCore.Delay(10, true);
                 string filename = Encryption.SHA256(Variables.AdbIpPort);
                 if (!Directory.Exists("C:\\ProgramData\\" + filename))
@@ -1800,23 +1893,6 @@ namespace UI
                         BotCore.Delay(1000, false);
                     }
                 }
-                Image img = BotCore.Decompress(image);
-                try
-                {
-                    if (img.Height != 720 || img.Width != 1280)
-                    {
-                        Debug_.WriteLine("Image size not correct: " + img.Width + "*" + img.Height);
-                        Variables.ScriptLog("Emulator's screen size is not 1280*720! Detected size is " + img.Width + "*" + img.Height, Color.LightYellow);
-                        BotCore.ResizeEmulator(1280, 720);
-                        BotCore.Delay(20000, 30000);
-                        return;
-                    }
-                }
-                catch
-                {
-                    return;
-                }
-
             }
             if (Stuck)
             {
@@ -1847,6 +1923,14 @@ namespace UI
             }
             else
             {
+                if (!Muted_Device)
+                {
+                    for (int x = 0; x < 20; x++)
+                    {
+                        BotCore.SendEvent(BotCore.KeyCode.VolumeDown);
+                    }
+                    Muted_Device = true;
+                }
                 if (!PrivateVariable.InMainScreen && !PrivateVariable.InEventScreen && !PrivateVariable.Battling)
                 {
                     LocateMainScreen();

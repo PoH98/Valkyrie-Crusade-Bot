@@ -82,10 +82,10 @@ namespace BotFramework
         /// <summary>
         /// Encrypt data and save as xml file. Decrypt first before any process!
         /// </summary>
-        /// <param name="image">Image for encrypt</param>
+        /// <param name="data">Image for encrypt</param>
         /// <param name="filename">The file name of image, do not include any .png or .jpg! It will directly save as xml format!</param>
         /// <returns></returns>
-        public static void EncryptData(byte[] image, string filename)
+        public static void EncryptData(byte[] data, string filename)
         {
             RijndaelManaged RijndaelCipher = new RijndaelManaged();
             string passPhrase = "PoH98";
@@ -96,7 +96,7 @@ namespace BotFramework
             ICryptoTransform Encryptor = RijndaelCipher.CreateEncryptor(password.GetBytes(32), password.GetBytes(16));
             MemoryStream memoryStream = new MemoryStream();
             CryptoStream cryptoStream = new CryptoStream(memoryStream, Encryptor, CryptoStreamMode.Write);
-            cryptoStream.Write(image, 0, image.Length);
+            cryptoStream.Write(data, 0, data.Length);
             cryptoStream.FlushFinalBlock();
             byte[] CipherBytes = memoryStream.ToArray();
             memoryStream.Close();

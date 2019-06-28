@@ -716,7 +716,7 @@ namespace BotFramework
         /// <summary>
         /// Fast Capturing screen and return the image, uses WinAPI capture if Variables.Background is false.
         /// </summary>
-        public static byte[] ImageCapture()
+        public static byte[] ImageCapture([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
@@ -778,32 +778,12 @@ namespace BotFramework
                     return null;
                 }
                 byte[] img = new byte[raw.Length - 12]; //remove header
-                for (int x = 12; x < raw.Length; x += 4)
-                {
-                    img[x - 10] = raw[x];
-                    img[x - 11] = raw[x + 1];
-                    img[x - 12] = raw[x + 2];
-                    img[x - 9] = raw[x + 3];
-                }
-                int expectedsize = 1280 * 720 * 4;
-                if (img.Length > expectedsize + 1000 || img.Length < expectedsize - 1000000)
-                {
-                    ResizeEmulator(1280, 720);
-                    return null;
-                }
-                raw = null;
-                using (var stream = new MemoryStream(img))
-                using (var bmp = new Bitmap(1280, 720, PixelFormat.Format32bppArgb))
-                {
-                    BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
-                    IntPtr pNative = bmpData.Scan0;
-                    Marshal.Copy(img, 0, pNative, img.Length);
-                    bmp.UnlockBits(bmpData);
-                    img = null;
-                    s.Stop();
-                    Variables.AdvanceLog("Screenshot saved to memory stream. Used time: " + s.ElapsedMilliseconds + " ms");
-                    return Compress(bmp);
-                }
+                Array.Copy(raw,12, img,0, img.Length);
+                Image<Rgba, byte> image = new Image<Rgba, byte>(1280,720);
+                image.Bytes = img;
+                Variables.AdvanceLog("Screenshot saved to memory used " + s.ElapsedMilliseconds + " ms",lineNumber,caller);
+                s.Stop();
+                return Compress(image.Bitmap);
             }
             catch (IOException)
             {
@@ -1322,7 +1302,7 @@ namespace BotFramework
         /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
         /// <returns>Point or null</returns>
         /// <returns></returns>
-        public static Point? FindImage(Bitmap original, Bitmap find, bool GrayStyle)
+        public static Point? FindImage(Bitmap original, Bitmap find, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
@@ -1345,7 +1325,7 @@ namespace BotFramework
                         if (maxValues[0] > 0.9)
                         {
                             s.Stop();
-                            Variables.AdvanceLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms");
+                            Variables.AdvanceLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber,caller);
                             return maxLocations[0];
                         }
                     }
@@ -1362,7 +1342,7 @@ namespace BotFramework
                         if (maxValues[0] > 0.9)
                         {
                             s.Stop();
-                            Variables.AdvanceLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms");
+                            Variables.AdvanceLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms",lineNumber,caller);
                             return maxLocations[0];
                         }
                     }
@@ -1374,7 +1354,7 @@ namespace BotFramework
 
             }
             s.Stop();
-            Variables.AdvanceLog("Image not matched. Used time: " + s.ElapsedMilliseconds + " ms");
+            Variables.AdvanceLog("Image not matched. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber,caller);
             return null;
         }
         /// <summary>
@@ -1384,7 +1364,7 @@ namespace BotFramework
         /// <param name="screencapture">Original image that need to get the point on it</param>
         /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
         /// <returns>Point or null</returns>
-        public static Point? FindImage(byte[] screencapture, string findPath, bool GrayStyle)
+        public static Point? FindImage(byte[] screencapture, string findPath, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
@@ -1394,13 +1374,13 @@ namespace BotFramework
             
             if (screencapture == null)
             {
-                Variables.AdvanceLog("Result return null because of null original image");
+                Variables.AdvanceLog("Result return null because of null original image",lineNumber,caller);
                 return null;
             }
             Bitmap original = new Bitmap(Decompress(screencapture));
             if (!File.Exists(findPath))
             {
-                Variables.AdvanceLog("Unable to find image " + findPath.Split('\\').Last() + ", image path not valid");
+                Variables.AdvanceLog("Unable to find image " + findPath.Split('\\').Last() + ", image path not valid", lineNumber,caller);
                 return null;
             }
             try
@@ -1416,7 +1396,7 @@ namespace BotFramework
                         if (maxValues[0] > 0.9)
                         {
                             s.Stop();
-                            Variables.AdvanceLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms");
+                            Variables.AdvanceLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber,caller);
                             return maxLocations[0];
                         }
                     }
@@ -1433,7 +1413,7 @@ namespace BotFramework
                         if (maxValues[0] > 0.9)
                         {
                             s.Stop();
-                            Variables.AdvanceLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms");
+                            Variables.AdvanceLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms",lineNumber,caller);
                             return maxLocations[0];
                         }
                     }
@@ -1444,7 +1424,7 @@ namespace BotFramework
 
             }
             s.Stop();
-            Variables.AdvanceLog("Image not matched. Used time: " + s.ElapsedMilliseconds + " ms");
+            Variables.AdvanceLog("Image not matched. Used time: " + s.ElapsedMilliseconds + " ms",lineNumber,caller);
             return null;
         }
         /// <summary>
@@ -1617,6 +1597,10 @@ namespace BotFramework
                 maxtime = mintime;
                 mintime = temp;
             }
+            if(mintime < 1)
+                mintime = 1;
+            if (maxtime < 1)
+                maxtime = 1;
             Thread.Sleep(rnd.Next(mintime, maxtime));
         }
         /// <summary>
@@ -1632,11 +1616,11 @@ namespace BotFramework
             }
             if (accurate)
             {
-                Thread.Sleep(randomtime);
+                Delay(randomtime, randomtime);
             }
             else
             {
-                Thread.Sleep(rnd.Next(randomtime - 100, randomtime + 100));
+                Delay(randomtime - 100, randomtime + 100);
             }
         }
         /// <summary>
@@ -1645,7 +1629,7 @@ namespace BotFramework
         /// <param name="time">miliseconds</param>
         public static void Delay(int time)
         {
-            Thread.Sleep(time);
+            Delay(time, true);
         }
         /// <summary>
         /// Delay for specific time
@@ -1678,6 +1662,29 @@ namespace BotFramework
             {
 
             }
+        }
+        /// <summary>
+        /// Used in SendEvent
+        /// </summary>
+        public enum KeyCode
+        {
+            /// <summary>
+            /// Volume Down
+            /// </summary>
+            VolumeDown = 25,
+            /// <summary>
+            /// Volume Mute
+            /// </summary>
+            VolumeMute = 164
+        }
+       /// <summary>
+       /// Send keyevent via Adb to controlled device
+       /// </summary>
+       /// <param name="keycode">keycode</param>
+        public static void SendEvent(KeyCode keycode)
+        {
+            var receiver = new ConsoleOutputReceiver();
+            client.ExecuteRemoteCommand("input keyevent " + keycode, (Variables.Controlled_Device as DeviceData), receiver);
         }
     }
 }
