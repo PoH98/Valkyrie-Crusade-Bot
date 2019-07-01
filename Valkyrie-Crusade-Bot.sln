@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MEmu", "MEmu\MEmu.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nox", "Nox\Nox.csproj", "{F72008D2-5E58-4B53-9665-90B22BB787D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DNPlayer", "DNPlayer\DNPlayer.csproj", "{2CFB11C0-EB7A-4DD5-B29C-8D731ABE0D7C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,18 +97,6 @@ Global
 		{F72008D2-5E58-4B53-9665-90B22BB787D6}.Release|x64.Build.0 = Release|Any CPU
 		{F72008D2-5E58-4B53-9665-90B22BB787D6}.Release|x86.ActiveCfg = Release|Any CPU
 		{F72008D2-5E58-4B53-9665-90B22BB787D6}.Release|x86.Build.0 = Release|Any CPU
-		{2CFB11C0-EB7A-4DD5-B29C-8D731ABE0D7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2CFB11C0-EB7A-4DD5-B29C-8D731ABE0D7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2CFB11C0-EB7A-4DD5-B29C-8D731ABE0D7C}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{2CFB11C0-EB7A-4DD5-B29C-8D731ABE0D7C}.Debug|x64.Build.0 = Debug|Any CPU
-		{2CFB11C0-EB7A-4DD5-B29C-8D731ABE0D7C}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{2CFB11C0-EB7A-4DD5-B29C-8D731ABE0D7C}.Debug|x86.Build.0 = Debug|Any CPU
-		{2CFB11C0-EB7A-4DD5-B29C-8D731ABE0D7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2CFB11C0-EB7A-4DD5-B29C-8D731ABE0D7C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2CFB11C0-EB7A-4DD5-B29C-8D731ABE0D7C}.Release|x64.ActiveCfg = Release|Any CPU
-		{2CFB11C0-EB7A-4DD5-B29C-8D731ABE0D7C}.Release|x64.Build.0 = Release|Any CPU
-		{2CFB11C0-EB7A-4DD5-B29C-8D731ABE0D7C}.Release|x86.ActiveCfg = Release|Any CPU
-		{2CFB11C0-EB7A-4DD5-B29C-8D731ABE0D7C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
