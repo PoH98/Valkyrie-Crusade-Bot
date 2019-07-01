@@ -150,7 +150,7 @@ namespace Nox
             }
         }
 
-        public void SetResolution(int x, int y)
+        public void SetResolution(int x, int y, int dpi)
         {
             string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).Replace("\\Roaming", "\\Local\\Nox\\conf.ini"));
             if (File.Exists(path))
@@ -164,7 +164,7 @@ namespace Nox
                     }
                     else if (lines[a].Contains("h_dpi"))
                     {
-                        lines[a] = "h_dpi=160";
+                        lines[a] = "h_dpi=" + dpi;
                     }
                 }
                 File.WriteAllLines(path, lines);

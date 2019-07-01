@@ -70,9 +70,9 @@ namespace DNPlayer
             return false;
         }
 
-        public void SetResolution(int x, int y)
+        public void SetResolution(int x, int y, int dpi)
         {
-            Process.Start(Variables.VBoxManagerPath, "modify --index 0 --resolution " + x + "," + y + ",160");
+            Process.Start(Variables.VBoxManagerPath, "modify --index 0 --resolution " + x + "," + y + ","+dpi);
         }
 
         public void StartEmulator()

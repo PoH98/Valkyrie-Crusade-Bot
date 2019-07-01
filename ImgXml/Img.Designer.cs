@@ -63,36 +63,6 @@ namespace ImgXml {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap Archwitch {
-            get {
-                object obj = ResourceManager.GetObject("Archwitch", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Archwitch_Rec {
-            get {
-                object obj = ResourceManager.GetObject("Archwitch_Rec", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Auto {
-            get {
-                object obj = ResourceManager.GetObject("Auto", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap Back_to_Village {
             get {
                 object obj = ResourceManager.GetObject("Back_to_Village", resourceCulture);
@@ -103,9 +73,9 @@ namespace ImgXml {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap blue {
+        public static System.Drawing.Bitmap Boss {
             get {
-                object obj = ResourceManager.GetObject("blue", resourceCulture);
+                object obj = ResourceManager.GetObject("Boss", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -153,9 +123,9 @@ namespace ImgXml {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap Demon_Poison {
+        public static System.Drawing.Bitmap Demon_Start {
             get {
-                object obj = ResourceManager.GetObject("Demon_Poison", resourceCulture);
+                object obj = ResourceManager.GetObject("Demon_Start", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -163,9 +133,9 @@ namespace ImgXml {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap Demon_Start {
+        public static System.Drawing.Bitmap Demon_Tutorial {
             get {
-                object obj = ResourceManager.GetObject("Demon_Start", resourceCulture);
+                object obj = ResourceManager.GetObject("Demon_Tutorial", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -193,16 +163,6 @@ namespace ImgXml {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap green {
-            get {
-                object obj = ResourceManager.GetObject("green", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap GreenButton {
             get {
                 object obj = ResourceManager.GetObject("GreenButton", resourceCulture);
@@ -216,16 +176,6 @@ namespace ImgXml {
         public static System.Drawing.Bitmap HellLoc {
             get {
                 object obj = ResourceManager.GetObject("HellLoc", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Help {
-            get {
-                object obj = ResourceManager.GetObject("Help", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -372,9 +322,9 @@ namespace ImgXml {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap Purple {
+        public static System.Drawing.Bitmap Red_Button {
             get {
-                object obj = ResourceManager.GetObject("Purple", resourceCulture);
+                object obj = ResourceManager.GetObject("Red_Button", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -382,9 +332,39 @@ namespace ImgXml {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap Red_Button {
+        public static System.Drawing.Bitmap Resource_1 {
             get {
-                object obj = ResourceManager.GetObject("Red_Button", resourceCulture);
+                object obj = ResourceManager.GetObject("Resource_1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Resource_2 {
+            get {
+                object obj = ResourceManager.GetObject("Resource_2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Resource_3 {
+            get {
+                object obj = ResourceManager.GetObject("Resource_3", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Resource_4 {
+            get {
+                object obj = ResourceManager.GetObject("Resource_4", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -442,29 +422,19 @@ namespace ImgXml {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap Tower_Tutorial {
+            get {
+                object obj = ResourceManager.GetObject("Tower_Tutorial", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap TowerFinished {
             get {
                 object obj = ResourceManager.GetObject("TowerFinished", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap TreasureHunt {
-            get {
-                object obj = ResourceManager.GetObject("TreasureHunt", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap TreasureHunt2 {
-            get {
-                object obj = ResourceManager.GetObject("TreasureHunt2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -515,16 +485,6 @@ namespace ImgXml {
         public static System.Drawing.Bitmap Wrong_Click2 {
             get {
                 object obj = ResourceManager.GetObject("Wrong_Click2", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Yellow {
-            get {
-                object obj = ResourceManager.GetObject("Yellow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

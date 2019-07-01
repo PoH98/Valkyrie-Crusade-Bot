@@ -196,14 +196,36 @@ namespace UI
                     image = BotCore.ImageCapture();
                     var crop = BotCore.CropImage(image, new Point(0, 0), new Point(1020, 720));
                     //Find image and collect
-                    foreach (var img in Directory.GetFiles("Img\\Resources\\", "*.png"))
+
+                    var p = BotCore.FindImage(image, Img.Resource_1, false);
+                    if (p != null)
                     {
-                        Point? p = BotCore.FindImage(crop, img, false);
+                        BotCore.SendTap(p.Value);
+                        BotCore.Delay(100, 200);
+                    }
+                    if (!BotCore.RGBComparer(image, new Point(1261, 101), Color.FromArgb(121, 194, 1), 10))
+                    {
+                        p = BotCore.FindImage(image, Img.Resource_2, false);
                         if (p != null)
                         {
                             BotCore.SendTap(p.Value);
                             BotCore.Delay(100, 200);
                         }
+                    }
+                    if (!BotCore.RGBComparer(image, new Point(1260, 42), Color.FromArgb(249, 173, 46), 10))
+                    {
+                        p = BotCore.FindImage(image, Img.Resource_3, false);
+                        if (p != null)
+                        {
+                            BotCore.SendTap(p.Value);
+                            BotCore.Delay(100, 200);
+                        }
+                    }
+                    p = BotCore.FindImage(image, Img.Resource_4, false);
+                    if (p != null)
+                    {
+                        BotCore.SendTap(p.Value);
+                        BotCore.Delay(100, 200);
                     }
                     BotCore.Delay(800, 1200);
                 }
@@ -292,112 +314,6 @@ namespace UI
                 BotCore.Delay(2700000);
             }
         }
-        //Treasure hunt!
-        private static void TreasureHunt()
-        {
-            Debug_.WriteLine();
-            var p = BotCore.FindImage(image, Img.TreasureHunt, true);
-            //Find for treasure hunt building!
-            for (int find = 0; find < 4; find++)
-            {
-                if (p == null)
-                {
-                    p = BotCore.FindImage(image, Img.TreasureHunt2, true);
-                    if (p == null)
-                    {
-                        switch (find)
-                        {
-                            case 0:
-                                BotCore.SendSwipe(new Point(925, 576), new Point(614, 26), 1000);
-                                break;
-                            case 1:
-                                BotCore.SendSwipe(new Point(231, 562), new Point(877, 127), 1000);
-                                break;
-                            case 2:
-                                BotCore.SendSwipe(new Point(226, 175), new Point(997, 591), 1000);
-                                break;
-                            case 3:
-                                BotCore.SendSwipe(new Point(969, 128), new Point(260, 545), 1000);
-                                break;
-                        }
-
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                else
-                {
-                    break;
-                }
-                BotCore.Delay(900, 1200);
-            }
-            if (p == null)
-            {
-                Variables.ScriptLog("No Treasure Hunt Building found!", Color.Yellow);
-                return;
-            }
-            Variables.ScriptLog("Treasure hunting...", Color.Lime);
-            BotCore.SendTap(p.Value);
-            BotCore.Delay(1000, false);
-            //Enter Treasure hunt
-            BotCore.SendTap(879, 642);
-            while (BotCore.RGBComparer(image, new Point(191, 147),Color.Black,5))//Wait for loading black screen pass
-            {
-                BotCore.Delay(1000, 2000);
-            }
-            BotCore.Delay(1000, 1200);
-            do
-            {
-                //If already hunting
-                if (BotCore.RGBComparer(image, new Point(973, 344), Color.FromArgb(130, 0, 0), 0))
-                {
-                    Variables.ScriptLog("Already in hunting, exit now!", Color.Lime);
-                    //Exit loop
-                    BotCore.SendTap(1222, 56);
-                    BotCore.Delay(5000, false);
-                    break;
-                }
-                else
-                {
-                    p = BotCore.FindImage(image, Img.Red_Button, true);
-                    if (p != null)
-                    {
-                        //Finished hunt, collect rewards
-                        BotCore.SendTap(p.Value);
-                        BotCore.Delay(5000, false);
-                        BotCore.SendTap(960, 621);
-                        BotCore.Delay(7000, false);
-                        p = BotCore.FindImage(image, Img.Map, true);
-                        //if found treasure map
-                        if (p != null)
-                        {
-                            //Just ignore that fxxking thing
-                            BotCore.SendTap(789, 626);
-                            BotCore.Delay(9000, 12000);
-                            BotCore.SendTap(310, 137);
-                        }
-                    }
-                }
-                while (BotCore.RGBComparer(image, new Point(191, 147), Color.Black, 5))//Wait for loading black screen pass
-                {
-                    BotCore.Delay(1000, 2000);
-                }
-                //Back to top
-                BotCore.SendSwipe(new Point(600, 200), new Point(600, 600), 1000);
-                BotCore.Delay(3000, false);
-                //Tap and start another hunt
-                BotCore.SendTap(998, 340);
-                BotCore.Delay(1000, false);
-                BotCore.SendTap(771, 453);
-                //Next Treasure hunt
-                BotCore.SendTap(1031, 50);
-                BotCore.Delay(3000, false);
-            }
-            while (true);
-
-        }
         //Check Event
         private static void CheckEvent()
         {
@@ -471,6 +387,15 @@ namespace UI
                     BotCore.SendTap(point.Value);
                     return;
                 }
+                if(BotCore.FindImage(image, Img.Demon_Tutorial, true) != null || BotCore.FindImage(image, Img.Tower_Tutorial, true) != null)
+                {
+                    for(int x = 0; x < 10; x++)
+                    {
+                        BotCore.SendTap(300, 300);
+                        BotCore.Delay(100);
+                    }
+                    continue;
+                }
                 if (BotCore.FindImage(image, Img.Locate_Tower, true) != null)
                 {
                     //Is Tower Event
@@ -478,13 +403,13 @@ namespace UI
                     PrivateVariable.InEventScreen = true;
                     return;
                 }
-                if (BotCore.FindImage(image, Img.Archwitch_Rec, true) != null)
+                /*if (BotCore.FindImage(image, Img.Archwitch_Rec, true) != null)
                 {
                     //Is Archwitch
                     PrivateVariable.EventType = 1;
                     PrivateVariable.InEventScreen = true;
                     return;
-                }
+                }*/
                 if (BotCore.FindImage(image, Img.Demon_InEvent, true) != null)
                 {
                     //Is Demon Event
@@ -758,17 +683,24 @@ namespace UI
         private static void Demon_Realm()
         {
             Debug_.WriteLine();
-            image = BotCore.ImageCapture();
-            Point? point = BotCore.FindImage(image, Img.Close2, false);
-            if (point != null)
-            {
-                BotCore.SendTap(new Point(point.Value.X, point.Value.Y));
-                BotCore.Delay(1000, false);
-            }
-            point = null;
+            Point? point = null;
             int error = 0;
             while (point == null)
             {
+                point = BotCore.FindImage(image, Img.Close2, false);
+                if (point != null)
+                {
+                    BotCore.SendTap(new Point(point.Value.X, point.Value.Y));
+                    BotCore.Delay(1000, false);
+                    continue;
+                }
+                point = BotCore.FindImage(image, Img.GreenButton, false);
+                if (point != null)
+                {
+                    BotCore.SendTap(new Point(point.Value.X, point.Value.Y));
+                    BotCore.Delay(1000, false);
+                    continue;
+                }
                 image = BotCore.ImageCapture();
                 if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
@@ -816,6 +748,8 @@ namespace UI
                 return;
             }
             Variables.ScriptLog("Enterting Stage", Color.White);
+            BotCore.SendSwipe(new Point(307, 249), new Point(305, 403),300);
+            BotCore.Delay(1500);
             image = BotCore.ImageCapture();
             switch (MainScreen.Level)
             {
@@ -956,14 +890,8 @@ namespace UI
             List<Point> BlackListedLocation = new List<Point>();
             Variables.ScriptLog("Fetching stage images", Color.White);
             List<Image> Stage = new List<Image>();
-            Image Boss = null;
             foreach (var file in Directory.GetFiles("Img\\DemonRealm", "*.png").OrderBy(f => f))
             {
-                if (file.Contains("Boss") || file.Contains("boss"))
-                {
-                    Boss = Image.FromFile(file);
-                    continue;
-                }
                 Stage.Add(Image.FromFile(file));
             }
             Point? p = null;
@@ -1029,19 +957,17 @@ namespace UI
                     }
                     else
                     {
-                        if (Boss != null)
+                        p = BotCore.FindImage(screen, Img.Boss, true);
+                        if (p != null)
                         {
-                            p = BotCore.FindImage(screen, (Bitmap)Boss, true);
-                            if (p != null)
+                            Variables.ScriptLog("Boss Stage found!", Color.Lime);
+                            if (runes == 3 && energy != 5)
                             {
-                                Variables.ScriptLog("Boss Stage found!", Color.Lime);
-                                if (runes == 3 && energy != 5)
-                                {
-                                    StuckRune();
-                                    return;
-                                }
-                                BotCore.SendTap(p.Value);
+                                StuckRune();
+                                return;
                             }
+                            BotCore.SendTap(p.Value);
+                            break;
                         }
                     }
                 }
@@ -1805,13 +1731,11 @@ namespace UI
                         }
                         //Maybe something is wrong, no process is connected!
                         BotCore.StartEmulator();
-                        BotCore.Delay(9000, 12000);
                     }
                 }
                 else //The Emulator is not exist!
                 {
                     BotCore.StartEmulator(); //Start our fxxking Emulator!!
-                    BotCore.Delay(10000); //Wait
                     BotCore.ConnectAndroidEmulator();
                     return;
                 }
@@ -1843,26 +1767,6 @@ namespace UI
                     {
                         BotCore.RestartEmulator();
                         error = 0;
-                    }
-                    Image img = BotCore.Decompress(image);
-                    try
-                    {
-                        if (img.Height != 720 || img.Width != 1280)
-                        {
-                            Debug_.WriteLine("Image size not correct: " + img.Width + "*" + img.Height);
-                            Variables.ScriptLog("Emulator's screen size is not 1280*720! Detected size is " + img.Width + "*" + img.Height, Color.LightYellow);
-                            BotCore.ResizeEmulator(1280, 720);
-                            BotCore.Delay(20000, 30000);
-                            return;
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                    catch
-                    {
-                        return;
                     }
                 } while (image == null);
                 BotCore.Delay(10, true);

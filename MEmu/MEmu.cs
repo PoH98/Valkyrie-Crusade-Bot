@@ -140,12 +140,14 @@ namespace MEmu
             return false;
         }
 
-        public void SetResolution(int x, int y)
+        public void SetResolution(int x, int y, int dpi)
         {
             ProcessStartInfo s = new ProcessStartInfo(Variables.VBoxManagerPath);
             s.Arguments = "guestproperty set MEmu resolution_height " + y;
             Process.Start(s);
             s.Arguments = "guestproperty set MEmu resolution_width " + x;
+            Process.Start(s);
+            s.Arguments = "guestproperty set MEmu vbox_dpi " + dpi;
             Process.Start(s);
         }
 

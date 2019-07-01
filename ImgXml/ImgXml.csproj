@@ -86,12 +86,6 @@
     <None Include="Resources\TowerFinished.PNG" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\TreasureHunt.PNG" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\TreasureHunt2.PNG" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Update_Complete.PNG" />
   </ItemGroup>
   <ItemGroup>
@@ -167,24 +161,6 @@
     <None Include="Resources\HellLoc.PNG" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Demon_Arch.PNG" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Demon_Boss.PNG" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Demon_Poison.PNG" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Demon_Box.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Demon_Angle.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Demon_Demon.PNG" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Demon_InEvent.PNG" />
   </ItemGroup>
   <ItemGroup>
@@ -200,16 +176,25 @@
     <None Include="Resources\Capture.PNG" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Yellow.PNG" />
+    <None Include="Resources\Boss.PNG" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\blue.PNG" />
+    <None Include="Resources\Resource_2.PNG" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\green.PNG" />
+    <None Include="Resources\Resource_1.PNG" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Purple.PNG" />
+    <None Include="Resources\Resource_3.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Resource_4.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Demon_Tutorial.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Tower_Tutorial.PNG" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

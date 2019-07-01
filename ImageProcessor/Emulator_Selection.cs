@@ -10,8 +10,14 @@ using System.Windows.Forms;
 
 namespace BotFramework
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public partial class Emulator_Selection : Form
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Emulator_Selection()
         {
             InitializeComponent();
@@ -37,10 +43,18 @@ namespace BotFramework
             Close();
         }
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
     public class EmuSelection_Resource
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public static List<EmulatorInterface> emu = new List<EmulatorInterface>();
+        /// <summary>
+        /// 
+        /// </summary>
         public static string selected;
 
     }

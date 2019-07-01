@@ -234,6 +234,8 @@ namespace BotFramework
             foreach (var s in PrivateVariable.BattleScript)
             {
                 tabControl2.TabPages.Add(s.ScriptName());
+                tabControl2.TabPages[tabControl2.TabPages.Count - 1].BackColor = Color.Black;
+                tabControl2.TabPages[tabControl2.TabPages.Count - 1].ForeColor = Color.White;
                 CheckBox chk = new CheckBox();
                 chk.Text = "使用脚本";
                 chk.Checked = false;
@@ -986,15 +988,15 @@ namespace BotFramework
             }
         }
 
-        private void MetroButton1_Click(object sender, EventArgs e)
-        {
-            SleepWake.SetWakeTimer(DateTime.Now.AddMinutes(1));
-            PCController.DoMouseClick(100,100);
-        }
-
         private void Suspend_Chk_CheckedChanged(object sender, EventArgs e)
         {
             WriteConfig("Suspend_PC",Suspend_Chk.Checked.ToString().ToLower());
+        }
+
+        private void btn_Sleep_Click(object sender, EventArgs e)
+        {
+            SleepWake.SetWakeTimer(DateTime.Now.AddMinutes(1));
+            PCController.DoMouseClick(100, 100);
         }
     }
 }

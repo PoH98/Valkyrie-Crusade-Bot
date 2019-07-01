@@ -34,7 +34,6 @@ namespace BotFramework
         /// The path to bot.ini
         /// </summary>
         public static string profilePath = Variables.Instance;
-        private static string path;
         /// <summary>
         /// Adb Server
         /// </summary>
@@ -253,24 +252,23 @@ namespace BotFramework
             JustStarted = true;
         }
         /// <summary>
-        /// Method for resizing emulators
+        /// Method for resizing emulators using Variables.EmulatorWidth, Variables.EmulatorHeight, Variables.EmulatorDpi
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        public static void ResizeEmulator(int x, int y)
+        public static void ResizeEmulator()
         {
             if (!ScriptRun.Run)
             {
                 return;
             }
             CloseEmulator();
-            Variables.emulator.SetResolution(x,y);
+            Delay(3000);
+            Variables.emulator.SetResolution(Variables.EmulatorWidth, Variables.EmulatorHeight, Variables.EmulatorDpi);
             Variables.ScriptLog("Restarting Emulator after setting size", Color.Lime);
             StartEmulator();
-           
         }
         /// <summary>
-        /// Refresh (Variables.Controlled_Device as DeviceData), Variables.Proc and BotCore.Handle, following with connection with Minitouch
+        /// Refresh (Variables.Controlled_Device as DeviceData), Variables.Proc and BotCore.Handle, following with connection with Minitouch. 
+        /// Remember to run EjectSockets before exit program to avoid errors!
         /// </summary>
         public static void ConnectAndroidEmulator()
         {
@@ -330,6 +328,21 @@ namespace BotFramework
                                 Variables.AdvanceLog("Device found, connection establish on " + Variables.AdbIpPort);
                             }
                             client.SetDevice(socket, device);
+                            //await emulator start
+                            do
+                            {
+                                var receiver = new ConsoleOutputReceiver();
+                                client.ExecuteRemoteCommand("getprop sys.boot_completed", (Variables.Controlled_Device as DeviceData),receiver);
+                                if (receiver.ToString().Contains("1"))
+                                {
+                                    break;
+                                }
+                                else
+                                {
+                                    Delay(100);
+                                }
+                            }
+                            while (true);
                             error = 0;
                             break;
                         }
@@ -361,7 +374,7 @@ namespace BotFramework
             ConnectMinitouch();
         }
         /// <summary>
-        /// Warning!!Must run this before exit program, else all sockets will continue in the PC even when restarted!!
+        /// Warning!!Must run this before exit program, else all sockets records will continue in the PC even when restarted!!
         /// </summary>
         public static void EjectSockets()
         {
@@ -395,6 +408,18 @@ namespace BotFramework
                     }
                 }
                 File.WriteAllLines(path, newports.Where(y => !string.IsNullOrEmpty(y)).ToArray());
+            }
+            var files = Directory.GetFiles(Variables.SharedPath, "*.raw");
+            foreach(var file in files)
+            {
+                try
+                {
+                    File.Delete(file);
+                }
+                catch
+                {
+
+                }
             }
         }
         /// <summary>
@@ -503,6 +528,7 @@ namespace BotFramework
                 else
                 {
                     Variables.AdvanceLog("Socket disconnected, retrying...");
+                    EjectSockets();
                     minitouchPort++;
                     goto Cm;
                 }
@@ -517,6 +543,7 @@ namespace BotFramework
                     return;
                 }
                 Variables.AdvanceLog(ex.ToString());
+                EjectSockets();
                 minitouchPort++;
                 ConnectMinitouch();
             }
@@ -565,9 +592,9 @@ namespace BotFramework
             {
                 if (!File.Exists(adbname))
                 {
-                    Variables.Configure.TryGetValue("Path", out path);
+                    Variables.Configure.TryGetValue("Path", out var path);
                     path = path.Remove(path.LastIndexOf('\\'));
-                    IEnumerable<string> exe = Directory.EnumerateFiles(path, "*.exe"); // lazy file system lookup
+                    IEnumerable<string> exe = Directory.EnumerateFiles(path, "*.exe");
                     foreach (var e in exe)
                     {
                         if (e.Contains("adb"))
@@ -729,8 +756,8 @@ namespace BotFramework
                     MessageBox.Show("Warning, unable to find shared folder! Try to match it manually!");
                     Environment.Exit(0);
                 }
-                path = Variables.SharedPath + "\\" + Encryption.SHA256(Variables.AdbIpPort) + ".raw";
-                path = path.Replace("\\\\", "\\");
+                var filename = Encryption.SHA256(DateTime.Now.ToString()) + ".raw";
+                var path = (Variables.SharedPath + "\\" + filename).Replace("\\\\", "\\");
                 Stopwatch s = Stopwatch.StartNew();
                 byte[] raw = null;
                 var receiver = new ConsoleOutputReceiver();
@@ -757,14 +784,14 @@ namespace BotFramework
                 {
                     return null;
                 }
-                client.ExecuteRemoteCommand("screencap " + Variables.AndroidSharedPath + Encryption.SHA256(Variables.AdbIpPort) + ".raw", (Variables.Controlled_Device as DeviceData), receiver);
+                client.ExecuteRemoteCommand("screencap " + Variables.AndroidSharedPath + filename, (Variables.Controlled_Device as DeviceData), receiver);
                 if (Variables.NeedPull)
                 {
                     if (File.Exists(path))
                     {
                         File.Delete(path);
                     }
-                    Pull(Variables.AndroidSharedPath + Encryption.SHA256(Variables.AdbIpPort) + ".raw", path);
+                    Pull(Variables.AndroidSharedPath + filename, path);
                 }
                 if (!File.Exists(path))
                 {
@@ -777,9 +804,16 @@ namespace BotFramework
                 {
                     return null;
                 }
+                File.Delete(path);
+                int expectedsize = (Variables.EmulatorHeight * Variables.EmulatorWidth * 4) + 12;
+                if (raw.Length != expectedsize)
+                {
+                    //Image is not in same size, resize emulator
+                    ResizeEmulator();
+                }
                 byte[] img = new byte[raw.Length - 12]; //remove header
                 Array.Copy(raw,12, img,0, img.Length);
-                Image<Rgba, byte> image = new Image<Rgba, byte>(1280,720);
+                Image<Rgba, byte> image = new Image<Rgba, byte>(Variables.EmulatorWidth,Variables.EmulatorHeight);
                 image.Bytes = img;
                 Variables.AdvanceLog("Screenshot saved to memory used " + s.ElapsedMilliseconds + " ms",lineNumber,caller);
                 s.Stop();
@@ -1685,6 +1719,13 @@ namespace BotFramework
         {
             var receiver = new ConsoleOutputReceiver();
             client.ExecuteRemoteCommand("input keyevent " + keycode, (Variables.Controlled_Device as DeviceData), receiver);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void Zoomout()
+        {
+            Minitouch("r\nd 0 300 600 50\nd 1 560 600 50\nc\nw 50\nm 0 325 600 50\nm 1 535 600 50\nc\nw 50\nm 0 350 600 50\nm 1 510 600 50\nc\nw 50\nm 0 375 600 50\nm 1 485 600 50\nc\nw 50\nm 0 400 600 50\nm 1 460 600 50\nc\nw 50\nm 0 425 600 50\nm 1 435 600 50\nc\nw 50\nm 0 430 600 50\nm 1 430 600 50\nc\nw 50\nu 0\nu 1\nc");
         }
     }
 }

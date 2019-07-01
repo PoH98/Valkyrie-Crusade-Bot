@@ -166,5 +166,9 @@ namespace BotFramework
         /// Set if screencapture need to use pull function
         /// </summary>
         public static bool NeedPull = false;
+        /// <summary>
+        /// Emulator's Width and Height will be used in ImageCapture()
+        /// </summary>
+        public static int EmulatorWidth = 1280, EmulatorHeight = 720, EmulatorDpi = 160;
     }
 }

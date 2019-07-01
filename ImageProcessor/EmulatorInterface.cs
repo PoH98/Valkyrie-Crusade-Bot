@@ -27,7 +27,8 @@
         /// </summary>
         /// <param name="x">x value</param>
         /// <param name="y">y value</param>
-        void SetResolution(int x, int y);
+        /// <param name="dpi">dpi of emulator</param>
+        void SetResolution(int x, int y, int dpi);
         /// <summary>
         /// Connect Emulator's adb, Variables.Proc and etc
         /// </summary>

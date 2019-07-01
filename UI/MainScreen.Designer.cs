@@ -89,7 +89,7 @@
             this.Settings = new MetroFramework.Controls.MetroTabPage();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.Debug = new MetroFramework.Controls.MetroTabPage();
-            this.metroButton1 = new MetroFramework.Controls.MetroButton();
+            this.btn_Sleep = new MetroFramework.Controls.MetroButton();
             this.btn_OCR = new MetroFramework.Controls.MetroButton();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.Script = new MetroFramework.Controls.MetroTabPage();
@@ -531,7 +531,7 @@
             this.metroTabControl1.Controls.Add(this.Info);
             resources.ApplyResources(this.metroTabControl1, "metroTabControl1");
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 1;
+            this.metroTabControl1.SelectedIndex = 2;
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Brown;
             this.metroTabControl1.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroTabControl1.UseSelectable = true;
@@ -573,7 +573,7 @@
             // 
             // Debug
             // 
-            this.Debug.Controls.Add(this.metroButton1);
+            this.Debug.Controls.Add(this.btn_Sleep);
             this.Debug.Controls.Add(this.btn_OCR);
             this.Debug.Controls.Add(this.sysd_box);
             this.Debug.Controls.Add(this.pictureBox4);
@@ -587,13 +587,13 @@
             this.Debug.VerticalScrollbarHighlightOnWheel = false;
             this.Debug.VerticalScrollbarSize = 10;
             // 
-            // metroButton1
+            // btn_Sleep
             // 
-            this.metroButton1.FontWeight = MetroFramework.MetroButtonWeight.Regular;
-            resources.ApplyResources(this.metroButton1, "metroButton1");
-            this.metroButton1.Name = "metroButton1";
-            this.metroButton1.UseSelectable = true;
-            this.metroButton1.Click += new System.EventHandler(this.MetroButton1_Click);
+            this.btn_Sleep.FontWeight = MetroFramework.MetroButtonWeight.Regular;
+            resources.ApplyResources(this.btn_Sleep, "btn_Sleep");
+            this.btn_Sleep.Name = "btn_Sleep";
+            this.btn_Sleep.UseSelectable = true;
+            this.btn_Sleep.Click += new System.EventHandler(this.btn_Sleep_Click);
             // 
             // btn_OCR
             // 
@@ -790,7 +790,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private MetroFramework.Controls.MetroButton metroButton1;
+        private MetroFramework.Controls.MetroButton btn_Sleep;
         private System.Windows.Forms.CheckBox Suspend_Chk;
     }
 }

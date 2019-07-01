@@ -51,9 +51,9 @@ namespace BotFramework
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        public static string SHA256(string text)
+        public static string SHA256(object text)
         {
-            byte[] bytes = Encoding.Unicode.GetBytes(text);
+            byte[] bytes = Encoding.Unicode.GetBytes(text.ToString());
             SHA256Managed hashstring = new SHA256Managed();
             byte[] hash = hashstring.ComputeHash(bytes);
             string hashString = string.Empty;
