@@ -140,6 +140,7 @@
       <DependentUpon>Emulator_Selection.cs</DependentUpon>
     </Compile>
     <Compile Include="Encryption.cs" />
+    <Compile Include="Languages.cs" />
     <Compile Include="OCR.cs" />
     <Compile Include="PCController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

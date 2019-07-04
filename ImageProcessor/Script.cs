@@ -2,6 +2,7 @@
 using SharpAdbClient.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
@@ -106,7 +107,7 @@ namespace BotFramework
         {
             try
             {
-                return t.ThreadState == ThreadState.Running;
+                return t.ThreadState == System.Threading.ThreadState.Running;
             }
             catch
             {
@@ -123,27 +124,29 @@ namespace BotFramework
                     {
                         script.Script();
                     }
-                    catch (SocketException)
+                    catch (Exception ex)
                     {
-                        BotCore.server.RestartServer();
-                        if (!CheckDeviceOnline())
+                        if(ex is SocketException || ex is DeviceNotFoundException || ex is AdbException)
                         {
-                            BotCore.RestartEmulator();
+                            BotCore.server.RestartServer();
+                            if (!CheckDeviceOnline())
+                            {
+                                BotCore.RestartEmulator();
+                            }
+                            BotCore.Delay(10000);
+                            BotCore.ConnectAndroidEmulator();
+                            continue;
                         }
-                        BotCore.Delay(10000);
-                        BotCore.ConnectAndroidEmulator();
-                        continue;
-                    }
-                    catch (DeviceNotFoundException)
-                    {
-                        BotCore.server.RestartServer();
-                        if (!CheckDeviceOnline())
+                        else if (ex is ThreadAbortException)
                         {
-                            BotCore.RestartEmulator();
+
                         }
-                        BotCore.Delay(10000);
-                        BotCore.ConnectAndroidEmulator();
-                        continue;
+                        else
+                        {
+                            File.WriteAllText("error.html","<html><head><title>Error Found!</title></head><body>"+ex.ToString().Replace("\n", "<br/>") +"</body></html>");
+                            Process.Start("error.html");
+                            continue;
+                        }
                     }
                 }
                 while (KeepRunning && Run);

@@ -47,15 +47,22 @@ namespace BotFramework
         // The event that will fire whenever the progress of the WebClient is changed
         private void ProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            progressBar1.Value = e.ProgressPercentage;
+            try
+            {
+                progressBar1.Value = e.ProgressPercentage;
 
-            // Show the percentage on our label.
-            label1.Text = e.ProgressPercentage.ToString() + "%";
+                // Show the percentage on our label.
+                label1.Text = e.ProgressPercentage.ToString() + "%";
 
-            // Update the label with how much data have been downloaded so far and the total size of the file we are currently downloading
-            this.Text = string.Format("{0} MB's / {1} MB's",
-                (e.BytesReceived / 1024d / 1024d).ToString("0.00"),
-                (e.TotalBytesToReceive / 1024d / 1024d).ToString("0.00"));
+                // Update the label with how much data have been downloaded so far and the total size of the file we are currently downloading
+                this.Text = string.Format("{0} MB's / {1} MB's",
+                    (e.BytesReceived / 1024d / 1024d).ToString("0.00"),
+                    (e.TotalBytesToReceive / 1024d / 1024d).ToString("0.00"));
+            }
+            catch
+            {
+
+            }
         }
 
         // The event that will trigger when the WebClient is completed

@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using MetroFramework.Forms;
 using System.Windows.Forms;
 using System.Linq;
+using System.IO.Compression;
 
 namespace BotFramework
 {
@@ -130,6 +131,12 @@ namespace BotFramework
             if (!Directory.Exists("Audio"))
             {
                 Directory.CreateDirectory("Audio");
+            }
+            if (!Directory.Exists("Img"))
+            {
+                File.WriteAllBytes("Img.zip", Img.Images);
+                ZipFile.ExtractToDirectory("Img.zip", Environment.CurrentDirectory);
+                File.Delete("Img.zip");
             }
             comboBox1.Items.Clear();
             Variables.Background = true;
@@ -565,13 +572,13 @@ namespace BotFramework
             WriteConfig("Double_Event", chk_twoE.Checked.ToString().ToLower());
             if (chk_twoE.Checked && !File.Exists("Img\\Event.png"))
             {
-                MessageBox.Show("请截图好活动的进入按钮样貌，保存到Img文件夹内，命名为Event.png!");
+                MessageBox.Show(UILanguage["OCR_debug"]);
             }
         }
 
         private void checkBox8_MouseEnter(object sender, EventArgs e)
         {
-            toolTip1.Show("如果在主城页面的左边选择活动区域拥有多个活动，影响挂机进入塔楼/魔女，请打勾这个！请慎用！", chk_twoE);
+            toolTip1.Show(UILanguage["Double_Tip"], chk_twoE);
         }
 
         private void checkBox8_MouseLeave(object sender, EventArgs e)

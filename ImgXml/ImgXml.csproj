@@ -55,6 +55,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Img.zip" />
     <None Include="Resources\index.json" />
     <None Include="Resources\NoEnergy.PNG" />
   </ItemGroup>

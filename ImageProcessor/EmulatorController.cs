@@ -16,7 +16,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Security;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Reflection;
@@ -94,6 +93,7 @@ namespace BotFramework
             Variables.AndroidSharedPath = "";
             Variables.SharedPath = "";
             Variables.VBoxManagerPath = "";
+            Emulator:
             if (EmuSelection_Resource.emu.Count() > 1) //More than one installed
             {
                 if (!File.Exists("Emulators\\Use_Emulator.ini"))
@@ -141,9 +141,8 @@ namespace BotFramework
                     }
                     if(Variables.emulator == null)
                     {
-                        //loop all emulator but not found same data
-                        MessageBox.Show("Please install any supported emulator first or install extentions to support your current installed emulator!", "No supported emulator found!");
-                        Environment.Exit(0);
+                        File.Delete("Emulators\\Use_Emulator.ini");
+                        goto Emulator;
                     }
                 }
             }
@@ -231,6 +230,7 @@ namespace BotFramework
             {
                 return;
             }
+            EjectSockets();
             Variables.emulator.CloseEmulator();
             Variables.Proc = null;
             Variables.Controlled_Device = null;
@@ -288,13 +288,13 @@ namespace BotFramework
                     return;
                 }
                 Variables.AdvanceLog("Emulator not connected, retrying in 2 second...");
-                Thread.Sleep(2000);
+                Thread.Sleep(1000);
                 error++;
-                if(error > 30) //We had await for 1 minute
+                if(error > 10) //We had await for 10 seconds
                 {
                     Variables.ScriptLog("Unable to connect to emulator! Emulator refused to load! Restarting it now!",Color.Red);
                     RestartEmulator();
-                    Thread.Sleep(10000);
+                    Thread.Sleep(1000);
                     error = 0;
                 }
                 if(error % 5 == 0)
@@ -1334,6 +1334,8 @@ namespace BotFramework
         /// <param name="find">The smaller image for matching</param>
         /// <param name="original">Original image that need to get the point on it</param>
         /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
+        /// <param name="lineNumber"></param>
+        /// <param name="caller"></param>
         /// <returns>Point or null</returns>
         /// <returns></returns>
         public static Point? FindImage(Bitmap original, Bitmap find, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
@@ -1397,6 +1399,8 @@ namespace BotFramework
         /// <param name="findPath">The path of smaller image for matching</param>
         /// <param name="screencapture">Original image that need to get the point on it</param>
         /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
+        /// <param name="lineNumber"></param>
+        /// <param name="caller"></param>
         /// <returns>Point or null</returns>
         public static Point? FindImage(byte[] screencapture, string findPath, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
