@@ -8,8 +8,8 @@ Bug汇报：QQ群号：809233738
 ___
 * 可使用EmulatorController进行一系列的模拟器操作，如果需要自行写别的游戏脚本，直接导入ImageProcessor.dll即可
 * 挂机自定义都是使用C# interface插件dll编写，因此方便修改以及增加。
-  * 自定义模拟器: EmulatorInterface (导入ImageProcessor.dll)
-  * 自定义脚本：BattleScript（导入VCweiyi.exe）
+  * 自定义模拟器: EmulatorInterface (导入BotFramework.dll)
+  * 自定义脚本：BattleScript（导入VCBot.exe）
 
 # 自定义模拟器
 ___
@@ -28,3 +28,9 @@ ___
   * CreateUI() 创建UI，并且显示在挂机主程序内，可以增加功能给
   * ScriptName() 脚本名字
   * Attack() 发动技能的方式，例如可一个个点或者默认的找图长按发动卡牌技能，看个人喜好
+  
+___  
+___
+# Bot Framework Documentation
+ * Here is some [documentation](https://github.com/PoH98/Valkyrie-Crusade-Bot/wiki) on how to use the BotFramework.dll to make your new script for any games!
+ * Warning, I am not responsible for using 'Bots' or 'Scripts' which cause your game account is banned! Use it with more randoms and longer delays will reduce the ban risk!
