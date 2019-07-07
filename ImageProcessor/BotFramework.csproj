@@ -122,6 +122,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adb.cs" />
+    <Compile Include="AdbResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AdbResource.resx</DependentUpon>
+    </Compile>
     <Compile Include="Compiler.cs" />
     <Compile Include="Debug_.cs" />
     <Compile Include="Download.cs">
@@ -148,13 +153,19 @@
     <Compile Include="Variables.cs" />
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Resources\adb.zip" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />
+    <None Include="Resources\css.txt" />
     <None Include="License-LGPL.txt" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <EmbeddedResource Include="AdbResource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AdbResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Download.resx">
       <DependentUpon>Download.cs</DependentUpon>
     </EmbeddedResource>

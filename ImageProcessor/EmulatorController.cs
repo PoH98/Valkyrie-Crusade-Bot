@@ -21,6 +21,7 @@ using System.Windows.Forms;
 using System.Reflection;
 using System.Net.Sockets;
 using System.Security.Principal;
+using System.IO.Compression;
 
 namespace BotFramework
 {
@@ -603,6 +604,13 @@ namespace BotFramework
                             break;
                         }
                     }
+                    //File is not exist and configure don't have any adb path, force recreate the adb again!
+                    if(adbname == Environment.CurrentDirectory + "\\adb\\adb.exe")
+                    {
+                        File.WriteAllBytes("adb.zip",AdbResource.adb);
+                        ZipFile.ExtractToDirectory("adb.zip", Environment.CurrentDirectory);
+                        File.Delete("adb.zip");
+                    }
                 }
             }
             server.StartServer(adbname, false);
@@ -612,7 +620,7 @@ namespace BotFramework
         /// <summary>
         /// Start Game by using CustomImg\Icon.png
         /// </summary>
-        public static bool StartGame(Bitmap icon, byte[] img)   
+        public static bool StartGame(Bitmap icon, byte[] img)
         {
             if (!ScriptRun.Run)
             {
@@ -1701,28 +1709,14 @@ namespace BotFramework
 
             }
         }
-        /// <summary>
-        /// Used in SendEvent
-        /// </summary>
-        public enum KeyCode
-        {
-            /// <summary>
-            /// Volume Down
-            /// </summary>
-            VolumeDown = 25,
-            /// <summary>
-            /// Volume Mute
-            /// </summary>
-            VolumeMute = 164
-        }
        /// <summary>
        /// Send keyevent via Adb to controlled device
        /// </summary>
        /// <param name="keycode">keycode</param>
-        public static void SendEvent(KeyCode keycode)
+        public static void SendEvent(int keycode)
         {
             var receiver = new ConsoleOutputReceiver();
-            client.ExecuteRemoteCommand("input keyevent " + keycode, (Variables.Controlled_Device as DeviceData), receiver);
+            client.ExecuteRemoteCommand("input keyevent " + keycode.ToString(), (Variables.Controlled_Device as DeviceData), receiver);
         }
         /// <summary>
         /// 

@@ -177,6 +177,9 @@
     <Compile Include="Script.cs" />
     <Compile Include="ScriptErrorHandler.cs" />
     <Compile Include="SleepWake.cs" />
+    <Compile Include="TransparentPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Variables.cs" />
     <Compile Include="WebClientOverride.cs">
       <SubType>Component</SubType>

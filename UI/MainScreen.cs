@@ -33,6 +33,8 @@ namespace BotFramework
         static List<CheckBox> customScriptEnable = new List<CheckBox>();
 
         public static Dictionary<string, string> UILanguage = new Dictionary<string, string>();
+
+        private static TransparentPanel tp;
         public MainScreen()
         {
             InitializeComponent();
@@ -139,7 +141,6 @@ namespace BotFramework
                 File.Delete("Img.zip");
             }
             comboBox1.Items.Clear();
-            Variables.Background = true;
             OCR.PrepairOcr(whitelist: "$0123456789", blacklist: "!?@#$%&*()<>_-+=/:;'\"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
             string output = "";
             Variables.EmulatorPath();
@@ -286,6 +287,15 @@ namespace BotFramework
                     pictureBox4.Image = Image.FromStream(stream);
                 }
             }
+            foreach(Control box in ED_Box.Controls)
+            {
+                foreach(Control control in box.Controls)
+                {
+                    control.MouseDown += Tp_MouseDown;
+                }
+                box.MouseDown += Tp_MouseDown;
+            }
+            ED_Box.MouseDown += Tp_MouseDown;
             metroTabControl1.SelectedIndex = 0;
             chk_item.Enabled = chk_autoRT.Checked;
             Login.LoadCompleted = true;
@@ -377,9 +387,32 @@ namespace BotFramework
                 panel3.Visible = true;
             }
             panel3.Enabled = false;
+            tp = new TransparentPanel();
+            tp.Location = panel3.Location;
+            tp.Size = panel3.Size;
+            tp.Enabled = true;
+            tp.Visible = true;
+            tp.MouseDown += Tp_MouseDown;
+            Controls.Add(tp);
+            foreach(Control control in Debug.Controls)
+            {
+                if(control is Button)
+                {
+                    control.Enabled = false;
+                }
+            }
             ScriptRun.RunScript(true, (new VCBotScript() as ScriptInterface));
             Thread cap = new Thread(Capt);
             cap.Start();
+        }
+
+        private void Tp_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                DllImport.ReleaseCapture();
+                DllImport.SendMessage(Handle, 0xA1, 0x2, 0);
+            }
         }
 
         private void richTextBox1_TextChanged(object sender, EventArgs e)
@@ -407,8 +440,13 @@ namespace BotFramework
                 DllImport.MoveWindow(Variables.Proc.MainWindowHandle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 1318, 752, true);
                 Docked = false;
             }
+            foreach (Control control in Debug.Controls)
+            {
+                control.Enabled = true;
+            }
             ScriptRun.StopScript();
             btn_Start.Enabled = true;
+            Controls.Remove(tp);
         }
 
         private void timer2_Tick(object sender, EventArgs e)
@@ -540,6 +578,7 @@ namespace BotFramework
                             {
                                 DllImport.SetParent(Variables.Proc.MainWindowHandle, panel3.Handle);
                             });
+                            tp.BringToFront();
                             Docked = true;
                         }
                         if (rect.left != -1 || rect.top != -55)
@@ -826,34 +865,6 @@ namespace BotFramework
                     x++;
                 }
             }
-            if (Variables.Background == true)
-            {
-                int x = 0;
-                foreach (var l in lines)
-                {
-                    string key = l.Split('=')[0];
-                    if (key == "Background")
-                    {
-                        lines[x] = "Background=true";
-                        break;
-                    }
-                    x++;
-                }
-            }
-            else
-            {
-                int x = 0;
-                foreach (var l in lines)
-                {
-                    string key = l.Split('=')[0];
-                    if (key == "Background")
-                    {
-                        lines[x] = "Background=false";
-                        break;
-                    }
-                    x++;
-                }
-            }
             File.WriteAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini", lines);
             if (ScriptRun.Run)
             {
@@ -1004,6 +1015,11 @@ namespace BotFramework
         {
             SleepWake.SetWakeTimer(DateTime.Now.AddMinutes(1));
             PCController.DoMouseClick(100, 100);
+        }
+
+        private void MetroButton1_Click(object sender, EventArgs e)
+        {
+            ScriptRun.ThrowException(new Exception("This is a testing exception!"));
         }
     }
 }

@@ -137,14 +137,13 @@ namespace BotFramework
                             BotCore.ConnectAndroidEmulator();
                             continue;
                         }
-                        else if (ex is ThreadAbortException)
+                        else if (ex is ThreadAbortException) //Bot stopped
                         {
 
                         }
                         else
                         {
-                            File.WriteAllText("error.html","<html><head><title>Error Found!</title></head><body>"+ex.ToString().Replace("\n", "<br/>") +"</body></html>");
-                            Process.Start("error.html");
+                            ThrowException(ex);
                             continue;
                         }
                     }
@@ -174,7 +173,26 @@ namespace BotFramework
 
             }
         }
-
+        /// <summary>
+        /// Another version for throwing exceptions, without getting freeze UI and exit program, but starts a webpage to tell the exception and continue our script!
+        /// </summary>
+        /// <param name="ex"></param>
+        public static void ThrowException(Exception ex)
+        {
+            string html = $"<head><title>Ops! Error Found! {ex.HResult}</title><link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\"></head><body><section id=\"not-found\"><div id=\"title\">Oh no! Bot Error Found!</div><div class=\"circles\"><p>{ex.Message}<br><small>{ex.ToString().Replace("\n", "<br>")}</small></p><span class=\"circle big\"></span>" +
+                            "<span class=\"circle med\"></span><span class=\"circle small\"></span></div></section></body>";
+            if (!Directory.Exists("Error"))
+            {
+                Directory.CreateDirectory("Error");
+            }
+            if (!File.Exists("Error\\style.css"))
+            {
+                File.WriteAllText("Error\\style.css", AdbResource.css);
+            }
+            string filename = string.Format(@"{0}.html", Encryption.SHA256(Guid.NewGuid()));
+            File.WriteAllText("Error\\" + filename, html);
+            Process.Start("Error\\" + filename);
+        }
         private static bool CheckDeviceOnline()
         {
             if(Variables.Proc != null)

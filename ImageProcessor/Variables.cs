@@ -42,14 +42,7 @@ namespace BotFramework
             BotCore.LoadEmulatorInterface();
             if (emulator == null)
             {
-                if (File.Exists("Updater.exe"))
-                {
-                    MessageBox.Show("正在自动下载模拟器...");
-                    Process p = Process.Start("Updater.exe", "http://dl.memuplay.com/download/backup/Memu-Setup-3.7.0.0.exe");
-                    p.WaitForExit();
-                }
-                MessageBox.Show("请安装完毕模拟器后再继续！");
-                Environment.Exit(0);
+                throw new FileNotFoundException("No supported emulators detected!");
             }
             if (Instance == "")
             {
@@ -69,10 +62,6 @@ namespace BotFramework
         /// If new devices added, will return true
         /// </summary>
         public static bool DeviceChanged = false;
-        /// <summary>
-        /// Available Adb Capture in Fast Capture if background is true else use WinAPI for capturing (Make Image not usable in RGBComparer and GetPixel)
-        /// </summary>
-        public static bool Background;
         /// <summary>
         /// The process attached, which is the emulator
         /// </summary>

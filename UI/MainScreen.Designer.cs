@@ -98,6 +98,7 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.chk_Log = new MetroFramework.Controls.MetroCheckBox();
             this.metroLink1 = new MetroFramework.Controls.MetroLink();
+            this.metroButton1 = new MetroFramework.Controls.MetroButton();
             this.ED_Box.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.M_Box.SuspendLayout();
@@ -531,7 +532,7 @@
             this.metroTabControl1.Controls.Add(this.Info);
             resources.ApplyResources(this.metroTabControl1, "metroTabControl1");
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 4;
+            this.metroTabControl1.SelectedIndex = 2;
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Brown;
             this.metroTabControl1.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroTabControl1.UseSelectable = true;
@@ -573,6 +574,7 @@
             // 
             // Debug
             // 
+            this.Debug.Controls.Add(this.metroButton1);
             this.Debug.Controls.Add(this.btn_Sleep);
             this.Debug.Controls.Add(this.btn_OCR);
             this.Debug.Controls.Add(this.sysd_box);
@@ -671,6 +673,14 @@
             this.metroLink1.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroLink1.UseSelectable = true;
             this.metroLink1.Click += new System.EventHandler(this.MetroLink1_Click);
+            // 
+            // metroButton1
+            // 
+            this.metroButton1.FontWeight = MetroFramework.MetroButtonWeight.Regular;
+            resources.ApplyResources(this.metroButton1, "metroButton1");
+            this.metroButton1.Name = "metroButton1";
+            this.metroButton1.UseSelectable = true;
+            this.metroButton1.Click += new System.EventHandler(this.MetroButton1_Click);
             // 
             // MainScreen
             // 
@@ -792,6 +802,7 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private MetroFramework.Controls.MetroButton btn_Sleep;
         private System.Windows.Forms.CheckBox Suspend_Chk;
+        private MetroFramework.Controls.MetroButton metroButton1;
     }
 }
 

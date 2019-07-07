@@ -1222,7 +1222,7 @@
     <value>Debug</value>
   </data>
   <data name="&gt;&gt;sysd_box.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
   <data name="rbd_help.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1489,10 +1489,10 @@
     <value>Left, Right</value>
   </data>
   <data name="panel3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>474, 59</value>
+    <value>474, 71</value>
   </data>
   <data name="panel3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>0, 574</value>
+    <value>4, 574</value>
   </data>
   <data name="panel3.TabIndex" type="System.Int32, mscorlib">
     <value>31</value>
@@ -4182,6 +4182,30 @@
   <data name="&gt;&gt;Settings.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="metroButton1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>215, 106</value>
+  </data>
+  <data name="metroButton1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>233, 37</value>
+  </data>
+  <data name="metroButton1.TabIndex" type="System.Int32, mscorlib">
+    <value>31</value>
+  </data>
+  <data name="metroButton1.Text" xml:space="preserve">
+    <value>错误提示</value>
+  </data>
+  <data name="&gt;&gt;metroButton1.Name" xml:space="preserve">
+    <value>metroButton1</value>
+  </data>
+  <data name="&gt;&gt;metroButton1.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroButton1.Parent" xml:space="preserve">
+    <value>Debug</value>
+  </data>
+  <data name="&gt;&gt;metroButton1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="btn_Sleep.Location" type="System.Drawing.Point, System.Drawing">
     <value>215, 63</value>
   </data>
@@ -4204,7 +4228,7 @@
     <value>Debug</value>
   </data>
   <data name="&gt;&gt;btn_Sleep.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="btn_OCR.Location" type="System.Drawing.Point, System.Drawing">
     <value>216, 20</value>
@@ -4228,7 +4252,7 @@
     <value>Debug</value>
   </data>
   <data name="&gt;&gt;btn_OCR.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="pictureBox4.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -4255,7 +4279,7 @@
     <value>Debug</value>
   </data>
   <data name="&gt;&gt;pictureBox4.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>6</value>
   </data>
   <data name="Debug.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 38</value>
@@ -4459,7 +4483,7 @@
     <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>470, 683</value>
+    <value>474, 683</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
