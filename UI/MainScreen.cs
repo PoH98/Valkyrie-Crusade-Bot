@@ -62,7 +62,6 @@ namespace BotFramework
                 Environment.Exit(0);
             }
         }
-
         private static string Get45PlusFromRegistry()
         {
             const string subkey = @"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\";
@@ -229,6 +228,20 @@ namespace BotFramework
                     Suspend_Chk.Checked = true;
                 }
             }
+            if(Variables.Configure.TryGetValue("biubiu",out output))
+            {
+                if(output == "true")
+                {
+                    Biubiu.Checked = true;
+                }
+            }
+            if (Variables.Configure.TryGetValue("WinApi", out output))
+            {
+                if (output == "true")
+                {
+                    checkBox1.Checked = true;
+                }
+            }
             webBrowser1.ScriptErrorsSuppressed = true;
             webBrowser3.ScriptErrorsSuppressed = true;
             PrivateVariable.nospam = DateTime.Now;
@@ -356,6 +369,7 @@ namespace BotFramework
                 return;
             }
             PrivateVariable.nospam = DateTime.Now;
+            Variables.ProchWnd = panel3.Handle;
             richTextBox1.Text = "";
             btn_Start.Enabled = false;
             if (chk_begin.Checked)
@@ -383,7 +397,7 @@ namespace BotFramework
             }
             if (panel3.Visible == false)
             {
-                Width += 700;
+                Width += 1280;
                 panel3.Visible = true;
             }
             panel3.Enabled = false;
@@ -417,7 +431,10 @@ namespace BotFramework
 
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
-            richTextBox1.ScrollToCaret();
+            if (!richTextBox1.Focused)
+            {
+                richTextBox1.ScrollToCaret();
+            }
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -429,9 +446,9 @@ namespace BotFramework
             PrivateVariable.InMap = false;
             BotCore.EjectSockets();
             Variables.ScriptLog("Script Stopped!",Color.White);
-            if (Width > 480)
+            if (Width > 1280)
             {
-                Width -= 700;
+                Width -= 1280;
                 panel3.Visible = false;
             }
             if (Variables.Proc != null)
@@ -565,7 +582,7 @@ namespace BotFramework
                     {
                         var handle = Variables.Proc.MainWindowHandle;
                         var parent = DllImport.GetParent(handle);
-                        DllImport.Rect rect = new DllImport.Rect();
+                        Rectangle rect = new Rectangle();
                         DllImport.GetWindowRect(handle, ref rect);
                         if (!Docked)
                         {
@@ -573,17 +590,17 @@ namespace BotFramework
                             {
                                 return;
                             }
-                            PrivateVariable.EmuDefaultLocation = new Point(rect.left, rect.top);
+                            PrivateVariable.EmuDefaultLocation = rect;
                             panel3.Invoke((MethodInvoker)delegate
                             {
                                 DllImport.SetParent(Variables.Proc.MainWindowHandle, panel3.Handle);
                             });
-                            tp.BringToFront();
+                            tp.Invoke((MethodInvoker)delegate { tp.BringToFront(); });
                             Docked = true;
                         }
-                        if (rect.left != -1 || rect.top != -55)
+                        if (rect.X != -1 || rect.Y != -30)
                         {
-                            DllImport.MoveWindow(Variables.Proc.MainWindowHandle, -1, -30, 736, 600, false);
+                            DllImport.MoveWindow(handle, -1, -30, 1318, 752, false);
                         }
                     }
                     catch
@@ -822,50 +839,6 @@ namespace BotFramework
 
         private void MainScreen_FormClosing(object sender, FormClosingEventArgs e)
         {
-            var lines = File.ReadAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini");
-            if (chk_begin.Checked)
-            {
-                int x = 0;
-                foreach (var l in lines)
-                {
-                    string key = l.Split('=')[0];
-                    if (key == "Level")
-                    {
-                        lines[x] = "Level=0";
-                        break;
-                    }
-                    x++;
-                }
-            }
-            else if (chk_inter.Checked)
-            {
-                int x = 0;
-                foreach (var l in lines)
-                {
-                    string key = l.Split('=')[0];
-                    if (key == "Level")
-                    {
-                        lines[x] = "Level=1";
-                        break;
-                    }
-                    x++;
-                }
-            }
-            else if (chk_advan.Checked)
-            {
-                int x = 0;
-                foreach (var l in lines)
-                {
-                    string key = l.Split('=')[0];
-                    if (key == "Level")
-                    {
-                        lines[x] = "Level=2";
-                        break;
-                    }
-                    x++;
-                }
-            }
-            File.WriteAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini", lines);
             if (ScriptRun.Run)
             {
                 button3_Click(sender, e);
@@ -996,12 +969,12 @@ namespace BotFramework
             {
                 if (chk_browser.Checked)
                 {
-                    Process.Start("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/sch/index.html");
+                    Process.Start("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/"+ comboBox1.SelectedItem.ToString()+"/index.html");
                 }
                 else
                 {
                     webBrowser3.Visible = true;
-                    webBrowser3.Navigate("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/sch/index.html");
+                    webBrowser3.Navigate("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/" + comboBox1.SelectedItem.ToString() + "/index.html");
                 }
             }
         }
@@ -1020,6 +993,29 @@ namespace BotFramework
         private void MetroButton1_Click(object sender, EventArgs e)
         {
             ScriptRun.ThrowException(new Exception("This is a testing exception!"));
+        }
+
+        private void biubiu_CheckedChanged(object sender, EventArgs e)
+        {
+            PrivateVariable.biubiu = Biubiu.Checked;
+            WriteConfig("biubiu", Biubiu.Checked.ToString().ToLower());
+        }
+
+        private void CheckBox1_CheckedChanged_1(object sender, EventArgs e)
+        {
+            Variables.WinApiCapt = checkBox1.Checked;
+            WriteConfig("WinApi", checkBox1.Checked.ToString().ToLower());
+        }
+        private void MainScreen_Resize(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Minimized)
+            {
+                WindowState = FormWindowState.Normal;
+            }
+            else if (WindowState == FormWindowState.Maximized)
+            {
+                WindowState = FormWindowState.Normal;
+            }
         }
     }
 }

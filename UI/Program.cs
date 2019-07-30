@@ -25,7 +25,7 @@ namespace UI
             if ( Variables.Proc != null)
             {
                 DllImport.SetParent(Variables.Proc.MainWindowHandle, IntPtr.Zero);
-                DllImport.MoveWindow(Variables.Proc.MainWindowHandle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 1318, 752, true);
+                DllImport.MoveWindow(Variables.Proc.MainWindowHandle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 0, 0, true);
             }
             Debug_.WriteLine(e.ExceptionObject.ToString());
             File.WriteAllText("error.log", e.ExceptionObject.ToString());
@@ -38,7 +38,7 @@ namespace UI
             if (Variables.Proc != null)
             {
                 DllImport.SetParent(Variables.Proc.MainWindowHandle, IntPtr.Zero);
-                DllImport.MoveWindow(Variables.Proc.MainWindowHandle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 1318, 752, true);
+                DllImport.MoveWindow(Variables.Proc.MainWindowHandle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 0, 0, true);
             }
             Debug_.WriteLine(e.Exception + " At: "+e.Exception.Source +" At: "+ e.Exception.TargetSite);
             File.WriteAllText("error.log", e.Exception.ToString());

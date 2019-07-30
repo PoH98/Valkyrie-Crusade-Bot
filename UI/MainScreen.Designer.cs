@@ -48,8 +48,10 @@
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.M_Box = new System.Windows.Forms.GroupBox();
+            this.Biubiu = new System.Windows.Forms.CheckBox();
             this.chk_twoE = new System.Windows.Forms.CheckBox();
             this.Etc_Box = new System.Windows.Forms.GroupBox();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.Suspend_Chk = new System.Windows.Forms.CheckBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label19 = new System.Windows.Forms.Label();
@@ -89,6 +91,7 @@
             this.Settings = new MetroFramework.Controls.MetroTabPage();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.Debug = new MetroFramework.Controls.MetroTabPage();
+            this.metroButton1 = new MetroFramework.Controls.MetroButton();
             this.btn_Sleep = new MetroFramework.Controls.MetroButton();
             this.btn_OCR = new MetroFramework.Controls.MetroButton();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
@@ -98,7 +101,6 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.chk_Log = new MetroFramework.Controls.MetroCheckBox();
             this.metroLink1 = new MetroFramework.Controls.MetroLink();
-            this.metroButton1 = new MetroFramework.Controls.MetroButton();
             this.ED_Box.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.M_Box.SuspendLayout();
@@ -234,11 +236,19 @@
             // M_Box
             // 
             this.M_Box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
+            this.M_Box.Controls.Add(this.Biubiu);
             this.M_Box.Controls.Add(this.chk_twoE);
             this.M_Box.ForeColor = System.Drawing.Color.White;
             resources.ApplyResources(this.M_Box, "M_Box");
             this.M_Box.Name = "M_Box";
             this.M_Box.TabStop = false;
+            // 
+            // Biubiu
+            // 
+            resources.ApplyResources(this.Biubiu, "Biubiu");
+            this.Biubiu.Name = "Biubiu";
+            this.Biubiu.UseVisualStyleBackColor = true;
+            this.Biubiu.CheckedChanged += new System.EventHandler(this.biubiu_CheckedChanged);
             // 
             // chk_twoE
             // 
@@ -253,6 +263,7 @@
             // Etc_Box
             // 
             this.Etc_Box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
+            this.Etc_Box.Controls.Add(this.checkBox1);
             this.Etc_Box.Controls.Add(this.Suspend_Chk);
             this.Etc_Box.Controls.Add(this.comboBox1);
             this.Etc_Box.Controls.Add(this.label19);
@@ -260,6 +271,13 @@
             resources.ApplyResources(this.Etc_Box, "Etc_Box");
             this.Etc_Box.Name = "Etc_Box";
             this.Etc_Box.TabStop = false;
+            // 
+            // checkBox1
+            // 
+            resources.ApplyResources(this.checkBox1, "checkBox1");
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged_1);
             // 
             // Suspend_Chk
             // 
@@ -532,7 +550,7 @@
             this.metroTabControl1.Controls.Add(this.Info);
             resources.ApplyResources(this.metroTabControl1, "metroTabControl1");
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 2;
+            this.metroTabControl1.SelectedIndex = 1;
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Brown;
             this.metroTabControl1.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroTabControl1.UseSelectable = true;
@@ -588,6 +606,14 @@
             this.Debug.VerticalScrollbarBarColor = true;
             this.Debug.VerticalScrollbarHighlightOnWheel = false;
             this.Debug.VerticalScrollbarSize = 10;
+            // 
+            // metroButton1
+            // 
+            this.metroButton1.FontWeight = MetroFramework.MetroButtonWeight.Regular;
+            resources.ApplyResources(this.metroButton1, "metroButton1");
+            this.metroButton1.Name = "metroButton1";
+            this.metroButton1.UseSelectable = true;
+            this.metroButton1.Click += new System.EventHandler(this.MetroButton1_Click);
             // 
             // btn_Sleep
             // 
@@ -674,14 +700,6 @@
             this.metroLink1.UseSelectable = true;
             this.metroLink1.Click += new System.EventHandler(this.MetroLink1_Click);
             // 
-            // metroButton1
-            // 
-            this.metroButton1.FontWeight = MetroFramework.MetroButtonWeight.Regular;
-            resources.ApplyResources(this.metroButton1, "metroButton1");
-            this.metroButton1.Name = "metroButton1";
-            this.metroButton1.UseSelectable = true;
-            this.metroButton1.Click += new System.EventHandler(this.MetroButton1_Click);
-            // 
             // MainScreen
             // 
             resources.ApplyResources(this, "$this");
@@ -694,6 +712,7 @@
             this.Controls.Add(this.btn_Start);
             this.Controls.Add(this.metroLink1);
             this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "MainScreen";
             this.Resizable = false;
             this.ShadowType = MetroFramework.Forms.MetroFormShadowType.AeroShadow;
@@ -702,6 +721,7 @@
             this.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainScreen_FormClosing);
             this.Load += new System.EventHandler(this.MainScreen_Load);
+            this.Resize += new System.EventHandler(this.MainScreen_Resize);
             this.ED_Box.ResumeLayout(false);
             this.ED_Box.PerformLayout();
             this.groupBox9.ResumeLayout(false);
@@ -803,6 +823,8 @@
         private MetroFramework.Controls.MetroButton btn_Sleep;
         private System.Windows.Forms.CheckBox Suspend_Chk;
         private MetroFramework.Controls.MetroButton metroButton1;
+        private System.Windows.Forms.CheckBox Biubiu;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }
 

@@ -67,6 +67,14 @@ namespace BotFramework
         /// </summary>
         public static Process Proc;
         /// <summary>
+        /// hWnd used to WinApi screenshot
+        /// </summary>
+        public static IntPtr ProchWnd;
+        /// <summary>
+        /// Use WinApi capture or adb capture?
+        /// </summary>
+        public static bool WinApiCapt = false;
+        /// <summary>
         /// Virtual box path
         /// </summary>
         public static string VBoxManagerPath;
@@ -159,5 +167,9 @@ namespace BotFramework
         /// Emulator's Width and Height will be used in ImageCapture()
         /// </summary>
         public static int EmulatorWidth = 1280, EmulatorHeight = 720, EmulatorDpi = 160;
+        /// <summary>
+        /// WinApi capture cropping as it might captured some garbage inside
+        /// </summary>
+        public static Point WinApiCaptCropStart = new Point(0, 0), WinApiCaptCropEnd = new Point(EmulatorWidth, EmulatorHeight);
     }
 }

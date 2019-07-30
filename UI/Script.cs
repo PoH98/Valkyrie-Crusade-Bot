@@ -9,7 +9,6 @@ using System.Media;
 using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace UI
@@ -25,7 +24,7 @@ namespace UI
         public static string Tower_Floor = "", Tower_Rank = "";
         public static byte[] image = null;
         public static DateTime nextOnline;
-        private static bool Collected;
+        private static int Collected;
         //Try Locate MainScreen
         private static void LocateMainScreen()
         {
@@ -33,13 +32,20 @@ namespace UI
             BotCore.Delay(1000, false);
             PrivateVariable.InMainScreen = false;
             BotCore.Delay(100, 200);
+            bool StartGame = false;
             for (int x = 0; x < 30; x++)
             {
                 if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
-                    BotCore.StartGame(Img.Icon, image);
-                    Collected = false;
-                    x = 0;
+                    return;
+                }
+                if (!Muted_Device && StartGame)
+                {
+                    for (int y = 0; y < 10; y++)
+                    {
+                        BotCore.SendEvent(25);
+                    }
+                    Muted_Device = true;
                 }
                 image = BotCore.ImageCapture();
                 while (BotCore.RGBComparer(image, new Point(520, 355), Color.Black, 1))
@@ -63,6 +69,7 @@ namespace UI
                         Variables.ScriptLog("Start Game Button Located!", Color.Lime);
                         BotCore.SendTap(point.Value);
                         error = 0;
+                        StartGame = true;
                         return;
                     }
                     point = BotCore.FindImage(image, Img.Update_Complete, true);
@@ -172,12 +179,15 @@ namespace UI
         //Collect
         private static void Collect()
         {
-            if (!Collected)
+            if (Collected < 4)
             {
                 Variables.ScriptLog("Collecting Resources", Color.Lime);
-                BotCore.Zoomout();
                 for (int x = 0; x < 4; x++)
                 {
+                    if(Collected > 3)
+                    {
+                        return;
+                    }
                     switch (x)
                     {
                         case 0:
@@ -201,6 +211,7 @@ namespace UI
                     {
                         BotCore.SendTap(p.Value);
                         BotCore.Delay(100, 200);
+                        Collected++;
                     }
                     if (!BotCore.RGBComparer(image, new Point(1261, 101), Color.FromArgb(121, 194, 1), 10))
                     {
@@ -209,7 +220,13 @@ namespace UI
                         {
                             BotCore.SendTap(p.Value);
                             BotCore.Delay(100, 200);
+                            Collected++;
                         }
+                    }
+                    else
+                    {
+                        Variables.ScriptLog("乙醚已满，跳过收取！", Color.Lime);
+                        Collected++;
                     }
                     if (!BotCore.RGBComparer(image, new Point(1260, 42), Color.FromArgb(249, 173, 46), 10))
                     {
@@ -218,17 +235,31 @@ namespace UI
                         {
                             BotCore.SendTap(p.Value);
                             BotCore.Delay(100, 200);
+                            Collected++;
                         }
                     }
-                    p = BotCore.FindImage(crop, Img.Resource_4, false);
-                    if (p != null)
+                    else
                     {
-                        BotCore.SendTap(p.Value);
-                        BotCore.Delay(100, 200);
+                        Variables.ScriptLog("黄金已满，跳过收取！", Color.Lime);
+                        Collected++;
+                    }
+                    if(!BotCore.RGBComparer(image,new Point(1260, 160), Color.FromArgb(125, 125, 125), 10))
+                    {
+                        p = BotCore.FindImage(crop, Img.Resource_4, false);
+                        if (p != null)
+                        {
+                            BotCore.SendTap(p.Value);
+                            BotCore.Delay(100, 200);
+                            Collected++;
+                        }
+                    }
+                    else
+                    {
+                        Variables.ScriptLog("铁已满，跳过收取！", Color.Lime);
+                        Collected++;
                     }
                     BotCore.Delay(800, 1200);
                 }
-                Collected = true;
             }
            
         }
@@ -323,28 +354,28 @@ namespace UI
             {
                 if (Special == "true")
                 {
-                    BotCore.SendTap(170, 630);
+                    BotCore.SendTap(170, 655);//???
                     BotCore.Delay(5000, false);
-                    if (File.Exists("Img\\Event.png"))
+                    for (int x = 0; x < 5; x++)
                     {
-                        for (int x = 0; x < 5; x++)
+                        image = BotCore.ImageCapture();
+                        Point? located = BotCore.FindImage(image, "Img\\LocateEventSwitch.png", true);
+                        if (located == null)
                         {
-                            image = BotCore.ImageCapture();
-                            Point? located = BotCore.FindImage(image, Environment.CurrentDirectory + "\\Img\\LocateEventSwitch.png", true);
-                            if (located == null)
+                            x -= 1;
+                            BotCore.Delay(1000, false);
+                            if (error > 10)
                             {
-                                x -= 1;
-                                BotCore.Delay(1000, false);
-                                if (error > 10)
-                                {
-                                    ScriptErrorHandler.Reset("Unable to locate Event Switch screen! Returning main screen!");
-                                    error = 0;
-                                    return;
-                                }
-                                error++;
-                                ScriptErrorHandler.ErrorHandle();
-                                continue;
+                                ScriptErrorHandler.Reset("Unable to locate Event Switch screen! Returning main screen!");
+                                error = 0;
+                                return;
                             }
+                            error++;
+                            ScriptErrorHandler.ErrorHandle();
+                            continue;
+                        }
+                        if (File.Exists("Img\\Event.png"))
+                        {
                             Variables.ScriptLog("Finding Event.png on screen", Color.White);
                             point = BotCore.FindImage(image, Environment.CurrentDirectory + "\\Img\\Event.png", true);
                             if (point != null)
@@ -355,11 +386,22 @@ namespace UI
                             }
                             ScriptErrorHandler.ErrorHandle();
                         }
+                        else
+                        {
+                            break;
+                        }
                     }
                     if (point == null)
                     {
                         Variables.ScriptLog("Event.png not found, force enter event and check what event...", Color.Red);
                         BotCore.SendTap(936, 100);
+                        Variables.ScriptLog("Updating Event.png...");
+                        var save = BotCore.CropImage(image, new Point(790, 70), new Point(840, 85));
+                        if (File.Exists("Img\\Event.png"))
+                        {
+                            File.Delete(("Img\\Event.png"));
+                        }
+                        BotCore.Decompress(save).Save(Environment.CurrentDirectory + "\\Img\\Event.png");
                     }
                 }
                 else
@@ -1027,7 +1069,6 @@ namespace UI
         private static void LocateUI()
         {
             BotCore.Delay(1000);
-            image = BotCore.ImageCapture();
             if (!BotCore.RGBComparer(image, new Point(10, 27), Color.FromArgb(200, 200, 200), 5))
             {
                 Debug_.WriteLine();
@@ -1106,7 +1147,7 @@ namespace UI
                     Variables.ScriptLog("Green Button Found!", Color.Lime);
                     if (PrivateVariable.EventType == 0)
                     {
-                        if (BotCore.FindImage(image, Img.TowerFinished, true) != null && RuneBoss && runes >= 3 && runes != 5)
+                        if (RuneBoss && runes >= 3 && runes != 5 && BotCore.FindImage(image, Img.TowerFinished, true) != null)
                         {
                             PrivateVariable.InEventScreen = false;
                             PrivateVariable.InMainScreen = false;
@@ -1137,6 +1178,7 @@ namespace UI
                             {
                                 BotCore.SendTap(point.Value.X + 125, point.Value.Y);
                                 Attackable = false;
+                                BotCore.Delay(1000);
                                 locateUIError = 0;
                                 return;
                             }
@@ -1162,6 +1204,7 @@ namespace UI
                             BotCore.SendTap(point.Value.X + 125, point.Value.Y);
                             Attackable = false;
                             locateUIError = 0;
+                            BotCore.Delay(1000);
                             return;
                         }
                     }
@@ -1233,34 +1276,6 @@ namespace UI
                 {
                     return;
                 }
-                point = BotCore.FindImage(image, Img.GarbageMessage, true);
-                if (point != null)
-                {
-                    BotCore.SendTap(point.Value);
-                    Attackable = false;
-                    locateUIError = 0;
-                    return;
-                }
-                if (!PrivateVariable.Battling)
-                {
-                    return;
-                }
-                point = BotCore.FindImage(image, Img.Love, true);
-                if (point != null)
-                {
-                    for (int x = 0; x < 10; x++)
-                    {
-                        BotCore.SendTap(point.Value);
-                        BotCore.Delay(100, 200);
-                        locateUIError = 0;
-                    }
-                    Attackable = false;
-                    return;
-                }
-                if (!PrivateVariable.Battling)
-                {
-                    return;
-                }
                 point = BotCore.FindImage(image, Img.Start_Game, true);
                 if (point != null)
                 {
@@ -1299,8 +1314,7 @@ namespace UI
             if (Attackable)
             {
                 Debug_.WriteLine();
-                image = BotCore.ImageCapture();
-                var enemy = BotCore.CropImage(image, new Point(582, 258), new Point(715, 308));
+                var enemy = BotCore.CropImage(image, new Point(585, 260), new Point(715, 305));
                 if (BotCore.RGBComparer(enemy, Color.FromArgb(33, 106, 159)) || BotCore.RGBComparer(enemy, Color.FromArgb(171, 0, 21)))
                 {
                     BotCore.SendTap(640, 156); //Boss在中间，打Boss
@@ -1308,10 +1322,6 @@ namespace UI
                 }
                 else
                 {
-                    if (!PrivateVariable.Battling)
-                    {
-                        return;
-                    }
                     if (PrivateVariable.Battling == true && PrivateVariable.EventType == 2)
                     {
                         var point = BotCore.FindImage(image, "Img\\HellLoc.png", false);
@@ -1338,47 +1348,45 @@ namespace UI
             }
             Attackable = true;
         }
-        //Click on enemy
         private static void Battle()
         {
             do
             {
                 Attackable = true;
-                Debug_.WriteLine();
-                if (!PrivateVariable.Battling)
-                {
-                    return;
-                }
+                BotCore.Delay(500);
+                image = BotCore.ImageCapture();
                 LocateUI();
+                Debug_.WriteLine();
                 if (Attackable)
                 {
                     Variables.ScriptLog("Locating Skills and enemies", Color.Gold);
                     if (PrivateVariable.BattleScript.Count > 0)
                     {
-                        image = BotCore.ImageCapture();
                         PrivateVariable.BattleScript[PrivateVariable.Selected_Script].Attack();
+                        BotCore.Delay(300);
                     }
                     CheckEnemy();
                     Stopwatch delay = Stopwatch.StartNew();
+                    Random rnd = new Random();
                     for (int x = 0; x < 15; x++)
                     {
-                        BotCore.Delay(10,100);
-                        if(x > 10)
+                        BotCore.Delay(100, 300);
+                        BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
+                        if (delay.ElapsedMilliseconds > 3000)
                         {
-                            image = BotCore.ImageCapture();
-                            var crop = BotCore.CropImage(image, new Point(209, 648), new Point(492, 693));
-                            if (BotCore.FindImage(crop, Img.White, true) != null)
-                            {
-                                break;
-                            }
-                            if (delay.ElapsedMilliseconds > 3000)
-                            {
-                                break;
-                            }
+                            break;
                         }
-                        BotCore.SendTap(10, 10);
                     }
                     delay.Stop();
+                }
+                else
+                {
+                    for (int x = 0; x < 15; x++)
+                    {
+                        BotCore.Delay(100, 300);
+                        Random rnd = new Random();
+                        BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
+                    }
                 }
                 if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
@@ -1557,6 +1565,7 @@ namespace UI
             }
             energy = 5;
         }
+        
         //No energy left so close game
         private static void NoEnergy()
         {
@@ -1656,6 +1665,7 @@ namespace UI
             }
             if (DateTime.Now > GetEventXML.guildwar && DateTime.Now < GetEventXML.guildwar.AddDays(9))
             {
+                
                 var hour = time.Hours;
                 if(hour == 8 || hour == 12 || hour == 19 || hour == 22)
                 {
@@ -1807,14 +1817,40 @@ namespace UI
             {
                 for (int e = 0; e < 10; e++)
                 {
-                    image = BotCore.ImageCapture();
                     Variables.ScriptLog("Starting Game", Color.Lime);
-                    BotCore.StartGame(Img.Icon, image);
+                    if (PrivateVariable.biubiu)
+                    {
+                        BotCore.StartGame("com.njh.biubiu/com.njh.ping.core.business.LauncherActivity");
+                        do
+                        {
+                            image = BotCore.ImageCapture();
+                            var p = BotCore.FindImage(image, Img.biubiu, false);
+                            if (p != null)
+                            {
+                                BotCore.SendTap(p.Value.X + 25, p.Value.Y - 600);
+                                BotCore.Delay(10000);
+                                BotCore.SendTap(620,320);
+                                break;
+                            }
+                            else
+                            {
+                                p = BotCore.FindImage(image, Img.biubiu2, false);
+                                if (p != null)
+                                {
+                                    BotCore.SendTap(p.Value);
+                                    break;
+                                }
+                            }
+                            BotCore.Delay(10000);
+                        }
+                        while (true);
+                    }
+                    BotCore.StartGame("com.nubee.valkyriecrusade/.GameActivity");
                     BotCore.Delay(3000);
                     if (BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                     {
                         nextOnline = DateTime.Now;
-                        Collected = false;
+                        Collected = 0;
                         break;
                     }
                     if (e == 9)
@@ -1825,14 +1861,6 @@ namespace UI
             }
             else
             {
-                if (!Muted_Device)
-                {
-                    for (int x = 0; x < 10; x++)
-                    {
-                        BotCore.SendEvent(25);
-                    }
-                    Muted_Device = true;
-                }
                 if (!PrivateVariable.InMainScreen && !PrivateVariable.InEventScreen && !PrivateVariable.Battling)
                 {
                     LocateMainScreen();
@@ -1871,6 +1899,11 @@ namespace UI
                     }
                 }
             }
+        }
+
+        public void ResetScript()
+        {
+            ScriptErrorHandler.Reset("Reset script!");
         }
     }
 }

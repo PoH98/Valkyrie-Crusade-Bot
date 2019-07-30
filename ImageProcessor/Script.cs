@@ -8,7 +8,9 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Security.Permissions;
+using System.Text;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace BotFramework
 {
@@ -21,6 +23,10 @@ namespace BotFramework
         /// Main scripting goes here!
         /// </summary>
         void Script();
+        /// <summary>
+        /// Used to reset the whole script if any error found!
+        /// </summary>
+        void ResetScript();
     }
     /// <summary>
     /// Start ScriptInterface's script
@@ -123,9 +129,11 @@ namespace BotFramework
                     try
                     {
                         script.Script();
+                        errornum = 0;
                     }
                     catch (Exception ex)
                     {
+                        script.ResetScript();
                         if(ex is SocketException || ex is DeviceNotFoundException || ex is AdbException)
                         {
                             BotCore.server.RestartServer();
@@ -173,25 +181,35 @@ namespace BotFramework
 
             }
         }
+        static int errornum = 0;
         /// <summary>
         /// Another version for throwing exceptions, without getting freeze UI and exit program, but starts a webpage to tell the exception and continue our script!
         /// </summary>
         /// <param name="ex"></param>
         public static void ThrowException(Exception ex)
         {
-            string html = $"<head><title>Ops! Error Found! {ex.HResult}</title><link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\"></head><body><section id=\"not-found\"><div id=\"title\">Oh no! Bot Error Found!</div><div class=\"circles\"><p>{ex.Message}<br><small>{ex.ToString().Replace("\n", "<br>")}</small></p><span class=\"circle big\"></span>" +
-                            "<span class=\"circle med\"></span><span class=\"circle small\"></span></div></section></body>";
-            if (!Directory.Exists("Error"))
+            if(errornum < 5)
             {
-                Directory.CreateDirectory("Error");
+                string html = $"<head><title>Ops! Error Found! {ex.HResult}</title><link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\"></head><body><section id=\"not-found\"><div id=\"title\">Oh no! Bot Error Found!</div><div class=\"circles\"><p>{ex.Message}<br><small>{ex.ToString().Replace("\n", "<br>")}</small></p><span class=\"circle big\"></span>" +
+                "<span class=\"circle med\"></span><span class=\"circle small\"></span></div></section></body>";
+                if (!Directory.Exists("Error"))
+                {
+                    Directory.CreateDirectory("Error");
+                }
+                if (!File.Exists("Error\\style.css"))
+                {
+                    File.WriteAllText("Error\\style.css", AdbResource.css);
+                }
+                string filename = string.Format(@"{0}.html", Encryption.SHA256(Guid.NewGuid()));
+                File.WriteAllText("Error\\" + filename, html, Encoding.UTF8);
+                Process.Start("Error\\" + filename);
             }
-            if (!File.Exists("Error\\style.css"))
+            else
             {
-                File.WriteAllText("Error\\style.css", AdbResource.css);
+                MessageBox.Show("Serious error happens! Process have to stop NOW!");
+                Environment.Exit(0);
             }
-            string filename = string.Format(@"{0}.html", Encryption.SHA256(Guid.NewGuid()));
-            File.WriteAllText("Error\\" + filename, html);
-            Process.Start("Error\\" + filename);
+            errornum++;
         }
         private static bool CheckDeviceOnline()
         {

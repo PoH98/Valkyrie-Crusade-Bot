@@ -16,166 +16,165 @@ namespace DefaultScript
         private static List<ComboBox> toolParameterComboBoxes = new List<ComboBox>();
         public void Attack()
         {
-
-                foreach (var cb in toolParameterComboBoxes)
+            Random rnd = new Random();
+            foreach (var cb in toolParameterComboBoxes)
+            {
+                int index = 0;
+                cb.Invoke((MethodInvoker)delegate { index = cb.SelectedIndex; });
+                switch (index)
                 {
-                    int index = 0;
-                    cb.Invoke((MethodInvoker)delegate { index = cb.SelectedIndex; });
-                    switch (index)
-                    {
-                        case 0:
-                            byte[] crop = BotCore.CropImage(VCBotScript.image, new Point(176, 356), new Point(330, 611));
-                            foreach (var f in PrivateVariable.Skills)
+                    case 0:
+                        byte[] crop = BotCore.CropImage(VCBotScript.image, new Point(176, 356), new Point(330, 611));
+                        foreach (var f in PrivateVariable.Skills)
+                        {
+                            if (!ScriptRun.Run)
                             {
-                                if (!ScriptRun.Run)
+                                return;
+                            }
+                            try
+                            {
+                                Thread.Sleep(10);
+                                Point? p = BotCore.FindImage(crop, f, false);
+                                if (p != null)
                                 {
-                                    return;
-                                }
-                                try
-                                {
-                                    Thread.Sleep(10);
-                                    Point? p = BotCore.FindImage(crop, f, false);
-                                    if (p != null)
+                                    Variables.ScriptLog("Skill actived", Color.Blue);
+                                    BotCore.SendSwipe(new Point(263, 473), new Point(264, 474), 1200);
+                                    for (int x = 0; x < 6; x++)
                                     {
-                                        Variables.ScriptLog("Skill actived", Color.Blue);
-                                        BotCore.SendSwipe(new Point(263, 473), new Point(264, 474), 1200);
-                                        for (int x = 0; x < 6; x++)
-                                        {
-                                            Thread.Sleep(100);
-                                            BotCore.SendTap(10, 10);
-                                        }
-                                        break;
+                                        Thread.Sleep(100);
+                                        BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
                                     }
-                                }
-                                catch
-                                {
-
+                                    break;
                                 }
                             }
-                            break;
-                        case 1:
-                            crop = BotCore.CropImage(VCBotScript.image, new Point(357, 356), new Point(543, 610));
-                            foreach (var f in PrivateVariable.Skills)
+                            catch
                             {
-                                if (!ScriptRun.Run)
-                                {
-                                    return;
-                                }
-                                try
-                                {
-                                    Thread.Sleep(10);
-                                    Point? p = BotCore.FindImage(crop, f, false);
-                                    if (p != null)
-                                    {
-                                        Variables.ScriptLog("Skill actived", Color.Blue);
-                                        BotCore.SendSwipe(new Point(448, 492), new Point(449, 493), 1200);
-                                        for (int x = 0; x < 6; x++)
-                                        {
-                                            Thread.Sleep(100);
-                                            BotCore.SendTap(10, 10);
-                                        }
-                                        break;
-                                    }
-                                }
-                                catch
-                                {
 
+                            }
+                        }
+                        break;
+                    case 1:
+                        crop = BotCore.CropImage(VCBotScript.image, new Point(357, 356), new Point(543, 610));
+                        foreach (var f in PrivateVariable.Skills)
+                        {
+                            if (!ScriptRun.Run)
+                            {
+                                return;
+                            }
+                            try
+                            {
+                                Thread.Sleep(10);
+                                Point? p = BotCore.FindImage(crop, f, false);
+                                if (p != null)
+                                {
+                                    Variables.ScriptLog("Skill actived", Color.Blue);
+                                    BotCore.SendSwipe(new Point(448, 492), new Point(449, 493), 1200);
+                                    for (int x = 0; x < 6; x++)
+                                    {
+                                        Thread.Sleep(100);
+                                        BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
+                                    }
+                                    break;
                                 }
                             }
-                            break;
-                        case 2:
-                            crop = BotCore.CropImage(VCBotScript.image, new Point(546, 376), new Point(724, 597));
-                            foreach (var f in PrivateVariable.Skills)
+                            catch
                             {
-                                if (!ScriptRun.Run)
-                                {
-                                    return;
-                                }
-                                try
-                                {
-                                    Thread.Sleep(10);
-                                    Point? p = BotCore.FindImage(crop, f, false);
-                                    if (p != null)
-                                    {
-                                        Variables.ScriptLog("Skill actived", Color.Blue);
-                                        BotCore.SendSwipe(new Point(641, 473), new Point(642, 474), 1200);
-                                        for (int x = 0; x < 6; x++)
-                                        {
-                                            Thread.Sleep(100);
-                                            BotCore.SendTap(10, 10);
-                                        }
-                                        break;
-                                    }
-                                }
-                                catch
-                                {
 
+                            }
+                        }
+                        break;
+                    case 2:
+                        crop = BotCore.CropImage(VCBotScript.image, new Point(546, 376), new Point(724, 597));
+                        foreach (var f in PrivateVariable.Skills)
+                        {
+                            if (!ScriptRun.Run)
+                            {
+                                return;
+                            }
+                            try
+                            {
+                                Thread.Sleep(10);
+                                Point? p = BotCore.FindImage(crop, f, false);
+                                if (p != null)
+                                {
+                                    Variables.ScriptLog("Skill actived", Color.Blue);
+                                    BotCore.SendSwipe(new Point(641, 473), new Point(642, 474), 1200);
+                                    for (int x = 0; x < 6; x++)
+                                    {
+                                        Thread.Sleep(100);
+                                        BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
+                                    }
+                                    break;
                                 }
                             }
-                            break;
-                        case 3:
-                            crop = BotCore.CropImage(VCBotScript.image, new Point(761, 356), new Point(921, 613));
-                            foreach (var f in PrivateVariable.Skills)
+                            catch
                             {
-                                if (!ScriptRun.Run)
-                                {
-                                    return;
-                                }
-                                try
-                                {
-                                    Thread.Sleep(10);
-                                    Point? p = BotCore.FindImage(crop, f, false);
-                                    if (p != null)
-                                    {
-                                        Variables.ScriptLog("Skill actived", Color.Blue);
-                                        BotCore.SendSwipe(new Point(834, 483), new Point(835, 484), 1200);
-                                        for (int x = 0; x < 6; x++)
-                                        {
-                                            Thread.Sleep(100);
-                                            BotCore.SendTap(10, 10);
-                                        }
-                                        break;
-                                    }
-                                }
-                                catch
-                                {
 
+                            }
+                        }
+                        break;
+                    case 3:
+                        crop = BotCore.CropImage(VCBotScript.image, new Point(761, 356), new Point(921, 613));
+                        foreach (var f in PrivateVariable.Skills)
+                        {
+                            if (!ScriptRun.Run)
+                            {
+                                return;
+                            }
+                            try
+                            {
+                                Thread.Sleep(10);
+                                Point? p = BotCore.FindImage(crop, f, false);
+                                if (p != null)
+                                {
+                                    Variables.ScriptLog("Skill actived", Color.Blue);
+                                    BotCore.SendSwipe(new Point(834, 483), new Point(835, 484), 1200);
+                                    for (int x = 0; x < 6; x++)
+                                    {
+                                        Thread.Sleep(100);
+                                        BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
+                                    }
+                                    break;
                                 }
                             }
-                            break;
-                        case 4:
-                            crop = BotCore.CropImage(VCBotScript.image, new Point(934, 356), new Point(1090, 578));
-                            foreach (var f in PrivateVariable.Skills)
+                            catch
                             {
-                                if (!ScriptRun.Run)
-                                {
-                                    return;
-                                }
-                                try
-                                {
-                                    Thread.Sleep(10);
-                                    Point? p = BotCore.FindImage(crop, f, false);
-                                    if (p != null)
-                                    {
-                                        Variables.ScriptLog("Skill actived", Color.Blue);
-                                        BotCore.SendSwipe(new Point(1017, 470), new Point(1018, 471), 1200);
-                                        for (int x = 0; x < 6; x++)
-                                        {
-                                            Thread.Sleep(100);
-                                            BotCore.SendTap(10, 10);
-                                        }
-                                        break;
-                                    }
-                                }
-                                catch
-                                {
 
+                            }
+                        }
+                        break;
+                    case 4:
+                        crop = BotCore.CropImage(VCBotScript.image, new Point(934, 356), new Point(1090, 578));
+                        foreach (var f in PrivateVariable.Skills)
+                        {
+                            if (!ScriptRun.Run)
+                            {
+                                return;
+                            }
+                            try
+                            {
+                                Thread.Sleep(10);
+                                Point? p = BotCore.FindImage(crop, f, false);
+                                if (p != null)
+                                {
+                                    Variables.ScriptLog("Skill actived", Color.Blue);
+                                    BotCore.SendSwipe(new Point(1017, 470), new Point(1018, 471), 1200);
+                                    for (int x = 0; x < 6; x++)
+                                    {
+                                        Thread.Sleep(100);
+                                        BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
+                                    }
+                                    break;
                                 }
                             }
-                            break;
-                    }
+                            catch
+                            {
+
+                            }
+                        }
+                        break;
                 }
-            
+            }
         }
         string cboxselected ="";
         public Control[] CreateUI()
@@ -190,7 +189,7 @@ namespace DefaultScript
             txtBox.Location = new Point(10, 40);
             txtBox.Height = 200;
             txtBox.Width = 400;
-            txtBox.Text = "这个是默认的脚本战斗系统，将会自动应用到所有的战斗。如果想要自行创建脚本，请期待未来更新 CustomVCBotScript.dll 插件，或者到www.github.com/PoH98/Bot/了解如何自己创建脚本插件！";
+            txtBox.Text = "这个是默认的脚本战斗系统，将会自动应用到所有的战斗!";
             txtBox.ReadOnly = true;
             txtBox.TabIndex = 1001;
             txtBox.BackColor = Color.Black;

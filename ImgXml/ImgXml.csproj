@@ -52,6 +52,7 @@
     <EmbeddedResource Include="Img.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Img.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +197,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Tower_Tutorial.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\biubiu.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\biubiu2.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CardSelected.PNG" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

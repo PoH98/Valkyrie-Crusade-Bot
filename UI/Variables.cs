@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BotFramework;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -7,6 +8,7 @@ namespace UI
     public class PrivateVariable
     {
 
+        public static bool biubiu = false;
         /// <summary>
         /// Check event type of the game
         /// </summary>
@@ -35,10 +37,6 @@ namespace UI
         public static bool CustomScript = false;
 
         public static DateTime nospam;
-        /// <summary>
-        /// The real main window of MEmu
-        /// </summary>
-        public static IntPtr MEmu_MainWindow;
 
         //public static List<byte[]> Enemies = new List<byte[]>();
         public static List<BattleScript> BattleScript = new List<UI.BattleScript>();
@@ -51,6 +49,7 @@ namespace UI
 
         public static Dictionary<string, Point> Archwitch2 = new Dictionary<string, Point>();
 
-        public static Point EmuDefaultLocation = new Point(0,0);
+        public static Rectangle EmuDefaultLocation = new Rectangle();
+
     }
 }
