@@ -756,7 +756,7 @@ namespace UI
                 }
                 image = BotCore.ImageCapture();
                 Variables.ScriptLog("Locating Demon Realm Event UI!", Color.White);
-                if (BotCore.RGBComparer(image, new Point(600, 405), Color.FromArgb(59, 30, 29), 10))
+                if (BotCore.RGBComparer(image, new Point(600, 405), Color.FromArgb(59, 30, 37), 15))
                 {
                     Tower_Floor = OCR.OcrImage(BotCore.CropImage(image, new Point(300, 115), new Point(484, 142)), "eng");
                     Tower_Rank = OCR.OcrImage(BotCore.CropImage(image, new Point(300, 150), new Point(458, 170)), "eng");
@@ -791,14 +791,13 @@ namespace UI
             Variables.ScriptLog("Enterting Stage", Color.White);
             BotCore.SendSwipe(new Point(307, 249), new Point(305, 403),300);
             BotCore.Delay(1500);
-            image = BotCore.ImageCapture();
             switch (MainScreen.Level)
             {
                 case 0:
                     BotCore.SendTap(250, 284);
                     break;
                 case 1:
-                    if (BotCore.RGBComparer(image, new Point(143, 355), Color.FromArgb(41, 16, 4), 5))
+                    if (BotCore.RGBComparer(image, new Point(143, 355), Color.FromArgb(51, 26, 5), 20))
                     {
                         Variables.ScriptLog("中级还没被解锁！自动往下挑战中！", Color.Red);
                         BotCore.SendTap(250, 284);
@@ -807,10 +806,10 @@ namespace UI
                     BotCore.SendTap(362, 283);
                     break;
                 case 2:
-                    if (BotCore.RGBComparer(image, new Point(143, 355), Color.FromArgb(41, 16, 4), 5))
+                    if (BotCore.RGBComparer(image, new Point(143, 355), Color.FromArgb(51, 26, 5), 20))
                     {
                         Variables.ScriptLog("上级还没被解锁！自动往下挑战中！", Color.Red);
-                        if (BotCore.RGBComparer(image, new Point(324, 270), Color.FromArgb(41, 16, 4), 5))
+                        if (BotCore.RGBComparer(image, new Point(324, 270), Color.FromArgb(51, 26, 5), 20))
                         {
                             Variables.ScriptLog("中级还没被解锁！自动往下挑战中！", Color.Red);
                             BotCore.SendTap(250, 284);
@@ -822,13 +821,13 @@ namespace UI
                     BotCore.SendTap(214, 370);
                     break;
                 case 3:
-                    if (BotCore.RGBComparer(image, new Point(324, 355), Color.FromArgb(41, 16, 4), 5))
+                    if (BotCore.RGBComparer(image, new Point(324, 355), Color.FromArgb(51, 26, 5), 20))
                     {
                         Variables.ScriptLog("超上级还没被解锁！自动往下挑战中！", Color.Red);
-                        if (BotCore.RGBComparer(image, new Point(143, 355), Color.FromArgb(41, 16, 4), 5))
+                        if (BotCore.RGBComparer(image, new Point(143, 355), Color.FromArgb(51, 26, 5), 20))
                         {
                             Variables.ScriptLog("上级还没被解锁！自动往下挑战中！", Color.Red);
-                            if (BotCore.RGBComparer(image, new Point(324, 270), Color.FromArgb(41, 16, 4), 5))
+                            if (BotCore.RGBComparer(image, new Point(324, 270), Color.FromArgb(51, 26, 5), 20))
                             {
                                 Variables.ScriptLog("中级还没被解锁！自动往下挑战中！", Color.Red);
                                 BotCore.SendTap(250, 284);
@@ -841,13 +840,13 @@ namespace UI
                     BotCore.SendTap(353, 371);
                     break;
                 case 4:
-                    if (BotCore.RGBComparer(image, new Point(324, 355), Color.FromArgb(41, 16, 4), 5))
+                    if (BotCore.RGBComparer(image, new Point(324, 355), Color.FromArgb(51, 26, 5), 20))
                     {
                         Variables.ScriptLog("超上级还没被解锁！自动往下挑战中！", Color.Red);
-                        if (BotCore.RGBComparer(image, new Point(143, 355), Color.FromArgb(41, 16, 4), 5))
+                        if (BotCore.RGBComparer(image, new Point(143, 355), Color.FromArgb(51, 26, 5), 20))
                         {
                             Variables.ScriptLog("上级还没被解锁！自动往下挑战中！", Color.Red);
-                            if (BotCore.RGBComparer(image, new Point(324, 270), Color.FromArgb(41, 16, 4), 5))
+                            if (BotCore.RGBComparer(image, new Point(324, 270), Color.FromArgb(51, 26, 5), 20))
                             {
                                 Variables.ScriptLog("中级还没被解锁！自动往下挑战中！", Color.Red);
                                 BotCore.SendTap(250, 284);
@@ -1071,8 +1070,10 @@ namespace UI
             BotCore.Delay(1000);
             if (!BotCore.RGBComparer(image, new Point(10, 27), Color.FromArgb(200, 200, 200), 5))
             {
-                Debug_.WriteLine();
                 Variables.ScriptLog("HP bar not found. Finding UIs", Color.Yellow);
+                Attackable = false;
+                Random rnd = new Random();
+                BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
                 ScriptErrorHandler.ErrorHandle();
                 Point? point = BotCore.FindImage(image, Img.Close2, false);
                 if (point != null)
@@ -1086,7 +1087,6 @@ namespace UI
                 {
                     ScriptErrorHandler.Reset("No Energy Left!");
                     NoEnergy();
-                    Attackable = false;
                     locateUIError = 0;
                     return;
                 }
@@ -1102,7 +1102,7 @@ namespace UI
                     Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                     stop.Reset();
                     BotCore.SendTap(1076, 106);
-                    Attackable = false;
+                    
                     locateUIError = 0;
                     return;
                 }
@@ -1117,7 +1117,7 @@ namespace UI
                     stop.Stop();
                     Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                     stop.Reset();
-                    Attackable = false;
+                    
                     locateUIError = 0;
                     return;
                 }
@@ -1132,7 +1132,7 @@ namespace UI
                     stop.Stop();
                     Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                     stop.Reset();
-                    Attackable = false;
+                    
                     locateUIError = 0;
                     return;
                 }
@@ -1157,7 +1157,7 @@ namespace UI
                             stop.Stop();
                             Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                             stop.Reset();
-                            Attackable = false;
+                            
                             locateUIError = 0;
                             RuneBoss = false;
                             return;
@@ -1171,13 +1171,13 @@ namespace UI
                                 stop.Stop();
                                 Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                                 stop.Reset();
-                                Attackable = false;
+                                
                                 locateUIError = 0;
                             }
                             else
                             {
                                 BotCore.SendTap(point.Value.X + 125, point.Value.Y);
-                                Attackable = false;
+                                
                                 BotCore.Delay(1000);
                                 locateUIError = 0;
                                 return;
@@ -1195,14 +1195,14 @@ namespace UI
                             stop.Stop();
                             Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                             stop.Reset();
-                            Attackable = false;
+                            
                             locateUIError = 0;
                             return;
                         }
                         else
                         {
                             BotCore.SendTap(point.Value.X + 125, point.Value.Y);
-                            Attackable = false;
+                            
                             locateUIError = 0;
                             BotCore.Delay(1000);
                             return;
@@ -1227,14 +1227,14 @@ namespace UI
                             stop.Stop();
                             Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                             stop.Reset();
-                            Attackable = false;
+                            
                             locateUIError = 0;
                             return;
                         }
                         else
                         {
                             BotCore.SendTap(point.Value.X + 125, point.Value.Y);
-                            Attackable = false;
+                            
                             locateUIError = 0;
                             return;
                         }
@@ -1253,7 +1253,7 @@ namespace UI
                             stop.Stop();
                             Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                             stop.Reset();
-                            Attackable = false;
+                            
                             locateUIError = 0;
                             return;
                         }
@@ -1268,7 +1268,7 @@ namespace UI
                         BotCore.SendTap(793, 565);
                         BotCore.Delay(1000, false);
                     }
-                    Attackable = false;
+                    
                     locateUIError = 0;
                     return;
                 }
@@ -1290,7 +1290,7 @@ namespace UI
                     Variables.ScriptLog("Start battle", Color.Lime);
                     BotCore.SendTap(959, 656);
                     PrivateVariable.Battling = true;
-                    Attackable = false;
+                    
                     locateUIError = 0;
                     return;
                 }

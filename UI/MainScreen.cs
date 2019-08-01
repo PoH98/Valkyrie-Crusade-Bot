@@ -429,9 +429,10 @@ namespace BotFramework
             }
         }
 
+        bool scroll = true;
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
-            if (!richTextBox1.Focused)
+            if (scroll)
             {
                 richTextBox1.ScrollToCaret();
             }
@@ -1016,6 +1017,16 @@ namespace BotFramework
             {
                 WindowState = FormWindowState.Normal;
             }
+        }
+
+        private void RichTextBox1_MouseEnter(object sender, EventArgs e)
+        {
+            scroll = false;
+        }
+
+        private void RichTextBox1_MouseLeave(object sender, EventArgs e)
+        {
+            scroll = true;
         }
     }
 }

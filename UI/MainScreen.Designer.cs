@@ -225,6 +225,8 @@
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
             this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
+            this.richTextBox1.MouseEnter += new System.EventHandler(this.RichTextBox1_MouseEnter);
+            this.richTextBox1.MouseLeave += new System.EventHandler(this.RichTextBox1_MouseLeave);
             // 
             // webBrowser1
             // 
@@ -550,7 +552,7 @@
             this.metroTabControl1.Controls.Add(this.Info);
             resources.ApplyResources(this.metroTabControl1, "metroTabControl1");
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 1;
+            this.metroTabControl1.SelectedIndex = 0;
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Brown;
             this.metroTabControl1.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroTabControl1.UseSelectable = true;
