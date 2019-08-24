@@ -51,7 +51,6 @@
             this.Biubiu = new System.Windows.Forms.CheckBox();
             this.chk_twoE = new System.Windows.Forms.CheckBox();
             this.Etc_Box = new System.Windows.Forms.GroupBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.Suspend_Chk = new System.Windows.Forms.CheckBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label19 = new System.Windows.Forms.Label();
@@ -124,7 +123,7 @@
             // timer2
             // 
             this.timer2.Interval = 900;
-            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            this.timer2.Tick += new System.EventHandler(this.Timer2_Tick);
             // 
             // ED_Box
             // 
@@ -224,7 +223,7 @@
             resources.ApplyResources(this.richTextBox1, "richTextBox1");
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
+            this.richTextBox1.TextChanged += new System.EventHandler(this.RichTextBox1_TextChanged);
             this.richTextBox1.MouseEnter += new System.EventHandler(this.RichTextBox1_MouseEnter);
             this.richTextBox1.MouseLeave += new System.EventHandler(this.RichTextBox1_MouseLeave);
             // 
@@ -258,14 +257,13 @@
             this.chk_twoE.ForeColor = System.Drawing.Color.White;
             this.chk_twoE.Name = "chk_twoE";
             this.chk_twoE.UseVisualStyleBackColor = true;
-            this.chk_twoE.CheckedChanged += new System.EventHandler(this.checkBox8_CheckedChanged);
+            this.chk_twoE.CheckedChanged += new System.EventHandler(this.CheckBox8_CheckedChanged);
             this.chk_twoE.MouseEnter += new System.EventHandler(this.checkBox8_MouseEnter);
             this.chk_twoE.MouseLeave += new System.EventHandler(this.checkBox8_MouseLeave);
             // 
             // Etc_Box
             // 
             this.Etc_Box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
-            this.Etc_Box.Controls.Add(this.checkBox1);
             this.Etc_Box.Controls.Add(this.Suspend_Chk);
             this.Etc_Box.Controls.Add(this.comboBox1);
             this.Etc_Box.Controls.Add(this.label19);
@@ -273,13 +271,6 @@
             resources.ApplyResources(this.Etc_Box, "Etc_Box");
             this.Etc_Box.Name = "Etc_Box";
             this.Etc_Box.TabStop = false;
-            // 
-            // checkBox1
-            // 
-            resources.ApplyResources(this.checkBox1, "checkBox1");
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged_1);
             // 
             // Suspend_Chk
             // 
@@ -375,7 +366,7 @@
             this.chk_ultim.Name = "chk_ultim";
             this.chk_ultim.TabStop = true;
             this.chk_ultim.UseVisualStyleBackColor = true;
-            this.chk_ultim.CheckedChanged += new System.EventHandler(this.radioButton5_CheckedChanged);
+            this.chk_ultim.CheckedChanged += new System.EventHandler(this.RadioButton5_CheckedChanged);
             // 
             // chk_begin
             // 
@@ -532,7 +523,7 @@
             this.btn_Start.Name = "btn_Start";
             this.btn_Start.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.btn_Start.UseSelectable = true;
-            this.btn_Start.Click += new System.EventHandler(this.button1_Click);
+            this.btn_Start.Click += new System.EventHandler(this.Button1_Click);
             // 
             // btn_Stop
             // 
@@ -541,7 +532,7 @@
             this.btn_Stop.Name = "btn_Stop";
             this.btn_Stop.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.btn_Stop.UseSelectable = true;
-            this.btn_Stop.Click += new System.EventHandler(this.button3_Click);
+            this.btn_Stop.Click += new System.EventHandler(this.Button3_Click);
             // 
             // metroTabControl1
             // 
@@ -552,7 +543,7 @@
             this.metroTabControl1.Controls.Add(this.Info);
             resources.ApplyResources(this.metroTabControl1, "metroTabControl1");
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 0;
+            this.metroTabControl1.SelectedIndex = 1;
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Brown;
             this.metroTabControl1.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroTabControl1.UseSelectable = true;
@@ -639,8 +630,8 @@
             this.pictureBox4.Name = "pictureBox4";
             this.pictureBox4.TabStop = false;
             this.pictureBox4.Click += new System.EventHandler(this.pictureBox4_Click);
-            this.pictureBox4.MouseEnter += new System.EventHandler(this.pictureBox4_MouseEnter);
-            this.pictureBox4.MouseLeave += new System.EventHandler(this.pictureBox4_MouseLeave);
+            this.pictureBox4.MouseEnter += new System.EventHandler(this.PictureBox4_MouseEnter);
+            this.pictureBox4.MouseLeave += new System.EventHandler(this.PictureBox4_MouseLeave);
             // 
             // Script
             // 
@@ -714,7 +705,6 @@
             this.Controls.Add(this.btn_Start);
             this.Controls.Add(this.metroLink1);
             this.MaximizeBox = false;
-            this.MinimizeBox = false;
             this.Name = "MainScreen";
             this.Resizable = false;
             this.ShadowType = MetroFramework.Forms.MetroFormShadowType.AeroShadow;
@@ -826,7 +816,6 @@
         private System.Windows.Forms.CheckBox Suspend_Chk;
         private MetroFramework.Controls.MetroButton metroButton1;
         private System.Windows.Forms.CheckBox Biubiu;
-        private System.Windows.Forms.CheckBox checkBox1;
     }
 }
 

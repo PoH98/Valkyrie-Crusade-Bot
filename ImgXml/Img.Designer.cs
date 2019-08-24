@@ -63,6 +63,26 @@ namespace ImgXml {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap Archwitch {
+            get {
+                object obj = ResourceManager.GetObject("Archwitch", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ArchwitchHunt {
+            get {
+                object obj = ResourceManager.GetObject("ArchwitchHunt", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap Back_to_Village {
             get {
                 object obj = ResourceManager.GetObject("Back_to_Village", resourceCulture);
@@ -96,16 +116,6 @@ namespace ImgXml {
         public static System.Drawing.Bitmap Boss {
             get {
                 object obj = ResourceManager.GetObject("Boss", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap CardSelected {
-            get {
-                object obj = ResourceManager.GetObject("CardSelected", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

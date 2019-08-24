@@ -22,15 +22,15 @@ namespace BotFramework
     public partial class MainScreen : MetroForm
     {
 
-        private static string html;
+        public static string html;
 
         public static int Level;
 
         static bool Docked = false;
 
-        static System.Windows.Forms.Timer timeout = new System.Windows.Forms.Timer();
+        static readonly System.Windows.Forms.Timer timeout = new System.Windows.Forms.Timer();
 
-        static List<CheckBox> customScriptEnable = new List<CheckBox>();
+        static readonly List<CheckBox> customScriptEnable = new List<CheckBox>();
 
         public static Dictionary<string, string> UILanguage = new Dictionary<string, string>();
 
@@ -53,7 +53,7 @@ namespace BotFramework
             }
         }
 
-        private void loading()
+        private void Loading()
         {
             Login load = new Login();
             load.ShowDialog();
@@ -107,15 +107,17 @@ namespace BotFramework
 
         private void MainScreen_Load(object sender, EventArgs e)
         {
-            Thread load = new Thread(loading);
+            Thread load = new Thread(Loading);
             load.SetApartmentState(ApartmentState.STA);
             load.Start();
             if (!IsRunAsAdministrator())
             {
-                var processInfo = new ProcessStartInfo(Assembly.GetExecutingAssembly().CodeBase);
-                // The following properties run the new process as administrator
-                processInfo.UseShellExecute = true;
-                processInfo.Verb = "runas";
+                var processInfo = new ProcessStartInfo(Assembly.GetExecutingAssembly().CodeBase)
+                {
+                    // The following properties run the new process as administrator
+                    UseShellExecute = true,
+                    Verb = "runas"
+                };
                 // Start the new process
                 try
                 {
@@ -141,7 +143,6 @@ namespace BotFramework
             }
             comboBox1.Items.Clear();
             OCR.PrepairOcr(whitelist: "$0123456789", blacklist: "!?@#$%&*()<>_-+=/:;'\"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
-            string output = "";
             Variables.EmulatorPath();
             if (File.Exists("bot.ini"))
             {
@@ -159,7 +160,7 @@ namespace BotFramework
 
                 }
             }
-            BotCore.ReadConfig();
+            Variables.ReadConfig();
             string _NET = Get45PlusFromRegistry();
             if (!Directory.Exists("Language"))
             {
@@ -170,7 +171,7 @@ namespace BotFramework
             {
                 comboBox1.Items.Add(lang.Replace("Language\\","").Replace(".ini",""));
             }
-            if (Variables.Configure.TryGetValue("Lang", out output))
+            if (Variables.FindConfig("General","Lang", out string output))
             {
                 int index = comboBox1.Items.IndexOf(output);
                 if (index < 0)
@@ -188,7 +189,7 @@ namespace BotFramework
             }
             label3.Text = Variables.VBoxManagerPath;
             label4.Text = Variables.SharedPath;
-            if (Variables.Configure.TryGetValue("Level", out output))
+            if (Variables.FindConfig("General","Level", out output))
             {
                 switch (output)
                 {
@@ -201,47 +202,47 @@ namespace BotFramework
                     case "2":
                         chk_advan.Checked = true;
                         break;
+                    case "3":
+                        chk_extre.Checked = true;
+                        break;
+                    case "4":
+                        chk_ultim.Checked = true;
+                        break;
                 }
             }
             else
             {
-                WriteConfig("Level", "0");
+                Variables.ModifyConfig("General","Level", "0");
             }
-            if (Variables.Configure.TryGetValue("Double_Event", out output))
+            if (Variables.FindConfig("General","Double_Event", out output))
             {
                 if (output == "true")
                 {
                     chk_twoE.Checked = true;
                 }
             }
-            if (Variables.Configure.TryGetValue("Manual_Rune", out output))
+            if (Variables.FindConfig("General","Manual_Rune", out output))
             {
                 if (output == "true")
                 {
                     chk_manuRT.Checked = true;
                 }
             }
-            if(Variables.Configure.TryGetValue("Suspend_PC",out output))
+            if(Variables.FindConfig("General","Suspend_PC",out output))
             {
                 if(output == "true")
                 {
                     Suspend_Chk.Checked = true;
                 }
             }
-            if(Variables.Configure.TryGetValue("biubiu",out output))
+            if(Variables.FindConfig("General","biubiu",out output))
             {
                 if(output == "true")
                 {
                     Biubiu.Checked = true;
                 }
             }
-            if (Variables.Configure.TryGetValue("WinApi", out output))
-            {
-                if (output == "true")
-                {
-                    checkBox1.Checked = true;
-                }
-            }
+            Variables.WinApiCapt = true;
             webBrowser1.ScriptErrorsSuppressed = true;
             webBrowser3.ScriptErrorsSuppressed = true;
             PrivateVariable.nospam = DateTime.Now;
@@ -257,9 +258,11 @@ namespace BotFramework
                 tabControl2.TabPages.Add(s.ScriptName());
                 tabControl2.TabPages[tabControl2.TabPages.Count - 1].BackColor = Color.Black;
                 tabControl2.TabPages[tabControl2.TabPages.Count - 1].ForeColor = Color.White;
-                CheckBox chk = new CheckBox();
-                chk.Text = "使用脚本";
-                chk.Checked = false;
+                CheckBox chk = new CheckBox
+                {
+                    Text = "使用脚本",
+                    Checked = false
+                };
                 chk.CheckedChanged += Chk_CheckedChanged;
                 chk.Location = new Point(10, 250);
                 chk.AutoSize = true;
@@ -270,8 +273,7 @@ namespace BotFramework
                     tabControl2.TabPages[tabControl2.TabPages.Count - 1].Controls.Add(c);
                 }
             }
-            string n = "";
-            if (Variables.Configure.TryGetValue("Selected_Script", out n))
+            if (Variables.FindConfig("General","Selected_Script", out string n))
             {
                 try
                 {
@@ -322,7 +324,7 @@ namespace BotFramework
             if (ck.Checked)
             {
                 PrivateVariable.Selected_Script = customScriptEnable.IndexOf(ck);
-                WriteConfig("Selected_Script", PrivateVariable.Selected_Script.ToString());
+                Variables.ModifyConfig("General","Selected_Script", PrivateVariable.Selected_Script.ToString());
             }
             foreach (var c in customScriptEnable)
             {
@@ -352,7 +354,7 @@ namespace BotFramework
             var wp = new WindowsPrincipal(wi);
             return wp.IsInRole(WindowsBuiltInRole.Administrator);
         }
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
             ScriptErrorHandler.errorImages.Clear();
             foreach (var f in Directory.GetFiles("Img\\Errors"))
@@ -392,7 +394,7 @@ namespace BotFramework
                 using (Stream bmp = File.Open(f, FileMode.Open))
                 {
                     Image image = Image.FromStream(bmp);
-                    PrivateVariable.Skills.Add(BotCore.Compress(image));
+                    PrivateVariable.Skills.Add(BotCore.Compress(image as Bitmap));
                 }
             }
             if (panel3.Visible == false)
@@ -401,11 +403,13 @@ namespace BotFramework
                 panel3.Visible = true;
             }
             panel3.Enabled = false;
-            tp = new TransparentPanel();
-            tp.Location = panel3.Location;
-            tp.Size = panel3.Size;
-            tp.Enabled = true;
-            tp.Visible = true;
+            tp = new TransparentPanel
+            {
+                Location = panel3.Location,
+                Size = panel3.Size,
+                Enabled = true,
+                Visible = true
+            };
             tp.MouseDown += Tp_MouseDown;
             Controls.Add(tp);
             foreach(Control control in Debug.Controls)
@@ -430,7 +434,7 @@ namespace BotFramework
         }
 
         bool scroll = true;
-        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        private void RichTextBox1_TextChanged(object sender, EventArgs e)
         {
             if (scroll)
             {
@@ -438,7 +442,7 @@ namespace BotFramework
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void Button3_Click(object sender, EventArgs e)
         {
             PrivateVariable.nospam = DateTime.Now;
             PrivateVariable.Battling = false;
@@ -467,7 +471,7 @@ namespace BotFramework
             Controls.Remove(tp);
         }
 
-        private void timer2_Tick(object sender, EventArgs e)
+        private void Timer2_Tick(object sender, EventArgs e)
         {
             GC.Collect();
             if (PrivateVariable.EventType == 0)
@@ -616,7 +620,7 @@ namespace BotFramework
             } while (ScriptRun.Run);
         }
 
-        private void button7_Click(object sender, EventArgs e)
+        private void Button7_Click(object sender, EventArgs e)
         {
             if (File.Exists("Updater.exe"))
             {
@@ -624,13 +628,9 @@ namespace BotFramework
             }
         }
 
-        private void checkBox8_CheckedChanged(object sender, EventArgs e)
+        private void CheckBox8_CheckedChanged(object sender, EventArgs e)
         {
-            WriteConfig("Double_Event", chk_twoE.Checked.ToString().ToLower());
-            if (chk_twoE.Checked && !File.Exists("Img\\Event.png"))
-            {
-                MessageBox.Show(UILanguage["OCR_debug"]);
-            }
+            Variables.ModifyConfig("General","Double_Event", chk_twoE.Checked.ToString().ToLower());
         }
 
         private void checkBox8_MouseEnter(object sender, EventArgs e)
@@ -662,7 +662,7 @@ namespace BotFramework
         {
             if (chk_autoRT.Checked)
             {
-                WriteConfig("Manual_Rune", "false");
+                Variables.ModifyConfig("General","Manual_Rune", "false");
                 chk_item.Enabled = chk_autoRT.Checked;
             }
         }
@@ -671,7 +671,7 @@ namespace BotFramework
         {
             if (chk_manuRT.Checked)
             {
-                WriteConfig("Manual_Rune", "true");
+                Variables.ModifyConfig("General","Manual_Rune", "true");
                 chk_item.Checked = false;
                 chk_item.Enabled = false;
             }
@@ -687,7 +687,7 @@ namespace BotFramework
         {
             if (chk_begin.Checked)
             {
-                WriteConfig("Level", "0");
+                Variables.ModifyConfig("General","Level", "0");
                 Level = 0;
             }
         }
@@ -696,7 +696,7 @@ namespace BotFramework
         {
             if (chk_inter.Checked)
             {
-                WriteConfig("Level", "1");
+                Variables.ModifyConfig("General","Level", "1");
                 Level = 1;
             }
         }
@@ -705,61 +705,29 @@ namespace BotFramework
         {
             if (chk_advan.Checked)
             {
-                WriteConfig("Level", "2");
+                Variables.ModifyConfig("General","Level", "2");
                 Level = 2;
             }
         }
 
         private void checkBox10_CheckedChanged(object sender, EventArgs e)
         {
-            WriteConfig("Use_Item", chk_item.Checked.ToString().ToLower());
+            Variables.ModifyConfig("General","Use_Item", chk_item.Checked.ToString().ToLower());
             PrivateVariable.Use_Item = chk_item.Checked;
-        }
-
-
-        private static void WriteConfig(string key, string value)
-        {
-            if(!Directory.Exists("Profiles\\" + BotCore.profilePath))
-            {
-                Directory.CreateDirectory("Profiles\\" + BotCore.profilePath);
-            }
-            if (File.Exists("Profiles\\" + BotCore.profilePath + "\\bot.ini"))
-            {
-                var config = File.ReadAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini");
-                int x = 0;
-                foreach (var c in config)
-                {
-                    if (c.Contains(key + "="))
-                    {
-                        config[x] = key + "=" + value;
-                        File.WriteAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini", config);
-                        return;
-                    }
-                    x++;
-                }
-                config[config.Length - 1] = config[config.Length - 1] + "\n" + key + "=" + value;
-                            File.WriteAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini", config);
-            }
-            if (Variables.Configure.ContainsKey(key))
-            {
-                Variables.Configure[key] = value;
-            }
-            else
-            {
-                Variables.Configure.Add(key, value);
-            }
         }
 
         private void pictureBox4_Click(object sender, EventArgs e)
         {
             if (pictureBox4.Image != null)
             {
-                SaveFileDialog s = new SaveFileDialog();
-                s.CheckPathExists = true;
-                s.OverwritePrompt = true;
-                s.AddExtension = false;
-                s.Filter = "(PNG)|*.png";
-                s.DefaultExt = "png";
+                SaveFileDialog s = new SaveFileDialog
+                {
+                    CheckPathExists = true,
+                    OverwritePrompt = true,
+                    AddExtension = false,
+                    Filter = "(PNG)|*.png",
+                    DefaultExt = "png"
+                };
                 s.AddExtension = true;
                 var result = s.ShowDialog();
                 if (result == DialogResult.OK)
@@ -770,12 +738,12 @@ namespace BotFramework
 
         }
 
-        private void pictureBox4_MouseEnter(object sender, EventArgs e)
+        private void PictureBox4_MouseEnter(object sender, EventArgs e)
         {
             toolTip1.Show("点击即可保存图片哦！", pictureBox4);
         }
 
-        private void pictureBox4_MouseLeave(object sender, EventArgs e)
+        private void PictureBox4_MouseLeave(object sender, EventArgs e)
         {
             toolTip1.Hide(pictureBox4);
         }
@@ -784,16 +752,16 @@ namespace BotFramework
         {
             if (chk_extre.Checked)
             {
-                WriteConfig("Level", "3");
+                Variables.ModifyConfig("General","Level", "3");
                 Level = 3;
             }
         }
 
-        private void radioButton5_CheckedChanged(object sender, EventArgs e)
+        private void RadioButton5_CheckedChanged(object sender, EventArgs e)
         {
             if (chk_ultim.Checked)
             {
-                WriteConfig("Level", "4");
+                Variables.ModifyConfig("General","Level", "4");
                 Level = 4;
             }
         }
@@ -802,7 +770,7 @@ namespace BotFramework
         {
             if (File.Exists("OCR.png"))
             {
-                var img = BotCore.Compress(Image.FromFile("OCR.png"));
+                var img = BotCore.Compress(Image.FromFile("OCR.png") as Bitmap);
                 MessageBox.Show(OCR.OcrImage(img, "eng"));
             }
         }
@@ -842,14 +810,14 @@ namespace BotFramework
         {
             if (ScriptRun.Run)
             {
-                button3_Click(sender, e);
+                Button3_Click(sender, e);
             }
             Environment.Exit(0);
         }
         
         private void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            WriteConfig("Lang", comboBox1.SelectedItem.ToString());
+            Variables.ModifyConfig("General","Lang", comboBox1.SelectedItem.ToString());
             ChangeLanguage(comboBox1.SelectedItem.ToString(), this);
             html = Img.index;
             WebClientOverride wc = new WebClientOverride();
@@ -903,8 +871,7 @@ namespace BotFramework
         {
             foreach (Control control in form.Controls)
             {
-                string text = "";
-                if (UILanguage.TryGetValue(control.Name, out text))
+                if (UILanguage.TryGetValue(control.Name, out string text))
                 {
                     control.Text = text;
                 }
@@ -982,7 +949,7 @@ namespace BotFramework
 
         private void Suspend_Chk_CheckedChanged(object sender, EventArgs e)
         {
-            WriteConfig("Suspend_PC",Suspend_Chk.Checked.ToString().ToLower());
+            Variables.ModifyConfig("General","Suspend_PC",Suspend_Chk.Checked.ToString().ToLower());
         }
 
         private void btn_Sleep_Click(object sender, EventArgs e)
@@ -999,23 +966,21 @@ namespace BotFramework
         private void biubiu_CheckedChanged(object sender, EventArgs e)
         {
             PrivateVariable.biubiu = Biubiu.Checked;
-            WriteConfig("biubiu", Biubiu.Checked.ToString().ToLower());
-        }
-
-        private void CheckBox1_CheckedChanged_1(object sender, EventArgs e)
-        {
-            Variables.WinApiCapt = checkBox1.Checked;
-            WriteConfig("WinApi", checkBox1.Checked.ToString().ToLower());
+            Variables.ModifyConfig("General","biubiu", Biubiu.Checked.ToString().ToLower());
         }
         private void MainScreen_Resize(object sender, EventArgs e)
         {
             if (WindowState == FormWindowState.Minimized)
             {
-                WindowState = FormWindowState.Normal;
+                Variables.WinApiCapt = false;
             }
             else if (WindowState == FormWindowState.Maximized)
             {
                 WindowState = FormWindowState.Normal;
+            }
+            else
+            {
+                Variables.WinApiCapt = true;
             }
         }
 

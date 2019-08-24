@@ -11,6 +11,8 @@
     <AssemblyName>ImgXml</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -100,9 +102,6 @@
     <None Include="Resources\Wrong_Click2.PNG" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Archwitch.PNG" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Archwitch_Rec.Png" />
   </ItemGroup>
   <ItemGroup>
@@ -131,9 +130,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Help.PNG" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Icon.PNG" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Idle.PNG" />
@@ -206,6 +202,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\CardSelected.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ArchwitchHunt.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Archwitch.PNG" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

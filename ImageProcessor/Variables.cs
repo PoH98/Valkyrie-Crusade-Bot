@@ -1,22 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using SharpAdbClient;
+using IniParser;
+using IniParser.Model;
+using IniParser.Parser;
 
 namespace BotFramework
 {
     /// <summary>
     /// Variables that are stored in memory for future usage
     /// </summary>
-    public static class Variables
+    public class Variables
     {
         /// <summary>
         /// The emulator to be used
@@ -57,7 +55,81 @@ namespace BotFramework
         /// <summary>
         /// Confiures of bot.ini, use BotCore.ReadConfig() to fill up values
         /// </summary>
-        public static Dictionary<string, string> Configure = new Dictionary<string, string>();
+        private static IniData Config = new IniData();
+        /// <summary>
+        /// Get config data by key
+        /// </summary>
+        /// <param name="key">Key</param>
+        /// <param name="result">Value fetched</param>
+        /// <param name="section">Section name</param>
+        /// <returns>true if key and value found, else false</returns>
+        public static bool FindConfig(string section, string key, out string result)
+        {
+            if (Config.Sections.ContainsSection(section))
+            {
+                if (Config[section].ContainsKey(key))
+                {
+                    result = Config[section][key];
+                    return true;
+                }
+            }
+            result = null;
+            return false;
+        }
+        /// <summary>
+        /// Read configures from bot.ini or create new if not exist
+        /// </summary>
+        public static void ReadConfig()
+        {
+            string path = "Profiles\\" + emulator.EmulatorName() + "\\bot.ini";
+            if (File.Exists(path))
+            {
+                FileIniDataParser p = new FileIniDataParser();
+                Config = p.ReadFile(path,Encoding.Unicode);
+            }
+            else
+            {
+                File.WriteAllText(path,"[General]");
+            }
+        }
+        /// <summary>
+        /// Modify the key and value from section
+        /// </summary>
+        /// <param name="section"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public static void ModifyConfig(string section, string key, string value)
+        {
+            if (Config.Sections.ContainsSection(section))
+            {
+                if (Config[section].ContainsKey(key))
+                {
+                    Config[section][key] = value;
+                }
+                else
+                {
+                    Config[section].AddKey(key);
+                    Config[section][key] = value;
+                }
+            }
+            else
+            {
+                Config.Sections.AddSection(section);
+                Config[section].AddKey(key);
+                Config[section][key] = value;
+            }
+            SaveConfig();
+        }
+        /// <summary>
+        /// Save Config to file. Normaly will automatic execute when ModifyConfig called
+        /// </summary>
+        public static void SaveConfig()
+        {
+            string path = "Profiles\\" + emulator.EmulatorName() + "\\bot.ini";
+            FileIniDataParser p = new FileIniDataParser();
+            Config.Configuration.AssigmentSpacer = "";
+            p.WriteFile(path, Config, Encoding.Unicode);
+        }
         /// <summary>
         /// If new devices added, will return true
         /// </summary>

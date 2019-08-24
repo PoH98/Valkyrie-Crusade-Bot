@@ -308,7 +308,7 @@ namespace DefaultScript
                 if (duplicated_index > -1)
                 {
                     var result = Enumerable.Range(0, 5).Except(existedIndex).ToList();
-                    toolParameterComboBoxes[duplicated_index].SelectedIndex = result.Last();
+                    toolParameterComboBoxes[duplicated_index].SelectedIndex = result.First();
                 }
             }
             catch (Exception ex)
@@ -320,7 +320,7 @@ namespace DefaultScript
             {
                 save += i.SelectedIndex.ToString();
             }
-            WriteConfig("Skill_Acd",save);
+            Variables.ModifyConfig("DefaultScript","Skill_Acd",save);
         }
 
         private void Create_Click(object sender, EventArgs e)
@@ -330,40 +330,16 @@ namespace DefaultScript
 
         public void ReadConfig()
         {
-            Variables.Configure.TryGetValue("Skill_Acd", out cboxselected);
+            Variables.FindConfig("DefaultScript", "Skill_Acd", out cboxselected);
             if(cboxselected == null)
             {
                 cboxselected = "";
+                Variables.ModifyConfig("DefaultScript", "Skill_Acd", "01234");
             }
         }
         public string ScriptName()
         {
             return "Default Script";
-        }
-        private static void WriteConfig(string key, string value)
-        {
-            var config = File.ReadAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini");
-            int x = 0;
-            foreach (var c in config)
-            {
-                if (c.Contains(key + "="))
-                {
-                    config[x] = key + "=" + value;
-                    File.WriteAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini", config);
-                    return;
-                }
-                x++;
-            }
-            config[config.Length - 1] = config[config.Length - 1] + "\n" + key + "=" + value;
-            if (Variables.Configure.ContainsKey(key))
-            {
-                Variables.Configure[key] = value;
-            }
-            else
-            {
-                Variables.Configure.Add(key, value);
-            }
-            File.WriteAllLines("Profiles\\" + BotCore.profilePath + "\\bot.ini", config);
         }
     }
 }

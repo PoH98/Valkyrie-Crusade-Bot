@@ -16,12 +16,34 @@ namespace Nox
 {
     public class Nox : EmulatorInterface
     {
+        private static string NoxFile;
         public void CloseEmulator()
         {
-            if(Variables.Proc != null)
+            ProcessStartInfo close = new ProcessStartInfo();
+            close.FileName = Variables.VBoxManagerPath;
+
+            if (Variables.Instance.Length > 0)
             {
-                BotCore.KillProcessAndChildren(Variables.Proc.Id);
+                close.Arguments = "controlvm " + Variables.Instance + " poweroff";
             }
+            else
+            {
+                close.Arguments = "controlvm Nox poweroff";
+            }
+            close.CreateNoWindow = true;
+            close.WindowStyle = ProcessWindowStyle.Hidden;
+            try
+            {
+                if (Variables.Proc != null || !Variables.Proc.HasExited)
+                {
+                    Variables.Proc.Kill();
+                }
+            }
+            catch
+            {
+
+            }
+            Process p = Process.Start(close);
         }
 
         public string EmulatorName()
@@ -42,7 +64,8 @@ namespace Nox
                     path = result.ToString();
                     if (Directory.Exists(path))
                     {
-                        Variables.VBoxManagerPath = path;
+                        NoxFile = path;
+                        Variables.VBoxManagerPath = GetRTPath() + "BigNoxVMMgr.exe";
                         InitNox();
                         return true;
                     }
@@ -63,7 +86,8 @@ namespace Nox
                         path = result.ToString();
                         if (Directory.Exists(path))
                         {
-                            Variables.VBoxManagerPath = path + "\\bin\\Nox.exe";
+                            NoxFile = path;
+                            Variables.VBoxManagerPath = GetRTPath() + "BigNoxVMMgr.exe";
                             InitNox();
                             return true;
                         }
@@ -85,7 +109,8 @@ namespace Nox
                         path = result.ToString();
                         if (Directory.Exists(path))
                         {
-                            Variables.VBoxManagerPath = path + "\\bin\\Nox.exe";
+                            NoxFile = path + "\\bin\\Nox.exe";
+                            Variables.VBoxManagerPath = GetRTPath() + "BigNoxVMMgr.exe";
                             InitNox();
                             return true;
                         }
@@ -96,35 +121,95 @@ namespace Nox
 
                 }
             }
-            path = null;
             return false;
+        }
+        private static string GetRTPath()
+        {
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\BigNox\\BigNoxVM\\RT\\";
+            if (Directory.Exists(path))
+            {
+                return path;
+            }
+            path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\BigNox\\BigNoxVM\\RT\\";
+            if (Directory.Exists(path))
+            {
+                return path;
+            }
+            RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\BigNox\VirtualBox\");
+            var value = key.GetValue("InstallDir");
+            if(value != null)
+            {
+                return value.ToString();
+            }
+            return null;
         }
         private static void InitNox()
         {
             string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).Replace("\\Roaming", "\\Local\\Nox\\conf.ini"));
-            string[] lines = File.ReadAllLines(path);
-            foreach (var line in lines)
+            if (File.Exists(path))
             {
-                if (line.Contains("share_path"))
+                string[] lines = File.ReadAllLines(path);
+                foreach (var line in lines)
                 {
-                    path = line.Replace(@"\\", @"\").Replace("share_path=", "");
-                    if (Directory.Exists(path + "\\OtherShare\\"))
+                    if (line.Contains("share_path"))
                     {
-                        Variables.SharedPath = path + "\\OtherShare";
+                        path = line.Replace(@"\\", @"\").Replace("share_path=", "");
+                        if (Directory.Exists(path + "\\OtherShare\\"))
+                        {
+                            Variables.SharedPath = path + "\\OtherShare";
+                            
+                        }
+                        else
+                        {
+                            MessageBox.Show("Nox version is not supported! Please update it to Nox v6 above!");
+                            Environment.Exit(0);
+                        }
+                        break;
                     }
-                    else
-                    {
-                        MessageBox.Show("Nox模拟器版本不被支持！请更新至 6.2.7.1！");
-                        Environment.Exit(0);
-                    }
-                    Variables.SharedPath = Variables.SharedPath.Replace("\\\\", "\\");
-                }
-                else if (line.Contains("adb_port"))
-                {
-                    Variables.AdbIpPort = "127.0.0.1:" + line.Replace("adb_port=", "");
                 }
             }
-            Variables.AndroidSharedPath = "/mnt/shell/emulated/0/Others/";
+            if(Variables.SharedPath == "")
+            {
+                if (Directory.Exists((Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Nox_share\Other\").Replace("\\\\", "\\")))
+                {
+                    Variables.SharedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Nox_share\Other\";
+                }
+                else if(Directory.Exists((Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\Nox_share\OtherShare\").Replace("\\\\","\\")))
+                {
+                    Variables.SharedPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\Nox_share\OtherShare\";
+                }
+                else
+                {
+                    MessageBox.Show("Nox version is not supported! Please update it to Nox v6 above!");
+                    Environment.Exit(0);
+                }
+            }
+            Variables.AndroidSharedPath = "/mnt/shared/Other|/mnt/shell/emulated/0/Download/other|/mnt/shell/emulated/0/Others/";
+            Variables.SharedPath = Variables.SharedPath.Replace("\\\\","\\");
+            ProcessStartInfo info = new ProcessStartInfo();
+            info.FileName = Variables.VBoxManagerPath;
+            if (Variables.Instance.Length > 0)
+            {
+                info.Arguments = "showvminfo " + Variables.Instance;
+            }
+            else
+            {
+                info.Arguments = "showvminfo nox";
+            }
+            info.RedirectStandardOutput = true;
+            info.UseShellExecute = false;
+            info.CreateNoWindow = true;
+            var p = Process.Start(info);
+            var result = p.StandardOutput.ReadToEnd();
+            string[] splitted = result.Split('\n');
+            foreach (var s in splitted)
+            {
+                if (s.Contains("guest port = 5555"))
+                {
+                    var port = s.Substring(s.IndexOf("port = ") + 7, 5).Replace(" ", "");
+                    Variables.AdbIpPort = "127.0.0.1:" + port;
+                }
+            }
         }
         public void StartEmulator()
         {
@@ -135,8 +220,20 @@ namespace Nox
                     MessageBox.Show("Unable to locate path of emulator!");
                     Process.Start("Profiles\\" + BotCore.profilePath + "\\bot.ini");
                 }
-                Process.Start(Variables.VBoxManagerPath);
-                Thread.Sleep(10000);
+                ProcessStartInfo info = new ProcessStartInfo();
+                info.FileName = NoxFile + "\\bin\\Nox.exe";
+                if (Variables.Instance.Length > 0)
+                {
+                    info.Arguments = "-clone:" + Variables.Instance;
+                }
+                else
+                {
+                    info.Arguments = "-clone:Nox_0";
+                 }
+                info.RedirectStandardOutput = true;
+                info.UseShellExecute = false;
+                info.CreateNoWindow = true;
+                Process.Start(info);
             }
             catch (SocketException)
             {
