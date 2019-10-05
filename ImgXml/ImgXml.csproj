@@ -209,6 +209,30 @@
   <ItemGroup>
     <None Include="Resources\Archwitch.PNG" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SoulWeapon.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ShopKeeper.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Return.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LV0.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LV1.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LV2.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LV3.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LV4.PNG" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

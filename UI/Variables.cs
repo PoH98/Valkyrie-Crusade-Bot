@@ -12,7 +12,18 @@ namespace UI
         /// <summary>
         /// Check event type of the game
         /// </summary>
-        public static int EventType;
+        public static EventType VCevent;
+        /// <summary>
+        /// Event type
+        /// </summary>
+        public enum EventType
+        {
+            Tower = 0,
+            ArchWitch = 1,
+            DemonRealm = 2,
+            SoulWeapon = 3,
+            Unknown = -1
+        }
 
         //public static List<byte[]> Enemies = new List<byte[]>();
 

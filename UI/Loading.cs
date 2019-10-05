@@ -2,13 +2,16 @@
 using System.Drawing;
 using System.Windows.Forms;
 using MetroFramework.Forms;
+using BotFramework;
+using CommonMark;
 
 namespace UI
 {
     public partial class Login : MetroForm
     {
         public static bool LoadCompleted = false;
-        
+
+        private static int autoClose;
         public Login()
         {
             InitializeComponent();
@@ -17,29 +20,34 @@ namespace UI
 
         private void Timer1_Tick(object sender, EventArgs e)
         {
-            if (LoadCompleted)
+            if(CheckVersion.UpdateText != null && CheckVersion.UpdateText != "")
             {
-                Close();
+                if (pictureBox1.Visible)
+                {
+                    Width += 200;
+                    Height += 200;
+                    webBrowser1.Width += 200;
+                    webBrowser1.Height += 200;
+                    webBrowser1.DocumentText = CommonMarkConverter.Convert(CheckVersion.UpdateText);
+                    metroProgressBar1.Visible = false;
+                    pictureBox1.Visible = false;
+                    Movable = true;
+                }
+                else
+                {
+                    autoClose++;
+                    if(autoClose > 10)
+                    {
+                        Close();
+                    }
+                }
             }
-        }
-
-        private void Button1_MouseEnter(object sender, EventArgs e)
-        {
-            (sender as Button).BackColor = Color.DarkGray;
-        }
-
-        private void Button1_MouseLeave(object sender, EventArgs e)
-        {
-            (sender as Button).BackColor = Color.DimGray;
-        }
-
-        private void Button1_Click(object sender, EventArgs e)
-        {
-            if (textBox1.Text == "")
+            else
             {
-                MessageBox.Show("Username is empty");
-                textBox1.Focus();
-                return;
+                if (LoadCompleted)
+                {
+                    Close();
+                }
             }
         }
 
@@ -57,6 +65,17 @@ namespace UI
             {
                 Environment.Exit(0);
             }
+        }
+
+        private void CheckBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            Variables.ModifyConfig("General", "AlertUpdate", (!checkBox1.Checked).ToString().ToLower());
+        }
+
+        private void Button1_Click(object sender, EventArgs e)
+        {
+            CheckVersion.UpdateText = null;
+            Close();
         }
     }
 }

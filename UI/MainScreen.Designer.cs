@@ -51,6 +51,7 @@
             this.Biubiu = new System.Windows.Forms.CheckBox();
             this.chk_twoE = new System.Windows.Forms.CheckBox();
             this.Etc_Box = new System.Windows.Forms.GroupBox();
+            this.WinAPi = new System.Windows.Forms.CheckBox();
             this.Suspend_Chk = new System.Windows.Forms.CheckBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label19 = new System.Windows.Forms.Label();
@@ -88,6 +89,18 @@
             this.metroTabControl1 = new MetroFramework.Controls.MetroTabControl();
             this.Log = new MetroFramework.Controls.MetroTabPage();
             this.Settings = new MetroFramework.Controls.MetroTabPage();
+            this.metroTabControl2 = new MetroFramework.Controls.MetroTabControl();
+            this.NormalEvent_Tab = new MetroFramework.Controls.MetroTabPage();
+            this.ArchwitchEvent_Tab = new MetroFramework.Controls.MetroTabPage();
+            this.Weapon = new System.Windows.Forms.GroupBox();
+            this.Combo_Weapon = new MetroFramework.Controls.MetroComboBox();
+            this.Chk_SoulWeapon = new System.Windows.Forms.CheckBox();
+            this.Archwitch = new System.Windows.Forms.GroupBox();
+            this.Chk_Archwitch = new System.Windows.Forms.CheckBox();
+            this.Combo_Archwitch = new MetroFramework.Controls.MetroComboBox();
+            this.OtherSettings_Tab = new MetroFramework.Controls.MetroTabPage();
+            this.GuildWar = new System.Windows.Forms.GroupBox();
+            this.chk_GWW = new System.Windows.Forms.CheckBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.Debug = new MetroFramework.Controls.MetroTabPage();
             this.metroButton1 = new MetroFramework.Controls.MetroButton();
@@ -100,6 +113,7 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.chk_Log = new MetroFramework.Controls.MetroCheckBox();
             this.metroLink1 = new MetroFramework.Controls.MetroLink();
+            this.btn_absys = new System.Windows.Forms.Button();
             this.ED_Box.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.M_Box.SuspendLayout();
@@ -112,6 +126,13 @@
             this.metroTabControl1.SuspendLayout();
             this.Log.SuspendLayout();
             this.Settings.SuspendLayout();
+            this.metroTabControl2.SuspendLayout();
+            this.NormalEvent_Tab.SuspendLayout();
+            this.ArchwitchEvent_Tab.SuspendLayout();
+            this.Weapon.SuspendLayout();
+            this.Archwitch.SuspendLayout();
+            this.OtherSettings_Tab.SuspendLayout();
+            this.GuildWar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.Debug.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
@@ -264,6 +285,7 @@
             // Etc_Box
             // 
             this.Etc_Box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
+            this.Etc_Box.Controls.Add(this.WinAPi);
             this.Etc_Box.Controls.Add(this.Suspend_Chk);
             this.Etc_Box.Controls.Add(this.comboBox1);
             this.Etc_Box.Controls.Add(this.label19);
@@ -271,6 +293,13 @@
             resources.ApplyResources(this.Etc_Box, "Etc_Box");
             this.Etc_Box.Name = "Etc_Box";
             this.Etc_Box.TabStop = false;
+            // 
+            // WinAPi
+            // 
+            resources.ApplyResources(this.WinAPi, "WinAPi");
+            this.WinAPi.Name = "WinAPi";
+            this.WinAPi.UseVisualStyleBackColor = true;
+            this.WinAPi.CheckedChanged += new System.EventHandler(this.WinAPi_CheckedChanged);
             // 
             // Suspend_Chk
             // 
@@ -564,8 +593,7 @@
             // 
             // Settings
             // 
-            this.Settings.Controls.Add(this.Etc_Box);
-            this.Settings.Controls.Add(this.E_Box);
+            this.Settings.Controls.Add(this.metroTabControl2);
             this.Settings.Controls.Add(this.pictureBox2);
             this.Settings.HorizontalScrollbarBarColor = true;
             this.Settings.HorizontalScrollbarHighlightOnWheel = false;
@@ -576,6 +604,151 @@
             this.Settings.VerticalScrollbarBarColor = true;
             this.Settings.VerticalScrollbarHighlightOnWheel = false;
             this.Settings.VerticalScrollbarSize = 10;
+            // 
+            // metroTabControl2
+            // 
+            this.metroTabControl2.Controls.Add(this.NormalEvent_Tab);
+            this.metroTabControl2.Controls.Add(this.ArchwitchEvent_Tab);
+            this.metroTabControl2.Controls.Add(this.OtherSettings_Tab);
+            resources.ApplyResources(this.metroTabControl2, "metroTabControl2");
+            this.metroTabControl2.Name = "metroTabControl2";
+            this.metroTabControl2.SelectedIndex = 2;
+            this.metroTabControl2.Style = MetroFramework.MetroColorStyle.Red;
+            this.metroTabControl2.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroTabControl2.UseSelectable = true;
+            // 
+            // NormalEvent_Tab
+            // 
+            this.NormalEvent_Tab.Controls.Add(this.E_Box);
+            this.NormalEvent_Tab.HorizontalScrollbarBarColor = true;
+            this.NormalEvent_Tab.HorizontalScrollbarHighlightOnWheel = false;
+            this.NormalEvent_Tab.HorizontalScrollbarSize = 10;
+            resources.ApplyResources(this.NormalEvent_Tab, "NormalEvent_Tab");
+            this.NormalEvent_Tab.Name = "NormalEvent_Tab";
+            this.NormalEvent_Tab.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.NormalEvent_Tab.VerticalScrollbarBarColor = true;
+            this.NormalEvent_Tab.VerticalScrollbarHighlightOnWheel = false;
+            this.NormalEvent_Tab.VerticalScrollbarSize = 10;
+            // 
+            // ArchwitchEvent_Tab
+            // 
+            this.ArchwitchEvent_Tab.Controls.Add(this.Weapon);
+            this.ArchwitchEvent_Tab.Controls.Add(this.Archwitch);
+            this.ArchwitchEvent_Tab.HorizontalScrollbarBarColor = true;
+            this.ArchwitchEvent_Tab.HorizontalScrollbarHighlightOnWheel = false;
+            this.ArchwitchEvent_Tab.HorizontalScrollbarSize = 10;
+            resources.ApplyResources(this.ArchwitchEvent_Tab, "ArchwitchEvent_Tab");
+            this.ArchwitchEvent_Tab.Name = "ArchwitchEvent_Tab";
+            this.ArchwitchEvent_Tab.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.ArchwitchEvent_Tab.VerticalScrollbarBarColor = true;
+            this.ArchwitchEvent_Tab.VerticalScrollbarHighlightOnWheel = false;
+            this.ArchwitchEvent_Tab.VerticalScrollbarSize = 10;
+            // 
+            // Weapon
+            // 
+            this.Weapon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
+            this.Weapon.Controls.Add(this.Combo_Weapon);
+            this.Weapon.Controls.Add(this.Chk_SoulWeapon);
+            this.Weapon.ForeColor = System.Drawing.Color.White;
+            resources.ApplyResources(this.Weapon, "Weapon");
+            this.Weapon.Name = "Weapon";
+            this.Weapon.TabStop = false;
+            // 
+            // Combo_Weapon
+            // 
+            this.Combo_Weapon.FormattingEnabled = true;
+            resources.ApplyResources(this.Combo_Weapon, "Combo_Weapon");
+            this.Combo_Weapon.Items.AddRange(new object[] {
+            resources.GetString("Combo_Weapon.Items"),
+            resources.GetString("Combo_Weapon.Items1"),
+            resources.GetString("Combo_Weapon.Items2"),
+            resources.GetString("Combo_Weapon.Items3"),
+            resources.GetString("Combo_Weapon.Items4"),
+            resources.GetString("Combo_Weapon.Items5"),
+            resources.GetString("Combo_Weapon.Items6")});
+            this.Combo_Weapon.Name = "Combo_Weapon";
+            this.Combo_Weapon.UseSelectable = true;
+            this.Combo_Weapon.SelectedIndexChanged += new System.EventHandler(this.Combo_Weapon_SelectedIndexChanged);
+            // 
+            // Chk_SoulWeapon
+            // 
+            resources.ApplyResources(this.Chk_SoulWeapon, "Chk_SoulWeapon");
+            this.Chk_SoulWeapon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
+            this.Chk_SoulWeapon.ForeColor = System.Drawing.Color.White;
+            this.Chk_SoulWeapon.Name = "Chk_SoulWeapon";
+            this.Chk_SoulWeapon.UseVisualStyleBackColor = false;
+            this.Chk_SoulWeapon.CheckedChanged += new System.EventHandler(this.Chk_SoulWeapon_CheckedChanged);
+            // 
+            // Archwitch
+            // 
+            this.Archwitch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
+            this.Archwitch.Controls.Add(this.Chk_Archwitch);
+            this.Archwitch.Controls.Add(this.Combo_Archwitch);
+            resources.ApplyResources(this.Archwitch, "Archwitch");
+            this.Archwitch.Name = "Archwitch";
+            this.Archwitch.TabStop = false;
+            // 
+            // Chk_Archwitch
+            // 
+            resources.ApplyResources(this.Chk_Archwitch, "Chk_Archwitch");
+            this.Chk_Archwitch.ForeColor = System.Drawing.Color.White;
+            this.Chk_Archwitch.Name = "Chk_Archwitch";
+            this.Chk_Archwitch.UseVisualStyleBackColor = true;
+            this.Chk_Archwitch.CheckedChanged += new System.EventHandler(this.Chk_Archwitch_CheckedChanged);
+            // 
+            // Combo_Archwitch
+            // 
+            this.Combo_Archwitch.FormattingEnabled = true;
+            resources.ApplyResources(this.Combo_Archwitch, "Combo_Archwitch");
+            this.Combo_Archwitch.Items.AddRange(new object[] {
+            resources.GetString("Combo_Archwitch.Items"),
+            resources.GetString("Combo_Archwitch.Items1"),
+            resources.GetString("Combo_Archwitch.Items2"),
+            resources.GetString("Combo_Archwitch.Items3"),
+            resources.GetString("Combo_Archwitch.Items4"),
+            resources.GetString("Combo_Archwitch.Items5"),
+            resources.GetString("Combo_Archwitch.Items6"),
+            resources.GetString("Combo_Archwitch.Items7"),
+            resources.GetString("Combo_Archwitch.Items8"),
+            resources.GetString("Combo_Archwitch.Items9"),
+            resources.GetString("Combo_Archwitch.Items10"),
+            resources.GetString("Combo_Archwitch.Items11"),
+            resources.GetString("Combo_Archwitch.Items12"),
+            resources.GetString("Combo_Archwitch.Items13"),
+            resources.GetString("Combo_Archwitch.Items14")});
+            this.Combo_Archwitch.Name = "Combo_Archwitch";
+            this.Combo_Archwitch.UseSelectable = true;
+            this.Combo_Archwitch.SelectedIndexChanged += new System.EventHandler(this.Combo_Archwitch_SelectedIndexChanged);
+            // 
+            // OtherSettings_Tab
+            // 
+            this.OtherSettings_Tab.Controls.Add(this.btn_absys);
+            this.OtherSettings_Tab.Controls.Add(this.Etc_Box);
+            this.OtherSettings_Tab.Controls.Add(this.GuildWar);
+            this.OtherSettings_Tab.HorizontalScrollbarBarColor = true;
+            this.OtherSettings_Tab.HorizontalScrollbarHighlightOnWheel = false;
+            this.OtherSettings_Tab.HorizontalScrollbarSize = 10;
+            resources.ApplyResources(this.OtherSettings_Tab, "OtherSettings_Tab");
+            this.OtherSettings_Tab.Name = "OtherSettings_Tab";
+            this.OtherSettings_Tab.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.OtherSettings_Tab.VerticalScrollbarBarColor = true;
+            this.OtherSettings_Tab.VerticalScrollbarHighlightOnWheel = false;
+            this.OtherSettings_Tab.VerticalScrollbarSize = 10;
+            // 
+            // GuildWar
+            // 
+            this.GuildWar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
+            this.GuildWar.Controls.Add(this.chk_GWW);
+            resources.ApplyResources(this.GuildWar, "GuildWar");
+            this.GuildWar.Name = "GuildWar";
+            this.GuildWar.TabStop = false;
+            // 
+            // chk_GWW
+            // 
+            resources.ApplyResources(this.chk_GWW, "chk_GWW");
+            this.chk_GWW.Name = "chk_GWW";
+            this.chk_GWW.UseVisualStyleBackColor = true;
+            this.chk_GWW.CheckedChanged += new System.EventHandler(this.Chk_GWW_CheckedChanged);
             // 
             // pictureBox2
             // 
@@ -693,6 +866,12 @@
             this.metroLink1.UseSelectable = true;
             this.metroLink1.Click += new System.EventHandler(this.MetroLink1_Click);
             // 
+            // btn_absys
+            // 
+            resources.ApplyResources(this.btn_absys, "btn_absys");
+            this.btn_absys.Name = "btn_absys";
+            this.btn_absys.UseVisualStyleBackColor = true;
+            // 
             // MainScreen
             // 
             resources.ApplyResources(this, "$this");
@@ -734,6 +913,16 @@
             this.metroTabControl1.ResumeLayout(false);
             this.Log.ResumeLayout(false);
             this.Settings.ResumeLayout(false);
+            this.metroTabControl2.ResumeLayout(false);
+            this.NormalEvent_Tab.ResumeLayout(false);
+            this.ArchwitchEvent_Tab.ResumeLayout(false);
+            this.Weapon.ResumeLayout(false);
+            this.Weapon.PerformLayout();
+            this.Archwitch.ResumeLayout(false);
+            this.Archwitch.PerformLayout();
+            this.OtherSettings_Tab.ResumeLayout(false);
+            this.GuildWar.ResumeLayout(false);
+            this.GuildWar.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.Debug.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
@@ -816,6 +1005,20 @@
         private System.Windows.Forms.CheckBox Suspend_Chk;
         private MetroFramework.Controls.MetroButton metroButton1;
         private System.Windows.Forms.CheckBox Biubiu;
+        private System.Windows.Forms.CheckBox WinAPi;
+        private System.Windows.Forms.GroupBox Archwitch;
+        private MetroFramework.Controls.MetroComboBox Combo_Archwitch;
+        private System.Windows.Forms.GroupBox GuildWar;
+        private System.Windows.Forms.CheckBox chk_GWW;
+        private System.Windows.Forms.CheckBox Chk_Archwitch;
+        private System.Windows.Forms.CheckBox Chk_SoulWeapon;
+        private MetroFramework.Controls.MetroTabControl metroTabControl2;
+        private MetroFramework.Controls.MetroTabPage NormalEvent_Tab;
+        private MetroFramework.Controls.MetroTabPage ArchwitchEvent_Tab;
+        private System.Windows.Forms.GroupBox Weapon;
+        private MetroFramework.Controls.MetroComboBox Combo_Weapon;
+        private MetroFramework.Controls.MetroTabPage OtherSettings_Tab;
+        private System.Windows.Forms.Button btn_absys;
     }
 }
 

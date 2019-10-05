@@ -25,6 +25,10 @@ namespace BotFramework
         /// </summary>
         public static string AdbIpPort;
         /// <summary>
+        /// Save all image capturing files, use this carefully!
+        /// </summary>
+        public static bool ImageDebug = false;
+        /// <summary>
         /// The path of screenshot saved in emulator
         /// </summary>
         public static string AndroidSharedPath;
@@ -82,6 +86,10 @@ namespace BotFramework
         public static void ReadConfig()
         {
             string path = "Profiles\\" + emulator.EmulatorName() + "\\bot.ini";
+            if(!Directory.Exists("Profiles\\" + emulator.EmulatorName()))
+            {
+                Directory.CreateDirectory("Profiles\\" + emulator.EmulatorName());
+            }
             if (File.Exists(path))
             {
                 FileIniDataParser p = new FileIniDataParser();
@@ -145,7 +153,7 @@ namespace BotFramework
         /// <summary>
         /// Use WinApi capture or adb capture?
         /// </summary>
-        public static bool WinApiCapt = false;
+        public static bool WinApiCapt = false, ForceWinApiCapt = false;
         /// <summary>
         /// Virtual box path
         /// </summary>

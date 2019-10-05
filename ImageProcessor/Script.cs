@@ -3,6 +3,7 @@ using SharpAdbClient.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
@@ -128,6 +129,30 @@ namespace BotFramework
                 {
                     try
                     {
+                        if (TimeDelay(out double delay))
+                        {
+                            Variables.ScriptLog("Time delay over 30 seconds! Trying to fix it!", Color.Red);
+                            try
+                            {
+                                string year = DateTime.Now.Year.ToString("0000");
+                                string month = DateTime.Now.Month.ToString("00");
+                                string day = DateTime.Now.Day.ToString("00");
+                                string hour = DateTime.Now.Hour.ToString("00");
+                                string minute = DateTime.Now.Minute.ToString("00");
+                                string second = DateTime.Now.Second.ToString("00");
+                                BotCore.AdbCommand("su 0 toolbox date -s " + year + month + day + "." + hour + minute + second);
+                                BotCore.AdbCommand("su 0 toybox date " + month + day + hour + minute + year + "." + second);
+                            }
+                            catch
+                            {
+                                Variables.ScriptLog("Failed to fix time delay! We will try to restart the emulator!", Color.Red);
+                                BotCore.RestartEmulator();
+                            }
+                        }
+                        else
+                        {
+                            Variables.AdvanceLog("Current time delay with android is "+delay + " second(s)！");
+                        }
                         script.Script();
                         errornum = 0;
                     }
@@ -136,7 +161,17 @@ namespace BotFramework
                         script.ResetScript();
                         if(ex is SocketException || ex is DeviceNotFoundException || ex is AdbException)
                         {
-                            BotCore.server.RestartServer();
+                            Start:
+                            try
+                            {
+                                BotCore.server.RestartServer();
+                            }
+                            catch
+                            {
+                                Variables.ScriptLog("Adb start failed! Retrying in 3 seconds!");
+                                BotCore.Delay(3000);
+                                goto Start;
+                            }
                             if (!CheckDeviceOnline())
                             {
                                 BotCore.RestartEmulator();
@@ -160,7 +195,7 @@ namespace BotFramework
             }
             else
             {
-                throw new Exception("No script dll found!");
+                throw new DllNotFoundException("No script dll found!");
             }
             Run = false;
         }
@@ -240,6 +275,30 @@ namespace BotFramework
             }
             else
             {
+                return false;
+            }
+        }
+        /// <summary>
+        /// If time delay is true, means the android is now delaying over 30 seconds!
+        /// </summary>
+        /// <returns></returns>
+        private static bool TimeDelay(out double delay)
+        {
+            try
+            {
+                delay = (DateTime.Parse(BotCore.AdbCommand("date").Remove(11).Remove(9)) - DateTime.Now.TimeOfDay).TimeOfDay.TotalSeconds;
+                if (delay > 30)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                delay = 0;
                 return false;
             }
         }

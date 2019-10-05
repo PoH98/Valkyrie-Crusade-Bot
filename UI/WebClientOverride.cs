@@ -15,7 +15,7 @@ namespace UI
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             WebRequest wr = base.GetWebRequest(address);
-            wr.Timeout = 5000; // timeout in milliseconds (ms)
+            wr.Timeout = 3000; // timeout in milliseconds (ms)
             return wr;
         }
     }

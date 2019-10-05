@@ -34,6 +34,8 @@ namespace BotFramework
 
         public static Dictionary<string, string> UILanguage = new Dictionary<string, string>();
 
+        private static Point loc;
+
         private static TransparentPanel tp;
         public MainScreen()
         {
@@ -131,10 +133,7 @@ namespace BotFramework
                 // Shut down the current process
                 Application.Exit();
             }
-            if (!Directory.Exists("Audio"))
-            {
-                Directory.CreateDirectory("Audio");
-            }
+            CheckVersion.CheckUpdate();
             if (!Directory.Exists("Img"))
             {
                 File.WriteAllBytes("Img.zip", Img.Images);
@@ -242,7 +241,73 @@ namespace BotFramework
                     Biubiu.Checked = true;
                 }
             }
-            Variables.WinApiCapt = true;
+            if(Variables.FindConfig("General", "ArWiEv", out output))
+            {
+                if(output == "true")
+                {
+                    Chk_Archwitch.Checked = true;
+                }
+            }
+            if (Variables.FindConfig("General", "SoWeEv", out output))
+            {
+                if (output == "true")
+                {
+                    Chk_SoulWeapon.Checked = true;
+                }
+            }
+            if (Variables.FindConfig("General", "ArWiSt", out output))
+            {
+                string temp = output.Replace(".", "-");
+                Combo_Archwitch.SelectedItem = temp;
+            }
+            else
+            {
+                Combo_Archwitch.SelectedIndex = 0;
+            }
+            if(Variables.FindConfig("General", "SoWeSt", out output))
+            {
+                string temp = output.Replace(".", "-");
+                Combo_Weapon.SelectedItem = temp;
+            }
+            else
+            {
+                Combo_Weapon.SelectedIndex = 0;
+            }
+            if (Variables.ForceWinApiCapt)
+            {
+                WinAPi.Checked = true;
+                WinAPi.Enabled = false;
+            }
+            else
+            {
+                if (Variables.FindConfig("General", "WinApi", out output))
+                {
+                    if (output == "true")
+                    {
+                        WinAPi.Checked = true;
+                    }
+                }
+            }
+            if(Variables.FindConfig("GuildWar", "Manual", out output))
+            {
+                if(output == "true")
+                {
+                    chk_GWW.Checked = true;
+                }
+            }
+            if(Variables.FindConfig("Version", "Version", out output))
+            {
+                if(output != CheckVersion.currentVersion)
+                {
+                    CheckVersion.UpdateText = "# Thanks for supporting VCBot! \n"+ CheckVersion.BufferUpdateText;
+                    Variables.ModifyConfig("Version", "Version", CheckVersion.currentVersion);
+                }
+            }
+            else
+            {
+                CheckVersion.UpdateText = "# Thanks for supporting VCBot! \n" + CheckVersion.BufferUpdateText;
+                Variables.ModifyConfig("Version", "Version", CheckVersion.currentVersion);
+            }
             webBrowser1.ScriptErrorsSuppressed = true;
             webBrowser3.ScriptErrorsSuppressed = true;
             PrivateVariable.nospam = DateTime.Now;
@@ -314,7 +379,7 @@ namespace BotFramework
             metroTabControl1.SelectedIndex = 0;
             chk_item.Enabled = chk_autoRT.Checked;
             Login.LoadCompleted = true;
-            PrivateVariable.EventType = -1;
+            PrivateVariable.VCevent = PrivateVariable.EventType.Unknown;
             timer2.Start();
         }
 
@@ -374,19 +439,6 @@ namespace BotFramework
             Variables.ProchWnd = panel3.Handle;
             richTextBox1.Text = "";
             btn_Start.Enabled = false;
-            if (chk_begin.Checked)
-            {
-                Level = 0;
-            }
-            else if (chk_inter.Checked)
-            {
-                Level = 1;
-            }
-            else if (chk_advan.Checked)
-            {
-                Level = 2;
-            }
-
             PrivateVariable.Skills.Clear();
             var files = Directory.GetFiles("Img\\Star");
             foreach (var f in files)
@@ -474,22 +526,16 @@ namespace BotFramework
         private void Timer2_Tick(object sender, EventArgs e)
         {
             GC.Collect();
-            if (PrivateVariable.EventType == 0)
+            if (PrivateVariable.VCevent == PrivateVariable.EventType.Tower)
             {
                 ED_Box.Text = UILanguage["Tower"];
                 lbl_Rune.Text = UILanguage["Rune_Tower"];
+                progressBar1.Maximum = 5;
+                progressBar2.Maximum = 5;
                 progressBar1.Value = VCBotScript.energy;
                 progressBar2.Value = VCBotScript.runes;
                 label7.Text = VCBotScript.runes + "/5";
                 label6.Text = VCBotScript.energy + "/5";
-                if (VCBotScript.nextOnline != null)
-                {
-                    if (VCBotScript.nextOnline > DateTime.Now)
-                    {
-                        TimeSpan time = VCBotScript.nextOnline - DateTime.Now;
-                        label9.Text = time.Hours.ToString("00") + " : " + time.Minutes.ToString("00") + " : " + time.Seconds.ToString("00");
-                    }
-                }
                 if (VCBotScript.Tower_Floor.Length > 0)
                 {
                     try
@@ -513,23 +559,27 @@ namespace BotFramework
                     }
                 }
             }
-            else if (PrivateVariable.EventType == 2)
+            else if (PrivateVariable.VCevent == PrivateVariable.EventType.ArchWitch || PrivateVariable.VCevent == PrivateVariable.EventType.SoulWeapon)
+            {
+                ED_Box.Text = UILanguage["Archwitch"];
+                lbl_Rune.Text = UILanguage["BossE_Archwitch"];
+                label7.Text = ArchwitchEvent.CurrentBossEnergy + "/" + ArchwitchEvent.FullBossEnergy;
+                label6.Text = ArchwitchEvent.CurrentWalkEnergy + "/" + ArchwitchEvent.FullWalkEnergy;
+                progressBar2.Maximum = ArchwitchEvent.FullBossEnergy;
+                progressBar1.Maximum = ArchwitchEvent.FullWalkEnergy;
+                progressBar2.Value = ArchwitchEvent.CurrentBossEnergy;
+                progressBar1.Value = ArchwitchEvent.CurrentWalkEnergy;
+            }
+            else if (PrivateVariable.VCevent == PrivateVariable.EventType.DemonRealm)
             {
                 ED_Box.Text = UILanguage["Demon"];
                 lbl_Rune.Text = UILanguage["Rune_Demon"];
                 label7.Text = VCBotScript.runes + "/4";
                 label6.Text = VCBotScript.energy + "/5";
+                progressBar1.Maximum = 5;
                 progressBar2.Maximum = 4;
                 progressBar1.Value = VCBotScript.energy;
                 progressBar2.Value = VCBotScript.runes;
-                if (VCBotScript.nextOnline != null)
-                {
-                    if (VCBotScript.nextOnline > DateTime.Now)
-                    {
-                        TimeSpan time = VCBotScript.nextOnline - DateTime.Now;
-                        label9.Text = time.Hours.ToString("00") + " : " + time.Minutes.ToString("00") + " : " + time.Seconds.ToString("00");
-                    }
-                }
                 if (VCBotScript.Tower_Floor.Length > 0)
                 {
                     try
@@ -557,6 +607,22 @@ namespace BotFramework
             {
                 ED_Box.Text = UILanguage["Unknown"];
             }
+            if (VCBotScript.nextOnline != null)
+            {
+                if (VCBotScript.nextOnline >= DateTime.Now)
+                {
+                    TimeSpan time = VCBotScript.nextOnline - DateTime.Now;
+                    label9.Text = time.Hours.ToString("00") + " : " + time.Minutes.ToString("00") + " : " + time.Seconds.ToString("00");
+                }
+                else
+                {
+                    label9.Text = "00:00:00";
+                }
+            }
+            else
+            {
+                label9.Text = "00:00:00";
+            }
         }
         /// <summary>
         /// Capture loop
@@ -574,14 +640,6 @@ namespace BotFramework
                         Variables.Proc = null;
                         Docked = false;
                         continue;
-                    }
-                    if (Variables.emulator.EmulatorName() == "Nox")
-                    {
-                        var hide = DllImport.GetAllChildrenWindowHandles(IntPtr.Zero, "Qt5QWindowToolSaveBits", "Form", 2);
-                        foreach (var h in hide)
-                        {
-                            DllImport.ShowWindow(h, 0);
-                        }
                     }
                     try
                     {
@@ -618,14 +676,6 @@ namespace BotFramework
                     Docked = false;
                 }
             } while (ScriptRun.Run);
-        }
-
-        private void Button7_Click(object sender, EventArgs e)
-        {
-            if (File.Exists("Updater.exe"))
-            {
-                Process.Start("Updater.exe", "http://dl.memuplay.com/download/backup/Memu-Setup-3.7.0.0.exe");
-            }
         }
 
         private void CheckBox8_CheckedChanged(object sender, EventArgs e)
@@ -801,7 +851,7 @@ namespace BotFramework
                 {
                     footer.InnerText = "";
                 }
-                webBrowser3.Document.BackColor = Color.FromArgb(445561);
+                webBrowser3.Document.BackColor = Color.FromArgb(23, 38, 54);
             }
             webBrowser3.Show();
         }
@@ -968,19 +1018,25 @@ namespace BotFramework
             PrivateVariable.biubiu = Biubiu.Checked;
             Variables.ModifyConfig("General","biubiu", Biubiu.Checked.ToString().ToLower());
         }
+
         private void MainScreen_Resize(object sender, EventArgs e)
         {
             if (WindowState == FormWindowState.Minimized)
             {
-                Variables.WinApiCapt = false;
+                WindowState = FormWindowState.Normal;//Restore normal state of form
+                if (Location == new Point(-1000, -1000))
+                {
+                    Location = loc;
+                }
+                else
+                {
+                    loc = Location;
+                    Location = new Point(-1000, -1000);
+                }
             }
             else if (WindowState == FormWindowState.Maximized)
             {
                 WindowState = FormWindowState.Normal;
-            }
-            else
-            {
-                Variables.WinApiCapt = true;
             }
         }
 
@@ -992,6 +1048,41 @@ namespace BotFramework
         private void RichTextBox1_MouseLeave(object sender, EventArgs e)
         {
             scroll = true;
+        }
+
+        private void WinAPi_CheckedChanged(object sender, EventArgs e)
+        {
+            Variables.ModifyConfig("General", "WinApi", WinAPi.Checked.ToString().ToLower());
+            Variables.WinApiCapt = WinAPi.Checked;
+        }
+
+        private void Chk_Archwitch_CheckedChanged(object sender, EventArgs e)
+        {
+            Variables.ModifyConfig("General", "ArWiEv", Chk_Archwitch.Checked.ToString().ToLower());
+        }
+
+        private void Combo_Archwitch_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Variables.ModifyConfig("General", "ArWiSt", Combo_Archwitch.SelectedItem.ToString().Replace("-","."));
+            Variables.FindConfig("General", "ArWiSt", out string config);
+            VCBotScript.Archwitch_Stage = Convert.ToDouble(config);
+        }
+
+        private void Chk_GWW_CheckedChanged(object sender, EventArgs e)
+        {
+            Variables.ModifyConfig("GuildWar", "Manual", chk_GWW.Checked.ToString().ToLower());
+        }
+
+        private void Chk_SoulWeapon_CheckedChanged(object sender, EventArgs e)
+        {
+            Variables.ModifyConfig("General", "SoWeEv", Chk_SoulWeapon.Checked.ToString().ToLower());
+        }
+
+        private void Combo_Weapon_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Variables.ModifyConfig("General", "SoWeSt", Combo_Weapon.SelectedItem.ToString().Replace("-", "."));
+            Variables.FindConfig("General", "SoWeSt", out string config);
+            VCBotScript.Weapon_Stage = Convert.ToDouble(config);
         }
     }
 }
