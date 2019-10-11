@@ -72,6 +72,10 @@ namespace UI
                 while (!PrivateVariable.InMainScreen);
                 VCBotScript.Stuck = false;
             }
+            else
+            {
+                BotCore.KillGame("com.nubee.valkyriecrusade");
+            }
             return;
         }
 
@@ -376,13 +380,9 @@ namespace UI
                             {
                                 Variables.ScriptLog("Unable to OCR energy! Exiting Event now!", Color.Red);
                                 CurrentBossEnergy = 0;
-                            }
-                            CurrentBossEnergy--;
-                            if (CurrentBossEnergy == 0)
-                            {
-                                Variables.ScriptLog("Archwitch Event have no energy. Exiting now! ", Color.Yellow);
                                 return;
                             }
+                            CurrentBossEnergy--;
                             BotCore.SendTap(buttons.Value.X + rnd.Next(430, 845), buttons.Value.Y + rnd.Next(370, 420));
                             BotCore.Delay(300, 500);
                             BotCore.SendTap(buttons.Value.X + rnd.Next(430, 845), buttons.Value.Y + rnd.Next(370, 420));
@@ -399,6 +399,11 @@ namespace UI
                     while (buttons == null);
                     PrivateVariable.Battling = true;
                     VCBotScript.Battle();
+                    if (CurrentBossEnergy == 0)
+                    {
+                        Variables.ScriptLog("Archwitch Event have no energy. Exiting now! ", Color.Yellow);
+                        return;
+                    }
                 }
                 crop = BotCore.CropImage(VCBotScript.image, new Point(420, 360), new Point(855, 430));
                 buttons = BotCore.FindImage(crop, Img.Red_Button, false);
