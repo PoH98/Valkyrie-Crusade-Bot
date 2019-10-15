@@ -120,14 +120,41 @@
   <metadata name="timer2.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>258, 20</value>
   </metadata>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="lbl_CEvent.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="lbl_CEvent.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 0</value>
+  </data>
+  <data name="lbl_CEvent.Size" type="System.Drawing.Size, System.Drawing">
+    <value>58, 13</value>
+  </data>
+  <data name="lbl_CEvent.TabIndex" type="System.Int32, mscorlib">
+    <value>43</value>
+  </data>
+  <data name="lbl_CEvent.Text" xml:space="preserve">
+    <value>lbl_CEvent</value>
+  </data>
+  <data name="&gt;&gt;lbl_CEvent.Name" xml:space="preserve">
+    <value>lbl_CEvent</value>
+  </data>
+  <data name="&gt;&gt;lbl_CEvent.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lbl_CEvent.Parent" xml:space="preserve">
+    <value>ED_Box</value>
+  </data>
+  <data name="&gt;&gt;lbl_CEvent.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="progressBar2.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 100</value>
   </data>
   <data name="progressBar2.Size" type="System.Drawing.Size, System.Drawing">
     <value>116, 23</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="progressBar2.TabIndex" type="System.Int32, mscorlib">
     <value>34</value>
   </data>
@@ -202,7 +229,7 @@
     <value>NoControl</value>
   </data>
   <data name="label7.Location" type="System.Drawing.Point, System.Drawing">
-    <value>91, 75</value>
+    <value>98, 75</value>
   </data>
   <data name="label7.Size" type="System.Drawing.Size, System.Drawing">
     <value>24, 13</value>
@@ -262,7 +289,7 @@
     <value>NoControl</value>
   </data>
   <data name="label6.Location" type="System.Drawing.Point, System.Drawing">
-    <value>67, 20</value>
+    <value>98, 20</value>
   </data>
   <data name="label6.Size" type="System.Drawing.Size, System.Drawing">
     <value>24, 13</value>
@@ -304,7 +331,7 @@
     <value>ED_Box</value>
   </data>
   <data name="&gt;&gt;groupBox9.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="label16.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -334,7 +361,7 @@
     <value>ED_Box</value>
   </data>
   <data name="&gt;&gt;label16.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="lbl_Rank.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -364,7 +391,7 @@
     <value>ED_Box</value>
   </data>
   <data name="&gt;&gt;lbl_Rank.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="label15.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -394,7 +421,7 @@
     <value>ED_Box</value>
   </data>
   <data name="&gt;&gt;label15.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="lbl_PT.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -424,7 +451,7 @@
     <value>ED_Box</value>
   </data>
   <data name="&gt;&gt;lbl_PT.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
   <data name="label9.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -454,7 +481,7 @@
     <value>ED_Box</value>
   </data>
   <data name="&gt;&gt;label9.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>6</value>
   </data>
   <data name="lbl_NxOn.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -484,7 +511,7 @@
     <value>ED_Box</value>
   </data>
   <data name="&gt;&gt;lbl_NxOn.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>7</value>
   </data>
   <data name="ED_Box.Location" type="System.Drawing.Point, System.Drawing">
     <value>210, 606</value>
@@ -494,9 +521,6 @@
   </data>
   <data name="ED_Box.TabIndex" type="System.Int32, mscorlib">
     <value>27</value>
-  </data>
-  <data name="ED_Box.Text" xml:space="preserve">
-    <value>塔楼活动</value>
   </data>
   <data name="&gt;&gt;ED_Box.Name" xml:space="preserve">
     <value>ED_Box</value>
@@ -1144,10 +1168,10 @@
     <value>NoControl</value>
   </data>
   <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>151, 63</value>
+    <value>219, 89</value>
   </data>
   <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>283, 27</value>
+    <value>215, 27</value>
   </data>
   <data name="label4.TabIndex" type="System.Int32, mscorlib">
     <value>26</value>
@@ -1171,10 +1195,10 @@
     <value>NoControl</value>
   </data>
   <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>151, 29</value>
+    <value>222, 29</value>
   </data>
   <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>283, 27</value>
+    <value>214, 27</value>
   </data>
   <data name="label3.TabIndex" type="System.Int32, mscorlib">
     <value>25</value>
@@ -1201,7 +1225,7 @@
     <value>NoControl</value>
   </data>
   <data name="lbl_esph.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 63</value>
+    <value>6, 89</value>
   </data>
   <data name="lbl_esph.Size" type="System.Drawing.Size, System.Drawing">
     <value>139, 13</value>
@@ -1255,10 +1279,10 @@
     <value>3</value>
   </data>
   <data name="sysd_box.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 396</value>
+    <value>0, 318</value>
   </data>
   <data name="sysd_box.Size" type="System.Drawing.Size, System.Drawing">
-    <value>448, 96</value>
+    <value>448, 174</value>
   </data>
   <data name="sysd_box.TabIndex" type="System.Int32, mscorlib">
     <value>19</value>
@@ -1276,7 +1300,7 @@
     <value>Debug</value>
   </data>
   <data name="&gt;&gt;sysd_box.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>4</value>
   </data>
   <data name="rbd_help.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1285,7 +1309,7 @@
     <value>NoControl</value>
   </data>
   <data name="rbd_help.Location" type="System.Drawing.Point, System.Drawing">
-    <value>193, 19</value>
+    <value>304, 19</value>
   </data>
   <data name="rbd_help.Size" type="System.Drawing.Size, System.Drawing">
     <value>109, 17</value>
@@ -1435,7 +1459,7 @@
     <value>NoControl</value>
   </data>
   <data name="rdb_card.Location" type="System.Drawing.Point, System.Drawing">
-    <value>96, 19</value>
+    <value>160, 19</value>
   </data>
   <data name="rdb_card.Size" type="System.Drawing.Size, System.Drawing">
     <value>73, 17</value>
@@ -1930,7 +1954,7 @@
     <value>OtherSettings_Tab</value>
   </data>
   <data name="&gt;&gt;btn_absys.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>2</value>
   </data>
   <data name="chk_GWW.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -4626,35 +4650,11 @@
   <data name="&gt;&gt;Settings.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="metroButton1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>221, 100</value>
-  </data>
-  <data name="metroButton1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>212, 37</value>
-  </data>
-  <data name="metroButton1.TabIndex" type="System.Int32, mscorlib">
-    <value>31</value>
-  </data>
-  <data name="metroButton1.Text" xml:space="preserve">
-    <value>错误提示</value>
-  </data>
-  <data name="&gt;&gt;metroButton1.Name" xml:space="preserve">
-    <value>metroButton1</value>
-  </data>
-  <data name="&gt;&gt;metroButton1.Type" xml:space="preserve">
-    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
-  </data>
-  <data name="&gt;&gt;metroButton1.Parent" xml:space="preserve">
-    <value>Debug</value>
-  </data>
-  <data name="&gt;&gt;metroButton1.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
   <data name="btn_Sleep.Location" type="System.Drawing.Point, System.Drawing">
-    <value>221, 57</value>
+    <value>222, 57</value>
   </data>
   <data name="btn_Sleep.Size" type="System.Drawing.Size, System.Drawing">
-    <value>212, 37</value>
+    <value>211, 37</value>
   </data>
   <data name="btn_Sleep.TabIndex" type="System.Int32, mscorlib">
     <value>30</value>
@@ -4672,7 +4672,7 @@
     <value>Debug</value>
   </data>
   <data name="&gt;&gt;btn_Sleep.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>2</value>
   </data>
   <data name="btn_OCR.Location" type="System.Drawing.Point, System.Drawing">
     <value>222, 14</value>
@@ -4696,7 +4696,7 @@
     <value>Debug</value>
   </data>
   <data name="&gt;&gt;btn_OCR.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>3</value>
   </data>
   <data name="pictureBox4.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -4723,7 +4723,7 @@
     <value>Debug</value>
   </data>
   <data name="&gt;&gt;pictureBox4.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>5</value>
   </data>
   <data name="Debug.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 38</value>

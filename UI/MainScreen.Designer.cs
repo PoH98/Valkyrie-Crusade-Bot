@@ -99,11 +99,11 @@
             this.Chk_Archwitch = new System.Windows.Forms.CheckBox();
             this.Combo_Archwitch = new MetroFramework.Controls.MetroComboBox();
             this.OtherSettings_Tab = new MetroFramework.Controls.MetroTabPage();
+            this.btn_absys = new System.Windows.Forms.Button();
             this.GuildWar = new System.Windows.Forms.GroupBox();
             this.chk_GWW = new System.Windows.Forms.CheckBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.Debug = new MetroFramework.Controls.MetroTabPage();
-            this.metroButton1 = new MetroFramework.Controls.MetroButton();
             this.btn_Sleep = new MetroFramework.Controls.MetroButton();
             this.btn_OCR = new MetroFramework.Controls.MetroButton();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
@@ -113,7 +113,7 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.chk_Log = new MetroFramework.Controls.MetroCheckBox();
             this.metroLink1 = new MetroFramework.Controls.MetroLink();
-            this.btn_absys = new System.Windows.Forms.Button();
+            this.lbl_CEvent = new System.Windows.Forms.Label();
             this.ED_Box.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.M_Box.SuspendLayout();
@@ -149,6 +149,7 @@
             // ED_Box
             // 
             this.ED_Box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
+            this.ED_Box.Controls.Add(this.lbl_CEvent);
             this.ED_Box.Controls.Add(this.groupBox9);
             this.ED_Box.Controls.Add(this.label16);
             this.ED_Box.Controls.Add(this.lbl_Rank);
@@ -572,7 +573,7 @@
             this.metroTabControl1.Controls.Add(this.Info);
             resources.ApplyResources(this.metroTabControl1, "metroTabControl1");
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 1;
+            this.metroTabControl1.SelectedIndex = 2;
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Brown;
             this.metroTabControl1.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroTabControl1.UseSelectable = true;
@@ -735,6 +736,12 @@
             this.OtherSettings_Tab.VerticalScrollbarHighlightOnWheel = false;
             this.OtherSettings_Tab.VerticalScrollbarSize = 10;
             // 
+            // btn_absys
+            // 
+            resources.ApplyResources(this.btn_absys, "btn_absys");
+            this.btn_absys.Name = "btn_absys";
+            this.btn_absys.UseVisualStyleBackColor = true;
+            // 
             // GuildWar
             // 
             this.GuildWar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
@@ -758,7 +765,6 @@
             // 
             // Debug
             // 
-            this.Debug.Controls.Add(this.metroButton1);
             this.Debug.Controls.Add(this.btn_Sleep);
             this.Debug.Controls.Add(this.btn_OCR);
             this.Debug.Controls.Add(this.sysd_box);
@@ -772,14 +778,6 @@
             this.Debug.VerticalScrollbarBarColor = true;
             this.Debug.VerticalScrollbarHighlightOnWheel = false;
             this.Debug.VerticalScrollbarSize = 10;
-            // 
-            // metroButton1
-            // 
-            this.metroButton1.FontWeight = MetroFramework.MetroButtonWeight.Regular;
-            resources.ApplyResources(this.metroButton1, "metroButton1");
-            this.metroButton1.Name = "metroButton1";
-            this.metroButton1.UseSelectable = true;
-            this.metroButton1.Click += new System.EventHandler(this.MetroButton1_Click);
             // 
             // btn_Sleep
             // 
@@ -866,11 +864,10 @@
             this.metroLink1.UseSelectable = true;
             this.metroLink1.Click += new System.EventHandler(this.MetroLink1_Click);
             // 
-            // btn_absys
+            // lbl_CEvent
             // 
-            resources.ApplyResources(this.btn_absys, "btn_absys");
-            this.btn_absys.Name = "btn_absys";
-            this.btn_absys.UseVisualStyleBackColor = true;
+            resources.ApplyResources(this.lbl_CEvent, "lbl_CEvent");
+            this.lbl_CEvent.Name = "lbl_CEvent";
             // 
             // MainScreen
             // 
@@ -1003,7 +1000,6 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private MetroFramework.Controls.MetroButton btn_Sleep;
         private System.Windows.Forms.CheckBox Suspend_Chk;
-        private MetroFramework.Controls.MetroButton metroButton1;
         private System.Windows.Forms.CheckBox Biubiu;
         private System.Windows.Forms.CheckBox WinAPi;
         private System.Windows.Forms.GroupBox Archwitch;
@@ -1019,6 +1015,7 @@
         private MetroFramework.Controls.MetroComboBox Combo_Weapon;
         private MetroFramework.Controls.MetroTabPage OtherSettings_Tab;
         private System.Windows.Forms.Button btn_absys;
+        private System.Windows.Forms.Label lbl_CEvent;
     }
 }
 

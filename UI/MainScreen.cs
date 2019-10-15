@@ -316,7 +316,14 @@ namespace BotFramework
             webBrowser3.Navigating += OnNavigating;
             webBrowser3.Navigated += WebBrowser3_Navigated;
             GetEventXML.LoadXMLEvent();
-            webBrowser3.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/"+ comboBox1.SelectedItem.ToString() +"/") + ".html"));
+            if (comboBox1.SelectedItem.ToString().Contains("cn"))
+            {
+                webBrowser3.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/scn/") + ".html"));
+            }
+            else
+            {
+                webBrowser3.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink + ".html"));
+            }
             VCBotScript.Read_Plugins();
             foreach (var s in PrivateVariable.BattleScript)
             {
@@ -528,7 +535,7 @@ namespace BotFramework
             GC.Collect();
             if (PrivateVariable.VCevent == PrivateVariable.EventType.Tower)
             {
-                ED_Box.Text = UILanguage["Tower"];
+                lbl_CEvent.Text = UILanguage["Tower"];
                 lbl_Rune.Text = UILanguage["Rune_Tower"];
                 progressBar1.Maximum = 5;
                 progressBar2.Maximum = 5;
@@ -561,7 +568,7 @@ namespace BotFramework
             }
             else if (PrivateVariable.VCevent == PrivateVariable.EventType.ArchWitch || PrivateVariable.VCevent == PrivateVariable.EventType.SoulWeapon)
             {
-                ED_Box.Text = UILanguage["Archwitch"];
+                lbl_CEvent.Text = UILanguage["Archwitch"];
                 lbl_Rune.Text = UILanguage["BossE_Archwitch"];
                 label7.Text = ArchwitchEvent.CurrentBossEnergy + "/" + ArchwitchEvent.FullBossEnergy;
                 label6.Text = ArchwitchEvent.CurrentWalkEnergy + "/" + ArchwitchEvent.FullWalkEnergy;
@@ -572,7 +579,7 @@ namespace BotFramework
             }
             else if (PrivateVariable.VCevent == PrivateVariable.EventType.DemonRealm)
             {
-                ED_Box.Text = UILanguage["Demon"];
+                lbl_CEvent.Text = UILanguage["Demon"];
                 lbl_Rune.Text = UILanguage["Rune_Demon"];
                 label7.Text = VCBotScript.runes + "/4";
                 label6.Text = VCBotScript.energy + "/5";
@@ -605,7 +612,7 @@ namespace BotFramework
             }
             else
             {
-                ED_Box.Text = UILanguage["Unknown"];
+                lbl_CEvent.Text = UILanguage["Unknown"];
             }
             if (VCBotScript.nextOnline != null)
             {
@@ -868,19 +875,37 @@ namespace BotFramework
         private void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             Variables.ModifyConfig("General","Lang", comboBox1.SelectedItem.ToString());
+            if (comboBox1.SelectedItem.ToString().Contains("cn"))
+            {
+                Biubiu.Visible = true;
+            }
+            else
+            {
+                Biubiu.Visible = false;
+            }
             ChangeLanguage(comboBox1.SelectedItem.ToString(), this);
             html = Img.index;
             WebClientOverride wc = new WebClientOverride();
-            try
+            if (comboBox1.SelectedItem.ToString().Contains("cn"))
             {
-                html = wc.DownloadString(new Uri("https://d2n1d3zrlbtx8o.cloudfront.net/news/info/" + comboBox1.SelectedItem.ToString() + "/index.html"));
+                try
+                {
+                    html = wc.DownloadString(new Uri("https://d2n1d3zrlbtx8o.cloudfront.net/news/info/scn/index.html"));
+                    html = html.Replace("bgcolor=\"#000000\"　text color=\"#FFFFFF\"", "style=\"background - color:#303030; color:white\"");
+                    html = html.Remove(html.IndexOf("<table width=\"200\">"), html.IndexOf("</table>") - html.IndexOf("<table width=\"200\">"));
+                    html = Regex.Replace(html, "(\\<span class\\=\"iro4\"\\>.*</span>)", "");
+                }
+                catch
+                {
+
+                }
+            }
+            else
+            {
+                html = wc.DownloadString(new Uri("https://d2n1d3zrlbtx8o.cloudfront.net/news/info/en/index.html"));
                 html = html.Replace("bgcolor=\"#000000\"　text color=\"#FFFFFF\"", "style=\"background - color:#303030; color:white\"");
                 html = html.Remove(html.IndexOf("<table width=\"200\">"), html.IndexOf("</table>") - html.IndexOf("<table width=\"200\">"));
                 html = Regex.Replace(html, "(\\<span class\\=\"iro4\"\\>.*</span>)", "");
-            }
-            catch
-            {
-
             }
             webBrowser1.DocumentText = html;
         }
@@ -943,11 +968,25 @@ namespace BotFramework
             {
                 if (chk_browser.Checked)
                 {
-                    Process.Start("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/" + comboBox1.SelectedItem.ToString() + "/") + ".html");
+                    if (comboBox1.SelectedItem.ToString().Contains("cn"))
+                    {
+                        Process.Start("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/scn/") + ".html");
+                    }
+                    else
+                    {
+                        Process.Start("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink + ".html");
+                    }
                 }
                 else
                 {
-                    webBrowser3.Navigate("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/" + comboBox1.SelectedItem.ToString() + "/") + ".html");
+                    if (comboBox1.SelectedItem.ToString().Contains("cn"))
+                    {
+                        webBrowser3.Navigate("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/scn/") + ".html");
+                    }
+                    else
+                    {
+                        webBrowser3.Navigate("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink + ".html");
+                    }
                 }
 
             }
@@ -987,12 +1026,26 @@ namespace BotFramework
             {
                 if (chk_browser.Checked)
                 {
-                    Process.Start("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/"+ comboBox1.SelectedItem.ToString()+"/index.html");
+                    if (comboBox1.SelectedItem.ToString().Contains("cn"))
+                    {
+                        Process.Start("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/scn/index.html");
+                    }
+                    else
+                    {
+                        Process.Start("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/en/index.html");
+                    }
                 }
                 else
                 {
                     webBrowser3.Visible = true;
-                    webBrowser3.Navigate("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/" + comboBox1.SelectedItem.ToString() + "/index.html");
+                    if (comboBox1.SelectedItem.ToString().Contains("cn"))
+                    {
+                        webBrowser3.Navigate("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/scn/index.html");
+                    }
+                    else
+                    {
+                        webBrowser3.Navigate("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/en/index.html");
+                    }
                 }
             }
         }

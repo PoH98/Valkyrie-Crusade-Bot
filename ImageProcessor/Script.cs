@@ -158,9 +158,9 @@ namespace BotFramework
                     }
                     catch (Exception ex)
                     {
-                        script.ResetScript();
                         if(ex is SocketException || ex is DeviceNotFoundException || ex is AdbException)
                         {
+                            Variables.ScriptLog("Exception found! Restarting emulator as emulator had closed!", Color.Red);
                             Start:
                             try
                             {
@@ -172,12 +172,10 @@ namespace BotFramework
                                 BotCore.Delay(3000);
                                 goto Start;
                             }
-                            if (!CheckDeviceOnline())
-                            {
-                                BotCore.RestartEmulator();
-                            }
+                            BotCore.RestartEmulator();
                             BotCore.Delay(10000);
                             BotCore.ConnectAndroidEmulator();
+                            script.ResetScript();
                             continue;
                         }
                         else if (ex is ThreadAbortException) //Bot stopped
@@ -246,38 +244,7 @@ namespace BotFramework
             }
             errornum++;
         }
-        private static bool CheckDeviceOnline()
-        {
-            if(Variables.Proc != null)
-            {
-                if (Variables.Proc.HasExited || !Variables.Proc.Responding)
-                {
-                    return false;
-                }
-                else
-                {
-                    if (Variables.Controlled_Device != null)
-                    {
-                        if((Variables.Controlled_Device as DeviceData).State == DeviceState.Online)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            }
-            else
-            {
-                return false;
-            }
-        }
+        
         /// <summary>
         /// If time delay is true, means the android is now delaying over 30 seconds!
         /// </summary>

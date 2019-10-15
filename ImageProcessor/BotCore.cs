@@ -51,7 +51,6 @@ namespace BotFramework
         /// </summary>
         public static TcpSocket minitouchSocket;
         static readonly ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
-        static bool JustStarted = true;
         /// <summary>
         /// Read emulators dll
         /// </summary>
@@ -252,7 +251,6 @@ namespace BotFramework
             Variables.ScriptLog("Restarting Emulator...",Color.Red);
             Thread.Sleep(1000);
             StartEmulator();
-            JustStarted = true;
         }
         /// <summary>
         /// Method for resizing emulators using Variables.EmulatorWidth, Variables.EmulatorHeight, Variables.EmulatorDpi
@@ -533,7 +531,6 @@ namespace BotFramework
                         goto Cm;
                     }
                     Variables.AdvanceLog("Minitouch connected on Port number " + minitouchPort, lineNumber, caller);
-                    JustStarted = false;
                 }
                 else
                 {
@@ -662,21 +659,19 @@ namespace BotFramework
             }
             try
             {
-                if(Variables.Controlled_Device == null)
+                if (Variables.Controlled_Device == null)
                 {
                     return false;
                 }
-                    
-
-                    client.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", (Variables.Controlled_Device as DeviceData), receiver);
+                client.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", (Variables.Controlled_Device as DeviceData), receiver);
+                Thread.Sleep(1000);
+                var ico = FindImage(img, icon, true);
+                if (ico != null)
+                {
+                    SendTap(ico.Value);
                     Thread.Sleep(1000);
-                    var ico = FindImage(img, icon, true);
-                    if (ico != null)
-                    {
-                        SendTap(ico.Value);
-                        Thread.Sleep(1000);
-                        return true;
-                    }
+                    return true;
+                }
             }
             catch (InvalidOperationException)
             {
@@ -684,7 +679,7 @@ namespace BotFramework
             }
             catch (ArgumentOutOfRangeException)
             {
-                
+
             }
             return false;
         }

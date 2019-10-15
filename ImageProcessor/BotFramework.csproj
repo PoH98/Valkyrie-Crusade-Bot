@@ -136,7 +136,7 @@
     <Compile Include="Download.Designer.cs">
       <DependentUpon>Download.cs</DependentUpon>
     </Compile>
-    <Compile Include="EmulatorController.cs" />
+    <Compile Include="BotCore.cs" />
     <Compile Include="DllImport.cs" />
     <Compile Include="EmulatorInterface.cs" />
     <Compile Include="Emulator_Selection.cs">

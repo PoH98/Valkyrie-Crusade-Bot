@@ -1275,6 +1275,14 @@ namespace UI
                     {
                         try
                         {
+                            if (lang.Contains("cn"))
+                            {
+                                lang = "scn";
+                            }
+                            else
+                            {
+                                lang = "en";
+                            }
                             WebClientOverride wc = new WebClientOverride();
                             var url = "https://d2n1d3zrlbtx8o.cloudfront.net/news/info/" + lang + "/index.html";
                             MainScreen.html = wc.DownloadString(new Uri(url));
