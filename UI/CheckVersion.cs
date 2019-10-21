@@ -20,16 +20,18 @@ namespace UI
             {
                 WebClientOverride wc = new WebClientOverride();
                 var api = wc.DownloadString("https://api.github.com/repos/PoH98/Valkyrie-Crusade-Bot/releases/latest");
-                dynamic data = JObject.Parse(api);
+                JObject data = JObject.Parse(api);
                 string latestversion = data["tag_name"].ToString();
                 BufferUpdateText = data["body"].ToString().Replace("\r\n", "\n\n");
-                if (Regex.Match(currentVersion.Replace(".", ""), @"\d+").Value != Regex.Match(latestversion.Replace(".", ""), @"\d+").Value)
+                JObject assets = JObject.Parse(data["assets"][0].ToString());
+                string download = assets["browser_download_url"].ToString();
+                if (Regex.Match(currentVersion.Replace(".",""),@"\d+").Value != Regex.Match(latestversion.Replace(".", ""), @"\d+").Value)
                 {
                     if (Variables.FindConfig("General", "AlertUpdate", out string output))
                     {
                         if (bool.Parse(output))
                         {
-                            UpdateText = BufferUpdateText;
+                            UpdateText = BufferUpdateText + "<br><hr><a href=\""+download+"\">Download</a>";
                         }
                     }
                     else

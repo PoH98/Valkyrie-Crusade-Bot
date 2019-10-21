@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainScreen));
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.ED_Box = new System.Windows.Forms.GroupBox();
+            this.lbl_CEvent = new System.Windows.Forms.Label();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
             this.progressBar2 = new MetroFramework.Controls.MetroProgressBar();
             this.progressBar1 = new MetroFramework.Controls.MetroProgressBar();
@@ -113,7 +114,6 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.chk_Log = new MetroFramework.Controls.MetroCheckBox();
             this.metroLink1 = new MetroFramework.Controls.MetroLink();
-            this.lbl_CEvent = new System.Windows.Forms.Label();
             this.ED_Box.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.M_Box.SuspendLayout();
@@ -161,6 +161,11 @@
             resources.ApplyResources(this.ED_Box, "ED_Box");
             this.ED_Box.Name = "ED_Box";
             this.ED_Box.TabStop = false;
+            // 
+            // lbl_CEvent
+            // 
+            resources.ApplyResources(this.lbl_CEvent, "lbl_CEvent");
+            this.lbl_CEvent.Name = "lbl_CEvent";
             // 
             // groupBox9
             // 
@@ -573,7 +578,7 @@
             this.metroTabControl1.Controls.Add(this.Info);
             resources.ApplyResources(this.metroTabControl1, "metroTabControl1");
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 2;
+            this.metroTabControl1.SelectedIndex = 0;
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Brown;
             this.metroTabControl1.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroTabControl1.UseSelectable = true;
@@ -613,7 +618,7 @@
             this.metroTabControl2.Controls.Add(this.OtherSettings_Tab);
             resources.ApplyResources(this.metroTabControl2, "metroTabControl2");
             this.metroTabControl2.Name = "metroTabControl2";
-            this.metroTabControl2.SelectedIndex = 2;
+            this.metroTabControl2.SelectedIndex = 0;
             this.metroTabControl2.Style = MetroFramework.MetroColorStyle.Red;
             this.metroTabControl2.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroTabControl2.UseSelectable = true;
@@ -863,11 +868,6 @@
             this.metroLink1.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroLink1.UseSelectable = true;
             this.metroLink1.Click += new System.EventHandler(this.MetroLink1_Click);
-            // 
-            // lbl_CEvent
-            // 
-            resources.ApplyResources(this.lbl_CEvent, "lbl_CEvent");
-            this.lbl_CEvent.Name = "lbl_CEvent";
             // 
             // MainScreen
             // 

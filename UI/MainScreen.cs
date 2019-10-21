@@ -133,7 +133,6 @@ namespace BotFramework
                 // Shut down the current process
                 Application.Exit();
             }
-            CheckVersion.CheckUpdate();
             if (!Directory.Exists("Img"))
             {
                 File.WriteAllBytes("Img.zip", Img.Images);
@@ -160,6 +159,7 @@ namespace BotFramework
                 }
             }
             Variables.ReadConfig();
+            CheckVersion.CheckUpdate();
             string _NET = Get45PlusFromRegistry();
             if (!Directory.Exists("Language"))
             {
@@ -316,9 +316,9 @@ namespace BotFramework
             webBrowser3.Navigating += OnNavigating;
             webBrowser3.Navigated += WebBrowser3_Navigated;
             GetEventXML.LoadXMLEvent();
-            if (comboBox1.SelectedItem.ToString().Contains("cn"))
+            if (comboBox1.SelectedItem.ToString().Contains("ch"))
             {
-                webBrowser3.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/scn/") + ".html"));
+                webBrowser3.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/sch/") + ".html"));
             }
             else
             {
@@ -720,7 +720,7 @@ namespace BotFramework
             if (chk_autoRT.Checked)
             {
                 Variables.ModifyConfig("General","Manual_Rune", "false");
-                chk_item.Enabled = chk_autoRT.Checked;
+                //chk_item.Enabled = chk_autoRT.Checked;
             }
         }
 
@@ -730,7 +730,7 @@ namespace BotFramework
             {
                 Variables.ModifyConfig("General","Manual_Rune", "true");
                 chk_item.Checked = false;
-                chk_item.Enabled = false;
+                //chk_item.Enabled = false;
             }
         }
 
@@ -875,7 +875,7 @@ namespace BotFramework
         private void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             Variables.ModifyConfig("General","Lang", comboBox1.SelectedItem.ToString());
-            if (comboBox1.SelectedItem.ToString().Contains("cn"))
+            if (comboBox1.SelectedItem.ToString().Contains("ch"))
             {
                 Biubiu.Visible = true;
             }
@@ -886,11 +886,11 @@ namespace BotFramework
             ChangeLanguage(comboBox1.SelectedItem.ToString(), this);
             html = Img.index;
             WebClientOverride wc = new WebClientOverride();
-            if (comboBox1.SelectedItem.ToString().Contains("cn"))
+            if (comboBox1.SelectedItem.ToString().Contains("ch"))
             {
                 try
                 {
-                    html = wc.DownloadString(new Uri("https://d2n1d3zrlbtx8o.cloudfront.net/news/info/scn/index.html"));
+                    html = wc.DownloadString(new Uri("https://d2n1d3zrlbtx8o.cloudfront.net/news/info/sch/index.html"));
                     html = html.Replace("bgcolor=\"#000000\"　text color=\"#FFFFFF\"", "style=\"background - color:#303030; color:white\"");
                     html = html.Remove(html.IndexOf("<table width=\"200\">"), html.IndexOf("</table>") - html.IndexOf("<table width=\"200\">"));
                     html = Regex.Replace(html, "(\\<span class\\=\"iro4\"\\>.*</span>)", "");
@@ -968,9 +968,9 @@ namespace BotFramework
             {
                 if (chk_browser.Checked)
                 {
-                    if (comboBox1.SelectedItem.ToString().Contains("cn"))
+                    if (comboBox1.SelectedItem.ToString().Contains("ch"))
                     {
-                        Process.Start("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/scn/") + ".html");
+                        Process.Start("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/sch/") + ".html");
                     }
                     else
                     {
@@ -979,9 +979,9 @@ namespace BotFramework
                 }
                 else
                 {
-                    if (comboBox1.SelectedItem.ToString().Contains("cn"))
+                    if (comboBox1.SelectedItem.ToString().Contains("ch"))
                     {
-                        webBrowser3.Navigate("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/scn/") + ".html");
+                        webBrowser3.Navigate("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/sch/") + ".html");
                     }
                     else
                     {
@@ -1026,9 +1026,9 @@ namespace BotFramework
             {
                 if (chk_browser.Checked)
                 {
-                    if (comboBox1.SelectedItem.ToString().Contains("cn"))
+                    if (comboBox1.SelectedItem.ToString().Contains("ch"))
                     {
-                        Process.Start("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/scn/index.html");
+                        Process.Start("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/sch/index.html");
                     }
                     else
                     {
@@ -1038,9 +1038,9 @@ namespace BotFramework
                 else
                 {
                     webBrowser3.Visible = true;
-                    if (comboBox1.SelectedItem.ToString().Contains("cn"))
+                    if (comboBox1.SelectedItem.ToString().Contains("ch"))
                     {
-                        webBrowser3.Navigate("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/scn/index.html");
+                        webBrowser3.Navigate("http://d2n1d3zrlbtx8o.cloudfront.net/news/help/sch/index.html");
                     }
                     else
                     {
