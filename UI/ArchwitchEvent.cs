@@ -305,6 +305,12 @@ namespace UI
             do
             {
                 Variables.ScriptLog("Detecting UIs...",Color.White);
+                if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
+                {
+                    ScriptErrorHandler.Reset("Game closed!");
+                    return;
+                }
+                ScriptErrorHandler.ErrorHandle();
                 Random rnd = new Random();
                 VCBotScript.image = BotCore.ImageCapture();
                 var crop = BotCore.CropImage(VCBotScript.image, new Point(420, 360), new Point(855, 430));
@@ -341,8 +347,7 @@ namespace UI
                     BotCore.Delay(1000, 1500);
                     VCBotScript.image = BotCore.ImageCapture();
                 }
-                crop = BotCore.CropImage(VCBotScript.image, new Point(665, 610), new Point(935, 685));
-                buttons = BotCore.FindImage(crop, Img.GreenButton, false);
+                buttons = BotCore.FindImage(VCBotScript.image, Img.GreenButton, false);
                 if(buttons != null)
                 {
                     BotCore.SendTap(buttons.Value.X + rnd.Next(675, 940), buttons.Value.Y + rnd.Next(620, 650));
@@ -405,8 +410,7 @@ namespace UI
                         return;
                     }
                 }
-                crop = BotCore.CropImage(VCBotScript.image, new Point(420, 360), new Point(855, 430));
-                buttons = BotCore.FindImage(crop, Img.Red_Button, false);
+                buttons = BotCore.FindImage(VCBotScript.image, Img.Red_Button, false);
                 if (buttons != null)
                 {
                     BotCore.SendTap(buttons.Value.X + rnd.Next(430, 845), buttons.Value.Y + rnd.Next(370, 420));

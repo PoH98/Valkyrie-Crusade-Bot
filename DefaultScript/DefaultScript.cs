@@ -18,9 +18,9 @@ namespace DefaultScript
         public void Attack()
         {
             Random rnd = new Random();
-            Bitmap bmp = (Bitmap)Image.FromFile("Img\\KO_Chance\\KO.png");
-            var points = BotCore.FindImage(VCBotScript.image, new Bitmap[] { bmp }, true);
-            if(points != null)
+            byte[] KO = BotCore.CropImage(VCBotScript.image, new Point(230, 70), new Point(1140, 160));
+            var points = BotCore.FindImages(KO, new Bitmap[] { Resource.Stun1, Resource.Stun2 }, false);
+            if(points != null && points.Length > 2)
             {
                 //Ko Chance
                 KOChance = true;

@@ -310,20 +310,48 @@ namespace BotFramework
             }
             webBrowser1.ScriptErrorsSuppressed = true;
             webBrowser3.ScriptErrorsSuppressed = true;
+            webBrowser2.ScriptErrorsSuppressed = true;
             PrivateVariable.nospam = DateTime.Now;
             string ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36";
             DllImport.UrlMkSetSessionOption(DllImport.URLMON_OPTION_USERAGENT, ua, ua.Length, 0);
             webBrowser3.Navigating += OnNavigating;
             webBrowser3.Navigated += WebBrowser3_Navigated;
             GetEventXML.LoadXMLEvent();
-            if (comboBox1.SelectedItem.ToString().Contains("ch"))
+            try
             {
-                webBrowser3.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/sch/") + ".html"));
+                if (comboBox1.SelectedItem.ToString().Contains("ch"))
+                {
+                    webBrowser3.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink.Replace("/en/", "/sch/") + ".html"));
+                }
+                else
+                {
+                    webBrowser3.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink + ".html"));
+                }
+                if (comboBox1.SelectedItem.ToString().Contains("ch"))
+                {
+                    webBrowser2.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/" + GetEventXML.GuildwarLink.Replace("/en/", "/sch/") + ".html"));
+                }
+                else
+                {
+                    webBrowser2.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/" + GetEventXML.GuildwarLink + ".html"));
+                }
+                webBrowser2.DocumentCompleted += (sender1, e1) =>
+                {
+                    webBrowser2.Document.Body.MouseEnter += (sender2, e2) =>
+                    {
+                        webBrowser2.Dock = DockStyle.Fill;
+                    };
+                    webBrowser2.Document.Body.MouseLeave += (sender2, e2) =>
+                    {
+                        webBrowser2.Dock = DockStyle.None;
+                    };
+                };
             }
-            else
+            catch
             {
-                webBrowser3.Navigate(new Uri("http://www-valkyriecrusade.nubee.com/" + GetEventXML.Eventlink + ".html"));
+                webBrowser2.Visible = false;
             }
+            
             VCBotScript.Read_Plugins();
             foreach (var s in PrivateVariable.BattleScript)
             {
@@ -438,7 +466,7 @@ namespace BotFramework
                     ScriptErrorHandler.errorImages.Add(new Bitmap(temp));
                 }
             }
-            if ((PrivateVariable.nospam - DateTime.Now).Duration() < TimeSpan.FromSeconds(4))
+            if ((PrivateVariable.nospam - DateTime.Now).Duration() < TimeSpan.FromSeconds(1))
             {
                 return;
             }
@@ -869,12 +897,13 @@ namespace BotFramework
             {
                 Button3_Click(sender, e);
             }
+            BotCore.EjectSockets();
             Environment.Exit(0);
         }
         
         private void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Variables.ModifyConfig("General","Lang", comboBox1.SelectedItem.ToString());
+            Variables.ModifyConfig("General", "Lang", comboBox1.SelectedItem.ToString());
             if (comboBox1.SelectedItem.ToString().Contains("ch"))
             {
                 Biubiu.Visible = true;
@@ -885,27 +914,37 @@ namespace BotFramework
             }
             ChangeLanguage(comboBox1.SelectedItem.ToString(), this);
             html = Img.index;
-            WebClientOverride wc = new WebClientOverride();
-            if (comboBox1.SelectedItem.ToString().Contains("ch"))
+            using (WebClientOverride wc = new WebClientOverride())
             {
-                try
+                if (comboBox1.SelectedItem.ToString().Contains("ch"))
                 {
-                    html = wc.DownloadString(new Uri("https://d2n1d3zrlbtx8o.cloudfront.net/news/info/sch/index.html"));
-                    html = html.Replace("bgcolor=\"#000000\"　text color=\"#FFFFFF\"", "style=\"background - color:#303030; color:white\"");
-                    html = html.Remove(html.IndexOf("<table width=\"200\">"), html.IndexOf("</table>") - html.IndexOf("<table width=\"200\">"));
-                    html = Regex.Replace(html, "(\\<span class\\=\"iro4\"\\>.*</span>)", "");
+                    try
+                    {
+                        html = wc.DownloadString(new Uri("https://d2n1d3zrlbtx8o.cloudfront.net/news/info/sch/index.html"));
+                        html = html.Replace("bgcolor=\"#000000\"　text color=\"#FFFFFF\"", "style=\"background - color:#303030; color:white\"");
+                        html = html.Remove(html.IndexOf("<table width=\"200\">"), html.IndexOf("</table>") - html.IndexOf("<table width=\"200\">"));
+                        html = Regex.Replace(html, "(\\<span class\\=\"iro4\"\\>.*</span>)", "");
+                    }
+                    catch
+                    {
+
+                    }
                 }
-                catch
+                else
                 {
+                    try
+                    {
+                        html = wc.DownloadString(new Uri("https://d2n1d3zrlbtx8o.cloudfront.net/news/info/en/index.html"));
+                        html = html.Replace("bgcolor=\"#000000\"　text color=\"#FFFFFF\"", "style=\"background - color:#303030; color:white\"");
+                        html = html.Remove(html.IndexOf("<table width=\"200\">"), html.IndexOf("</table>") - html.IndexOf("<table width=\"200\">"));
+                        html = Regex.Replace(html, "(\\<span class\\=\"iro4\"\\>.*</span>)", "");
+                    }
+                    catch
+                    {
+
+                    }
 
                 }
-            }
-            else
-            {
-                html = wc.DownloadString(new Uri("https://d2n1d3zrlbtx8o.cloudfront.net/news/info/en/index.html"));
-                html = html.Replace("bgcolor=\"#000000\"　text color=\"#FFFFFF\"", "style=\"background - color:#303030; color:white\"");
-                html = html.Remove(html.IndexOf("<table width=\"200\">"), html.IndexOf("</table>") - html.IndexOf("<table width=\"200\">"));
-                html = Regex.Replace(html, "(\\<span class\\=\"iro4\"\\>.*</span>)", "");
             }
             webBrowser1.DocumentText = html;
         }

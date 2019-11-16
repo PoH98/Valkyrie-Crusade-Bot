@@ -9,8 +9,9 @@ namespace UI
     class GetEventXML
     {
         private static string url = "http://www-valkyriecrusade.nubee.com/";
-        public static string Eventlink, RandomImage;
+        public static string Eventlink, RandomImage, GuildwarLink;
         public static DateTime guildwar = DateTime.MinValue;
+ 
         public static void LoadXMLEvent()
         {
             List<string> Imagelink = new List<string>();
@@ -43,6 +44,7 @@ namespace UI
                         var date = Convert.ToDateTime(n.InnerXml.Substring(n.InnerXml.IndexOf("<LastModified xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">")).Replace("<LastModified xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">", "").Remove(10));
                         if (guildwar < date)
                         {
+                            GuildwarLink = n.InnerText.Remove(n.InnerText.IndexOf(".html"));
                             guildwar = date;
                         }
                     }

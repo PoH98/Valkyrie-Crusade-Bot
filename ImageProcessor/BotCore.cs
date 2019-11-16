@@ -50,7 +50,6 @@ namespace BotFramework
         /// minitouch Tcp socket. Default null, use connectEmulator to gain a socket connection!
         /// </summary>
         public static TcpSocket minitouchSocket;
-        static readonly ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
         /// <summary>
         /// Read emulators dll
         /// </summary>
@@ -211,7 +210,7 @@ namespace BotFramework
             }
             try
             {
-                
+                ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
                 client.ExecuteRemoteCommand("adb install " + path, (Variables.Controlled_Device as DeviceData), receiver);
             }
             catch (InvalidOperationException)
@@ -281,7 +280,8 @@ namespace BotFramework
                 return;
             }
             Variables.AdvanceLog("Connecting emulator...", lineNumber, caller);
-            if(Variables.Proc == null)
+            ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
+            if (Variables.Proc == null)
             {
                 if (!ScriptRun.Run)
                 {
@@ -331,7 +331,6 @@ namespace BotFramework
                             }
                             client.SetDevice(socket, device);
                             //await emulator start
-                            receiver.Flush();
                             do
                             {
                                 client.ExecuteRemoteCommand("getprop sys.boot_completed", (Variables.Controlled_Device as DeviceData),receiver);
@@ -396,7 +395,7 @@ namespace BotFramework
             {
 
             }
-            receiver.Flush();
+            ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
             var path = Path.GetTempPath() + "minitouch";
             if (File.Exists(path))
             {
@@ -512,7 +511,7 @@ namespace BotFramework
                     return;
                 }
                 Cm:
-                
+                ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
                 client.ExecuteRemoteCommandAsync("/data/local/tmp/minitouch", (Variables.Controlled_Device as DeviceData), receiver, CancellationToken.None, int.MaxValue);
                 client.CreateForward((Variables.Controlled_Device as DeviceData), ForwardSpec.Parse($"tcp:{minitouchPort}"), ForwardSpec.Parse("localabstract:minitouch"), true);
                 minitouchSocket = new TcpSocket();
@@ -597,9 +596,9 @@ namespace BotFramework
         {
             if(Variables.Controlled_Device == null)
             {
-                throw new DeviceNotFoundException("There is no connected device!");
+                throw new DeviceNotFoundException();
             }
-            receiver.Flush();
+            ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
             client.ExecuteRemoteCommand(command, (Variables.Controlled_Device as DeviceData), receiver);
             return receiver.ToString();
         }
@@ -663,6 +662,7 @@ namespace BotFramework
                 {
                     return false;
                 }
+                ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
                 client.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", (Variables.Controlled_Device as DeviceData), receiver);
                 Thread.Sleep(1000);
                 var ico = FindImage(img, icon, true);
@@ -700,7 +700,7 @@ namespace BotFramework
                 {
                     return false;
                 }
-                
+                ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
                 client.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", (Variables.Controlled_Device as DeviceData), receiver);
                 Thread.Sleep(1000);
                 client.ExecuteRemoteCommand("am start -n " + packagename, (Variables.Controlled_Device as DeviceData), receiver);
@@ -733,6 +733,7 @@ namespace BotFramework
                 {
                     return;
                 }
+                ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
                 client.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", (Variables.Controlled_Device as DeviceData), receiver);
                 Thread.Sleep(1000);
                 client.ExecuteRemoteCommand("am force-stop " + packagename, (Variables.Controlled_Device as DeviceData), receiver);
@@ -850,6 +851,7 @@ namespace BotFramework
                 {
                     return null;
                 }
+                ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
                 client.ExecuteRemoteCommand("screencap " + androidimagepath, (Variables.Controlled_Device as DeviceData), receiver);
                 if (Variables.NeedPull)
                 {
@@ -927,7 +929,7 @@ namespace BotFramework
             {
                 return;
             }
-            receiver.Flush();
+            ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
             client.ExecuteRemoteCommand("input touchscreen swipe " + x + " " + y + " " + ex + " " + ey + " " + usedTime, (Variables.Controlled_Device as DeviceData), receiver);
             if (receiver.ToString().Contains("Error"))
             {
@@ -1000,7 +1002,7 @@ namespace BotFramework
             {
                 return;
             }
-            receiver.Flush();
+            ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
             client.ExecuteRemoteCommand("input touchscreen swipe " + startX + " " + startY + " " + endX + " " + endY + " " + usedTime, (Variables.Controlled_Device as DeviceData), receiver);
             if (receiver.ToString().Contains("Error"))
             {
@@ -1618,9 +1620,9 @@ namespace BotFramework
             }
             if ((Variables.Controlled_Device as DeviceData).State == DeviceState.Online)
             {
+                ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
                 client.ExecuteRemoteCommand("content insert --uri content://settings/system --bind name:s:accelerometer_rotation --bind value:i:0", (Variables.Controlled_Device as DeviceData), receiver);
                 client.ExecuteRemoteCommand("content insert --uri content://settings/system --bind name:s:user_rotation --bind value:i:0", (Variables.Controlled_Device as DeviceData), receiver);
-                receiver.Flush();
             }
         }
         /// <summary>
@@ -1771,7 +1773,7 @@ namespace BotFramework
             }
             try
             {
-                
+                ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
                 client.ExecuteRemoteCommand("input text \"" + text.Replace(" ", "%s") + "\"", (Variables.Controlled_Device as DeviceData), receiver);
             }
             catch (InvalidOperationException)
@@ -1799,7 +1801,7 @@ namespace BotFramework
         /// <returns></returns>
         public static string AdbCommand(string command, object device)
         {
-            receiver.Flush();
+            ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
             client.ExecuteRemoteCommand(command, (device as DeviceData), receiver);
             return receiver.ToString();
         }

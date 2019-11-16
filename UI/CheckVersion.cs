@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System.Drawing;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -19,7 +20,8 @@ namespace UI
             try
             {
                 WebClientOverride wc = new WebClientOverride();
-                var api = wc.DownloadString("https://api.github.com/repos/PoH98/Valkyrie-Crusade-Bot/releases/latest");
+                var rawdata = wc.DownloadData("https://api.github.com/repos/PoH98/Valkyrie-Crusade-Bot/releases/latest");
+                var api = Encoding.UTF8.GetString(rawdata);
                 JObject data = JObject.Parse(api);
                 string latestversion = data["tag_name"].ToString();
                 BufferUpdateText = data["body"].ToString().Replace("\r\n", "\n\n");

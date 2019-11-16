@@ -500,11 +500,7 @@ namespace UI
             {
                 Variables.ScriptLog("HP bar not found. Finding UIs", Color.Yellow);
                 Attackable = false;
-                Random rnd = new Random();
-                if (PrivateVariable.VCevent != PrivateVariable.EventType.ArchWitch && PrivateVariable.VCevent != PrivateVariable.EventType.SoulWeapon)
-                    BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
-                else
-                    BotCore.SendTap(643, 167);
+                BotCore.SendTap(643, 167);
                 Point? point = BotCore.FindImage(image, Img.Close2, false);
                 if (point != null)
                 {
@@ -513,10 +509,7 @@ namespace UI
                     locateUIError = 0;
                     image = BotCore.ImageCapture();
                 }
-                if (PrivateVariable.VCevent != PrivateVariable.EventType.ArchWitch && PrivateVariable.VCevent != PrivateVariable.EventType.SoulWeapon)
-                    BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
-                else
-                    BotCore.SendTap(643, 167);
+                BotCore.SendTap(643, 167);
                 if (BotCore.FindImage(image, Img.NoEnergy, true) != null)
                 {
                     ScriptErrorHandler.Reset("No Energy Left!");
@@ -524,10 +517,7 @@ namespace UI
                     locateUIError = 0;
                     return;
                 }
-                if (PrivateVariable.VCevent != PrivateVariable.EventType.ArchWitch && PrivateVariable.VCevent != PrivateVariable.EventType.SoulWeapon)
-                    BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
-                else
-                    BotCore.SendTap(643, 167);
+                BotCore.SendTap(643, 167);
                 if (!PrivateVariable.Battling)
                 {
                     return;
@@ -544,10 +534,7 @@ namespace UI
                     locateUIError = 0;
                     return;
                 }
-                if (PrivateVariable.VCevent != PrivateVariable.EventType.ArchWitch && PrivateVariable.VCevent != PrivateVariable.EventType.SoulWeapon)
-                    BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
-                else
-                    BotCore.SendTap(643, 167);
+                BotCore.SendTap(643, 167);
                 if (!PrivateVariable.Battling)
                 {
                     return;
@@ -563,10 +550,7 @@ namespace UI
                     locateUIError = 0;
                     return;
                 }
-                if (PrivateVariable.VCevent != PrivateVariable.EventType.ArchWitch && PrivateVariable.VCevent != PrivateVariable.EventType.SoulWeapon)
-                    BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
-                else
-                    BotCore.SendTap(643, 167);
+                BotCore.SendTap(643, 167);
                 if (!PrivateVariable.Battling)
                 {
                     return;
@@ -586,10 +570,7 @@ namespace UI
                 {
                     return;
                 }
-                if (PrivateVariable.VCevent != PrivateVariable.EventType.ArchWitch && PrivateVariable.VCevent != PrivateVariable.EventType.SoulWeapon)
-                    BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
-                else
-                    BotCore.SendTap(643, 167);
+                BotCore.SendTap(643, 167);
                 var crop = BotCore.CropImage(image, new Point(125, 0), new Point(1280, 720));
                 point = BotCore.FindImage(crop, Img.GreenButton, false);
                 if (point != null)
@@ -1271,7 +1252,7 @@ namespace UI
                 if (File.Exists("Profiles\\Verify.vcb"))
                 {
                     FileInfo f = new FileInfo("Profiles\\Verify.vcb");
-                    if((DateTime.Now - f.LastAccessTime) > new TimeSpan(1, 0, 0))
+                    if((DateTime.Now.ToUniversalTime() - f.LastWriteTimeUtc) > new TimeSpan(1, 0, 0))
                     {
                         try
                         {
@@ -1310,6 +1291,7 @@ namespace UI
                             else
                             {
                                 Variables.ScriptLog("VCBot verified", Color.White);
+                                File.WriteAllText("Profiles\\Verify.vcb", Encryption.SHA256(MainScreen.html));
                             }
                         }
                     }

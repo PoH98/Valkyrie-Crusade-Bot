@@ -75,7 +75,12 @@ namespace UI
         private void Button1_Click(object sender, EventArgs e)
         {
             CheckVersion.UpdateText = null;
-            Close();
+            pictureBox1.Visible = true;
+            metroProgressBar1.Visible = true;
+            Width -= 200;
+            Height -= 200;
+            webBrowser1.Width -= 200;
+            webBrowser1.Height -= 200;
         }
     }
 }
