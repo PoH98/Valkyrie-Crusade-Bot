@@ -1,36 +1,32 @@
 # 神女控挂机
 ___
 Bug汇报：QQ群号：809233738
+Bug Report: Discord: PoH98#2102, Telegram: https://t.me/PoH98
 
 > 自定义脚本以及自定义模拟器支持都可以使用C#编写，此软件由学生制作因此充满bug
+> Written by a freakin lazy student who let bots to play games. Bugs will be anywhere!
 
-# [挂机下载](https://github.com/PoH98/Valkyrie-Crusade-Bot/releases)
-___
-* 可使用EmulatorController进行一系列的模拟器操作，如果需要自行写别的游戏脚本，直接导入ImageProcessor.dll即可
-* 挂机自定义都是使用C# interface插件dll编写，因此方便修改以及增加。
-  * 自定义模拟器: EmulatorInterface (导入BotFramework.dll)
-  * 自定义脚本：BattleScript（导入VCBot.exe）
+# [挂机下载/Bot Download](https://github.com/PoH98/Valkyrie-Crusade-Bot/releases)
 
-# 自定义模拟器
-___
-* 加载了EmulatorInterface后，必须注意的事项：
-  * CloseEmulator() 为关闭模拟器时需要干什么进行关闭，可使用Variables.Proc进行强制关闭(不建议)
-  * ConnectEmulator() 把模拟器的IntPtr以及程序加载进入EmulatorController.handle以及Variables.Proc为主的功能，根据每个模拟器不一样都需要不一样的方式进行加载
-  * EmulatorName() 模拟器名字，可以用于显示在挂机内
-  * LoadEmulatorSettings() 载入模拟器的安装路径，Adb端口，共享文件夹（安卓内:Variables.AndroidSharedPath以及电脑内Variables.SharedPath的路径都需要）
-  * SetResolution(int x, int y) 设置模拟器分辨率，DPI等等资料专用
-  * StartEmulator() 启动模拟器的方式，必须想办法支持启动可多开的模拟器，否则挂机会出错！
+___  
+# 挂机需求: 
+* 逍遥模拟器 6.2.1, 6.1.1, 6.1.0, 6.0.7.6, 6.0.6.0, 5.3.2.0, 5.2.3.0, 5.0.1.0, 3.6.2.0, 3.5.0.2, 3.1.2.x, 2.9.6.1, 2.9.3, 2.9.1, 2.8.6, 2.8.5, 2.8.3, 2.8.2, 2.8.0, 2.7.2, 2.7.0, 2.6.6, 2.6.5, 2.6.2, 2.6.1, 2.5.0, 2.3.1, 2.3.0, 2.2.1 Or 夜神模拟器 6.2.8.1, 6.2.8, 6.2.7.x, 6.2.6.x, 6.2.5.3, 6.2.0.0, 6.0.1.0, 6.0.0.0, 5.2.1.0, 5.1.0.0, 5.0.0.1, 5.0.0.0, 3.8.1.3, 3.8.0.x, 3.7.6.x, 3.7.5.1, 3.7.5, 3.7.3, 3.7.1, 3.7.0, 3.6.0, 3.5.1, 3.3.0, 3.1.0, 3.0.0
+* 神女控已安装
+* 模拟器语言为中文
 
-# 自定义脚本
-___
-* 加载了BattleScript后，必须注意的事项：
-  * ReadConfig() 加载脚本所需设置，推荐使用Variables.Configure进行储存和获取资料，无需再创建大量储存资料的垃圾文件。
-  * CreateUI() 创建UI，并且显示在挂机主程序内，可以增加功能给
-  * ScriptName() 脚本名字
-  * Attack() 发动技能的方式，例如可一个个点或者默认的找图长按发动卡牌技能，看个人喜好
-  
+___  
+# Bot Requirements: 
+* MEmu  6.2.1, 6.1.1, 6.1.0, 6.0.7.6, 6.0.6.0, 5.3.2.0, 5.2.3.0, 5.0.1.0, 3.6.2.0, 3.5.0.2, 3.1.2.x, 2.9.6.1, 2.9.3, 2.9.1, 2.8.6, 2.8.5, 2.8.3, 2.8.2, 2.8.0, 2.7.2, 2.7.0, 2.6.6, 2.6.5, 2.6.2, 2.6.1, 2.5.0, 2.3.1, 2.3.0, 2.2.1 Or Nox 6.2.8.1, 6.2.8, 6.2.7.x, 6.2.6.x, 6.2.5.3, 6.2.0.0, 6.0.1.0, 6.0.0.0, 5.2.1.0, 5.1.0.0, 5.0.0.1, 5.0.0.0, 3.8.1.3, 3.8.0.x, 3.7.6.x, 3.7.5.1, 3.7.5, 3.7.3, 3.7.1, 3.7.0, 3.6.0, 3.5.1, 3.3.0, 3.1.0, 3.0.0
+* Valkyrie Crusade installed
+* Instance language as Chinese
+
 ___  
 ___
 # Bot Framework Documentation
  * Here is some [documentation](https://github.com/PoH98/Valkyrie-Crusade-Bot/wiki) on how to use the BotFramework.dll to make your new script for any games!
  * Warning, I am not responsible for using 'Bots' or 'Scripts' which cause your game account is banned! Use it with more randoms and longer delays will reduce the ban risk!
+ 
+___
+# 挂机开发文档
+ * 这里拥有文档[资料](https://github.com/PoH98/Valkyrie-Crusade-Bot/wiki)解释如何使用BotFramework.dll编写任何游戏挂机软件
+ * 免责声明：本人不会对于任何因使用本脚本而造成的 “外挂” 或 “机器人” 等原因的封号做出任何赔偿，请自行慎用！
