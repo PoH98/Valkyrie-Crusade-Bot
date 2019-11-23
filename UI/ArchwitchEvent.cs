@@ -74,7 +74,7 @@ namespace UI
             }
             else
             {
-                BotCore.KillGame("com.nubee.valkyriecrusade");
+                BotCore.KillGame(VCBotScript.game);
             }
             return;
         }
@@ -305,7 +305,7 @@ namespace UI
             do
             {
                 Variables.ScriptLog("Detecting UIs...",Color.White);
-                if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
+                if (!BotCore.GameIsForeground(VCBotScript.game))
                 {
                     ScriptErrorHandler.Reset("Game closed!");
                     return;
@@ -413,6 +413,8 @@ namespace UI
                 buttons = BotCore.FindImage(VCBotScript.image, Img.Red_Button, false);
                 if (buttons != null)
                 {
+                    BotCore.SendTap(buttons.Value.X + rnd.Next(430, 845), buttons.Value.Y + rnd.Next(370, 420));
+                    BotCore.SendTap(buttons.Value.X + rnd.Next(430, 845), buttons.Value.Y + rnd.Next(370, 420));
                     BotCore.SendTap(buttons.Value.X + rnd.Next(430, 845), buttons.Value.Y + rnd.Next(370, 420));
                     BotCore.Delay(2000, 3000);
                     PrivateVariable.Battling = true;

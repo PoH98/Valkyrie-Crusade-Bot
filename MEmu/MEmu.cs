@@ -71,16 +71,38 @@ namespace MEmu
             RegistryKey reg = Registry.LocalMachine;
             try
             {
-                RegistryKey r;
-                if (BotCore.Is64BitOperatingSystem())
+                object location = null;
+                if(File.Exists(@"D:\Program Files\Microvirt\MEmu\MEmu.exe"))
                 {
-                    r = reg.OpenSubKey("SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MEmu");
+                    location = @"D:\Program Files\Microvirt";
+                }
+                else if (File.Exists(@"C:\Program Files\Microvirt\MEmu\MEmu.exe"))
+                {
+                    location = @"C:\Program Files\Microvirt";
                 }
                 else
                 {
-                    r = reg.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MEmu");
+                    RegistryKey r;
+                    if (BotCore.Is64BitOperatingSystem())
+                    {
+                        r = reg.OpenSubKey("SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MEmu");
+                    }
+                    else
+                    {
+                        r = reg.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MEmu");
+                    }
+                    location = r.GetValue("InstallLocation");
+                    if(location == null)
+                    {
+                        location = r.GetValue("DisplayIcon");
+                        if(location != null)
+                        {
+                            location = location.ToString().Remove(location.ToString().LastIndexOf("\\"));
+                            location = location.ToString().Remove(location.ToString().LastIndexOf("\\"));
+                        }
+                    }
                 }
-                var location = r.GetValue("InstallLocation");
+                
                 if (location != null)
                 {
                     var path = location.ToString().Replace("\0", "");

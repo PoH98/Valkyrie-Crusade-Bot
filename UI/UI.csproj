@@ -173,6 +173,8 @@
     <Compile Include="CheckVersion.cs" />
     <Compile Include="DemonRealm.cs" />
     <Compile Include="GetEventXML.cs" />
+    <Compile Include="Guildwar.cs" />
+    <Compile Include="LinkItem.cs" />
     <Compile Include="Loading.cs">
       <SubType>Form</SubType>
     </Compile>

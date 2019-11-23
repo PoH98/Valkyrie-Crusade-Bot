@@ -117,62 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="html" xml:space="preserve">
-    <value>&lt;head&gt;
-&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
-&lt;style&gt;
-div {
-  border: 1px solid gray;
-  padding: 8px;
-}
-h2 {
-  text-align: center;
-  text-transform: uppercase;
-  color: #4CAF50;
-}
-p {
-  text-indent: 50px;
-  text-align: justify;
-  letter-spacing: 3px;
-   display: block;
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    margin-inline-start: 0px;
-    margin-inline-end: 0px;
-}
-a {
-  background-color: #4CAF50; /* Green */
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  width: 100%;
-}
-a:hover{
-  background-color: 	#32CD32;
-}
-&lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-&lt;div&gt;
-&lt;p&gt;
-&lt;ul&gt;
-&lt;!data!&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;!download!&gt;
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;/body&gt;</value>
-  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="img2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\img2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Stun1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Stun1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="loading2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\loading2.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Stun2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Stun2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

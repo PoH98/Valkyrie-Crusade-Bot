@@ -93,6 +93,9 @@
             this.metroTabControl2 = new MetroFramework.Controls.MetroTabControl();
             this.NormalEvent_Tab = new MetroFramework.Controls.MetroTabPage();
             this.ArchwitchEvent_Tab = new MetroFramework.Controls.MetroTabPage();
+            this.webBrowser2 = new System.Windows.Forms.WebBrowser();
+            this.GuildWar = new System.Windows.Forms.GroupBox();
+            this.chk_GWW = new System.Windows.Forms.CheckBox();
             this.Weapon = new System.Windows.Forms.GroupBox();
             this.Combo_Weapon = new MetroFramework.Controls.MetroComboBox();
             this.Chk_SoulWeapon = new System.Windows.Forms.CheckBox();
@@ -103,6 +106,7 @@
             this.btn_absys = new System.Windows.Forms.Button();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.Debug = new MetroFramework.Controls.MetroTabPage();
+            this.btn_SwitchImg = new System.Windows.Forms.Button();
             this.btn_Sleep = new MetroFramework.Controls.MetroButton();
             this.btn_OCR = new MetroFramework.Controls.MetroButton();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
@@ -112,9 +116,6 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.chk_Log = new MetroFramework.Controls.MetroCheckBox();
             this.metroLink1 = new MetroFramework.Controls.MetroLink();
-            this.GuildWar = new System.Windows.Forms.GroupBox();
-            this.chk_GWW = new System.Windows.Forms.CheckBox();
-            this.webBrowser2 = new System.Windows.Forms.WebBrowser();
             this.ED_Box.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.M_Box.SuspendLayout();
@@ -130,6 +131,7 @@
             this.metroTabControl2.SuspendLayout();
             this.NormalEvent_Tab.SuspendLayout();
             this.ArchwitchEvent_Tab.SuspendLayout();
+            this.GuildWar.SuspendLayout();
             this.Weapon.SuspendLayout();
             this.Archwitch.SuspendLayout();
             this.OtherSettings_Tab.SuspendLayout();
@@ -139,7 +141,6 @@
             this.Script.SuspendLayout();
             this.Info.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.GuildWar.SuspendLayout();
             this.SuspendLayout();
             // 
             // timer2
@@ -322,6 +323,9 @@
             // 
             // webBrowser1
             // 
+            this.webBrowser1.AllowNavigation = false;
+            this.webBrowser1.AllowWebBrowserDrop = false;
+            this.webBrowser1.IsWebBrowserContextMenuEnabled = false;
             this.webBrowser1.Location = new System.Drawing.Point(3, 3);
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
@@ -808,7 +812,7 @@
             this.metroTabControl1.Controls.Add(this.Info);
             this.metroTabControl1.Location = new System.Drawing.Point(8, 63);
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 1;
+            this.metroTabControl1.SelectedIndex = 2;
             this.metroTabControl1.Size = new System.Drawing.Size(460, 537);
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Brown;
             this.metroTabControl1.TabIndex = 32;
@@ -856,7 +860,7 @@
             this.metroTabControl2.Controls.Add(this.OtherSettings_Tab);
             this.metroTabControl2.Location = new System.Drawing.Point(3, 105);
             this.metroTabControl2.Name = "metroTabControl2";
-            this.metroTabControl2.SelectedIndex = 0;
+            this.metroTabControl2.SelectedIndex = 1;
             this.metroTabControl2.Size = new System.Drawing.Size(443, 390);
             this.metroTabControl2.Style = MetroFramework.MetroColorStyle.Red;
             this.metroTabControl2.TabIndex = 15;
@@ -897,6 +901,41 @@
             this.ArchwitchEvent_Tab.VerticalScrollbarBarColor = true;
             this.ArchwitchEvent_Tab.VerticalScrollbarHighlightOnWheel = false;
             this.ArchwitchEvent_Tab.VerticalScrollbarSize = 10;
+            // 
+            // webBrowser2
+            // 
+            this.webBrowser2.Location = new System.Drawing.Point(3, 155);
+            this.webBrowser2.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser2.Name = "webBrowser2";
+            this.webBrowser2.Size = new System.Drawing.Size(430, 194);
+            this.webBrowser2.TabIndex = 21;
+            this.webBrowser2.WebBrowserShortcutsEnabled = false;
+            // 
+            // GuildWar
+            // 
+            this.GuildWar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
+            this.GuildWar.Controls.Add(this.chk_GWW);
+            this.GuildWar.ForeColor = System.Drawing.Color.White;
+            this.GuildWar.Location = new System.Drawing.Point(3, 105);
+            this.GuildWar.Name = "GuildWar";
+            this.GuildWar.Size = new System.Drawing.Size(429, 47);
+            this.GuildWar.TabIndex = 15;
+            this.GuildWar.TabStop = false;
+            this.GuildWar.Text = "盟战";
+            // 
+            // chk_GWW
+            // 
+            this.chk_GWW.AutoSize = true;
+            this.chk_GWW.Checked = true;
+            this.chk_GWW.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chk_GWW.Enabled = false;
+            this.chk_GWW.Location = new System.Drawing.Point(9, 19);
+            this.chk_GWW.Name = "chk_GWW";
+            this.chk_GWW.Size = new System.Drawing.Size(80, 17);
+            this.chk_GWW.TabIndex = 0;
+            this.chk_GWW.Text = "checkBox1";
+            this.chk_GWW.UseVisualStyleBackColor = true;
+            this.chk_GWW.CheckedChanged += new System.EventHandler(this.chk_GWW_CheckedChanged_1);
             // 
             // Weapon
             // 
@@ -1016,12 +1055,13 @@
             // btn_absys
             // 
             this.btn_absys.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.btn_absys.Location = new System.Drawing.Point(252, 73);
+            this.btn_absys.Location = new System.Drawing.Point(252, 13);
             this.btn_absys.Name = "btn_absys";
             this.btn_absys.Size = new System.Drawing.Size(177, 34);
             this.btn_absys.TabIndex = 15;
             this.btn_absys.Text = "btn_absys";
             this.btn_absys.UseVisualStyleBackColor = true;
+            this.btn_absys.Visible = false;
             // 
             // pictureBox2
             // 
@@ -1036,6 +1076,7 @@
             // 
             // Debug
             // 
+            this.Debug.Controls.Add(this.btn_SwitchImg);
             this.Debug.Controls.Add(this.btn_Sleep);
             this.Debug.Controls.Add(this.btn_OCR);
             this.Debug.Controls.Add(this.sysd_box);
@@ -1052,6 +1093,16 @@
             this.Debug.VerticalScrollbarBarColor = true;
             this.Debug.VerticalScrollbarHighlightOnWheel = false;
             this.Debug.VerticalScrollbarSize = 10;
+            // 
+            // btn_SwitchImg
+            // 
+            this.btn_SwitchImg.Location = new System.Drawing.Point(222, 100);
+            this.btn_SwitchImg.Name = "btn_SwitchImg";
+            this.btn_SwitchImg.Size = new System.Drawing.Size(211, 40);
+            this.btn_SwitchImg.TabIndex = 31;
+            this.btn_SwitchImg.Text = "切换图片";
+            this.btn_SwitchImg.UseVisualStyleBackColor = true;
+            this.btn_SwitchImg.Click += new System.EventHandler(this.btn_SwitchImg_Click);
             // 
             // btn_Sleep
             // 
@@ -1170,37 +1221,6 @@
             this.metroLink1.UseSelectable = true;
             this.metroLink1.Click += new System.EventHandler(this.MetroLink1_Click);
             // 
-            // GuildWar
-            // 
-            this.GuildWar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
-            this.GuildWar.Controls.Add(this.chk_GWW);
-            this.GuildWar.ForeColor = System.Drawing.Color.White;
-            this.GuildWar.Location = new System.Drawing.Point(3, 105);
-            this.GuildWar.Name = "GuildWar";
-            this.GuildWar.Size = new System.Drawing.Size(429, 47);
-            this.GuildWar.TabIndex = 15;
-            this.GuildWar.TabStop = false;
-            this.GuildWar.Text = "盟战";
-            // 
-            // chk_GWW
-            // 
-            this.chk_GWW.AutoSize = true;
-            this.chk_GWW.Location = new System.Drawing.Point(9, 19);
-            this.chk_GWW.Name = "chk_GWW";
-            this.chk_GWW.Size = new System.Drawing.Size(80, 17);
-            this.chk_GWW.TabIndex = 0;
-            this.chk_GWW.Text = "checkBox1";
-            this.chk_GWW.UseVisualStyleBackColor = true;
-            // 
-            // webBrowser2
-            // 
-            this.webBrowser2.Location = new System.Drawing.Point(3, 155);
-            this.webBrowser2.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser2.Name = "webBrowser2";
-            this.webBrowser2.Size = new System.Drawing.Size(430, 194);
-            this.webBrowser2.TabIndex = 21;
-            this.webBrowser2.WebBrowserShortcutsEnabled = false;
-            // 
             // MainScreen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1249,6 +1269,8 @@
             this.metroTabControl2.ResumeLayout(false);
             this.NormalEvent_Tab.ResumeLayout(false);
             this.ArchwitchEvent_Tab.ResumeLayout(false);
+            this.GuildWar.ResumeLayout(false);
+            this.GuildWar.PerformLayout();
             this.Weapon.ResumeLayout(false);
             this.Weapon.PerformLayout();
             this.Archwitch.ResumeLayout(false);
@@ -1260,8 +1282,6 @@
             this.Script.ResumeLayout(false);
             this.Info.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.GuildWar.ResumeLayout(false);
-            this.GuildWar.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1353,6 +1373,7 @@
         private System.Windows.Forms.WebBrowser webBrowser2;
         private System.Windows.Forms.GroupBox GuildWar;
         private System.Windows.Forms.CheckBox chk_GWW;
+        private System.Windows.Forms.Button btn_SwitchImg;
     }
 }
 

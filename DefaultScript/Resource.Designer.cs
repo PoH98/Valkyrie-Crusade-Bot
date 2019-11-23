@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace UI.Properties {
+namespace DefaultScript {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace UI.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    internal class Resource {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources() {
+        internal Resource() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace UI.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("UI.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DefaultScript.Resource", typeof(Resource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,45 +61,11 @@ namespace UI.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;head&gt;
-        ///&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
-        ///&lt;style&gt;
-        ///div {
-        ///  border: 1px solid gray;
-        ///  padding: 8px;
-        ///}
-        ///h2 {
-        ///  text-align: center;
-        ///  text-transform: uppercase;
-        ///  color: #4CAF50;
-        ///}
-        ///p {
-        ///  text-indent: 50px;
-        ///  text-align: justify;
-        ///  letter-spacing: 3px;
-        ///   display: block;
-        ///    margin-block-start: 1em;
-        ///    margin-block-end: 1em;
-        ///    margin-inline-start: 0px;
-        ///    margin-inline-end: 0px;
-        ///}
-        ///a {
-        ///  background-color: #4CAF50; /* Green */
-        ///  border: none;
-        ///  color: w [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string html {
-            get {
-                return ResourceManager.GetString("html", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap img2 {
+        internal static System.Drawing.Bitmap Stun1 {
             get {
-                object obj = ResourceManager.GetObject("img2", resourceCulture);
+                object obj = ResourceManager.GetObject("Stun1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -107,9 +73,9 @@ namespace UI.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap loading2 {
+        internal static System.Drawing.Bitmap Stun2 {
             get {
-                object obj = ResourceManager.GetObject("loading2", resourceCulture);
+                object obj = ResourceManager.GetObject("Stun2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

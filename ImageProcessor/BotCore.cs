@@ -416,7 +416,7 @@ namespace BotFramework
                 }
                 File.WriteAllLines(path, newports.Where(y => !string.IsNullOrEmpty(y)).ToArray());
             }
-            var files = Directory.GetFiles(Variables.SharedPath, "*.raw");
+            var files = Directory.GetFiles(Variables.SharedPath, "*.rgba");
             foreach(var file in files)
             {
                 try
@@ -1820,6 +1820,13 @@ namespace BotFramework
             }
             names = name.ToArray();
             return devices.ToArray();
+        }
+
+        public static Bitmap EnlargeImage(Bitmap image, int width, int height)
+        {
+            Image<Rgb, byte> captureImage = new Image<Rgb, byte>(image);
+            Image<Rgb, byte> resizedImage = captureImage.Resize(width, height, Inter.Linear);
+            return resizedImage.ToBitmap();
         }
     }
 }

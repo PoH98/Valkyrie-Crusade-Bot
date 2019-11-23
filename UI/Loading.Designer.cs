@@ -93,6 +93,7 @@
             this.webBrowser1.Location = new System.Drawing.Point(24, 33);
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
+            this.webBrowser1.ScriptErrorsSuppressed = true;
             this.webBrowser1.Size = new System.Drawing.Size(318, 139);
             this.webBrowser1.TabIndex = 15;
             // 
@@ -102,10 +103,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(365, 243);
             this.Controls.Add(this.metroProgressBar1);
-            this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.webBrowser1);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.button1);
+            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.webBrowser1);
             this.DisplayHeader = false;
             this.DoubleBuffered = false;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));

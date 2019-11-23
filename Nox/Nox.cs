@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -125,65 +126,28 @@ namespace Nox
         }
         private static string GetRTPath()
         {
-            var path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\BigNox\\BigNoxVM\\RT\\";
-            if (Directory.Exists(path))
+            var path = Environment.ExpandEnvironmentVariables("%ProgramW6432%") + "\\BigNox\\BigNoxVM\\RT\\";
+            if (!Directory.Exists(path))
             {
-                return path;
+                path = Environment.ExpandEnvironmentVariables("%ProgramFiles(x86)%") + "\\BigNox\\BigNoxVM\\RT\\";
             }
-            path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\BigNox\\BigNoxVM\\RT\\";
-            if (Directory.Exists(path))
+            if (!Directory.Exists(path))
             {
-                return path;
+                path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) +"\\BigNox\\BigNoxVM\\RT\\";
             }
-            RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\BigNox\VirtualBox\");
-            var value = key.GetValue("InstallDir");
-            if(value != null)
+            if (!Directory.Exists(path))
             {
-                return value.ToString();
+                RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\BigNox\VirtualBox\");
+                var value = key.GetValue("InstallDir");
+                if (value != null)
+                {
+                    path = value.ToString();
+                }
             }
-            return null;
+            return path;
         }
         private static void InitNox()
         {
-            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).Replace("\\Roaming", "\\Local\\Nox\\conf.ini"));
-            if (File.Exists(path))
-            {
-                string[] lines = File.ReadAllLines(path);
-                foreach (var line in lines)
-                {
-                    if (line.Contains("share_path"))
-                    {
-                        path = line.Replace(@"\\", @"\").Replace("share_path=", "");
-                        if (Directory.Exists(path + "\\OtherShare\\"))
-                        {
-                            Variables.SharedPath = path + "\\OtherShare";
-                            
-                        }
-                        else
-                        {
-                            MessageBox.Show("Nox version is not supported! Please update it to Nox v6 above!");
-                            Environment.Exit(0);
-                        }
-                        break;
-                    }
-                }
-            }
-            if(Variables.SharedPath == "")
-            {
-                if (Directory.Exists((Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Nox_share\Other\").Replace("\\\\", "\\")))
-                {
-                    Variables.SharedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Nox_share\Other\";
-                }
-                else if(Directory.Exists((Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\Nox_share\OtherShare\").Replace("\\\\","\\")))
-                {
-                    Variables.SharedPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\Nox_share\OtherShare\";
-                }
-                else
-                {
-                    MessageBox.Show("Nox version is not supported! Please update it to Nox v6 above!");
-                    Environment.Exit(0);
-                }
-            }
             Variables.AndroidSharedPath = "/mnt/shared/Other|/mnt/shell/emulated/0/Download/other|/mnt/shell/emulated/0/Others/";
             Variables.SharedPath = Variables.SharedPath.Replace("\\\\","\\");
             ProcessStartInfo info = new ProcessStartInfo();
@@ -201,13 +165,43 @@ namespace Nox
             info.CreateNoWindow = true;
             var p = Process.Start(info);
             var result = p.StandardOutput.ReadToEnd();
-            string[] splitted = result.Split('\n');
-            foreach (var s in splitted)
+            Regex host = new Regex(".*host ip = ([^,]+), .* guest port = 5555");
+            var regexresult = host.Match(result);
+            string ip = "127.0.0.1", port= "62001";
+            if (regexresult.Success)
             {
-                if (s.Contains("guest port = 5555"))
+                ip = regexresult.Value;
+            }
+            Regex portregex = new Regex("name = .*host port = (/d{3,5}), .* guest port = 5555");
+            regexresult = portregex.Match(result);
+            if (regexresult.Success)
+            {
+                port = regexresult.Value;
+            }
+            Variables.AdbIpPort = ip + ":" + port;//Adb Port Get
+            Regex regex = new Regex("Name: 'Other', Host path: '(.*)'.*");
+            var match = regex.Match(result);
+            if (match.Success)
+            {
+                Variables.SharedPath = match.Value;
+            }
+            else
+            {
+                if (Directory.Exists((Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Nox_share\Other\").Replace("\\\\", "\\")))
                 {
-                    var port = s.Substring(s.IndexOf("port = ") + 7, 5).Replace(" ", "");
-                    Variables.AdbIpPort = "127.0.0.1:" + port;
+                    Variables.SharedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Nox_share\Other\";
+                }
+                else if (Directory.Exists((Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\Nox_share\OtherShare\").Replace("\\\\", "\\")))
+                {
+                    Variables.SharedPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\Nox_share\OtherShare\";
+                }
+                else if (Directory.Exists((Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\Nox_share\")))
+                {
+                    Variables.SharedPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\Nox_share\";
+                }
+                else
+                {
+                    Variables.ForceWinApiCapt = true;
                 }
             }
         }
@@ -229,7 +223,7 @@ namespace Nox
                 else
                 {
                     info.Arguments = "-clone:Nox_0";
-                 }
+                }
                 info.RedirectStandardOutput = true;
                 info.UseShellExecute = false;
                 info.CreateNoWindow = true;

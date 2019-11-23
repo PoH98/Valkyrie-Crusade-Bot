@@ -22,6 +22,7 @@ namespace UI
             ArchWitch = 1,
             DemonRealm = 2,
             SoulWeapon = 3,
+            GuildWar = 4,
             Unknown = -1
         }
 

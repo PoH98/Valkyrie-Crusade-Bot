@@ -16,6 +16,8 @@ using MetroFramework.Forms;
 using System.Windows.Forms;
 using System.Linq;
 using System.IO.Compression;
+using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 
 namespace BotFramework
 {
@@ -37,6 +39,21 @@ namespace BotFramework
         private static Point loc;
 
         private static TransparentPanel tp;
+        [DllImport("kernel32.dll",
+            EntryPoint = "GetStdHandle",
+            SetLastError = true,
+            CharSet = CharSet.Auto,
+            CallingConvention = CallingConvention.StdCall)]
+        private static extern IntPtr GetStdHandle(int nStdHandle);
+        [DllImport("kernel32.dll",
+            EntryPoint = "AllocConsole",
+            SetLastError = true,
+            CharSet = CharSet.Auto,
+            CallingConvention = CallingConvention.StdCall)]
+        private static extern int AllocConsole();
+        private const int STD_OUTPUT_HANDLE = -11;
+        private const int MY_CODE_PAGE = 437;
+
         public MainScreen()
         {
             InitializeComponent();
@@ -59,7 +76,7 @@ namespace BotFramework
         {
             Login load = new Login();
             load.ShowDialog();
-            if(load.DialogResult == DialogResult.Abort)
+            if (load.DialogResult == DialogResult.Abort)
             {
                 Environment.Exit(0);
             }
@@ -166,11 +183,11 @@ namespace BotFramework
                 MessageBox.Show("Lost files, please reinstall the bot!");
                 Environment.Exit(0);
             }
-            foreach(var lang in Directory.GetFiles("Language"))
+            foreach (var lang in Directory.GetFiles("Language"))
             {
-                comboBox1.Items.Add(lang.Replace("Language\\","").Replace(".ini",""));
+                comboBox1.Items.Add(lang.Replace("Language\\", "").Replace(".ini", ""));
             }
-            if (Variables.FindConfig("General","Lang", out string output))
+            if (Variables.FindConfig("General", "Lang", out string output))
             {
                 int index = comboBox1.Items.IndexOf(output);
                 if (index < 0)
@@ -188,7 +205,7 @@ namespace BotFramework
             }
             label3.Text = Variables.VBoxManagerPath;
             label4.Text = Variables.SharedPath;
-            if (Variables.FindConfig("General","Level", out output))
+            if (Variables.FindConfig("General", "Level", out output))
             {
                 switch (output)
                 {
@@ -211,39 +228,39 @@ namespace BotFramework
             }
             else
             {
-                Variables.ModifyConfig("General","Level", "0");
+                Variables.ModifyConfig("General", "Level", "0");
             }
-            if (Variables.FindConfig("General","Double_Event", out output))
+            if (Variables.FindConfig("General", "Double_Event", out output))
             {
                 if (output == "true")
                 {
                     chk_twoE.Checked = true;
                 }
             }
-            if (Variables.FindConfig("General","Manual_Rune", out output))
+            if (Variables.FindConfig("General", "Manual_Rune", out output))
             {
                 if (output == "true")
                 {
                     chk_manuRT.Checked = true;
                 }
             }
-            if(Variables.FindConfig("General","Suspend_PC",out output))
+            if (Variables.FindConfig("General", "Suspend_PC", out output))
             {
-                if(output == "true")
+                if (output == "true")
                 {
                     Suspend_Chk.Checked = true;
                 }
             }
-            if(Variables.FindConfig("General","biubiu",out output))
+            if (Variables.FindConfig("General", "biubiu", out output))
             {
-                if(output == "true")
+                if (output == "true")
                 {
                     Biubiu.Checked = true;
                 }
             }
-            if(Variables.FindConfig("General", "ArWiEv", out output))
+            if (Variables.FindConfig("General", "ArWiEv", out output))
             {
-                if(output == "true")
+                if (output == "true")
                 {
                     Chk_Archwitch.Checked = true;
                 }
@@ -264,7 +281,7 @@ namespace BotFramework
             {
                 Combo_Archwitch.SelectedIndex = 0;
             }
-            if(Variables.FindConfig("General", "SoWeSt", out output))
+            if (Variables.FindConfig("General", "SoWeSt", out output))
             {
                 string temp = output.Replace(".", "-");
                 Combo_Weapon.SelectedItem = temp;
@@ -288,18 +305,18 @@ namespace BotFramework
                     }
                 }
             }
-            if(Variables.FindConfig("GuildWar", "Manual", out output))
+            if (Variables.FindConfig("GuildWar", "Manual", out output))
             {
-                if(output == "true")
+                if (output == "true")
                 {
                     chk_GWW.Checked = true;
                 }
             }
-            if(Variables.FindConfig("Version", "Version", out output))
+            if (Variables.FindConfig("Version", "Version", out output))
             {
-                if(output != CheckVersion.currentVersion)
+                if (output != CheckVersion.currentVersion)
                 {
-                    CheckVersion.UpdateText = "# Thanks for supporting VCBot! \n"+ CheckVersion.BufferUpdateText;
+                    CheckVersion.UpdateText = "# Thanks for supporting VCBot! \n" + CheckVersion.BufferUpdateText;
                     Variables.ModifyConfig("Version", "Version", CheckVersion.currentVersion);
                 }
             }
@@ -351,7 +368,7 @@ namespace BotFramework
             {
                 webBrowser2.Visible = false;
             }
-            
+
             VCBotScript.Read_Plugins();
             foreach (var s in PrivateVariable.BattleScript)
             {
@@ -373,7 +390,7 @@ namespace BotFramework
                     tabControl2.TabPages[tabControl2.TabPages.Count - 1].Controls.Add(c);
                 }
             }
-            if (Variables.FindConfig("General","Selected_Script", out string n))
+            if (Variables.FindConfig("General", "Selected_Script", out string n))
             {
                 try
                 {
@@ -402,9 +419,9 @@ namespace BotFramework
                     pictureBox4.Image = Image.FromStream(stream);
                 }
             }
-            foreach(Control box in ED_Box.Controls)
+            foreach (Control box in ED_Box.Controls)
             {
-                foreach(Control control in box.Controls)
+                foreach (Control control in box.Controls)
                 {
                     control.MouseDown += Tp_MouseDown;
                 }
@@ -424,7 +441,7 @@ namespace BotFramework
             if (ck.Checked)
             {
                 PrivateVariable.Selected_Script = customScriptEnable.IndexOf(ck);
-                Variables.ModifyConfig("General","Selected_Script", PrivateVariable.Selected_Script.ToString());
+                Variables.ModifyConfig("General", "Selected_Script", PrivateVariable.Selected_Script.ToString());
             }
             foreach (var c in customScriptEnable)
             {
@@ -499,9 +516,9 @@ namespace BotFramework
             };
             tp.MouseDown += Tp_MouseDown;
             Controls.Add(tp);
-            foreach(Control control in Debug.Controls)
+            foreach (Control control in Debug.Controls)
             {
-                if(control is Button)
+                if (control is Button)
                 {
                     control.Enabled = false;
                 }
@@ -537,7 +554,7 @@ namespace BotFramework
             PrivateVariable.InMainScreen = false;
             PrivateVariable.InMap = false;
             BotCore.EjectSockets();
-            Variables.ScriptLog("Script Stopped!",Color.White);
+            Variables.ScriptLog("Script Stopped!", Color.White);
             if (Width > 1280)
             {
                 Width -= 1280;
@@ -638,6 +655,17 @@ namespace BotFramework
                     }
                 }
             }
+            else if (PrivateVariable.VCevent == PrivateVariable.EventType.GuildWar)
+            {
+                lbl_CEvent.Text = UILanguage["Guildwar"];
+                lbl_Rune.Text = UILanguage["Rune_Guildwar"];
+                label7.Text = VCBotScript.runes + "/6";
+                label6.Text = VCBotScript.energy + "/5";
+                progressBar1.Maximum = 5;
+                progressBar2.Maximum = 6;
+                progressBar1.Value = VCBotScript.energy;
+                progressBar2.Value = VCBotScript.runes;
+            }
             else
             {
                 lbl_CEvent.Text = UILanguage["Unknown"];
@@ -662,7 +690,7 @@ namespace BotFramework
         /// <summary>
         /// Capture loop
         /// </summary>
-        
+
         private void Capt()
         {
             do
@@ -715,7 +743,7 @@ namespace BotFramework
 
         private void CheckBox8_CheckedChanged(object sender, EventArgs e)
         {
-            Variables.ModifyConfig("General","Double_Event", chk_twoE.Checked.ToString().ToLower());
+            Variables.ModifyConfig("General", "Double_Event", chk_twoE.Checked.ToString().ToLower());
         }
 
         private void checkBox8_MouseEnter(object sender, EventArgs e)
@@ -747,7 +775,7 @@ namespace BotFramework
         {
             if (chk_autoRT.Checked)
             {
-                Variables.ModifyConfig("General","Manual_Rune", "false");
+                Variables.ModifyConfig("General", "Manual_Rune", "false");
                 //chk_item.Enabled = chk_autoRT.Checked;
             }
         }
@@ -756,7 +784,7 @@ namespace BotFramework
         {
             if (chk_manuRT.Checked)
             {
-                Variables.ModifyConfig("General","Manual_Rune", "true");
+                Variables.ModifyConfig("General", "Manual_Rune", "true");
                 chk_item.Checked = false;
                 //chk_item.Enabled = false;
             }
@@ -772,7 +800,7 @@ namespace BotFramework
         {
             if (chk_begin.Checked)
             {
-                Variables.ModifyConfig("General","Level", "0");
+                Variables.ModifyConfig("General", "Level", "0");
                 Level = 0;
             }
         }
@@ -781,7 +809,7 @@ namespace BotFramework
         {
             if (chk_inter.Checked)
             {
-                Variables.ModifyConfig("General","Level", "1");
+                Variables.ModifyConfig("General", "Level", "1");
                 Level = 1;
             }
         }
@@ -790,14 +818,14 @@ namespace BotFramework
         {
             if (chk_advan.Checked)
             {
-                Variables.ModifyConfig("General","Level", "2");
+                Variables.ModifyConfig("General", "Level", "2");
                 Level = 2;
             }
         }
 
         private void checkBox10_CheckedChanged(object sender, EventArgs e)
         {
-            Variables.ModifyConfig("General","Use_Item", chk_item.Checked.ToString().ToLower());
+            Variables.ModifyConfig("General", "Use_Item", chk_item.Checked.ToString().ToLower());
             PrivateVariable.Use_Item = chk_item.Checked;
         }
 
@@ -817,7 +845,10 @@ namespace BotFramework
                 var result = s.ShowDialog();
                 if (result == DialogResult.OK)
                 {
-                    pictureBox4.Image.Save(s.FileName);
+                    Bitmap OriginalBitmap = new Bitmap(pictureBox4.Image);
+                    int new_wid = 640, new_hgt = 896;
+                    var bmp = BotCore.EnlargeImage(OriginalBitmap, new_wid, new_hgt);
+                    bmp.Save(s.FileName);
                 }
             }
 
@@ -837,7 +868,7 @@ namespace BotFramework
         {
             if (chk_extre.Checked)
             {
-                Variables.ModifyConfig("General","Level", "3");
+                Variables.ModifyConfig("General", "Level", "3");
                 Level = 3;
             }
         }
@@ -846,7 +877,7 @@ namespace BotFramework
         {
             if (chk_ultim.Checked)
             {
-                Variables.ModifyConfig("General","Level", "4");
+                Variables.ModifyConfig("General", "Level", "4");
                 Level = 4;
             }
         }
@@ -882,7 +913,7 @@ namespace BotFramework
                         div.InnerText = "";
                     }
                 }
-                foreach(HtmlElement footer in webBrowser3.Document.GetElementsByTagName("footer"))
+                foreach (HtmlElement footer in webBrowser3.Document.GetElementsByTagName("footer"))
                 {
                     footer.InnerText = "";
                 }
@@ -900,7 +931,7 @@ namespace BotFramework
             BotCore.EjectSockets();
             Environment.Exit(0);
         }
-        
+
         private void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             Variables.ModifyConfig("General", "Lang", comboBox1.SelectedItem.ToString());
@@ -957,7 +988,7 @@ namespace BotFramework
             }
             if (File.Exists(Environment.CurrentDirectory + "\\Language\\" + language + ".ini"))
             {
-                var buffer = File.ReadAllLines(Environment.CurrentDirectory + "\\Language\\" + language + ".ini",Encoding.Unicode);
+                var buffer = File.ReadAllLines(Environment.CurrentDirectory + "\\Language\\" + language + ".ini", Encoding.Unicode);
                 foreach (var line in buffer)
                 {
                     var split = line.Split('=');
@@ -1091,7 +1122,7 @@ namespace BotFramework
 
         private void Suspend_Chk_CheckedChanged(object sender, EventArgs e)
         {
-            Variables.ModifyConfig("General","Suspend_PC",Suspend_Chk.Checked.ToString().ToLower());
+            Variables.ModifyConfig("General", "Suspend_PC", Suspend_Chk.Checked.ToString().ToLower());
         }
 
         private void btn_Sleep_Click(object sender, EventArgs e)
@@ -1108,7 +1139,7 @@ namespace BotFramework
         private void biubiu_CheckedChanged(object sender, EventArgs e)
         {
             PrivateVariable.biubiu = Biubiu.Checked;
-            Variables.ModifyConfig("General","biubiu", Biubiu.Checked.ToString().ToLower());
+            Variables.ModifyConfig("General", "biubiu", Biubiu.Checked.ToString().ToLower());
         }
 
         private void MainScreen_Resize(object sender, EventArgs e)
@@ -1155,7 +1186,7 @@ namespace BotFramework
 
         private void Combo_Archwitch_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Variables.ModifyConfig("General", "ArWiSt", Combo_Archwitch.SelectedItem.ToString().Replace("-","."));
+            Variables.ModifyConfig("General", "ArWiSt", Combo_Archwitch.SelectedItem.ToString().Replace("-", "."));
             Variables.FindConfig("General", "ArWiSt", out string config);
             VCBotScript.Archwitch_Stage = Convert.ToDouble(config);
         }
@@ -1175,6 +1206,25 @@ namespace BotFramework
             Variables.ModifyConfig("General", "SoWeSt", Combo_Weapon.SelectedItem.ToString().Replace("-", "."));
             Variables.FindConfig("General", "SoWeSt", out string config);
             VCBotScript.Weapon_Stage = Convert.ToDouble(config);
+        }
+
+        private void chk_GWW_CheckedChanged_1(object sender, EventArgs e)
+        {
+            Variables.ModifyConfig("GuildWar", "Manual", chk_GWW.Checked.ToString().ToLower());
+        }
+
+        private void btn_SwitchImg_Click(object sender, EventArgs e)
+        {
+            GetEventXML.GetRandomImage();
+            if (GetEventXML.RandomImage != null)
+            {
+                var request = WebRequest.Create("http://www-valkyriecrusade.nubee.com/" + GetEventXML.RandomImage);
+                using (var response = request.GetResponse())
+                using (var stream = response.GetResponseStream())
+                {
+                    pictureBox4.Image = Image.FromStream(stream);
+                }
+            }
         }
     }
 }

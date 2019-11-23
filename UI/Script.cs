@@ -14,6 +14,7 @@ namespace UI
     {
         public static Stopwatch stop = new Stopwatch();
         public static bool RuneBoss, Stuck, EnterWitchGate, Archwitch_Repeat, DisableAutoCheckEvent, CloseEmu = false, pushed = false;
+        public static readonly string game = "com.nubee.valkyriecrusade", activity = "/.GameActivity";
         public static int runes, energy;
         public static double Archwitch_Stage, Weapon_Stage;
         public static int TreasureHuntIndex = -1;
@@ -46,7 +47,7 @@ namespace UI
                     BotCore.Delay(1000, true);
                     image = BotCore.ImageCapture();
                 }
-                var crop = BotCore.CropImage(image, new Point(315, 150), new Point(1005, 590));
+                var crop = BotCore.CropImage(image, new Point(315, 150), new Point(1005, 700));
                 Point? point = BotCore.FindImage(crop, Img.GreenButton, false);
                 if (point != null)
                 {
@@ -55,7 +56,7 @@ namespace UI
                 image = BotCore.ImageCapture();
                 if (!BotCore.RGBComparer(image, new Point(109, 705), Color.FromArgb(130, 130, 130), 5) && !BotCore.RGBComparer(image, new Point(219, 705), Color.FromArgb(130, 130, 130), 5))
                 {
-                    if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
+                    if (!BotCore.GameIsForeground(game))
                     {
                         return;
                     }
@@ -125,7 +126,7 @@ namespace UI
                         }
                         else
                         {
-                            BotCore.KillGame("com.nubee.valkyriecrusade");
+                            BotCore.KillGame(game);
                             ScriptErrorHandler.Reset("Unable to locate main screen. Restarting Game!");
                             error = 0;
                             return;
@@ -154,7 +155,10 @@ namespace UI
                     {
                         PrivateVariable.InMainScreen = true;
                         Variables.ScriptLog("Screen Located", Color.White);
-                        Collect();
+                        if(PrivateVariable.VCevent != PrivateVariable.EventType.GuildWar)
+                        {
+                            Collect();
+                        }
                         Retry = 0;
                         break;
                     }
@@ -169,7 +173,7 @@ namespace UI
                 }
                 if (x > 25)
                 {
-                    BotCore.KillGame("com.nubee.valkyriecrusade");
+                    BotCore.KillGame(game);
                 }
             }
         }
@@ -187,7 +191,7 @@ namespace UI
                             BotCore.SendSwipe(new Point(925, 576), new Point(614, 26), 1000);
                             break;
                         case 1:
-                            BotCore.SendSwipe(new Point(250, 576), new Point(877, 127), 1000);
+                            BotCore.SendSwipe(new Point(300, 580), new Point(877, 127), 1000);
                             break;
                         case 2:
                             BotCore.SendSwipe(new Point(226, 175), new Point(997, 591), 1000);
@@ -198,10 +202,20 @@ namespace UI
                     }
                     image = BotCore.ImageCapture();
                     var crop = BotCore.CropImage(image, new Point(0, 0), new Point(1020, 720));
+                    var p = BotCore.FindImage(image, Img.Red_Button, false);
+                    if(p != null)
+                    {
+                        BotCore.SendTap(p.Value);
+                    }
+                    p = BotCore.FindImage(image, Img.GreenButton, false);
+                    if(p != null)
+                    {
+                        BotCore.SendTap(p.Value);
+                    }
                     //Find image and collect
                     if(!BotCore.RGBComparer(image, new Point(1259, 219), Color.FromArgb(75, 87, 254), 65))
                     {
-                        var p = BotCore.FindImage(crop, Img.Resource_1, false);
+                        p = BotCore.FindImage(crop, Img.Resource_1, false);
                         if (p != null)
                         {
                             BotCore.SendTap(p.Value);
@@ -210,7 +224,7 @@ namespace UI
                     }
                     if (!BotCore.RGBComparer(image, new Point(1261, 101), Color.FromArgb(70, 130, 10), 65))
                     {
-                        var p = BotCore.FindImage(crop, Img.Resource_2, false);
+                        p = BotCore.FindImage(crop, Img.Resource_2, false);
                         if (p != null)
                         {
                             BotCore.SendTap(p.Value);
@@ -225,7 +239,7 @@ namespace UI
                     }
                     if (!BotCore.RGBComparer(image, new Point(1260, 42), Color.FromArgb(249, 173, 46), 10))
                     {
-                        var p = BotCore.FindImage(crop, Img.Resource_3, false);
+                        p = BotCore.FindImage(crop, Img.Resource_3, false);
                         if (p != null)
                         {
                             BotCore.SendTap(p.Value);
@@ -240,7 +254,7 @@ namespace UI
                     }
                     if(!BotCore.RGBComparer(image,new Point(1260, 160), Color.FromArgb(125, 125, 125), 10))
                     {
-                        var p = BotCore.FindImage(crop, Img.Resource_4, false);
+                        p = BotCore.FindImage(crop, Img.Resource_4, false);
                         if (p != null)
                         {
                             BotCore.SendTap(p.Value);
@@ -258,44 +272,7 @@ namespace UI
             }
             Collected = true;
         }
-        //Archwitch
-        
-        //Guild wars
-        private static void GuildWar()
-        {
-            for(int x = 0; x < 60; x++)
-            {
-                image = BotCore.ImageCapture();
-                var point = BotCore.FindImage(image, Img.GreenButton, false);
-                if(point != null)
-                {
-                    BotCore.SendTap(point.Value);
-                    BotCore.Delay(500);
-                    x--;
-                    continue;
-                }
-                if (BotCore.FindImage(image, "Img\\GuildWar\\Locate.png", false) != null)
-                {
-                    break;
-                }
-                if(x > 50)
-                {
-                    Variables.ScriptLog("Somehing is not right! No guild war locate found! Lets go back!");
-                    GetEventXML.guildwar = DateTime.MinValue;
-                    return;
-                }
-            }
-            //Read energy
-            if (BotCore.RGBComparer(image, new Point(877, 560), Color.FromArgb(50, 233,34), 10))
-            {
-                PrivateVariable.Battling = true;
-                Battle();
-            }
-            else
-            {
-                BotCore.Delay(2700000);
-            }
-        }
+
         //Check Event
         private static Point[] eventlocations = new Point[] { new Point(795, 80), new Point(795, 240), new Point(795, 400)  };
         private static int selectedeventlocations = 0;
@@ -375,7 +352,7 @@ namespace UI
             var tutorial_charac = 0;
             do
             {
-                if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
+                if (!BotCore.GameIsForeground(game))
                 {
                     return;
                 }
@@ -588,7 +565,6 @@ namespace UI
                             stop.Stop();
                             Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                             stop.Reset();
-                            
                             locateUIError = 0;
                             RuneBoss = false;
                             return;
@@ -685,7 +661,19 @@ namespace UI
                             stop.Stop();
                             Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                             stop.Reset();
-                            
+                            locateUIError = 0;
+                            return;
+                        }
+                    }
+                    else if(PrivateVariable.VCevent == PrivateVariable.EventType.GuildWar)
+                    {
+                        if (BotCore.FindImage(image, "Img\\GuildWar\\Locate.png", false) != null)
+                        {
+                            PrivateVariable.Battling = false;
+                            Variables.ScriptLog("Battle Ended!", Color.Lime);
+                            stop.Stop();
+                            Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
+                            stop.Reset();
                             locateUIError = 0;
                             return;
                         }
@@ -736,7 +724,7 @@ namespace UI
                 if (locateUIError > 30)
                 {
                     //Something wrong, we need to reset
-                    BotCore.KillGame("com.nubee.valkyriecrusade");
+                    BotCore.KillGame(game);
                     ScriptErrorHandler.Reset("Error on finding UIs, no UI found and no battle screen found!");
                     locateUIError = 0;
                 }
@@ -829,7 +817,7 @@ namespace UI
                     }
                     delay.Stop();
                 }
-                if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
+                if (!BotCore.GameIsForeground(game))
                 {
                     ScriptErrorHandler.Reset("Game is closed! Restarting all!");
                     return;
@@ -868,7 +856,7 @@ namespace UI
                     }
                 
             }
-            else
+            else if(PrivateVariable.VCevent == PrivateVariable.EventType.DemonRealm)
             {
                 Color energy = Color.FromArgb(104, 45, 22);
                 if (BotCore.RGBComparer(image, new Point(208, 445), energy, 10))
@@ -891,6 +879,31 @@ namespace UI
                 {
                     num++;
                 }
+            }
+            else
+            {
+                Color energy = Color.FromArgb(50, 233, 34);
+                if (BotCore.RGBComparer(image, new Point(877, 560), energy, 10))
+                {
+                    num++;
+                }
+                if (BotCore.RGBComparer(image, new Point(943, 560), energy, 10))
+                {
+                    num++;
+                }
+                if(BotCore.RGBComparer(image, new Point(1006, 560), energy, 10))
+                {
+                    num++;
+                }
+                if(BotCore.RGBComparer(image, new Point(1071, 560), energy, 10))
+                {
+                    num++;
+                }
+                if(BotCore.RGBComparer(image, new Point(1135, 560), energy, 10))
+                {
+                    num++;
+                }
+                return num;
             }
             if(nextOnline < DateTime.Now)
             {
@@ -929,7 +942,7 @@ namespace UI
                 }
                 return num;
             }
-            else
+            else if (PrivateVariable.VCevent == PrivateVariable.EventType.DemonRealm)
             {
                 int num = 0;
                 if (!BotCore.RGBComparer(image, new Point(965, 158), 74, 56, 68, 10))
@@ -945,6 +958,36 @@ namespace UI
                     num++;
                 }
                 if (!BotCore.RGBComparer(image, new Point(1116, 261), 44, 31, 35, 10))
+                {
+                    num++;
+                }
+                return num;
+            }
+            else
+            {
+                int num = 0;
+                Color star = Color.FromArgb(250, 197, 43);
+                if(BotCore.RGBComparer(image, new Point(874, 234), star, 20))
+                {
+                    num++;
+                }
+                if(BotCore.RGBComparer(image, new Point(925, 234), star, 20))
+                {
+                    num++;
+                }
+                if(BotCore.RGBComparer(image, new Point(976, 234), star, 20))
+                {
+                    num++;
+                }
+                if(BotCore.RGBComparer(image, new Point(1027,234), star, 20))
+                {
+                    num++;
+                }
+                if(BotCore.RGBComparer(image,new Point(1078,234), star, 20))
+                {
+                    num++;
+                }
+                if(BotCore.RGBComparer(image, new Point(1129, 234), star, 20))
                 {
                     num++;
                 }
@@ -970,7 +1013,7 @@ namespace UI
             {
                 Variables.ScriptLog("Backup saved", Color.Lime);
             }
-            BotCore.KillGame("com.nubee.valkyriecrusade");
+            BotCore.KillGame(game);
             Variables.FindConfig("General","Manual_Rune", out string output);
             if (output == "true")
             {
@@ -994,7 +1037,7 @@ namespace UI
                 if (bool.Parse(conf))
                 {
                     Variables.ScriptLog("Entering SoulWeapon Event", Color.AliceBlue);
-                    if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
+                    if (!BotCore.GameIsForeground(game))
                     {
                         for (int e = 0; e < 10; e++)
                         {
@@ -1028,9 +1071,9 @@ namespace UI
                                 }
                                 while (true);
                             }
-                            BotCore.StartGame("com.nubee.valkyriecrusade/.GameActivity");
+                            BotCore.StartGame(game + activity);
                             BotCore.Delay(3000);
-                            if (BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
+                            if (BotCore.GameIsForeground(game))
                             {
                                 //nextOnline = DateTime.Now;
                                 //Collected = false;
@@ -1054,7 +1097,7 @@ namespace UI
                 if (bool.Parse(conf))
                 {
                     Variables.ScriptLog("Entering Archwitch Event", Color.AliceBlue);
-                    if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
+                    if (!BotCore.GameIsForeground(game))
                     {
                         for (int e = 0; e < 10; e++)
                         {
@@ -1090,7 +1133,7 @@ namespace UI
                             }
                             BotCore.StartGame("com.nubee.valkyriecrusade/.GameActivity");
                             BotCore.Delay(3000);
-                            if (BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
+                            if (BotCore.GameIsForeground(game))
                             {
                                 //nextOnline = DateTime.Now;
                                 //Collected = false;
@@ -1115,16 +1158,26 @@ namespace UI
                 {
                     if (suspend == "true")
                     {
-                        SleepWake.SetWakeTimer(nextOnline.AddMinutes(-5));
+                        SleepWake.SetWakeTimer(nextOnline.AddMinutes(-15));
                     }
                     else
                     {
-                        BotCore.Delay(Convert.ToInt32((nextOnline - DateTime.Now).TotalMilliseconds - 300000));
+                        do
+                        {
+                            BotCore.Delay(2000);
+                            Guildwar.Enter();
+                        }
+                        while (DateTime.Now != nextOnline.AddMinutes(-10));
                     }
                 }
                 else
                 {
-                    BotCore.Delay(Convert.ToInt32((nextOnline - DateTime.Now).TotalMilliseconds - 300000));
+                    do
+                    {
+                        BotCore.Delay(2000);
+                        Guildwar.Enter();
+                    }
+                    while (DateTime.Now != nextOnline.AddMinutes(-10));
                 }
             }
             energy = 5;
@@ -1160,7 +1213,7 @@ namespace UI
                     }
                 }
                 Variables.ScriptLog("Estimate online time is " + nextOnline, Color.Lime);
-                BotCore.KillGame("com.nubee.valkyriecrusade");
+                BotCore.KillGame(game);
                 string filename = Encryption.SHA256(Variables.AdbIpPort);
                 if (!Directory.Exists("C:\\ProgramData\\" + filename))
                 {
@@ -1174,42 +1227,32 @@ namespace UI
                 {
                     Variables.ScriptLog("Backup saved", Color.Lime);
                 }
-                if (DateTime.Now > GetEventXML.guildwar && DateTime.Now < GetEventXML.guildwar.AddDays(9))
-                {
-                    //Guild war! Online immediately!
-                    if(nextOnline.Hour > 9 && nextOnline.Hour < 11)
-                    {
-                        nextOnline = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 7, 59, 30);
-                    }
-                    else if (nextOnline.Hour > 13 && nextOnline.Hour < 18)
-                    {
-                        nextOnline = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 11, 59, 30);
-                    }
-                    else if (nextOnline.Hour > 20 && nextOnline.Hour < 21)
-                    {
-                        nextOnline = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 18, 59, 30);
-                    }
-                    else if (nextOnline.Hour > 23)
-                    {
-                        nextOnline = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 21, 59, 30);
-                    }
-                }
                 if (DateTime.Now < nextOnline.AddMinutes(-5))
                 {
                     if (Variables.FindConfig("General", "Suspend_PC", out string suspend))
                     {
                         if (suspend == "true")
                         {
-                            SleepWake.SetWakeTimer(nextOnline.AddMinutes(-5));
+                            SleepWake.SetWakeTimer(nextOnline.AddMinutes(-15));
                         }
                         else
                         {
-                            BotCore.Delay(Convert.ToInt32((nextOnline - DateTime.Now).TotalMilliseconds - 300000));
+                            do
+                            {
+                                BotCore.Delay(2000);
+                                Guildwar.Enter();
+                            }
+                            while (DateTime.Now != nextOnline.AddMinutes(-10));
                         }
                     }
                     else
                     {
-                        BotCore.Delay(Convert.ToInt32((nextOnline - DateTime.Now).TotalMilliseconds - 300000));
+                        do
+                        {
+                            BotCore.Delay(2000);
+                            Guildwar.Enter();
+                        }
+                        while (DateTime.Now != nextOnline.AddMinutes(-10));
                     }
                 }
             }
@@ -1307,79 +1350,6 @@ namespace UI
                 }
             }
             Debug_.WriteLine();
-            var Japan = TimeZoneInfo.FindSystemTimeZoneById("Tokyo Standard Time");
-            var time = TimeZoneInfo.ConvertTime(DateTime.Now, Japan).TimeOfDay;
-            if (time.Hours == 12)//Event change time
-            {
-                GetEventXML.LoadXMLEvent();
-            }
-            if (DateTime.Now > GetEventXML.guildwar && DateTime.Now < GetEventXML.guildwar.AddDays(9))
-            {
-                Variables.ScriptLog("Guildwar is now running! ",Color.LightCyan);
-                if(Variables.FindConfig("GuildWar", "Manual", out string output))
-                {
-                    var hour = time.Hours;
-                    if (hour == 8 || hour == 12 || hour == 19 || hour == 22)
-                    {
-                        Console.Beep();
-                        ScriptErrorHandler.Reset("Guild War is running, waiting for end...");
-                        double seconds = 0;
-                        Console.Beep();
-                        switch (hour)
-                        {
-                            case 8:
-                                seconds = (TimeSpan.Parse("8:59:59") - time).TotalMilliseconds;
-                                Variables.ScriptLog("Will start game at Japan time 8:59:59", Color.YellowGreen);
-                                break;
-                            case 12:
-                                seconds = (TimeSpan.Parse("12:59:59") - time).TotalMilliseconds;
-                                Variables.ScriptLog("Will start game at Japan Time 12:59:59", Color.YellowGreen);
-                                break;
-                            case 19:
-                                seconds = (TimeSpan.Parse("19:59:59") - time).TotalMilliseconds;
-                                Variables.ScriptLog("Will start game at Japan Time 19:59:59", Color.YellowGreen);
-                                break;
-                            case 22:
-                                seconds = (TimeSpan.Parse("23:59:59") - time).TotalMilliseconds;
-                                Variables.ScriptLog("Will start game at Japan Time 23:59:59", Color.YellowGreen);
-                                break;
-                        }
-                        BotCore.KillGame("com.nubee.valkyriecrusade");
-                        BotCore.Delay(Convert.ToInt32(seconds), true);
-                    }
-                }
-                /*else if(Variables.FindConfig("GuildWar", "Bot", out output))
-               {
-
-               }
-               switch (hour)
-               {
-                   case 8:
-                   case 12:
-                   case 19:
-                   case 22:
-                       ScriptErrorHandler.Reset("Guild War is running!");
-                       var point = BotCore.FindImage(image, Img.GreenButton, false);
-                       if (point == null)
-                       {
-                           BotCore.SendTap(155, 663);
-                           BotCore.Delay(5000);
-                           BotCore.SendTap(628, 96);
-                           BotCore.Delay(5000);
-                       }
-                       else
-                       {
-                           BotCore.SendTap(point.Value);
-                       }
-                       do
-                       {
-                           Variables.ScriptLog("Entering Guild War!", Color.White);
-                           GuildWar();
-                       } while (hour == 8 || hour == 12 || hour == 19 || hour == 22);
-                       break;
-               }
-               */
-            }
             if (!CloseEmu)
             {
                 BotCore.Delay(10, true);
@@ -1470,7 +1440,7 @@ namespace UI
                 return;
             }
             BotCore.Delay(10, true);
-            if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
+            if (!BotCore.GameIsForeground(game))
             {
                 for (int e = 0; e < 10; e++)
                 {
@@ -1506,7 +1476,7 @@ namespace UI
                     }
                     BotCore.StartGame("com.nubee.valkyriecrusade/.GameActivity");
                     BotCore.Delay(3000);
-                    if (BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
+                    if (BotCore.GameIsForeground(game))
                     {
                         nextOnline = DateTime.Now;
                         Collected = false;
@@ -1520,6 +1490,32 @@ namespace UI
             }
             else
             {
+                var Japan = TimeZoneInfo.FindSystemTimeZoneById("Tokyo Standard Time");
+                var time = TimeZoneInfo.ConvertTime(DateTime.Now, Japan).TimeOfDay;
+                if (time.Hours == 12)//Event change time
+                {
+                    GetEventXML.LoadXMLEvent();
+                }
+                if (DateTime.Now > GetEventXML.guildwar && DateTime.Now < GetEventXML.guildwar.AddDays(9))
+                {
+                    Variables.ScriptLog("Guildwar is now running! ", Color.LightCyan);
+                    if (Variables.FindConfig("GuildWar", "Manual", out string output))
+                    {
+                        if (bool.Parse(output))
+                        {
+                            WaitGuildWar(time);
+                        }
+                        else
+                        {
+                            //Direct attack guildwar
+                            Guildwar.Enter();
+                        }
+                    }
+                    else
+                    {
+                        WaitGuildWar(time);
+                    }
+                }
                 if (!PrivateVariable.InMainScreen && !PrivateVariable.InEventScreen && !PrivateVariable.Battling)
                 {
                     LocateMainScreen();
@@ -1560,6 +1556,38 @@ namespace UI
             }
         }
 
+        private static void WaitGuildWar(TimeSpan time)
+        {
+            var hour = time.Hours;
+            if (hour == 8 || hour == 12 || hour == 19 || hour == 22)
+            {
+                Console.Beep();
+                ScriptErrorHandler.Reset("Guild War is running, waiting for end...");
+                double seconds = 0;
+                Console.Beep();
+                switch (hour)
+                {
+                    case 8:
+                        seconds = (TimeSpan.Parse("8:59:59") - time).TotalMilliseconds;
+                        Variables.ScriptLog("Will start game at Japan time 8:59:59", Color.YellowGreen);
+                        break;
+                    case 12:
+                        seconds = (TimeSpan.Parse("12:59:59") - time).TotalMilliseconds;
+                        Variables.ScriptLog("Will start game at Japan Time 12:59:59", Color.YellowGreen);
+                        break;
+                    case 19:
+                        seconds = (TimeSpan.Parse("19:59:59") - time).TotalMilliseconds;
+                        Variables.ScriptLog("Will start game at Japan Time 19:59:59", Color.YellowGreen);
+                        break;
+                    case 22:
+                        seconds = (TimeSpan.Parse("23:59:59") - time).TotalMilliseconds;
+                        Variables.ScriptLog("Will start game at Japan Time 23:59:59", Color.YellowGreen);
+                        break;
+                }
+                BotCore.KillGame(game);
+                BotCore.Delay(Convert.ToInt32(seconds), true);
+            }
+        }
         public void ResetScript()
         {
             ScriptErrorHandler.Reset("Reset script!");

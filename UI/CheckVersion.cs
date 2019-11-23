@@ -12,7 +12,7 @@ namespace UI
     {
         public static string UpdateText;
 
-        public static string BufferUpdateText;
+        public static string[] BufferUpdateText;
 
         public static string currentVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static void CheckUpdate()
@@ -24,7 +24,7 @@ namespace UI
                 var api = Encoding.UTF8.GetString(rawdata);
                 JObject data = JObject.Parse(api);
                 string latestversion = data["tag_name"].ToString();
-                BufferUpdateText = data["body"].ToString().Replace("\r\n", "\n\n");
+                BufferUpdateText = data["body"].ToString().Split('\n');
                 JObject assets = JObject.Parse(data["assets"][0].ToString());
                 string download = assets["browser_download_url"].ToString();
                 if (Regex.Match(currentVersion.Replace(".",""),@"\d+").Value != Regex.Match(latestversion.Replace(".", ""), @"\d+").Value)
@@ -33,13 +33,38 @@ namespace UI
                     {
                         if (bool.Parse(output))
                         {
-                            UpdateText = BufferUpdateText + "<br><hr><a href=\""+download+"\">Download</a>";
+                            string formatedhtml = "";
+                            foreach(var line in BufferUpdateText)
+                            {
+                                if(line.Contains("# "))
+                                {
+                                    formatedhtml += line.Replace("# ", "<h2>") + "</h2>";
+                                }
+                                else
+                                {
+                                    formatedhtml += line.Replace("*","<li>")+"</li><br>";
+                                }
+                            }
+                            UpdateText = Properties.Resources.html.Replace("<!data!>", formatedhtml).Replace("<!download!>", "<a href=\"" + download + "\">Download</a>");
                         }
                     }
                     else
                     {
                         Variables.ModifyConfig("General", "AlertUpdate", "true");
-                        UpdateText = BufferUpdateText;
+                        string formatedhtml = "";
+                        foreach (var line in BufferUpdateText)
+                        {
+                            if (line.Contains("# "))
+                            {
+                                formatedhtml += line.Replace("# ", "<h2>") + "</h2>";
+                            }
+                            else
+                            {
+                                formatedhtml += line.Replace("*", "<li>") + "</li><br>";
+                            }
+                        }
+                        UpdateText = Properties.Resources.html.Replace("<!data!>", formatedhtml).Replace("<!download!>", "<a href=\"" + download + "\">Download</a>");
+
                     }
                 }
             }

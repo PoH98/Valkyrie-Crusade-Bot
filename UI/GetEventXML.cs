@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Net;
-using System.Windows.Forms;
+using System.Net.Cache;
 using System.Xml;
 
 namespace UI
@@ -11,10 +13,11 @@ namespace UI
         private static string url = "http://www-valkyriecrusade.nubee.com/";
         public static string Eventlink, RandomImage, GuildwarLink;
         public static DateTime guildwar = DateTime.MinValue;
- 
+        public static List<string> Imagelink = new List<string>();
+        public static List<int> UnixTimeStamp = new List<int>();
+
         public static void LoadXMLEvent()
         {
-            List<string> Imagelink = new List<string>();
             try
             {
                 XmlDocument doc = new XmlDocument();
@@ -75,15 +78,20 @@ namespace UI
                         break;
                     }
                 }
-                Random rnd = new Random();
-                int imindex = rnd.Next(0, Imagelink.Count);
-                RandomImage = Imagelink[imindex];
+                GetRandomImage();
             }
             catch
             {
                 Eventlink = "";
             }
             
+        }
+
+        public static void GetRandomImage()
+        {
+            Random rnd = new Random();
+            int imindex = rnd.Next(0, Imagelink.Count);
+            RandomImage = Imagelink[imindex];
         }
     }
 }

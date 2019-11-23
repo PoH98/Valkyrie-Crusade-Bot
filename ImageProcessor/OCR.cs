@@ -27,8 +27,16 @@ namespace BotFramework
             {
                 throw new Exception("Run PrepairOcr First!");
             }
-            Image<Bgr, byte> img = new Image<Bgr, byte>(new Bitmap(BotCore.Decompress(source)));
-             t.SetImage(img);
+            Image<Bgr, byte> img = new Image<Bgr, byte>(BotCore.Decompress(source));
+            if (File.Exists($"C:\\ProgramData\\tessdata\\{lang}.traineddata"))
+            {
+                FileInfo f = new FileInfo(($"C:\\ProgramData\\tessdata\\{lang}.traineddata"));
+                if (f.Length == 0)
+                {
+                    throw new FileNotFoundException("The given ocr data is incomplete or not found!");
+                }
+            }
+            t.SetImage(img);
             return t.GetUTF8Text();
         }
         /// <summary>
@@ -38,7 +46,7 @@ namespace BotFramework
         /// <param name="blacklist">Blacklisted characters while OCR</param>
         /// <param name="whitelist">Only allow these specific characters while OCR</param>
         /// <returns></returns>
-        public static void PrepairOcr(string whitelist = "", string blacklist = "", string lang = "eng")
+        public static void PrepairOcr(string whitelist = "", string blacklist = "", string lang = "eng", bool numbersonly = false)
         {
             if (t == null)
             {
@@ -62,15 +70,6 @@ namespace BotFramework
                     d.url = $"https://github.com/tesseract-ocr/tessdata/raw/master/{lang}.traineddata";
                     d.path = $"C:\\ProgramData\\tessdata\\{lang}.traineddata";
                     d.ShowDialog();
-                    
-                    /*try
-                    {
-                        wc.DownloadFile($"https://github.com/tesseract-ocr/tessdata/raw/master/{lang}.traineddata", $"C:\\ProgramData\\tessdata\\{lang}.traineddata");
-                    }
-                    catch
-                    {
-                        MessageBox.Show("Download failed! Retrying! \n下载失败！正在重试！");
-                    }*/
                 }
                 if(whitelist.Length > 0)
                 {
@@ -79,6 +78,14 @@ namespace BotFramework
                 if (blacklist.Length > 0)
                 {
                     t.SetVariable("tessedit_char_blacklist", blacklist);
+                }
+                if (numbersonly)
+                {
+                    t.SetVariable("classify_bln_numeric_mode", "1");
+                }
+                else
+                {
+                    t.SetVariable("classify_bln_numeric_mode", "0");
                 }
                 try
                 {
