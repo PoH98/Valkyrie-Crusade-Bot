@@ -278,6 +278,10 @@ namespace UI
         private static int selectedeventlocations = 0;
         private static void CheckEvent()
         {
+            if (selectedeventlocations > eventlocations.Length)
+            {
+                selectedeventlocations = 0;
+            }
             Point eventlocation = eventlocations[selectedeventlocations];
             Debug_.WriteLine();
             Point? point = null;
@@ -882,24 +886,24 @@ namespace UI
             }
             else
             {
-                Color energy = Color.FromArgb(50, 233, 34);
-                if (BotCore.RGBComparer(image, new Point(877, 560), energy, 10))
+                Color energy = Color.FromArgb(111,111,111);
+                if (!BotCore.RGBComparer(image, new Point(876, 560), energy, 10))
                 {
                     num++;
                 }
-                if (BotCore.RGBComparer(image, new Point(943, 560), energy, 10))
+                if (!BotCore.RGBComparer(image, new Point(941, 560), energy, 10))
                 {
                     num++;
                 }
-                if(BotCore.RGBComparer(image, new Point(1006, 560), energy, 10))
+                if(!BotCore.RGBComparer(image, new Point(1006, 559), energy, 10))
                 {
                     num++;
                 }
-                if(BotCore.RGBComparer(image, new Point(1071, 560), energy, 10))
+                if(!BotCore.RGBComparer(image, new Point(1068, 560), energy, 10))
                 {
                     num++;
                 }
-                if(BotCore.RGBComparer(image, new Point(1135, 560), energy, 10))
+                if(!BotCore.RGBComparer(image, new Point(1133, 560), energy, 10))
                 {
                     num++;
                 }
@@ -966,28 +970,28 @@ namespace UI
             else
             {
                 int num = 0;
-                Color star = Color.FromArgb(250, 197, 43);
-                if(BotCore.RGBComparer(image, new Point(874, 234), star, 20))
+                Color star = Color.FromArgb(69, 47, 17);
+                if(!BotCore.RGBComparer(image, new Point(877, 234), star, 10))
                 {
                     num++;
                 }
-                if(BotCore.RGBComparer(image, new Point(925, 234), star, 20))
+                if(!BotCore.RGBComparer(image, new Point(929, 237), star, 10))
                 {
                     num++;
                 }
-                if(BotCore.RGBComparer(image, new Point(976, 234), star, 20))
+                if(!BotCore.RGBComparer(image, new Point(986, 232), star, 10))
                 {
                     num++;
                 }
-                if(BotCore.RGBComparer(image, new Point(1027,234), star, 20))
+                if(!BotCore.RGBComparer(image, new Point(1032, 235), star, 10))
                 {
                     num++;
                 }
-                if(BotCore.RGBComparer(image,new Point(1078,234), star, 20))
+                if(!BotCore.RGBComparer(image,new Point(1080, 236), star, 10))
                 {
                     num++;
                 }
-                if(BotCore.RGBComparer(image, new Point(1129, 234), star, 20))
+                if(!BotCore.RGBComparer(image, new Point(1131, 235), star, 10))
                 {
                     num++;
                 }
@@ -1167,7 +1171,7 @@ namespace UI
                             BotCore.Delay(2000);
                             Guildwar.Enter();
                         }
-                        while (DateTime.Now != nextOnline.AddMinutes(-10));
+                        while (DateTime.Now <= nextOnline.AddMinutes(-10));
                     }
                 }
                 else
@@ -1175,9 +1179,15 @@ namespace UI
                     do
                     {
                         BotCore.Delay(2000);
-                        Guildwar.Enter();
+                        if(Variables.FindConfig("GuildWar", "Manual", out string boolean))
+                        {
+                            if(boolean == "false")
+                            {
+                                Guildwar.Enter();
+                            }
+                        }
                     }
-                    while (DateTime.Now != nextOnline.AddMinutes(-10));
+                    while (DateTime.Now <= nextOnline.AddMinutes(-10));
                 }
             }
             energy = 5;
@@ -1242,7 +1252,7 @@ namespace UI
                                 BotCore.Delay(2000);
                                 Guildwar.Enter();
                             }
-                            while (DateTime.Now != nextOnline.AddMinutes(-10));
+                            while (DateTime.Now <= nextOnline.AddMinutes(-10));
                         }
                     }
                     else
@@ -1250,9 +1260,15 @@ namespace UI
                         do
                         {
                             BotCore.Delay(2000);
-                            Guildwar.Enter();
+                            if (Variables.FindConfig("GuildWar", "Manual", out string boolean))
+                            {
+                                if (boolean == "false")
+                                {
+                                    Guildwar.Enter();
+                                }
+                            }
                         }
-                        while (DateTime.Now != nextOnline.AddMinutes(-10));
+                        while (DateTime.Now <= nextOnline.AddMinutes(-10));
                     }
                 }
             }

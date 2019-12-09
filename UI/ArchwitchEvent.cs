@@ -359,13 +359,13 @@ namespace UI
                 if(buttons != null)
                 {
                     BotCore.SendTap(buttons.Value.X + rnd.Next(675, 960), buttons.Value.Y + rnd.Next(575, 630));
-                    BotCore.Delay(3000, 5000);
+                    BotCore.Delay(5000);
                     do
                     {
-                        BotCore.Delay(1500);
+                        BotCore.Delay(500);
                         VCBotScript.image = BotCore.ImageCapture();
                     }
-                    while (BotCore.RGBComparer(VCBotScript.image, new Point(400, 400), Color.Black, 10));
+                    while (BotCore.RGBComparer(VCBotScript.image, new Point(400, 400), Color.Black, 0));
                     buttons = null;
                     do
                     {
@@ -410,12 +410,13 @@ namespace UI
                         return;
                     }
                 }
-                buttons = BotCore.FindImage(VCBotScript.image, Img.Red_Button, false);
-                if (buttons != null)
+                crop = BotCore.CropImage(VCBotScript.image, new Point(410, 330), new Point(880, 450));
+                buttons = BotCore.FindImage(crop, Img.Red_Button, false);
+                if (buttons != null )
                 {
-                    BotCore.SendTap(buttons.Value.X + rnd.Next(430, 845), buttons.Value.Y + rnd.Next(370, 420));
-                    BotCore.SendTap(buttons.Value.X + rnd.Next(430, 845), buttons.Value.Y + rnd.Next(370, 420));
-                    BotCore.SendTap(buttons.Value.X + rnd.Next(430, 845), buttons.Value.Y + rnd.Next(370, 420));
+                    BotCore.SendTap(buttons.Value.X + rnd.Next(410, 880), buttons.Value.Y + rnd.Next(330, 450));
+                    BotCore.SendTap(buttons.Value.X + rnd.Next(410, 880), buttons.Value.Y + rnd.Next(330, 450));
+                    BotCore.SendTap(buttons.Value.X + rnd.Next(410, 880), buttons.Value.Y + rnd.Next(330, 450));
                     BotCore.Delay(2000, 3000);
                     PrivateVariable.Battling = true;
                     VCBotScript.Battle();

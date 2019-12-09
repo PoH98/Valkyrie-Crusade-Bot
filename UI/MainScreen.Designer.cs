@@ -812,7 +812,7 @@
             this.metroTabControl1.Controls.Add(this.Info);
             this.metroTabControl1.Location = new System.Drawing.Point(8, 63);
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 2;
+            this.metroTabControl1.SelectedIndex = 1;
             this.metroTabControl1.Size = new System.Drawing.Size(460, 537);
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Brown;
             this.metroTabControl1.TabIndex = 32;
@@ -926,16 +926,13 @@
             // chk_GWW
             // 
             this.chk_GWW.AutoSize = true;
-            this.chk_GWW.Checked = true;
-            this.chk_GWW.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chk_GWW.Enabled = false;
             this.chk_GWW.Location = new System.Drawing.Point(9, 19);
             this.chk_GWW.Name = "chk_GWW";
             this.chk_GWW.Size = new System.Drawing.Size(80, 17);
             this.chk_GWW.TabIndex = 0;
             this.chk_GWW.Text = "checkBox1";
             this.chk_GWW.UseVisualStyleBackColor = true;
-            this.chk_GWW.CheckedChanged += new System.EventHandler(this.chk_GWW_CheckedChanged_1);
+            this.chk_GWW.CheckedChanged += new System.EventHandler(this.chk_GWW_CheckedChanged);
             // 
             // Weapon
             // 

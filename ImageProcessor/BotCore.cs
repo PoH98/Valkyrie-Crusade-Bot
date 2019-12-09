@@ -94,6 +94,7 @@ namespace BotFramework
             Variables.AndroidSharedPath = "";
             Variables.SharedPath = "";
             Variables.VBoxManagerPath = "";
+            Variables.ForceWinApiCapt = false;
             Emulator:
             if (EmuSelection_Resource.emu.Count() > 1) //More than one installed
             {
@@ -109,6 +110,7 @@ namespace BotFramework
                             {
                                 Variables.emulator = e;
                                 e.LoadEmulatorSettings();
+                                
                                 File.WriteAllText("Emulators\\Use_Emulator.ini", "use=" + e.EmulatorName());
                                 return;
                             }
@@ -122,6 +124,7 @@ namespace BotFramework
                             {
                                 Variables.emulator = emulators[x];
                                 emulators[x].LoadEmulatorSettings();
+                                CheckSharedPath();
                                 File.WriteAllText("Emulators\\Use_Emulator.ini","use="+emulators[x].EmulatorName());
                                 return;
                             }
@@ -137,6 +140,7 @@ namespace BotFramework
                         {
                             Variables.emulator = e;
                             e.LoadEmulatorSettings();
+                            CheckSharedPath();
                             return;
                         }
                     }
@@ -156,8 +160,15 @@ namespace BotFramework
             {
                 Variables.emulator = EmuSelection_Resource.emu[0];
                 Variables.emulator.LoadEmulatorSettings();
+                CheckSharedPath();
             }
+        }
 
+        private static void CheckSharedPath()
+        {
+            Variables.SharedPath = new string(Variables.SharedPath.Select(ch => Path.GetInvalidPathChars().Contains(ch) ? Path.DirectorySeparatorChar : ch).ToArray());
+            Variables.SharedPath = Variables.SharedPath.Replace("'","");
+            Path.GetFullPath(Variables.SharedPath);
         }
         /// <summary>
         /// Compress image into byte array to avoid conflict while multiple function trying to access the image
@@ -330,6 +341,7 @@ namespace BotFramework
                                 Variables.AdvanceLog("Device found, connection establish on " + Variables.AdbIpPort, lineNumber, caller);
                             }
                             client.SetDevice(socket, device);
+                            Delay(5000);
                             //await emulator start
                             do
                             {
@@ -375,7 +387,8 @@ namespace BotFramework
                 RestartEmulator();
                 return;
             }
-            client.ExecuteRemoteCommand("settings put system font_scale 1.0", (Variables.Controlled_Device as DeviceData), receiver);
+
+           client.ExecuteRemoteCommand("settings put system font_scale 1.0", (Variables.Controlled_Device as DeviceData), receiver);
             ConnectMinitouch();
         }
         /// <summary>
@@ -416,17 +429,28 @@ namespace BotFramework
                 }
                 File.WriteAllLines(path, newports.Where(y => !string.IsNullOrEmpty(y)).ToArray());
             }
-            var files = Directory.GetFiles(Variables.SharedPath, "*.rgba");
-            foreach(var file in files)
+            if(Variables.SharedPath != "")
             {
                 try
                 {
-                    File.Delete(file);
+                    var files = Directory.GetFiles(Variables.SharedPath, "*.rgba");
+                    foreach (var file in files)
+                    {
+                        try
+                        {
+                            File.Delete(file);
+                        }
+                        catch
+                        {
+
+                        }
+                    }
                 }
                 catch
                 {
 
                 }
+                
             }
         }
         /// <summary>
@@ -837,7 +861,27 @@ namespace BotFramework
                 {
                     var tempname = Encryption.SHA256(DateTime.Now.ToString());
                     pcimagepath = (Variables.SharedPath + "\\" + tempname + ".rgba").Replace("\\\\","\\");
-                    androidimagepath = (Variables.AndroidSharedPath + tempname + ".rgba");
+                    if (Variables.AndroidSharedPath.Contains("|"))
+                    {
+                        foreach(var path in Variables.AndroidSharedPath.Split('|'))
+                        {
+                            if (AndroidDirectoryExist(path))
+                            {
+                                string temppath = path;
+                                if(temppath.Last() != '/')
+                                {
+                                    temppath += "/";
+                                }
+                                androidimagepath = (temppath + tempname + ".rgba");
+                                Variables.AdvanceLog("Multiple Android Path settes, selected " + androidimagepath);
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        androidimagepath = (Variables.AndroidSharedPath + tempname + ".rgba");
+                    }
                 }
                 byte[] raw = null;
                 
@@ -1821,12 +1865,34 @@ namespace BotFramework
             names = name.ToArray();
             return devices.ToArray();
         }
-
+        /// <summary>
+        /// Enlarge image and its pixel amounts
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="width">The new width of image</param>
+        /// <param name="height">The new height of image</param>
+        /// <returns></returns>
         public static Bitmap EnlargeImage(Bitmap image, int width, int height)
         {
             Image<Rgb, byte> captureImage = new Image<Rgb, byte>(image);
             Image<Rgb, byte> resizedImage = captureImage.Resize(width, height, Inter.Linear);
             return resizedImage.ToBitmap();
+        }
+        /// <summary>
+        /// Check if the android directory is exist
+        /// </summary>
+        /// <param name="androidpath">The path to check</param>
+        /// <returns></returns>
+        public static bool AndroidDirectoryExist(string androidpath)
+        {
+            if (AdbCommand("ls " + androidpath + " > /dev/null 2>&1 && echo \"exists\" || echo \"not exists\"").Contains("exist"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

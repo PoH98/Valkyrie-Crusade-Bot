@@ -95,6 +95,7 @@ namespace UI
                 hour = time.Hours;
             }
             PrivateVariable.VCevent = tempEvent;
+            Located = false;
             return;
         }
 
@@ -116,7 +117,7 @@ namespace UI
             {
                 if(time.Minutes < 50)
                 {
-                    if (VCBotScript.energy < 4 && VCBotScript.runes > 3 && VCBotScript.runes != 6)
+                    if (VCBotScript.energy < 5 && VCBotScript.runes > 3 && VCBotScript.runes < 6)
                     {
                         if (waittime == 0)
                         {

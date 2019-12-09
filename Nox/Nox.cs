@@ -18,6 +18,8 @@ namespace Nox
     public class Nox : EmulatorInterface
     {
         private static string NoxFile;
+
+        private static IntPtr ToolBox;
         public void CloseEmulator()
         {
             ProcessStartInfo close = new ProcessStartInfo();
@@ -166,38 +168,34 @@ namespace Nox
             var p = Process.Start(info);
             var result = p.StandardOutput.ReadToEnd();
             Regex host = new Regex(".*host ip = ([^,]+), .* guest port = 5555");
-            var regexresult = host.Match(result);
+            var regexresult = host.Match(result).Value;
             string ip = "127.0.0.1", port= "62001";
-            if (regexresult.Success)
-            {
-                ip = regexresult.Value;
-            }
-            Regex portregex = new Regex("name = .*host port = (/d{3,5}), .* guest port = 5555");
-            regexresult = portregex.Match(result);
-            if (regexresult.Success)
-            {
-                port = regexresult.Value;
-            }
+            ip = regexresult.Substring(regexresult.IndexOf("host ip = ") + 10);
+            ip = ip.Remove(ip.IndexOf("host port =") - 2);
+            port = regexresult.Substring(regexresult.IndexOf("host port = ") + 12, 5);
+
             Variables.AdbIpPort = ip + ":" + port;//Adb Port Get
             Regex regex = new Regex("Name: 'Other', Host path: '(.*)'.*");
             var match = regex.Match(result);
             if (match.Success)
             {
-                Variables.SharedPath = match.Value;
+                //"Name: 'Other', Host path: 'C:\\Users\\csy22\\Nox_share\\OtherShare' (machine mapping), writable\r"
+                var shared = match.Value.Substring(match.Value.IndexOf("'",25));
+                Variables.SharedPath = shared.Remove(shared.LastIndexOf("'"));
             }
             else
             {
                 if (Directory.Exists((Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Nox_share\Other\").Replace("\\\\", "\\")))
                 {
-                    Variables.SharedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Nox_share\Other\";
+                    Variables.SharedPath = (Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Nox_share\Other\").Replace("\\\\", "\\");
                 }
                 else if (Directory.Exists((Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\Nox_share\OtherShare\").Replace("\\\\", "\\")))
                 {
-                    Variables.SharedPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\Nox_share\OtherShare\";
+                    Variables.SharedPath = (Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\Nox_share\OtherShare\").Replace("\\\\", "\\");
                 }
-                else if (Directory.Exists((Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\Nox_share\")))
+                else if (Directory.Exists((Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\Nox_share\").Replace("\\\\", "\\")))
                 {
-                    Variables.SharedPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\Nox_share\";
+                    Variables.SharedPath = (Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\Nox_share\").Replace("\\\\", "\\");
                 }
                 else
                 {
@@ -278,9 +276,12 @@ namespace Nox
                     IntPtr handle = DllImport.FindWindowEx(p.MainWindowHandle, IntPtr.Zero, string.Empty, string.Empty);
                     Variables.Proc = p;
                     Variables.ScriptLog("Emulator ID: " + p.Id, Color.DarkGreen);
+                    ToolBox = DllImport.FindWindowEx(IntPtr.Zero, IntPtr.Zero, "Qt5QWindowToolSaveBits", "nox");
+                    DllImport.ShowWindow(ToolBox, 0);
                     break;
                 }
             }
+
         }
     }
 }

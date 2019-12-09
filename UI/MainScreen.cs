@@ -290,6 +290,13 @@ namespace BotFramework
             {
                 Combo_Weapon.SelectedIndex = 0;
             }
+            if(Variables.FindConfig("GuildWar", "Manual", out output))
+            {
+                if(output == "true")
+                {
+                    chk_GWW.Checked = true;
+                }
+            }
             if (Variables.ForceWinApiCapt)
             {
                 WinAPi.Checked = true;
@@ -316,13 +323,23 @@ namespace BotFramework
             {
                 if (output != CheckVersion.currentVersion)
                 {
-                    CheckVersion.UpdateText = "# Thanks for supporting VCBot! \n" + CheckVersion.BufferUpdateText;
+                    StringBuilder sb = new StringBuilder();
+                    foreach(var line in CheckVersion.BufferUpdateText)
+                    {
+                        sb.Append(line + "\n");
+                    }
+                    CheckVersion.UpdateText = "# Thanks for supporting VCBot! \n" + sb.ToString();
                     Variables.ModifyConfig("Version", "Version", CheckVersion.currentVersion);
                 }
             }
             else
             {
-                CheckVersion.UpdateText = "# Thanks for supporting VCBot! \n" + CheckVersion.BufferUpdateText;
+                StringBuilder sb = new StringBuilder();
+                foreach (var line in CheckVersion.BufferUpdateText)
+                {
+                    sb.Append(line + "\n");
+                }
+                CheckVersion.UpdateText = "# Thanks for supporting VCBot! \n" + sb.ToString();
                 Variables.ModifyConfig("Version", "Version", CheckVersion.currentVersion);
             }
             webBrowser1.ScriptErrorsSuppressed = true;
@@ -1191,11 +1208,6 @@ namespace BotFramework
             VCBotScript.Archwitch_Stage = Convert.ToDouble(config);
         }
 
-        private void Chk_GWW_CheckedChanged(object sender, EventArgs e)
-        {
-            Variables.ModifyConfig("GuildWar", "Manual", chk_GWW.Checked.ToString().ToLower());
-        }
-
         private void Chk_SoulWeapon_CheckedChanged(object sender, EventArgs e)
         {
             Variables.ModifyConfig("General", "SoWeEv", Chk_SoulWeapon.Checked.ToString().ToLower());
@@ -1208,10 +1220,6 @@ namespace BotFramework
             VCBotScript.Weapon_Stage = Convert.ToDouble(config);
         }
 
-        private void chk_GWW_CheckedChanged_1(object sender, EventArgs e)
-        {
-            Variables.ModifyConfig("GuildWar", "Manual", chk_GWW.Checked.ToString().ToLower());
-        }
 
         private void btn_SwitchImg_Click(object sender, EventArgs e)
         {
@@ -1225,6 +1233,11 @@ namespace BotFramework
                     pictureBox4.Image = Image.FromStream(stream);
                 }
             }
+        }
+
+        private void chk_GWW_CheckedChanged(object sender, EventArgs e)
+        {
+            Variables.ModifyConfig("GuildWar", "Manual", chk_GWW.Checked.ToString().ToLower());
         }
     }
 }
