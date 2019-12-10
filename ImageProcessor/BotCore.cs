@@ -1219,7 +1219,7 @@ namespace BotFramework
         /// Compare point RGB from image
         /// </summary>
         /// <returns>bool</returns>
-        public static bool RGBComparer(byte[] rawimage, Color color)
+        public static bool RGBComparer(byte[] rawimage, Color color, int tolerance)
         {
             if (!ScriptRun.Run)
             {
@@ -1250,13 +1250,17 @@ namespace BotFramework
                 for (int j = 0; j < bmp.Width; j++)
                 {
                     //Get the color at each pixel
-                    Color now_color = GetPixel(j, i, step, Width, Depth, pixel);
-
-                    //Compare Pixel's Color ARGB property with the picked color's ARGB property 
-                    if (now_color.ToArgb() == color.ToArgb())
+                    Color clr = GetPixel(j, i, step, Width, Depth, pixel);
+                    if (clr.R >= (color.R - tolerance) && clr.R <= (color.R + tolerance))
                     {
-                        bmp.UnlockBits(bd);
-                        return true;
+                        if (clr.G >= (color.G - tolerance) && clr.G <= (color.G + tolerance))
+                        {
+                            if (clr.B >= (color.B - tolerance) && clr.B <= (color.B + tolerance))
+                            {
+                                bmp.UnlockBits(bd);
+                                return true;
+                            }
+                        }
                     }
                 }
             }
@@ -1267,7 +1271,7 @@ namespace BotFramework
         /// Compare point RGB from image
         /// </summary>
         /// <returns>bool</returns>
-        public static bool RGBComparer(byte[] rawimage, Color color, Point start, Point end, out Point? point, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static bool RGBComparer(byte[] rawimage, Color color, Point start, Point end, int tolerance, out Point? point, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
@@ -1280,14 +1284,14 @@ namespace BotFramework
                 point = null;
                 return false;
             }
-            return RGBComparer(image, color, out point, lineNumber, caller);
+            return RGBComparer(image, color,tolerance, out point, lineNumber, caller);
         }
 
         /// <summary>
         /// Compare point RGB from image
         /// </summary>
         /// <returns>bool</returns>
-        public static bool RGBComparer(byte[] rawimage, Color color, out Point? point, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static bool RGBComparer(byte[] rawimage, Color color,int tolerance, out Point? point, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
@@ -1322,13 +1326,18 @@ namespace BotFramework
                 {
                     //Get the color at each pixel
                     Color now_color = GetPixel(j, i,  step, Width, Depth, pixel);
-
-                    //Compare Pixel's Color ARGB property with the picked color's ARGB property 
-                    if (now_color.ToArgb() == color.ToArgb())
+                    Color clr = GetPixel(j, i, step, Width, Depth, pixel);
+                    if (clr.R >= (color.R - tolerance) && clr.R <= (color.R + tolerance))
                     {
-                        point = new Point(j, i);
-                        bmp.UnlockBits(bd);
-                        return true;
+                        if (clr.G >= (color.G - tolerance) && clr.G <= (color.G + tolerance))
+                        {
+                            if (clr.B >= (color.B - tolerance) && clr.B <= (color.B + tolerance))
+                            {
+                                bmp.UnlockBits(bd);
+                                point = new Point(j, i);
+                                return true;
+                            }
+                        }
                     }
                 }
             }
