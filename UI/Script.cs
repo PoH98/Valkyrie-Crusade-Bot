@@ -42,7 +42,7 @@ namespace UI
                     Muted_Device = true;
                 }
                 image = BotCore.ImageCapture();
-                while (BotCore.RGBComparer(image, new Point(520, 355), Color.Black, 1))
+                while (BotCore.RGBComparer(new Point(520, 355), Color.Black, 1))
                 {
                     BotCore.Delay(1000, true);
                     image = BotCore.ImageCapture();
@@ -54,7 +54,7 @@ namespace UI
                     BotCore.SendTap(point.Value);
                 }
                 image = BotCore.ImageCapture();
-                if (!BotCore.RGBComparer(image, new Point(109, 705), Color.FromArgb(130, 130, 130), 30) && !BotCore.RGBComparer(image, new Point(219, 705), Color.FromArgb(130, 130, 130), 30))
+                if (!BotCore.RGBComparer(new Point(109, 705), Color.FromArgb(130, 130, 130), 30) && !BotCore.RGBComparer(new Point(219, 705), Color.FromArgb(130, 130, 130), 30))
                 {
                     if (!BotCore.GameIsForeground(game))
                     {
@@ -213,7 +213,7 @@ namespace UI
                         BotCore.SendTap(p.Value);
                     }
                     //Find image and collect
-                    if(!BotCore.RGBComparer(image, new Point(1259, 219), Color.FromArgb(75, 87, 254), 65))
+                    if(!BotCore.RGBComparer(new Point(1259, 219), Color.FromArgb(75, 87, 254), 65))
                     {
                         p = BotCore.FindImage(crop, Img.Resource_1, false);
                         if (p != null)
@@ -222,7 +222,7 @@ namespace UI
                             BotCore.Delay(100, 200);
                         }
                     }
-                    if (!BotCore.RGBComparer(image, new Point(1261, 101), Color.FromArgb(70, 130, 10), 65))
+                    if (!BotCore.RGBComparer(new Point(1261, 101), Color.FromArgb(70, 130, 10), 65))
                     {
                         p = BotCore.FindImage(crop, Img.Resource_2, false);
                         if (p != null)
@@ -237,7 +237,7 @@ namespace UI
                         Variables.ScriptLog("乙醚已满，跳过收取！", Color.Lime);
                         
                     }
-                    if (!BotCore.RGBComparer(image, new Point(1260, 42), Color.FromArgb(249, 173, 46), 10))
+                    if (!BotCore.RGBComparer(new Point(1260, 42), Color.FromArgb(249, 173, 46), 10))
                     {
                         p = BotCore.FindImage(crop, Img.Resource_3, false);
                         if (p != null)
@@ -252,7 +252,7 @@ namespace UI
                         Variables.ScriptLog("黄金已满，跳过收取！", Color.Lime);
                         
                     }
-                    if(!BotCore.RGBComparer(image,new Point(1260, 160), Color.FromArgb(125, 125, 125), 10))
+                    if(!BotCore.RGBComparer(new Point(1260, 160), Color.FromArgb(125, 125, 125), 10))
                     {
                         p = BotCore.FindImage(crop, Img.Resource_4, false);
                         if (p != null)
@@ -432,7 +432,7 @@ namespace UI
                     PrivateVariable.InEventScreen = true;
                     return;
                 }
-                if (BotCore.RGBComparer(image, new Point(109, 705), Color.FromArgb(130, 130, 130), 30) && BotCore.RGBComparer(image, new Point(219, 705), Color.FromArgb(130, 130, 130), 30))
+                if (BotCore.RGBComparer(new Point(109, 705), Color.FromArgb(130, 130, 130), 30) && BotCore.RGBComparer(new Point(219, 705), Color.FromArgb(130, 130, 130), 30))
                 {
                     Variables.ScriptLog("Rare error happens, still in main screen!", Color.Red);
                     PrivateVariable.InMainScreen = false;
@@ -477,7 +477,7 @@ namespace UI
         private static void LocateUI()
         {
             BotCore.Delay(1000);
-            if (!BotCore.RGBComparer(image, new Point(10, 27), Color.FromArgb(200, 200, 200), 40))
+            if (!BotCore.RGBComparer(new Point(10, 27), Color.FromArgb(200, 200, 200), 40))
             {
                 Variables.ScriptLog("HP bar not found. Finding UIs", Color.Yellow);
                 Attackable = false;
@@ -658,7 +658,7 @@ namespace UI
                 {
                     if (PrivateVariable.VCevent == PrivateVariable.EventType.DemonRealm)
                     {
-                        if (BotCore.RGBComparer(image, new Point(133, 35), Color.FromArgb(30, 30, 30), 50))
+                        if (BotCore.RGBComparer(new Point(133, 35), Color.FromArgb(30, 30, 30), 50))
                         {
                             PrivateVariable.Battling = false;
                             Variables.ScriptLog("Battle Ended!", Color.Lime);
@@ -709,7 +709,7 @@ namespace UI
                     locateUIError = 0;
                     return;
                 }
-                if (BotCore.RGBComparer(image, new Point(959, 656), 31, 102, 26, 34))
+                if (BotCore.RGBComparer(new Point(959, 656), 31, 102, 26, 34))
                 {
                     Variables.ScriptLog("Start battle", Color.Lime);
                     BotCore.SendTap(959, 656);
@@ -718,7 +718,7 @@ namespace UI
                     locateUIError = 0;
                     return;
                 }
-                if (BotCore.RGBComparer(image, new Point(415, 678), Color.FromArgb(223, 192, 63), 40))
+                if (BotCore.RGBComparer(new Point(415, 678), Color.FromArgb(223, 192, 63), 40))
                 {
                     PrivateVariable.Battling = false;
                     BotCore.Delay(9000, 12000);
@@ -838,23 +838,23 @@ namespace UI
             if (PrivateVariable.VCevent == PrivateVariable.EventType.Tower)
             {
                     Color energy = Color.FromArgb(50, 233, 34);
-                    if (BotCore.RGBComparer(image, new Point(417, 535), energy, 30))
+                    if (BotCore.RGBComparer(new Point(417, 535), energy, 30))
                     {
                         num++;
                     }
-                    if (BotCore.RGBComparer(image, new Point(481, 535), energy, 30))
+                    if (BotCore.RGBComparer(new Point(481, 535), energy, 30))
                     {
                         num++;
                     }
-                    if (BotCore.RGBComparer(image, new Point(546, 535), energy, 30))
+                    if (BotCore.RGBComparer(new Point(546, 535), energy, 30))
                     {
                         num++;
                     }
-                    if (BotCore.RGBComparer(image, new Point(613, 535), energy, 30))
+                    if (BotCore.RGBComparer(new Point(613, 535), energy, 30))
                     {
                         num++;
                     }
-                    if (BotCore.RGBComparer(image, new Point(677, 535), energy, 30))
+                    if (BotCore.RGBComparer(new Point(677, 535), energy, 30))
                     {
                         num++;
                     }
@@ -863,23 +863,23 @@ namespace UI
             else if(PrivateVariable.VCevent == PrivateVariable.EventType.DemonRealm)
             {
                 Color energy = Color.FromArgb(104, 45, 22);
-                if (BotCore.RGBComparer(image, new Point(208, 445), energy, 30))
+                if (BotCore.RGBComparer(new Point(208, 445), energy, 30))
                 {
                     num++;
                 }
-                if (BotCore.RGBComparer(image, new Point(253, 441), energy, 30))
+                if (BotCore.RGBComparer(new Point(253, 441), energy, 30))
                 {
                     num++;
                 }
-                if (BotCore.RGBComparer(image, new Point(315, 445), energy, 30))
+                if (BotCore.RGBComparer(new Point(315, 445), energy, 30))
                 {
                     num++;
                 }
-                if (BotCore.RGBComparer(image, new Point(351, 449), energy, 30))
+                if (BotCore.RGBComparer(new Point(351, 449), energy, 30))
                 {
                     num++;
                 }
-                if (!BotCore.RGBComparer(image, new Point(410, 458), Color.FromArgb(27, 24, 29), 10))
+                if (!BotCore.RGBComparer(new Point(410, 458), Color.FromArgb(27, 24, 29), 10))
                 {
                     num++;
                 }
@@ -887,23 +887,23 @@ namespace UI
             else
             {
                 Color energy = Color.FromArgb(111,111,111);
-                if (!BotCore.RGBComparer(image, new Point(876, 560), energy, 30))
+                if (!BotCore.RGBComparer(new Point(876, 560), energy, 30))
                 {
                     num++;
                 }
-                if (!BotCore.RGBComparer(image, new Point(941, 560), energy, 30))
+                if (!BotCore.RGBComparer(new Point(941, 560), energy, 30))
                 {
                     num++;
                 }
-                if(!BotCore.RGBComparer(image, new Point(1006, 559), energy, 30))
+                if(!BotCore.RGBComparer(new Point(1006, 559), energy, 30))
                 {
                     num++;
                 }
-                if(!BotCore.RGBComparer(image, new Point(1068, 560), energy, 30))
+                if(!BotCore.RGBComparer(new Point(1068, 560), energy, 30))
                 {
                     num++;
                 }
-                if(!BotCore.RGBComparer(image, new Point(1133, 560), energy, 30))
+                if(!BotCore.RGBComparer(new Point(1133, 560), energy, 30))
                 {
                     num++;
                 }
@@ -920,27 +920,26 @@ namespace UI
         public static int GetRune()
         {
             Debug_.WriteLine();
-            image = BotCore.ImageCapture();
             if (PrivateVariable.VCevent == PrivateVariable.EventType.Tower)
             {
                 int num = 5;
-                if (BotCore.RGBComparer(image, new Point(945, 207), 118, 117, 118, 30))
+                if (BotCore.RGBComparer(new Point(945, 207), 118, 117, 118, 30))
                 {
                     num--;
                 }
-                if (BotCore.RGBComparer(image, new Point(979, 308), 114, 114, 114, 30))
+                if (BotCore.RGBComparer(new Point(979, 308), 114, 114, 114, 30))
                 {
                     num--;
                 }
-                if (BotCore.RGBComparer(image, new Point(1088, 309), 118, 117, 118, 30))
+                if (BotCore.RGBComparer(new Point(1088, 309), 118, 117, 118, 30))
                 {
                     num--;
                 }
-                if (BotCore.RGBComparer(image, new Point(1121, 204), 113, 113, 113, 30))
+                if (BotCore.RGBComparer(new Point(1121, 204), 113, 113, 113, 30))
                 {
                     num--;
                 }
-                if (BotCore.RGBComparer(image, new Point(1033, 140), 116, 115, 115, 30))
+                if (BotCore.RGBComparer(new Point(1033, 140), 116, 115, 115, 30))
                 {
                     num--;
                 }
@@ -949,19 +948,19 @@ namespace UI
             else if (PrivateVariable.VCevent == PrivateVariable.EventType.DemonRealm)
             {
                 int num = 0;
-                if (!BotCore.RGBComparer(image, new Point(965, 158), 74, 56, 68, 30))
+                if (!BotCore.RGBComparer(new Point(965, 158), 74, 56, 68, 30))
                 {
                     num++;
                 }
-                if (!BotCore.RGBComparer(image, new Point(1097, 156), 59, 45, 55, 30))
+                if (!BotCore.RGBComparer(new Point(1097, 156), 59, 45, 55, 30))
                 {
                     num++;
                 }
-                if (!BotCore.RGBComparer(image, new Point(974, 250), 67, 49, 54 , 30))
+                if (!BotCore.RGBComparer(new Point(974, 250), 67, 49, 54 , 30))
                 {
                     num++;
                 }
-                if (!BotCore.RGBComparer(image, new Point(1116, 261), 44, 31, 35, 30))
+                if (!BotCore.RGBComparer(new Point(1116, 261), 44, 31, 35, 30))
                 {
                     num++;
                 }
@@ -971,27 +970,27 @@ namespace UI
             {
                 int num = 0;
                 Color star = Color.FromArgb(69, 47, 17);
-                if(!BotCore.RGBComparer(image, new Point(877, 234), star, 30))
+                if(!BotCore.RGBComparer(new Point(877, 234), star, 30))
                 {
                     num++;
                 }
-                if(!BotCore.RGBComparer(image, new Point(929, 237), star, 30))
+                if(!BotCore.RGBComparer(new Point(929, 237), star, 30))
                 {
                     num++;
                 }
-                if(!BotCore.RGBComparer(image, new Point(986, 232), star, 30))
+                if(!BotCore.RGBComparer(new Point(986, 232), star, 30))
                 {
                     num++;
                 }
-                if(!BotCore.RGBComparer(image, new Point(1032, 235), star, 30))
+                if(!BotCore.RGBComparer(new Point(1032, 235), star, 30))
                 {
                     num++;
                 }
-                if(!BotCore.RGBComparer(image,new Point(1080, 236), star, 30))
+                if(!BotCore.RGBComparer(new Point(1080, 236), star, 30))
                 {
                     num++;
                 }
-                if(!BotCore.RGBComparer(image, new Point(1131, 235), star, 30))
+                if(!BotCore.RGBComparer(new Point(1131, 235), star, 30))
                 {
                     num++;
                 }

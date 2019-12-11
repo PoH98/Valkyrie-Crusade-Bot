@@ -142,8 +142,7 @@ namespace UI
                     int x = 0;
                     do
                     {
-                        image = BotCore.ImageCapture();
-                        if(BotCore.RGBComparer(image, new Point(247, 356), Color.Black, 10))
+                        if(BotCore.RGBComparer(new Point(247, 356), Color.Black, 10))
                         {
                             break;
                         }

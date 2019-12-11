@@ -98,7 +98,7 @@ namespace UI
                     BotCore.SendTap(404, 536);
                     break;
                 case 1.2:
-                    if(!BotCore.RGBComparer(VCBotScript.image, new Point(274, 511), notUnlocked, 10))
+                    if(!BotCore.RGBComparer(new Point(274, 511), notUnlocked, 10))
                     {
                         BotCore.SendTap(274, 512);
                     }
@@ -110,7 +110,7 @@ namespace UI
                     }
                     break;
                 case 1.3:
-                    if (!BotCore.RGBComparer(VCBotScript.image, new Point(224, 340), notUnlocked, 10))
+                    if (!BotCore.RGBComparer(new Point(224, 340), notUnlocked, 10))
                     {
                         BotCore.SendTap(211, 340);
                     }
@@ -122,7 +122,7 @@ namespace UI
                     }
                     break;
                 case 2.1:
-                    if (!BotCore.RGBComparer(VCBotScript.image, new Point(339, 170), notUnlocked, 10))
+                    if (!BotCore.RGBComparer(new Point(339, 170), notUnlocked, 10))
                     {
                         BotCore.SendTap(333, 172);
                     }
@@ -134,7 +134,7 @@ namespace UI
                     }
                     break;
                 case 2.2:
-                    if (!BotCore.RGBComparer(VCBotScript.image, new Point(528, 168), notUnlocked, 10))
+                    if (!BotCore.RGBComparer(new Point(528, 168), notUnlocked, 10))
                     {
                         BotCore.SendTap(527, 171);
                     }
@@ -146,7 +146,7 @@ namespace UI
                     }
                     break;
                 case 2.3:
-                    if (!BotCore.RGBComparer(VCBotScript.image, new Point(643, 327), notUnlocked, 10))
+                    if (!BotCore.RGBComparer(new Point(643, 327), notUnlocked, 10))
                     {
                         BotCore.SendTap(621, 323);
                     }
@@ -158,7 +158,7 @@ namespace UI
                     }
                     break;
                 case 3.1:
-                    if (!BotCore.RGBComparer(VCBotScript.image, new Point(739, 457), notUnlocked, 10))
+                    if (!BotCore.RGBComparer(new Point(739, 457), notUnlocked, 10))
                     {
                         BotCore.SendTap(740, 457);
                     }
@@ -170,7 +170,7 @@ namespace UI
                     }
                     break;
                 case 3.2:
-                    if (!BotCore.RGBComparer(VCBotScript.image, new Point(890, 517), notUnlocked, 10))
+                    if (!BotCore.RGBComparer(new Point(890, 517), notUnlocked, 10))
                     {
                         BotCore.SendTap(887, 518);
                     }
@@ -185,7 +185,7 @@ namespace UI
                 case 3.3:
                     BotCore.SendSwipe(new Point(1100, 385), new Point(125, 385), 1000);
                     BotCore.Delay(500, 1000);
-                    if (!BotCore.RGBComparer(VCBotScript.image, new Point(445, 546), notUnlocked, 10))
+                    if (!BotCore.RGBComparer(new Point(445, 546), notUnlocked, 10))
                     {
                         BotCore.SendTap(444, 544);
                     }
@@ -199,7 +199,7 @@ namespace UI
                 case 4.1:
                     BotCore.SendSwipe(new Point(1100, 385), new Point(125, 385), 1000);
                     BotCore.Delay(500, 1000);
-                    if (!BotCore.RGBComparer(VCBotScript.image, new Point(643, 532), notUnlocked, 10))
+                    if (!BotCore.RGBComparer(new Point(643, 532), notUnlocked, 10))
                     {
                         BotCore.SendTap(643, 532);
                     }
@@ -213,7 +213,7 @@ namespace UI
                 case 4.2:
                     BotCore.SendSwipe(new Point(1100, 385), new Point(125, 385), 1000);
                     BotCore.Delay(500, 1000);
-                    if (!BotCore.RGBComparer(VCBotScript.image, new Point(823, 530), notUnlocked, 10))
+                    if (!BotCore.RGBComparer(new Point(823, 530), notUnlocked, 10))
                     {
                         BotCore.SendTap(823, 530);
                     }
@@ -227,7 +227,7 @@ namespace UI
                 case 4.3:
                     BotCore.SendSwipe(new Point(1100, 385), new Point(125, 385), 1000);
                     BotCore.Delay(500, 1000);
-                    if (!BotCore.RGBComparer(VCBotScript.image, new Point(1010, 514), notUnlocked, 10))
+                    if (!BotCore.RGBComparer(new Point(1010, 514), notUnlocked, 10))
                     {
                         BotCore.SendTap(1010, 514);
                     }
@@ -241,7 +241,7 @@ namespace UI
                 case 5.1:
                     BotCore.SendSwipe(new Point(1100, 385), new Point(125, 385), 1000);
                     BotCore.Delay(500, 1000);
-                    if (!BotCore.RGBComparer(VCBotScript.image, new Point(1110, 364), notUnlocked, 10))
+                    if (!BotCore.RGBComparer(new Point(1110, 364), notUnlocked, 10))
                     {
                         BotCore.SendTap(1110, 364);
                     }
@@ -255,7 +255,7 @@ namespace UI
                 case 5.2:
                     BotCore.SendSwipe(new Point(1100, 385), new Point(125, 385), 1000);
                     BotCore.Delay(500, 1000);
-                    if (!BotCore.RGBComparer(VCBotScript.image, new Point(1100, 222), notUnlocked, 10))
+                    if (!BotCore.RGBComparer(new Point(1100, 222), notUnlocked, 10))
                     {
                         BotCore.SendTap(1100, 222);
                     }
@@ -269,7 +269,7 @@ namespace UI
                 case 5.3:
                     BotCore.SendSwipe(new Point(1100, 385), new Point(125, 385), 1000);
                     BotCore.Delay(500, 1000);
-                    if (!BotCore.RGBComparer(VCBotScript.image, new Point(951, 205), notUnlocked, 10))
+                    if (!BotCore.RGBComparer(new Point(951, 205), notUnlocked, 10))
                     {
                         BotCore.SendTap(951, 205);
                     }
@@ -298,9 +298,8 @@ namespace UI
             do
             {
                 BotCore.Delay(1500);
-                VCBotScript.image = BotCore.ImageCapture();
             }
-            while (BotCore.RGBComparer(VCBotScript.image, new Point(400,400), Color.Black, 10));
+            while (BotCore.RGBComparer(new Point(400,400), Color.Black, 10));
             Variables.ScriptLog("Running stage!", Color.Lime);
             do
             {
@@ -362,10 +361,9 @@ namespace UI
                     BotCore.Delay(5000);
                     do
                     {
-                        BotCore.Delay(500);
-                        VCBotScript.image = BotCore.ImageCapture();
+                        BotCore.Delay(1500);
                     }
-                    while (BotCore.RGBComparer(VCBotScript.image, new Point(400, 400), Color.Black, 0));
+                    while (BotCore.RGBComparer(new Point(400, 400), Color.Black, 0));
                     buttons = null;
                     do
                     {

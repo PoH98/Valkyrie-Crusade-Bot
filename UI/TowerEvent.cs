@@ -39,7 +39,7 @@ namespace UI
                 return;
             }
             image = BotCore.ImageCapture();
-            while (!BotCore.RGBComparer(image, new Point(135, 526), 13, 46, 74, 10))
+            while (!BotCore.RGBComparer( new Point(135, 526), 13, 46, 74, 10))
             {
                 BotCore.Delay(1000, true);
                 image = BotCore.ImageCapture();
@@ -200,7 +200,7 @@ namespace UI
                     BotCore.SendTap(196, 648);
                     break;
                 case 1:
-                    if (BotCore.RGBComparer(image, new Point(328, 621), Color.FromArgb(13, 12, 12), 35))
+                    if (BotCore.RGBComparer( new Point(328, 621), Color.FromArgb(13, 12, 12), 35))
                     {
                         Variables.ScriptLog("中级还没被解锁！自动往下挑战中！", Color.Red);
                         BotCore.SendTap(196, 648);
@@ -209,10 +209,10 @@ namespace UI
                     BotCore.SendTap(391, 648);
                     break;
                 case 2:
-                    if (BotCore.RGBComparer(image, new Point(515, 625), Color.FromArgb(12, 11, 12), 35))
+                    if (BotCore.RGBComparer( new Point(515, 625), Color.FromArgb(12, 11, 12), 35))
                     {
                         Variables.ScriptLog("上级还没被解锁！自动往下挑战中！", Color.Red);
-                        if (BotCore.RGBComparer(image, new Point(328, 621), Color.FromArgb(13, 12, 12), 5))
+                        if (BotCore.RGBComparer( new Point(328, 621), Color.FromArgb(13, 12, 12), 5))
                         {
                             Variables.ScriptLog("中级还没被解锁！自动往下挑战中！", Color.Red);
                             BotCore.SendTap(196, 648);
@@ -224,13 +224,13 @@ namespace UI
                     BotCore.SendTap(581, 646);
                     break;
                 case 3:
-                    if (BotCore.RGBComparer(image, new Point(703, 622), Color.FromArgb(32, 30, 30), 35))
+                    if (BotCore.RGBComparer( new Point(703, 622), Color.FromArgb(32, 30, 30), 35))
                     {
                         Variables.ScriptLog("超上级还没被解锁！自动往下挑战中！", Color.Red);
-                        if (BotCore.RGBComparer(image, new Point(515, 625), Color.FromArgb(12, 11, 12), 35))
+                        if (BotCore.RGBComparer( new Point(515, 625), Color.FromArgb(12, 11, 12), 35))
                         {
                             Variables.ScriptLog("上级还没被解锁！自动往下挑战中！", Color.Red);
-                            if (BotCore.RGBComparer(image, new Point(328, 621), Color.FromArgb(13, 12, 12), 35))
+                            if (BotCore.RGBComparer( new Point(328, 621), Color.FromArgb(13, 12, 12), 35))
                             {
                                 Variables.ScriptLog("中级还没被解锁！自动往下挑战中！", Color.Red);
                                 BotCore.SendTap(196, 648);
@@ -245,16 +245,16 @@ namespace UI
                     BotCore.SendTap(741, 623);
                     break;
                 case 4:
-                    if (BotCore.RGBComparer(image, new Point(885, 621), Color.FromArgb(107, 100, 100), 90))
+                    if (BotCore.RGBComparer( new Point(885, 621), Color.FromArgb(107, 100, 100), 90))
                     {
                         Variables.ScriptLog("霸级还没被解锁！自动往下挑战中！", Color.Red);
-                        if (BotCore.RGBComparer(image, new Point(703, 621), Color.FromArgb(107, 100, 100), 90))
+                        if (BotCore.RGBComparer( new Point(703, 621), Color.FromArgb(107, 100, 100), 90))
                         {
                             Variables.ScriptLog("超上级还没被解锁！自动往下挑战中！", Color.Red);
-                            if (BotCore.RGBComparer(image, new Point(515, 621), Color.FromArgb(107, 100, 100), 90))
+                            if (BotCore.RGBComparer( new Point(515, 621), Color.FromArgb(107, 100, 100), 90))
                             {
                                 Variables.ScriptLog("上级还没被解锁！自动往下挑战中！", Color.Red);
-                                if (BotCore.RGBComparer(image, new Point(328, 621), Color.FromArgb(117, 100, 100), 90))
+                                if (BotCore.RGBComparer( new Point(328, 621), Color.FromArgb(117, 100, 100), 90))
                                 {
                                     Variables.ScriptLog("中级还没被解锁！自动往下挑战中！", Color.Red);
                                     BotCore.SendTap(196, 648);
@@ -305,7 +305,7 @@ namespace UI
                     BotCore.Delay(5000, false);
                 }*/
                 image = BotCore.ImageCapture();
-                if (BotCore.RGBComparer(image, new Point(959, 656), 31, 102, 26, 4))
+                if (BotCore.RGBComparer( new Point(959, 656), 31, 102, 26, 4))
                 {
                     Variables.ScriptLog("Start battle", Color.Lime);
                     BotCore.SendTap(new Point(959, 656));

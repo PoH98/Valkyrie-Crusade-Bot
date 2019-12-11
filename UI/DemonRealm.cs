@@ -37,16 +37,15 @@ namespace UI
                 {
                     return;
                 }
-                if (BotCore.RGBComparer(image, new Point(415, 678), Color.FromArgb(223, 192, 63), 10))
+                if (BotCore.RGBComparer( new Point(415, 678), Color.FromArgb(223, 192, 63), 10))
                 {
                     PrivateVariable.VCevent = PrivateVariable.EventType.DemonRealm;
                     PrivateVariable.InEventScreen = true;
                     DemonStage_Enter();
                     return;
                 }
-                image = BotCore.ImageCapture();
                 Variables.ScriptLog("Locating Demon Realm Event UI!", Color.White);
-                if (BotCore.RGBComparer(image, new Point(600, 405), Color.FromArgb(59, 30, 37), 15))
+                if (BotCore.RGBComparer(new Point(600, 405), Color.FromArgb(59, 30, 37), 15))
                 {
                     VCBotScript.Tower_Floor = OCR.OcrImage(BotCore.CropImage(image, new Point(300, 115), new Point(484, 142)), "eng");
                     VCBotScript.Tower_Rank = OCR.OcrImage(BotCore.CropImage(image, new Point(300, 150), new Point(458, 170)), "eng");
@@ -87,7 +86,7 @@ namespace UI
                     BotCore.SendTap(250, 284);
                     break;
                 case 1:
-                    if (BotCore.RGBComparer(VCBotScript.image, new Point(143, 355), Color.FromArgb(51, 16, 5), 20))
+                    if (BotCore.RGBComparer( new Point(143, 355), Color.FromArgb(51, 16, 5), 20))
                     {
                         Variables.ScriptLog("中级还没被解锁！自动往下挑战中！", Color.Red);
                         BotCore.SendTap(250, 284);
@@ -96,10 +95,10 @@ namespace UI
                     BotCore.SendTap(362, 283);
                     break;
                 case 2:
-                    if (BotCore.RGBComparer(VCBotScript.image, new Point(143, 355), Color.FromArgb(51, 16, 5), 20))
+                    if (BotCore.RGBComparer( new Point(143, 355), Color.FromArgb(51, 16, 5), 20))
                     {
                         Variables.ScriptLog("上级还没被解锁！自动往下挑战中！", Color.Red);
-                        if (BotCore.RGBComparer(VCBotScript.image, new Point(324, 270), Color.FromArgb(51, 16, 5), 20))
+                        if (BotCore.RGBComparer( new Point(324, 270), Color.FromArgb(51, 16, 5), 20))
                         {
                             Variables.ScriptLog("中级还没被解锁！自动往下挑战中！", Color.Red);
                             BotCore.SendTap(250, 284);
@@ -111,13 +110,13 @@ namespace UI
                     BotCore.SendTap(214, 370);
                     break;
                 case 3:
-                    if (BotCore.RGBComparer(VCBotScript.image, new Point(324, 355), Color.FromArgb(51, 16, 5), 20))
+                    if (BotCore.RGBComparer( new Point(324, 355), Color.FromArgb(51, 16, 5), 20))
                     {
                         Variables.ScriptLog("超上级还没被解锁！自动往下挑战中！", Color.Red);
-                        if (BotCore.RGBComparer(VCBotScript.image, new Point(143, 355), Color.FromArgb(51, 16, 5), 20))
+                        if (BotCore.RGBComparer( new Point(143, 355), Color.FromArgb(51, 16, 5), 20))
                         {
                             Variables.ScriptLog("上级还没被解锁！自动往下挑战中！", Color.Red);
-                            if (BotCore.RGBComparer(VCBotScript.image, new Point(324, 270), Color.FromArgb(51, 16, 5), 20))
+                            if (BotCore.RGBComparer( new Point(324, 270), Color.FromArgb(51, 16, 5), 20))
                             {
                                 Variables.ScriptLog("中级还没被解锁！自动往下挑战中！", Color.Red);
                                 BotCore.SendTap(250, 284);
@@ -130,13 +129,13 @@ namespace UI
                     BotCore.SendTap(353, 371);
                     break;
                 case 4:
-                    if (BotCore.RGBComparer(VCBotScript.image, new Point(324, 355), Color.FromArgb(51, 16, 5), 20))
+                    if (BotCore.RGBComparer( new Point(324, 355), Color.FromArgb(51, 16, 5), 20))
                     {
                         Variables.ScriptLog("超上级还没被解锁！自动往下挑战中！", Color.Red);
-                        if (BotCore.RGBComparer(VCBotScript.image, new Point(143, 355), Color.FromArgb(51, 16, 5), 20))
+                        if (BotCore.RGBComparer( new Point(143, 355), Color.FromArgb(51, 16, 5), 20))
                         {
                             Variables.ScriptLog("上级还没被解锁！自动往下挑战中！", Color.Red);
-                            if (BotCore.RGBComparer(VCBotScript.image, new Point(324, 270), Color.FromArgb(51, 16, 5), 20))
+                            if (BotCore.RGBComparer( new Point(324, 270), Color.FromArgb(51, 16, 5), 20))
                             {
                                 Variables.ScriptLog("中级还没被解锁！自动往下挑战中！", Color.Red);
                                 BotCore.SendTap(250, 284);
@@ -153,8 +152,7 @@ namespace UI
             error = 0;
             do
             {
-                VCBotScript.image = BotCore.ImageCapture();
-                if (BotCore.RGBComparer(VCBotScript.image, new Point(959, 656), 31, 102, 26, 4))
+                if (BotCore.RGBComparer( new Point(959, 656), 31, 102, 26, 4))
                 {
                     Variables.ScriptLog("Start battle", Color.Lime);
                     BotCore.SendTap(new Point(959, 656));
@@ -200,8 +198,7 @@ namespace UI
         private static void DemonStage_Enter()
         {
             int error = 0;
-            VCBotScript.image = BotCore.ImageCapture();
-            while (!BotCore.RGBComparer(VCBotScript.image, new Point(415, 678), Color.FromArgb(223, 192, 63), 10))
+            while (!BotCore.RGBComparer( new Point(415, 678), Color.FromArgb(223, 192, 63), 10))
             {
                 if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
@@ -216,7 +213,6 @@ namespace UI
                     return;
                 }
                 BotCore.Delay(1000, false);
-                VCBotScript.image = BotCore.ImageCapture();
             }
             error = 0;
             Variables.ScriptLog("Demon Realm Event Located", Color.Lime);
@@ -259,12 +255,29 @@ namespace UI
                             {
                                 Variables.ScriptLog("Stage found!", Color.Lime);
                                 BotCore.SendTap(p.Value);
-                                BotCore.Delay(2000, false);
-                                BotCore.SendTap(768, 536);
-                                BotCore.Delay(5000, false);
-                                VCBotScript.image = BotCore.ImageCapture();
-                                crop = BotCore.CropImage(VCBotScript.image, new Point(948, 623), new Point(1141, 694));
-                                if (BotCore.FindImage(crop, Img.Red_Button, false) != null)
+                                BotCore.Delay(3000, false);
+                                bool StageEnterable = false;
+                                for(int y = 0;y < 10;y++)
+                                {
+                                    if (BotCore.RGBComparer(new Point(543, 122), Color.FromArgb(60, 106, 137), 20))
+                                    {
+                                        StageEnterable = true;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        BotCore.Delay(1000);
+                                    }
+                                }
+                                if (StageEnterable)
+                                {
+                                    BotCore.SendTap(768, 536);
+                                    BotCore.Delay(4500, false);
+                                    BotCore.SendTap(970, 614);
+                                    BotCore.Delay(2000, false);
+                                    BotCore.SendTap(753, 423);
+                                }
+                                else
                                 {
                                     Variables.ScriptLog("Ops, looks like the stage is not able to enter!", Color.Red);
                                     BlackListedLocation.Add(p.Value);
@@ -275,12 +288,9 @@ namespace UI
                                             grf.FillEllipse(brsh, p.Value.X, p.Value.Y, 5, 5);
                                         }
                                     }
-                                    p = null;
                                     continue;
                                 }
-                                BotCore.SendTap(970, 614);
-                                BotCore.Delay(2000, false);
-                                BotCore.SendTap(753, 423);
+
                                 break;
                             }
                         }
@@ -338,7 +348,6 @@ namespace UI
                 {
                     return;
                 }
-                VCBotScript.image = BotCore.ImageCapture();
                 point = BotCore.FindImage(VCBotScript.image, Img.Red_Button, false);
                 if (point != null)
                 {

@@ -161,7 +161,7 @@ namespace UI
                 BotCore.Delay(1500);
                 VCBotScript.image = BotCore.ImageCapture();
             }
-            while (BotCore.RGBComparer(VCBotScript.image, new Point(400, 400), Color.Black, 10));
+            while (BotCore.RGBComparer( new Point(400, 400), Color.Black, 10));
             Variables.ScriptLog("Running stage!", Color.Lime);
             int error = 0;
             do

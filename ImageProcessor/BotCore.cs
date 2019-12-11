@@ -1097,15 +1097,23 @@ namespace BotFramework
         /// Get color of location in screenshots
         /// </summary>
         /// <param name="position">The position of image</param>
-        /// <param name="rawimage">The image that need to return color</param>
         /// <returns>color</returns>
-        public static Color GetPixel(Point position, byte[] rawimage)
+        public static Color GetPixel(Point position)
         {
             if (!ScriptRun.Run)
             {
                 return Color.Black;
             }
-            return Decompress(rawimage).GetPixel(position.X, position.Y);
+            byte[] image = null;
+            if (Variables.ProchWnd != IntPtr.Zero)
+            {
+                image = ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd);
+            }
+            else
+            {
+                image = ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd);
+            }
+            return Decompress(image).GetPixel(position.X, position.Y);
         }
 
         private static Color GetPixel(int x, int y, int step, int Width, int Depth, byte[] pixel)
@@ -1138,12 +1146,11 @@ namespace BotFramework
         /// <summary>
         /// Compare point RGB from image
         /// </summary>
-        /// <param name="image">The image that need to return</param>
         /// <param name="point">The point to check for color</param>
         /// <param name="color">The color to check at point is true or false</param>
         /// <param name="tolerance">The tolerance on color, larger will more inaccurate</param>
         /// <returns>bool</returns>
-        public static bool RGBComparer(byte[] image, Point point, Color color, int tolerance, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static bool RGBComparer(Point point, Color color, int tolerance, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
@@ -1152,26 +1159,83 @@ namespace BotFramework
             int red = color.R;
             int blue = color.B;
             int green = color.G;
-            return RGBComparer(image,point,red,green,blue,tolerance, lineNumber, caller);
+            byte[] image = null;
+            if (Variables.ProchWnd != IntPtr.Zero)
+            {
+                image = ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+            }
+            else
+            {
+                image = ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+            }
+            if (image == null)
+            {
+                return false;
+            }
+            Bitmap bmp = Decompress(image);
+            int Width = bmp.Width;
+            int Height = bmp.Height;
+            int PixelCount = Width * Height;
+            Rectangle rect = new Rectangle(0, 0, Width, Height);
+            int Depth = Bitmap.GetPixelFormatSize(bmp.PixelFormat);
+            if (Depth != 8 && Depth != 24 && Depth != 32)
+            {
+                Variables.AdvanceLog("Image bit per pixel format not supported", lineNumber, caller);
+                return false;
+            }
+            BitmapData bd = bmp.LockBits(rect, ImageLockMode.ReadOnly, bmp.PixelFormat);
+            int step = Depth / 8;
+            try
+            {
+                byte[] pixel = new byte[PixelCount * step];
+                IntPtr ptr = bd.Scan0;
+                Marshal.Copy(ptr, pixel, 0, pixel.Length);
+                Color clr = GetPixel(point.X, point.Y, step, Width, Depth, pixel);
+                if (clr.R >= (red - tolerance) && clr.R <= (red + tolerance))
+                {
+                    if (clr.G >= (green - tolerance) && clr.G <= (green + tolerance))
+                    {
+                        if (clr.B >= (blue - tolerance) && clr.B <= (blue + tolerance))
+                        {
+                            bmp.UnlockBits(bd);
+                            return true;
+                        }
+                    }
+                }
+                Variables.AdvanceLog("The point " + point.X + ", " + point.Y + " color is " + clr.R + ", " + clr.G + ", " + clr.B, lineNumber, caller);
+            }
+            catch
+            {
+
+            }
+            bmp.UnlockBits(bd);
+            return false;
         }
 
         /// <summary>
         /// Compare point RGB from image
         /// </summary>
-        /// <param name="image">The image that need to return</param>
         /// <param name="point">The point to check for color</param>
         /// <param name="tolerance">Tolerance to the color RGB, example: red=120, Tolerance=20 Result=100~140 red will return true</param>
         /// <param name="blue">Blue value of color</param>
         /// <param name="green">Green value of color</param>
         /// <param name="red">Red value of color</param>
         /// <returns>bool</returns>
-        public static bool RGBComparer(byte[] image, Point point, int red, int green, int blue, int tolerance, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static bool RGBComparer(Point point, int red, int green, int blue, int tolerance, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
                 return false;
             }
-            
+            byte[] image = null;
+            if (Variables.ProchWnd != IntPtr.Zero)
+            {
+                image = ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+            }
+            else
+            {
+                image = ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+            }
             if (image == null)
             {
                 return false;
@@ -1271,12 +1335,21 @@ namespace BotFramework
         /// Compare point RGB from image
         /// </summary>
         /// <returns>bool</returns>
-        public static bool RGBComparer(byte[] rawimage, Color color, Point start, Point end, int tolerance, out Point? point, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static bool RGBComparer(Color color, Point start, Point end, int tolerance, out Point? point, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
                 point = null;
                 return false;
+            }
+            byte[] rawimage = null;
+            if (Variables.ProchWnd != IntPtr.Zero)
+            {
+                rawimage = ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+            }
+            else
+            {
+                rawimage = ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
             }
             var image = CropImage(rawimage, start, end);
             if (image == null)
@@ -1284,26 +1357,70 @@ namespace BotFramework
                 point = null;
                 return false;
             }
-            return RGBComparer(image, color,tolerance, out point, lineNumber, caller);
+            var bmp = Decompress(image);
+            int Width = bmp.Width;
+            int Height = bmp.Height;
+            int PixelCount = Width * Height;
+            Rectangle rect = new Rectangle(0, 0, Width, Height);
+            int Depth = Bitmap.GetPixelFormatSize(bmp.PixelFormat);
+            if (Depth != 8 && Depth != 24 && Depth != 32)
+            {
+                Variables.AdvanceLog("Image bit per pixel format not supported");
+                point = null;
+                return false;
+            }
+            BitmapData bd = bmp.LockBits(rect, ImageLockMode.ReadOnly, bmp.PixelFormat);
+            int step = Depth / 8;
+            byte[] pixel = new byte[PixelCount * step];
+            IntPtr ptr = bd.Scan0;
+            Marshal.Copy(ptr, pixel, 0, pixel.Length);
+            for (int i = 0; i < bmp.Height; i++)
+            {
+                for (int j = 0; j < bmp.Width; j++)
+                {
+                    //Get the color at each pixel
+                    Color now_color = GetPixel(j, i, step, Width, Depth, pixel);
+                    Color clr = GetPixel(j, i, step, Width, Depth, pixel);
+                    if (clr.R >= (color.R - tolerance) && clr.R <= (color.R + tolerance))
+                    {
+                        if (clr.G >= (color.G - tolerance) && clr.G <= (color.G + tolerance))
+                        {
+                            if (clr.B >= (color.B - tolerance) && clr.B <= (color.B + tolerance))
+                            {
+                                bmp.UnlockBits(bd);
+                                point = new Point(j, i);
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            bmp.UnlockBits(bd);
+            point = null;
+            return false;
         }
 
         /// <summary>
         /// Compare point RGB from image
         /// </summary>
         /// <returns>bool</returns>
-        public static bool RGBComparer(byte[] rawimage, Color color,int tolerance, out Point? point, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static bool RGBComparer(Color color,int tolerance, out Point? point, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
                 point = null;
                 return false;
             }
-            if (rawimage == null)
+            byte[] rawimage = null;
+            if (Variables.ProchWnd != IntPtr.Zero)
             {
-                point = null;
-                return false;
+                rawimage = ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
             }
-            Bitmap bmp = Decompress(rawimage);
+            else
+            {
+                rawimage=ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+            }
+            var bmp = Decompress(rawimage);
             int Width = bmp.Width;
             int Height = bmp.Height;
             int PixelCount = Width * Height;
