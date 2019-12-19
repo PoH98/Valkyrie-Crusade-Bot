@@ -408,7 +408,7 @@ namespace UI
                         return;
                     }
                 }
-                crop = BotCore.CropImage(VCBotScript.image, new Point(410, 330), new Point(880, 450));
+                crop = BotCore.CropImage(VCBotScript.image, new Point(420, 360), new Point(855, 430));
                 buttons = BotCore.FindImage(crop, Img.Red_Button, false);
                 if (buttons != null )
                 {

@@ -18,6 +18,20 @@ namespace UI
             {
                 try
                 {
+                    var p = BotCore.FindImages(VCBotScript.image, errorImages.ToArray(), false, true);
+                    if (p != null)
+                    {
+                        BotCore.KillGame("com.nubee.valkyriecrusade");
+                        Reset("Error message found!");
+                    }
+                }
+                catch
+                {
+
+                }
+
+                /*try
+                {
                     var crop = BotCore.CropImage(VCBotScript.image, new Point(350, 180), new Point(980, 515));
                     foreach(var error in errorImages)
                     {
@@ -34,7 +48,7 @@ namespace UI
                 catch
                 {
 
-                }
+                }*/
             }
         }
         //Reset back to just started the script

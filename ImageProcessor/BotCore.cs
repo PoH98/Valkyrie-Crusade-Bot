@@ -1472,10 +1472,10 @@ namespace BotFramework
         /// <param name="caller"></param>
         /// <returns>Point or null</returns>
         /// <returns></returns>
-        public static Point[] FindImages(byte[] original, Bitmap[] find, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static Point[] FindImages(byte[] original, Bitmap[] find, bool GrayStyle, bool FindOnlyOne = false, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             Bitmap image = Decompress(original);
-            return FindImages(image, find, GrayStyle, lineNumber, caller);
+            return FindImages(image, find, GrayStyle,FindOnlyOne, lineNumber, caller);
         }
 
         /// <summary>
@@ -1488,7 +1488,7 @@ namespace BotFramework
         /// <param name="caller"></param>
         /// <returns>Point or null</returns>
         /// <returns></returns>
-        public static Point[] FindImages(Bitmap original, Bitmap[] find, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static Point[] FindImages(Bitmap original, Bitmap[] find, bool GrayStyle, bool FindOnlyOne = false, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
@@ -1509,10 +1509,14 @@ namespace BotFramework
                             result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
                             for (int x = 0; x < maxValues.Length; x++)
                             {
-                                if (maxValues[x] > 0.9 && !matched.Contains(maxLocations[x]))
+                                if (maxValues[x] > 0.9)
                                 {
-                                    s.Stop();
+                                    source.FillConvexPoly(new Point[] {new Point(maxLocations[x].X - 2, maxLocations[x].Y - 2), new Point(maxLocations[x].X +2, maxLocations[x].Y + 2) }, new Gray());
                                     matched.Add(maxLocations[x]);
+                                    if (FindOnlyOne)
+                                    {
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -1529,10 +1533,100 @@ namespace BotFramework
                             result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
                             for (int x = 0; x < maxValues.Length; x++)
                             {
-                                if (maxValues[x] > 0.9 && !matched.Contains(maxLocations[x]))
+                                if (maxValues[x] > 0.9 )
                                 {
-                                    s.Stop();
+                                    source.FillConvexPoly(new Point[] { new Point(maxLocations[x].X - 2, maxLocations[x].Y - 2), new Point(maxLocations[x].X + 2, maxLocations[x].Y + 2) }, new Bgr());
                                     matched.Add(maxLocations[x]);
+                                    if (FindOnlyOne)
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Variables.AdvanceLog(ex.ToString());
+            }
+            s.Stop();
+            Variables.AdvanceLog("Image processed. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber, caller);
+            if (matched.Count < 1)
+            {
+                return null;
+            }
+            else
+            {
+                return matched.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Return a Point location of the image in Variables.Image (will return null if not found)
+        /// </summary>
+        /// <param name="find">The smaller image for matching</param>
+        /// <param name="original">Original image that need to get the point on it</param>
+        /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
+        /// <param name="lineNumber"></param>
+        /// <param name="caller"></param>
+        /// <returns>Point or null</returns>
+        /// <returns></returns>
+        public static Point[] FindImages(byte[] original, List<byte[]> find, bool GrayStyle,bool FindOnlyOne = false, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        {
+            if (!ScriptRun.Run)
+            {
+                return null;
+            }
+            Stopwatch s = Stopwatch.StartNew();
+            List<Point> matched = new List<Point>();
+            try
+            {
+                if (GrayStyle)
+                {
+                    Image<Gray, byte> source = new Image<Gray, byte>(Decompress(original));
+                    foreach (var image in find)
+                    {
+                        Image<Gray, byte> template = new Image<Gray, byte>(Decompress(image));
+                        using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
+                        {
+                            result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
+                            for (int x = 0; x < maxValues.Length; x++)
+                            {
+                                if (maxValues[x] > 0.9)
+                                {
+                                    source.FillConvexPoly(new Point[] { new Point(maxLocations[x].X - 2, maxLocations[x].Y - 2), new Point(maxLocations[x].X + 2, maxLocations[x].Y + 2) }, new Gray());
+                                    matched.Add(maxLocations[x]);
+                                    if (FindOnlyOne)
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    Image<Bgr, byte> source = new Image<Bgr, byte>(Decompress(original));
+                    foreach (var image in find)
+                    {
+                        Image<Bgr, byte> template = new Image<Bgr, byte>(Decompress(image));
+                        using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
+                        {
+                            result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
+                            for (int x = 0; x < maxValues.Length; x++)
+                            {
+                                if (maxValues[x] > 0.9)
+                                {
+                                    source.FillConvexPoly(new Point[] { new Point(maxLocations[x].X - 2, maxLocations[x].Y - 2), new Point(maxLocations[x].X + 2, maxLocations[x].Y + 2) }, new Bgr());
+                                    matched.Add(maxLocations[x]);
+                                    if (FindOnlyOne)
+                                    {
+                                        break;
+                                    }
                                 }
                             }
                         }

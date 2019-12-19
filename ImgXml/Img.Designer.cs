@@ -133,6 +133,16 @@ namespace ImgXml {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap Castle {
+            get {
+                object obj = ResourceManager.GetObject("Castle", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap Click_Wrong {
             get {
                 object obj = ResourceManager.GetObject("Click_Wrong", resourceCulture);
@@ -372,6 +382,16 @@ namespace ImgXml {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap MainScreen {
+            get {
+                object obj = ResourceManager.GetObject("MainScreen", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap Map {
             get {
                 object obj = ResourceManager.GetObject("Map", resourceCulture);
@@ -385,6 +405,16 @@ namespace ImgXml {
         public static System.Drawing.Bitmap Menu {
             get {
                 object obj = ResourceManager.GetObject("Menu", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap NEW {
+            get {
+                object obj = ResourceManager.GetObject("NEW", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -525,6 +555,16 @@ namespace ImgXml {
         public static System.Drawing.Bitmap ShopKeeper {
             get {
                 object obj = ResourceManager.GetObject("ShopKeeper", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap SoulArrow {
+            get {
+                object obj = ResourceManager.GetObject("SoulArrow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

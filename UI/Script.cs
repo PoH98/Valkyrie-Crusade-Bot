@@ -51,10 +51,10 @@ namespace UI
                 Point? point = BotCore.FindImage(crop, Img.GreenButton, false);
                 if (point != null)
                 {
-                    BotCore.SendTap(point.Value);
+                    BotCore.SendTap(point.Value.X + 315, point.Value.Y + 150);
+                    x--;
                 }
-                image = BotCore.ImageCapture();
-                if (!BotCore.RGBComparer(new Point(109, 705), Color.FromArgb(130, 130, 130), 30) && !BotCore.RGBComparer(new Point(219, 705), Color.FromArgb(130, 130, 130), 30))
+                if (BotCore.FindImage(image, Img.MainScreen, true) == null)
                 {
                     if (!BotCore.GameIsForeground(game))
                     {
@@ -147,6 +147,7 @@ namespace UI
                         Variables.ScriptLog("Green Button Found!", Color.Lime);
                     }
                     ScriptErrorHandler.ErrorHandle();
+                    BotCore.Delay(200);
                 }
                 else
                 {
@@ -361,30 +362,7 @@ namespace UI
                     return;
                 }
                 image = BotCore.ImageCapture();
-                var crop = BotCore.CropImage(image, new Point(125, 0), new Point(900, 510));
-                if (BotCore.FindImage(image, Img.ArchwitchHunt, true) != null)
-                {
-                    //Is Archwitch, we will save it to another filename as we have to use it later!
-                    if (File.Exists("Img\\WeaponEvent.png"))
-                    {
-                        File.Delete("Img\\WeaponEvent.png");
-                    }
-                    File.Move("Img\\Event.png", "Img\\WeaponEvent.png");
-                    selectedeventlocations++;
-                    ScriptErrorHandler.Reset("Soul Weapon Event found, but we don't want to run this!");
-                    return;
-                }
-                if (BotCore.FindImage(image, Img.Archwitch, true) != null)
-                {
-                    if (File.Exists("Img\\ArchEvent.png"))
-                    {
-                        File.Delete("Img\\ArchEvent.png");
-                    }
-                    File.Move("Img\\Event.png", "Img\\ArchEvent.png");
-                    selectedeventlocations++;
-                    ScriptErrorHandler.Reset("Archwitch Event found, but we don't want to run this!");
-                    return;
-                }
+                var crop = BotCore.CropImage(image, new Point(60, 133), new Point(255, 160));
                 point = BotCore.FindImage(crop, Img.GreenButton, false);
                 if (point != null)
                 {
@@ -411,6 +389,14 @@ namespace UI
                     }
                     continue;
                 }
+                if (BotCore.FindImage(image, Img.ArchwitchHunt, false) != null || BotCore.FindImage(image, Img.SoulArrow, false) != null)
+                {
+                    
+                    //Is SoulWeapon Event
+                    PrivateVariable.VCevent = PrivateVariable.EventType.SoulWeapon;
+                    PrivateVariable.InEventScreen = true;
+                    return;
+                }
                 if (BotCore.FindImage(image, Img.Locate_Tower, true) != null)
                 {
                     //Is Tower Event
@@ -432,7 +418,18 @@ namespace UI
                     PrivateVariable.InEventScreen = true;
                     return;
                 }
-                if (BotCore.RGBComparer(new Point(109, 705), Color.FromArgb(130, 130, 130), 30) && BotCore.RGBComparer(new Point(219, 705), Color.FromArgb(130, 130, 130), 30))
+                if (BotCore.FindImage(image, Img.Archwitch, true) != null)
+                {
+                    if (File.Exists("Img\\ArchEvent.png"))
+                    {
+                        File.Delete("Img\\ArchEvent.png");
+                    }
+                    File.Move("Img\\Event.png", "Img\\ArchEvent.png");
+                    selectedeventlocations++;
+                    ScriptErrorHandler.Reset("Archwitch Event found, but we don't want to run this!");
+                    return;
+                }
+                if (BotCore.FindImage(image, Img.MainScreen, true) != null)
                 {
                     Variables.ScriptLog("Rare error happens, still in main screen!", Color.Red);
                     PrivateVariable.InMainScreen = false;
@@ -477,12 +474,12 @@ namespace UI
         private static void LocateUI()
         {
             BotCore.Delay(1000);
-            if (!BotCore.RGBComparer(new Point(10, 27), Color.FromArgb(200, 200, 200), 40))
+            if (!BotCore.RGBComparer(new Point(10, 27), Color.FromArgb(200, 200, 200), 5))
             {
                 Variables.ScriptLog("HP bar not found. Finding UIs", Color.Yellow);
                 Attackable = false;
                 BotCore.SendTap(643, 167);
-                Point? point = BotCore.FindImage(image, Img.Close2, false);
+                var point = BotCore.FindImage(image, Img.Close2, false);
                 if (point != null)
                 {
                     BotCore.SendTap(point.Value);
@@ -582,13 +579,13 @@ namespace UI
                                 stop.Stop();
                                 Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                                 stop.Reset();
-                                
+
                                 locateUIError = 0;
                             }
                             else
                             {
                                 BotCore.SendTap(point.Value.X + 125, point.Value.Y);
-                                
+
                                 BotCore.Delay(1000);
                                 locateUIError = 0;
                                 return;
@@ -606,14 +603,14 @@ namespace UI
                             stop.Stop();
                             Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
                             stop.Reset();
-                            
+
                             locateUIError = 0;
                             return;
                         }
                         else
                         {
                             BotCore.SendTap(point.Value.X + 125, point.Value.Y);
-                            
+
                             locateUIError = 0;
                             BotCore.Delay(1000);
                             return;
@@ -621,28 +618,11 @@ namespace UI
                     }
                     else
                     {
-                        var pt = BotCore.FindImage(crop, Img.PT, true);
-                        if (pt != null)
+                        if (BotCore.FindImages(image, new Bitmap[] { Img.SoulArrow, Img.PT, Img.ArchwitchHunt }, true, true) != null)
                         {
                             Variables.ScriptLog("Battle Ended!", Color.Lime);
-                            do
-                            {
-                                image = BotCore.ImageCapture();
-                                crop = BotCore.CropImage(image, new Point(125, 0), new Point(1280, 720));
-                                point = BotCore.FindImage(crop, Img.GreenButton, false);
-                                if(point!= null)
-                                {
-                                    BotCore.SendTap(point.Value.X + 125, point.Value.Y);
-                                    BotCore.Delay(100, 200);
-                                }
-                                else
-                                {
-                                    PrivateVariable.Battling = false;
-                                    locateUIError = 0;
-                                    return;
-                                }
-                            }
-                            while (point != null);
+                            PrivateVariable.Battling = false;
+                            return;
                         }
                         else
                         {
@@ -669,7 +649,7 @@ namespace UI
                             return;
                         }
                     }
-                    else if(PrivateVariable.VCevent == PrivateVariable.EventType.GuildWar)
+                    else if (PrivateVariable.VCevent == PrivateVariable.EventType.GuildWar)
                     {
                         if (BotCore.FindImage(image, "Img\\GuildWar\\Locate.png", false) != null)
                         {
@@ -692,7 +672,7 @@ namespace UI
                         BotCore.SendTap(793, 565);
                         BotCore.Delay(1000, false);
                     }
-                    
+
                     locateUIError = 0;
                     return;
                 }
@@ -1221,54 +1201,54 @@ namespace UI
                         PrivateVariable.VCevent = temp;
                     }
                 }
-                Variables.ScriptLog("Estimate online time is " + nextOnline, Color.Lime);
-                BotCore.KillGame(game);
-                string filename = Encryption.SHA256(Variables.AdbIpPort);
-                if (!Directory.Exists("C:\\ProgramData\\" + filename))
+            }
+            Variables.ScriptLog("Estimate online time is " + nextOnline, Color.Lime);
+            BotCore.KillGame(game);
+            string filename = Encryption.SHA256(Variables.AdbIpPort);
+            if (!Directory.Exists("C:\\ProgramData\\" + filename))
+            {
+                Directory.CreateDirectory("C:\\ProgramData\\" + filename);
+            }
+            if (!BotCore.Pull("/data/data/com.nubee.valkyriecrusade/shared_prefs/NUBEE_ID.xml", "C:\\ProgramData\\" + filename + "\\" + filename + ".xml"))
+            {
+                Variables.ScriptLog("Pull files failed", Color.Red);
+            }
+            else
+            {
+                Variables.ScriptLog("Backup saved", Color.Lime);
+            }
+            if (DateTime.Now < nextOnline.AddMinutes(-5))
+            {
+                if (Variables.FindConfig("General", "Suspend_PC", out string suspend))
                 {
-                    Directory.CreateDirectory("C:\\ProgramData\\" + filename);
-                }
-                if (!BotCore.Pull("/data/data/com.nubee.valkyriecrusade/shared_prefs/NUBEE_ID.xml", "C:\\ProgramData\\" + filename + "\\" + filename + ".xml"))
-                {
-                    Variables.ScriptLog("Pull files failed", Color.Red);
-                }
-                else
-                {
-                    Variables.ScriptLog("Backup saved", Color.Lime);
-                }
-                if (DateTime.Now < nextOnline.AddMinutes(-5))
-                {
-                    if (Variables.FindConfig("General", "Suspend_PC", out string suspend))
+                    if (suspend == "true")
                     {
-                        if (suspend == "true")
-                        {
-                            SleepWake.SetWakeTimer(nextOnline.AddMinutes(-15));
-                        }
-                        else
-                        {
-                            do
-                            {
-                                BotCore.Delay(2000);
-                                Guildwar.Enter();
-                            }
-                            while (DateTime.Now <= nextOnline.AddMinutes(-10));
-                        }
+                        SleepWake.SetWakeTimer(nextOnline.AddMinutes(-15));
                     }
                     else
                     {
                         do
                         {
                             BotCore.Delay(2000);
-                            if (Variables.FindConfig("GuildWar", "Manual", out string boolean))
-                            {
-                                if (boolean == "false")
-                                {
-                                    Guildwar.Enter();
-                                }
-                            }
+                            Guildwar.Enter();
                         }
                         while (DateTime.Now <= nextOnline.AddMinutes(-10));
                     }
+                }
+                else
+                {
+                    do
+                    {
+                        BotCore.Delay(2000);
+                        if (Variables.FindConfig("GuildWar", "Manual", out string boolean))
+                        {
+                            if (boolean == "false")
+                            {
+                                Guildwar.Enter();
+                            }
+                        }
+                    }
+                    while (DateTime.Now <= nextOnline.AddMinutes(-10));
                 }
             }
         }
@@ -1551,7 +1531,9 @@ namespace UI
                                     TowerEvent.Tower();
                                     break;
                                 case PrivateVariable.EventType.ArchWitch:
+                                    break;
                                 case PrivateVariable.EventType.SoulWeapon:
+                                    SoulWeapon.SoulWeaponEnter();
                                     break;
                                 case PrivateVariable.EventType.DemonRealm:
                                     DemonRealm.Demon_Realm();

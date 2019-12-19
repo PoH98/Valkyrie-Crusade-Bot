@@ -39,7 +39,7 @@ namespace DefaultScript
                         if (!cboxchecked[index] || PrivateVariable.VCevent != PrivateVariable.EventType.Tower)
                         {
                             byte[] crop = BotCore.CropImage(VCBotScript.image, new Point(176, 356), new Point(330, 611));
-                            foreach (var f in PrivateVariable.Skills)
+                            /*foreach (var f in PrivateVariable.Skills)
                             {
                                 if (!ScriptRun.Run)
                                 {
@@ -64,13 +64,24 @@ namespace DefaultScript
                                 catch
                                 {
 
+                                }
+                            }*/
+                            var results = BotCore.FindImages(crop, PrivateVariable.Skills, false, true);
+                            if(results != null)
+                            {
+                                Variables.ScriptLog("Skill actived", Color.Blue);
+                                BotCore.SendSwipe(new Point(263, 473), new Point(264, 474), 1200);
+                                for (int x = 0; x < 6; x++)
+                                {
+                                    Thread.Sleep(100);
+                                    BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
                                 }
                             }
                         }
                         else if(KOChance)
                         {
                             byte[] crop = BotCore.CropImage(VCBotScript.image, new Point(176, 356), new Point(330, 611));
-                            foreach (var f in PrivateVariable.Skills)
+                            /*foreach (var f in PrivateVariable.Skills)
                             {
                                 if (!ScriptRun.Run)
                                 {
@@ -95,6 +106,17 @@ namespace DefaultScript
                                 catch
                                 {
 
+                                }
+                            }*/
+                            var results = BotCore.FindImages(crop, PrivateVariable.Skills, false, true);
+                            if (results != null)
+                            {
+                                Variables.ScriptLog("Skill actived", Color.Blue);
+                                BotCore.SendSwipe(new Point(263, 473), new Point(264, 474), 1200);
+                                for (int x = 0; x < 6; x++)
+                                {
+                                    Thread.Sleep(100);
+                                    BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
                                 }
                             }
                         }
@@ -103,7 +125,7 @@ namespace DefaultScript
                         if (!cboxchecked[index] || PrivateVariable.VCevent != PrivateVariable.EventType.ArchWitch)
                         {
                             byte[] crop = BotCore.CropImage(VCBotScript.image, new Point(357, 356), new Point(543, 610));
-                            foreach (var f in PrivateVariable.Skills)
+                            /*foreach (var f in PrivateVariable.Skills)
                             {
                                 if (!ScriptRun.Run)
                                 {
@@ -129,12 +151,23 @@ namespace DefaultScript
                                 {
 
                                 }
+                            }*/
+                            var results = BotCore.FindImages(crop, PrivateVariable.Skills, false, true);
+                            if (results != null)
+                            {
+                                Variables.ScriptLog("Skill actived", Color.Blue);
+                                BotCore.SendSwipe(new Point(448, 492), new Point(449, 493), 1200);
+                                for (int x = 0; x < 6; x++)
+                                {
+                                    Thread.Sleep(100);
+                                    BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
+                                }
                             }
                         }
-                        else
+                        else if(KOChance)
                         {
                             byte[] crop = BotCore.CropImage(VCBotScript.image, new Point(500, 0), new Point(800, 50));
-                            if (BotCore.FindImage(crop, "Img\\KO_Chance\\KO.png", false) != null)//Ko Chance, active skill
+                            /*if (BotCore.FindImage(crop, "Img\\KO_Chance\\KO.png", false) != null)//Ko Chance, active skill
                             {
                                 crop = BotCore.CropImage(VCBotScript.image, new Point(357, 356), new Point(543, 610));
                                 foreach (var f in PrivateVariable.Skills)
@@ -164,6 +197,17 @@ namespace DefaultScript
 
                                     }
                                 }
+                            }*/
+                            var results = BotCore.FindImages(crop, PrivateVariable.Skills, false, true);
+                            if (results != null)
+                            {
+                                Variables.ScriptLog("Skill actived", Color.Blue);
+                                BotCore.SendSwipe(new Point(448, 492), new Point(449, 493), 1200);
+                                for (int x = 0; x < 6; x++)
+                                {
+                                    Thread.Sleep(100);
+                                    BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
+                                }
                             }
                         }
                         break;
@@ -171,7 +215,7 @@ namespace DefaultScript
                         if (!cboxchecked[index] || PrivateVariable.VCevent != PrivateVariable.EventType.ArchWitch)
                         {
                             byte[] crop = BotCore.CropImage(VCBotScript.image, new Point(546, 376), new Point(724, 597));
-                            foreach (var f in PrivateVariable.Skills)
+                            /*foreach (var f in PrivateVariable.Skills)
                             {
                                 if (!ScriptRun.Run)
                                 {
@@ -197,12 +241,23 @@ namespace DefaultScript
                                 {
 
                                 }
+                            }*/
+                            var results = BotCore.FindImages(crop, PrivateVariable.Skills, false, true);
+                            if (results != null)
+                            {
+                                Variables.ScriptLog("Skill actived", Color.Blue);
+                                BotCore.SendSwipe(new Point(641, 473), new Point(642, 474), 1200);
+                                for (int x = 0; x < 6; x++)
+                                {
+                                    Thread.Sleep(100);
+                                    BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
+                                }
                             }
                         }
-                        else
+                        else if(KOChance)
                         {
                             byte[] crop = BotCore.CropImage(VCBotScript.image, new Point(500, 0), new Point(800, 50));
-                            if (BotCore.FindImage(crop, "Img\\KO_Chance\\KO.png", false) != null)//Ko Chance, active skill
+                            /*if (BotCore.FindImage(crop, "Img\\KO_Chance\\KO.png", false) != null)//Ko Chance, active skill
                             {
                                 crop = BotCore.CropImage(VCBotScript.image, new Point(546, 376), new Point(724, 597));
                                 foreach (var f in PrivateVariable.Skills)
@@ -232,6 +287,17 @@ namespace DefaultScript
 
                                     }
                                 }
+                            }*/
+                            var results = BotCore.FindImages(crop, PrivateVariable.Skills, false, true);
+                            if (results != null)
+                            {
+                                Variables.ScriptLog("Skill actived", Color.Blue);
+                                BotCore.SendSwipe(new Point(641, 473), new Point(642, 474), 1200);
+                                for (int x = 0; x < 6; x++)
+                                {
+                                    Thread.Sleep(100);
+                                    BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
+                                }
                             }
                         }
                         break;
@@ -239,7 +305,7 @@ namespace DefaultScript
                         if (!cboxchecked[index] || PrivateVariable.VCevent != PrivateVariable.EventType.ArchWitch)
                         {
                             byte[] crop = BotCore.CropImage(VCBotScript.image, new Point(761, 356), new Point(921, 613));
-                            foreach (var f in PrivateVariable.Skills)
+                            /*foreach (var f in PrivateVariable.Skills)
                             {
                                 if (!ScriptRun.Run)
                                 {
@@ -265,12 +331,23 @@ namespace DefaultScript
                                 {
 
                                 }
+                            }*/
+                            var results = BotCore.FindImages(crop, PrivateVariable.Skills, false, true);
+                            if (results != null)
+                            {
+                                Variables.ScriptLog("Skill actived", Color.Blue);
+                                BotCore.SendSwipe(new Point(834, 483), new Point(835, 484), 1200);
+                                for (int x = 0; x < 6; x++)
+                                {
+                                    Thread.Sleep(100);
+                                    BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
+                                }
                             }
                         }
-                        else
+                        else if(KOChance)
                         {
                             byte[] crop = BotCore.CropImage(VCBotScript.image, new Point(500, 0), new Point(800, 50));
-                            if (BotCore.FindImage(crop, "Img\\KO_Chance\\KO.png", false) != null)//Ko Chance, active skill
+                            /*if (BotCore.FindImage(crop, "Img\\KO_Chance\\KO.png", false) != null)//Ko Chance, active skill
                             {
                                 crop = BotCore.CropImage(VCBotScript.image, new Point(761, 356), new Point(921, 613));
                                 foreach (var f in PrivateVariable.Skills)
@@ -300,6 +377,17 @@ namespace DefaultScript
 
                                     }
                                 }
+                            }*/
+                            var results = BotCore.FindImages(crop, PrivateVariable.Skills, false, true);
+                            if (results != null)
+                            {
+                                Variables.ScriptLog("Skill actived", Color.Blue);
+                                BotCore.SendSwipe(new Point(834, 483), new Point(835, 484), 1200);
+                                for (int x = 0; x < 6; x++)
+                                {
+                                    Thread.Sleep(100);
+                                    BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
+                                }
                             }
                         }
                         break;
@@ -307,7 +395,7 @@ namespace DefaultScript
                         if (!cboxchecked[index] || PrivateVariable.VCevent != PrivateVariable.EventType.ArchWitch)
                         {
                             byte[] crop = BotCore.CropImage(VCBotScript.image, new Point(934, 356), new Point(1090, 578));
-                            foreach (var f in PrivateVariable.Skills)
+                            /*foreach (var f in PrivateVariable.Skills)
                             {
                                 if (!ScriptRun.Run)
                                 {
@@ -333,12 +421,23 @@ namespace DefaultScript
                                 {
 
                                 }
+                            }*/
+                            var results = BotCore.FindImages(crop, PrivateVariable.Skills, false, true);
+                            if (results != null)
+                            {
+                                Variables.ScriptLog("Skill actived", Color.Blue);
+                                BotCore.SendSwipe(new Point(1017, 470), new Point(1018, 471), 1200);
+                                for (int x = 0; x < 6; x++)
+                                {
+                                    Thread.Sleep(100);
+                                    BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
+                                }
                             }
                         }
-                        else
+                        else if(KOChance)
                         {
                             byte[] crop = BotCore.CropImage(VCBotScript.image, new Point(500, 0), new Point(800, 50));
-                            if (BotCore.FindImage(crop, "Img\\KO_Chance\\KO.png", false) != null)//Ko Chance, active skill
+                            /*if (BotCore.FindImage(crop, "Img\\KO_Chance\\KO.png", false) != null)//Ko Chance, active skill
                             {
                                 crop = BotCore.CropImage(VCBotScript.image, new Point(934, 356), new Point(1090, 578));
                                 foreach (var f in PrivateVariable.Skills)
@@ -367,6 +466,17 @@ namespace DefaultScript
                                     {
 
                                     }
+                                }
+                            }*/
+                            var results = BotCore.FindImages(crop, PrivateVariable.Skills, false, true);
+                            if (results != null)
+                            {
+                                Variables.ScriptLog("Skill actived", Color.Blue);
+                                BotCore.SendSwipe(new Point(1017, 470), new Point(1018, 471), 1200);
+                                for (int x = 0; x < 6; x++)
+                                {
+                                    Thread.Sleep(100);
+                                    BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
                                 }
                             }
                         }

@@ -162,12 +162,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="absys.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="absys.Designer.cs">
-      <DependentUpon>absys.cs</DependentUpon>
-    </Compile>
     <Compile Include="ArchwitchEvent.cs" />
     <Compile Include="BattleScript.cs" />
     <Compile Include="CheckVersion.cs" />
@@ -206,9 +200,6 @@
     <Compile Include="WebClientOverride.cs">
       <SubType>Component</SubType>
     </Compile>
-    <EmbeddedResource Include="absys.resx">
-      <DependentUpon>absys.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Loading.resx">
       <DependentUpon>Loading.cs</DependentUpon>
     </EmbeddedResource>

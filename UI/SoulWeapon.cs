@@ -8,10 +8,10 @@ namespace UI
 {
     class SoulWeapon
     {
-        static bool UnhandledException;
+        //static bool UnhandledException;
 
         static int error = 0;
-        public static void SoulWeaponEnter()
+        /*public static void SoulWeaponEnter()
         {
             if (UnhandledException)
             {
@@ -66,11 +66,13 @@ namespace UI
             {
                 Variables.ScriptLog("WeaponEvent.png not found! Exiting function! ", Color.Red);
             }
-        }
-        public static void SwitchStage()
+        }*/
+        //public static void SwitchEvent
+        public static void SoulWeaponEnter()
         {
+            Variables.ScriptLog("Soul Weapon Event found!",Color.Lime);
             //Check do we still can get into the stage
-            do
+            /*do
             {
                 BotCore.Delay(1000, 1200);
                 VCBotScript.image = BotCore.ImageCapture();
@@ -80,12 +82,12 @@ namespace UI
                     return;
                 }
             }
-            while (BotCore.FindImage(VCBotScript.image, Img.SoulWeapon, true) == null);
+            while (BotCore.FindImage(VCBotScript.image, Img.SoulWeapon, true) == null);*/
             int error = 0;
             //Check if we didnt need to switch stage
             do
             {
-                var crop = BotCore.CropImage(VCBotScript.image, new Point(73, 83), new Point(112, 102));
+                /*var crop = BotCore.CropImage(VCBotScript.image, new Point(73, 83), new Point(112, 102));
                 var tempstring = OCR.OcrImage(crop, "eng");
                 var leftTimes = tempstring.Split('/')[0];
                 if (leftTimes == "0")
@@ -94,64 +96,126 @@ namespace UI
                     return;
                 }
                 else
+                {*/
+                VCBotScript.image = BotCore.ImageCapture();
+                if (BotCore.FindImage(VCBotScript.image, Img.SoulArrow, false) != null)
                 {
-                    //Back to 1-1 first before we continue
-                    BotCore.Delay(1000);
-                    //BotCore.Minitouch("d 0 290 340 150\nc\nm 0 340 340 150\nc\nm 0 390 340 150\nc\nm 0 440 340 150\nc\nm 0 490 340 150\nc\nm 0 540 340 150\nc\nm 0 590 340 150\nc\nm 0 640 340 150\nc\nm 0 740 340 150\nc\nm 0 840 340 150\nc\nm 0 940 340 150\nc\nu 0\nc\n");
-                    BotCore.SendSwipe(290, 340, 990, 360, 3000);//Why it can't swipe????
-                    BotCore.Delay(1000);
-
-                    switch (VCBotScript.Weapon_Stage)
+                    Variables.ScriptLog("Already in a stage, running now...",Color.Lime);
+                    Attack();
+                }
+                //Back to 1-1 first before we continue
+                BotCore.Delay(1000);
+                if(Variables.FindConfig("General", "SoulEv", out string data))
+                {
+                    if (bool.Parse(data))
                     {
-                        case 1.1:
-                            BotCore.SendTap(449, 532);
-                            break;
-                        case 1.2:
-                            BotCore.SendTap(577, 422);
-                            break;
-                        case 1.3:
-                            BotCore.SendTap(692, 277);
-                            break;
-                        case 2.1:
-                            BotCore.SendTap(820, 423);
-                            break;
-                        case 2.2:
-                            BotCore.SendTap(944, 306);
-                            break;
-                        case 2.3:
-                            BotCore.SendTap(1053, 210);
-                            break;
-                        case 3.1:
-                            BotCore.SendTap(1191, 310);
-                            break;
-                        //next page
-                        case 3.2:
-                            BotCore.SendSwipe(1191, 310, 670, 310, 3000);
-                            BotCore.Delay(1000);
-                            BotCore.SendTap(315, 427);
-                            break;
+                        var New = BotCore.FindImage(VCBotScript.image, Img.NEW, false);
+                        if(New != null)
+                        {
+                            Variables.ScriptLog("Found new stage!", Color.Blue);
+                            BotCore.SendTap(New.Value);
+                            goto SkipSelectStage;
+                        }
+                        else
+                        {
+                            Variables.ScriptLog("New stage not found! Try getting into Boss stage!", Color.Blue);
+                            New = BotCore.FindImage(VCBotScript.image, Img.Castle, true);
+                            if(New != null)
+                            {
+                                BotCore.SendTap(New.Value);
+                                goto SkipSelectStage;
+                            }
+                            Variables.ScriptLog("No Stage located, force getting into stage!",Color.Red);
+                        }
                     }
-                    BotCore.Delay(1000, 1200);
-                    VCBotScript.image = BotCore.ImageCapture();
-                    if (BotCore.FindImage(VCBotScript.image, Img.GreenButton, false) != null)
+                }
+                //BotCore.Minitouch("d 0 290 340 150\nc\nm 0 340 340 150\nc\nm 0 390 340 150\nc\nm 0 440 340 150\nc\nm 0 490 340 150\nc\nm 0 540 340 150\nc\nm 0 590 340 150\nc\nm 0 640 340 150\nc\nm 0 740 340 150\nc\nm 0 840 340 150\nc\nm 0 940 340 150\nc\nu 0\nc\n");
+                BotCore.SendSwipe(400, 340,1200, 360, 1000);//Why it can't swipe????
+                BotCore.Delay(1000);
+
+                switch (VCBotScript.Weapon_Stage)
+                {
+                    case 1.1:
+                        BotCore.SendTap(449, 532);
+                        break;
+                    case 1.2:
+                        BotCore.SendTap(577, 422);
+                        break;
+                    case 1.3:
+                        BotCore.SendTap(692, 277);
+                        break;
+                    case 2.1:
+                        BotCore.SendTap(820, 423);
+                        break;
+                    case 2.2:
+                        BotCore.SendTap(944, 306);
+                        break;
+                    case 2.3:
+                        BotCore.SendTap(1053, 210);
+                        break;
+                    case 3.1:
+                        BotCore.SendTap(1191, 310);
+                        break;
+                    //next page
+                    case 3.2:
+                        BotCore.SendSwipe(1191, 310, 670, 310, 3000);
+                        BotCore.Delay(1000);
+                        BotCore.SendTap(315, 427);
+                        break;
+                }
+                SkipSelectStage:
+                BotCore.Delay(1000, 1200);
+                VCBotScript.image = BotCore.ImageCapture();
+                var point = BotCore.FindImage(VCBotScript.image, Img.GreenButton, false);
+                if (point != null)
+                {
+                    BotCore.SendTap(point.Value);
+                    BotCore.Delay(1000, 2000);
+                    Attack();
+                    if (!PrivateVariable.InEventScreen || BotCore.GameIsForeground(VCBotScript.game))
                     {
-                        BotCore.SendTap(776, 524);
-                        BotCore.Delay(1000, 2000);
-                        Attack();
+                        PrivateVariable.InEventScreen = false;
+                        PrivateVariable.InMainScreen = false;
+                        return;
+                    }
+                    error = 0;
+                    if (Variables.FindConfig("General", "SoulEv", out data))
+                    {
+                        if (!bool.Parse(data))
+                        {
+                            if (VCBotScript.Weapon_Stage < 3.0)
+                            {
+                                VCBotScript.Weapon_Stage += 0.1;
+                                if (VCBotScript.Weapon_Stage % 1 > 0.3)
+                                {
+                                    VCBotScript.Weapon_Stage += 0.7;
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (error > 9)
+                    {
+                        BotCore.KillGame("com.nubee.valkyriecrusade");
+                        ScriptErrorHandler.Reset("Extreme error happens. Restarting game...");
+                        return;
                     }
                     else
                     {
-                        Variables.ScriptLog("Unexpected error found! Unable to get into stage! Exiting for now!", Color.Red);
-                        return;
+                        Variables.ScriptLog("Something error happens. Unable to get detect expcted UI", Color.Red);
+                        BotCore.SendSwipe(395, 365, 1100, 380, 1000);
+                        error++;
                     }
+                    //Variables.ScriptLog("Unexpected error found! Unable to get into stage! Exiting for now!", Color.Red);
+                    //return;
                 }
-                error++;
+                //}
+
             }
             while (error != 10);
-            if(error == 10)
-            {
-                Variables.ScriptLog("Something error happens. Unable to get detect expcted UI",Color.Red);
-            }
+            
         }
 
         private static void Attack()
@@ -177,6 +241,14 @@ namespace UI
                     {
                         //No energy
                         Variables.ScriptLog("SoulWeapon Event have no energy. Exiting now! ", Color.Yellow);
+                        TimeSpan delay = new TimeSpan(0, ((ArchwitchEvent.FullWalkEnergy - ArchwitchEvent.CurrentWalkEnergy) * 5), 0);
+                        VCBotScript.nextOnline = DateTime.Now + delay;
+                        Variables.ScriptLog("Estimate online time is " + VCBotScript.nextOnline, Color.Lime);
+                        BotCore.KillGame(VCBotScript.game);
+                        BotCore.Delay(delay);
+                        PrivateVariable.InEventScreen = false;
+                        PrivateVariable.InMainScreen = false;
+                        BotCore.StartGame(VCBotScript.game + VCBotScript.activity);
                         return;
                     }
                     BotCore.SendTap(buttons.Value.X + rnd.Next(430, 845), buttons.Value.Y + rnd.Next(370, 420));
@@ -201,9 +273,17 @@ namespace UI
                 if (buttons != null)
                 {
                     ArchwitchEvent.CheckBossEnergy();
-                    if (ArchwitchEvent.CurrentBossEnergy == 0)
+                    if (ArchwitchEvent.CurrentBossEnergy < 3)
                     {
                         Variables.ScriptLog("SoulWeapon Event have no energy. Exiting now! ", Color.Yellow);
+                        TimeSpan delay = new TimeSpan(0, ((ArchwitchEvent.FullBossEnergy - ArchwitchEvent.CurrentBossEnergy) * 15), 0);
+                        VCBotScript.nextOnline = DateTime.Now + delay;
+                        Variables.ScriptLog("Estimate online time is " + VCBotScript.nextOnline, Color.Lime);
+                        BotCore.KillGame(VCBotScript.game);
+                        BotCore.Delay(delay);
+                        PrivateVariable.InEventScreen = false;
+                        PrivateVariable.InMainScreen = false;
+                        BotCore.StartGame(VCBotScript.game + VCBotScript.activity);
                         return;
                     }
                     BotCore.SendTap(buttons.Value.X + rnd.Next(430, 845), buttons.Value.Y + rnd.Next(370, 420));
@@ -219,7 +299,7 @@ namespace UI
                     BotCore.Delay(1500);
                     continue;
                 }
-                if(BotCore.FindImage(VCBotScript.image, Img.SoulWeapon, true) != null)
+                if(BotCore.FindImage(VCBotScript.image, Img.ArchwitchHunt, true) != null)
                 {
                     //Stage completed
                     return;
@@ -228,7 +308,7 @@ namespace UI
                 if(error > 30)
                 {
                     BotCore.Decompress(VCBotScript.image).Save("Profiles\\Logs\\error.png");
-                    UnhandledException = true;
+                    //UnhandledException = true;
                     Variables.ScriptLog("Unhandled exception. Contact PoH98 for fix!", Color.Red);
                     return;
                 }

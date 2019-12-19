@@ -265,11 +265,11 @@ namespace BotFramework
                     Chk_Archwitch.Checked = true;
                 }
             }
-            if (Variables.FindConfig("General", "SoWeEv", out output))
+            if (Variables.FindConfig("General", "SoulEv", out output))
             {
                 if (output == "true")
                 {
-                    Chk_SoulWeapon.Checked = true;
+                    chk_SoulEv.Checked = true;
                 }
             }
             if (Variables.FindConfig("General", "ArWiSt", out output))
@@ -1208,11 +1208,6 @@ namespace BotFramework
             VCBotScript.Archwitch_Stage = Convert.ToDouble(config);
         }
 
-        private void Chk_SoulWeapon_CheckedChanged(object sender, EventArgs e)
-        {
-            Variables.ModifyConfig("General", "SoWeEv", Chk_SoulWeapon.Checked.ToString().ToLower());
-        }
-
         private void Combo_Weapon_SelectedIndexChanged(object sender, EventArgs e)
         {
             Variables.ModifyConfig("General", "SoWeSt", Combo_Weapon.SelectedItem.ToString().Replace("-", "."));
@@ -1238,6 +1233,11 @@ namespace BotFramework
         private void chk_GWW_CheckedChanged(object sender, EventArgs e)
         {
             Variables.ModifyConfig("GuildWar", "Manual", chk_GWW.Checked.ToString().ToLower());
+        }
+
+        private void checkBox1_CheckedChanged_1(object sender, EventArgs e)
+        {
+            Variables.ModifyConfig("General", "SoulEv", chk_SoulEv.Checked.ToString().ToLower());
         }
     }
 }

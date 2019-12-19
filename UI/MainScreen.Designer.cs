@@ -96,9 +96,6 @@
             this.webBrowser2 = new System.Windows.Forms.WebBrowser();
             this.GuildWar = new System.Windows.Forms.GroupBox();
             this.chk_GWW = new System.Windows.Forms.CheckBox();
-            this.Weapon = new System.Windows.Forms.GroupBox();
-            this.Combo_Weapon = new MetroFramework.Controls.MetroComboBox();
-            this.Chk_SoulWeapon = new System.Windows.Forms.CheckBox();
             this.Archwitch = new System.Windows.Forms.GroupBox();
             this.Chk_Archwitch = new System.Windows.Forms.CheckBox();
             this.Combo_Archwitch = new MetroFramework.Controls.MetroComboBox();
@@ -116,6 +113,10 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.chk_Log = new MetroFramework.Controls.MetroCheckBox();
             this.metroLink1 = new MetroFramework.Controls.MetroLink();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.Combo_Weapon = new MetroFramework.Controls.MetroComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.chk_SoulEv = new System.Windows.Forms.CheckBox();
             this.ED_Box.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.M_Box.SuspendLayout();
@@ -132,7 +133,6 @@
             this.NormalEvent_Tab.SuspendLayout();
             this.ArchwitchEvent_Tab.SuspendLayout();
             this.GuildWar.SuspendLayout();
-            this.Weapon.SuspendLayout();
             this.Archwitch.SuspendLayout();
             this.OtherSettings_Tab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -141,6 +141,7 @@
             this.Script.SuspendLayout();
             this.Info.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // timer2
@@ -263,7 +264,7 @@
             this.lbl_Rank.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.lbl_Rank.Location = new System.Drawing.Point(6, 100);
             this.lbl_Rank.Name = "lbl_Rank";
-            this.lbl_Rank.Size = new System.Drawing.Size(91, 13);
+            this.lbl_Rank.Size = new System.Drawing.Size(85, 13);
             this.lbl_Rank.TabIndex = 40;
             this.lbl_Rank.Text = "当前塔楼排名：";
             // 
@@ -283,7 +284,7 @@
             this.lbl_PT.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.lbl_PT.Location = new System.Drawing.Point(6, 60);
             this.lbl_PT.Name = "lbl_PT";
-            this.lbl_PT.Size = new System.Drawing.Size(91, 13);
+            this.lbl_PT.Size = new System.Drawing.Size(85, 13);
             this.lbl_PT.TabIndex = 38;
             this.lbl_PT.Text = "当前塔楼层数：";
             // 
@@ -637,7 +638,7 @@
             this.lbl_esph.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.lbl_esph.Location = new System.Drawing.Point(6, 89);
             this.lbl_esph.Name = "lbl_esph";
-            this.lbl_esph.Size = new System.Drawing.Size(139, 13);
+            this.lbl_esph.Size = new System.Drawing.Size(130, 13);
             this.lbl_esph.TabIndex = 20;
             this.lbl_esph.Text = "逍遥模拟器共享文件夹：";
             // 
@@ -647,7 +648,7 @@
             this.lbl_eins.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.lbl_eins.Location = new System.Drawing.Point(6, 29);
             this.lbl_eins.Name = "lbl_eins";
-            this.lbl_eins.Size = new System.Drawing.Size(127, 13);
+            this.lbl_eins.Size = new System.Drawing.Size(121, 13);
             this.lbl_eins.TabIndex = 19;
             this.lbl_eins.Text = "逍遥模拟器安装位置：";
             // 
@@ -860,7 +861,7 @@
             this.metroTabControl2.Controls.Add(this.OtherSettings_Tab);
             this.metroTabControl2.Location = new System.Drawing.Point(3, 105);
             this.metroTabControl2.Name = "metroTabControl2";
-            this.metroTabControl2.SelectedIndex = 1;
+            this.metroTabControl2.SelectedIndex = 0;
             this.metroTabControl2.Size = new System.Drawing.Size(443, 390);
             this.metroTabControl2.Style = MetroFramework.MetroColorStyle.Red;
             this.metroTabControl2.TabIndex = 15;
@@ -869,6 +870,7 @@
             // 
             // NormalEvent_Tab
             // 
+            this.NormalEvent_Tab.Controls.Add(this.groupBox2);
             this.NormalEvent_Tab.Controls.Add(this.E_Box);
             this.NormalEvent_Tab.HorizontalScrollbarBarColor = true;
             this.NormalEvent_Tab.HorizontalScrollbarHighlightOnWheel = false;
@@ -887,7 +889,6 @@
             // 
             this.ArchwitchEvent_Tab.Controls.Add(this.webBrowser2);
             this.ArchwitchEvent_Tab.Controls.Add(this.GuildWar);
-            this.ArchwitchEvent_Tab.Controls.Add(this.Weapon);
             this.ArchwitchEvent_Tab.Controls.Add(this.Archwitch);
             this.ArchwitchEvent_Tab.HorizontalScrollbarBarColor = true;
             this.ArchwitchEvent_Tab.HorizontalScrollbarHighlightOnWheel = false;
@@ -934,52 +935,6 @@
             this.chk_GWW.UseVisualStyleBackColor = true;
             this.chk_GWW.CheckedChanged += new System.EventHandler(this.chk_GWW_CheckedChanged);
             // 
-            // Weapon
-            // 
-            this.Weapon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
-            this.Weapon.Controls.Add(this.Combo_Weapon);
-            this.Weapon.Controls.Add(this.Chk_SoulWeapon);
-            this.Weapon.ForeColor = System.Drawing.Color.White;
-            this.Weapon.Location = new System.Drawing.Point(231, 3);
-            this.Weapon.Name = "Weapon";
-            this.Weapon.Size = new System.Drawing.Size(201, 96);
-            this.Weapon.TabIndex = 14;
-            this.Weapon.TabStop = false;
-            this.Weapon.Text = "战器活动";
-            // 
-            // Combo_Weapon
-            // 
-            this.Combo_Weapon.FormattingEnabled = true;
-            this.Combo_Weapon.ItemHeight = 23;
-            this.Combo_Weapon.Items.AddRange(new object[] {
-            "1-1",
-            "1-2",
-            "1-3",
-            "2-1",
-            "2-2",
-            "2-3",
-            "3-1"});
-            this.Combo_Weapon.Location = new System.Drawing.Point(12, 44);
-            this.Combo_Weapon.Name = "Combo_Weapon";
-            this.Combo_Weapon.Size = new System.Drawing.Size(183, 29);
-            this.Combo_Weapon.TabIndex = 3;
-            this.Combo_Weapon.UseSelectable = true;
-            this.Combo_Weapon.SelectedIndexChanged += new System.EventHandler(this.Combo_Weapon_SelectedIndexChanged);
-            // 
-            // Chk_SoulWeapon
-            // 
-            this.Chk_SoulWeapon.AutoSize = true;
-            this.Chk_SoulWeapon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
-            this.Chk_SoulWeapon.ForeColor = System.Drawing.Color.White;
-            this.Chk_SoulWeapon.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.Chk_SoulWeapon.Location = new System.Drawing.Point(12, 21);
-            this.Chk_SoulWeapon.Name = "Chk_SoulWeapon";
-            this.Chk_SoulWeapon.Size = new System.Drawing.Size(113, 17);
-            this.Chk_SoulWeapon.TabIndex = 3;
-            this.Chk_SoulWeapon.Text = "Chk_SoulWeapon";
-            this.Chk_SoulWeapon.UseVisualStyleBackColor = false;
-            this.Chk_SoulWeapon.CheckedChanged += new System.EventHandler(this.Chk_SoulWeapon_CheckedChanged);
-            // 
             // Archwitch
             // 
             this.Archwitch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
@@ -988,7 +943,7 @@
             this.Archwitch.ForeColor = System.Drawing.Color.White;
             this.Archwitch.Location = new System.Drawing.Point(4, 3);
             this.Archwitch.Name = "Archwitch";
-            this.Archwitch.Size = new System.Drawing.Size(201, 96);
+            this.Archwitch.Size = new System.Drawing.Size(425, 96);
             this.Archwitch.TabIndex = 13;
             this.Archwitch.TabStop = false;
             this.Archwitch.Text = "魔女活动";
@@ -1200,7 +1155,7 @@
             this.chk_Log.ForeColor = System.Drawing.Color.White;
             this.chk_Log.Location = new System.Drawing.Point(21, 695);
             this.chk_Log.Name = "chk_Log";
-            this.chk_Log.Size = new System.Drawing.Size(114, 15);
+            this.chk_Log.Size = new System.Drawing.Size(110, 15);
             this.chk_Log.TabIndex = 33;
             this.chk_Log.Text = "显示更详细日志";
             this.chk_Log.Theme = MetroFramework.MetroThemeStyle.Dark;
@@ -1217,6 +1172,59 @@
             this.metroLink1.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroLink1.UseSelectable = true;
             this.metroLink1.Click += new System.EventHandler(this.MetroLink1_Click);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
+            this.groupBox2.Controls.Add(this.chk_SoulEv);
+            this.groupBox2.Controls.Add(this.label1);
+            this.groupBox2.Controls.Add(this.Combo_Weapon);
+            this.groupBox2.ForeColor = System.Drawing.Color.White;
+            this.groupBox2.Location = new System.Drawing.Point(6, 248);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(423, 100);
+            this.groupBox2.TabIndex = 10;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "战器活动";
+            // 
+            // Combo_Weapon
+            // 
+            this.Combo_Weapon.FormattingEnabled = true;
+            this.Combo_Weapon.ItemHeight = 23;
+            this.Combo_Weapon.Items.AddRange(new object[] {
+            "1-1",
+            "1-2",
+            "1-3",
+            "2-1",
+            "2-2",
+            "2-3",
+            "3-1"});
+            this.Combo_Weapon.Location = new System.Drawing.Point(15, 56);
+            this.Combo_Weapon.Name = "Combo_Weapon";
+            this.Combo_Weapon.Size = new System.Drawing.Size(183, 29);
+            this.Combo_Weapon.TabIndex = 4;
+            this.Combo_Weapon.UseSelectable = true;
+            this.Combo_Weapon.SelectedIndexChanged += new System.EventHandler(this.Combo_Weapon_SelectedIndexChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 40);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(67, 13);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "自定义关卡";
+            // 
+            // chk_SoulEv
+            // 
+            this.chk_SoulEv.AutoSize = true;
+            this.chk_SoulEv.Location = new System.Drawing.Point(15, 20);
+            this.chk_SoulEv.Name = "chk_SoulEv";
+            this.chk_SoulEv.Size = new System.Drawing.Size(110, 17);
+            this.chk_SoulEv.TabIndex = 6;
+            this.chk_SoulEv.Text = "自动打最新关卡";
+            this.chk_SoulEv.UseVisualStyleBackColor = true;
+            this.chk_SoulEv.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged_1);
             // 
             // MainScreen
             // 
@@ -1268,8 +1276,6 @@
             this.ArchwitchEvent_Tab.ResumeLayout(false);
             this.GuildWar.ResumeLayout(false);
             this.GuildWar.PerformLayout();
-            this.Weapon.ResumeLayout(false);
-            this.Weapon.PerformLayout();
             this.Archwitch.ResumeLayout(false);
             this.Archwitch.PerformLayout();
             this.OtherSettings_Tab.ResumeLayout(false);
@@ -1279,6 +1285,8 @@
             this.Script.ResumeLayout(false);
             this.Info.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1358,12 +1366,9 @@
         private System.Windows.Forms.GroupBox Archwitch;
         private MetroFramework.Controls.MetroComboBox Combo_Archwitch;
         private System.Windows.Forms.CheckBox Chk_Archwitch;
-        private System.Windows.Forms.CheckBox Chk_SoulWeapon;
         private MetroFramework.Controls.MetroTabControl metroTabControl2;
         private MetroFramework.Controls.MetroTabPage NormalEvent_Tab;
         private MetroFramework.Controls.MetroTabPage ArchwitchEvent_Tab;
-        private System.Windows.Forms.GroupBox Weapon;
-        private MetroFramework.Controls.MetroComboBox Combo_Weapon;
         private MetroFramework.Controls.MetroTabPage OtherSettings_Tab;
         private System.Windows.Forms.Button btn_absys;
         private System.Windows.Forms.Label lbl_CEvent;
@@ -1371,6 +1376,10 @@
         private System.Windows.Forms.GroupBox GuildWar;
         private System.Windows.Forms.CheckBox chk_GWW;
         private System.Windows.Forms.Button btn_SwitchImg;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.CheckBox chk_SoulEv;
+        private System.Windows.Forms.Label label1;
+        private MetroFramework.Controls.MetroComboBox Combo_Weapon;
     }
 }
 
