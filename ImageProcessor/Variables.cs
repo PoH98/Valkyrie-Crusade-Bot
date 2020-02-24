@@ -41,7 +41,7 @@ namespace BotFramework
         /// </summary>
         public static void EmulatorPath()
         {
-            BotCore.LoadEmulatorInterface();
+            EmulatorLoader.LoadEmulatorInterface();
             if (emulator == null)
             {
                 throw new FileNotFoundException("No supported emulators detected!");
@@ -50,7 +50,7 @@ namespace BotFramework
             {
                 Instance = emulator.EmulatorName();
             }
-            BotCore.profilePath = Instance;
+            AdbInstance.Instance.profilePath = Instance;
         }
         /// <summary>
         /// The controlled device

@@ -153,7 +153,7 @@ namespace ITools
             catch (Exception ex)
             {
                 MessageBox.Show("Error while starting emulator! Error message: " + ex.Message);
-                Process.Start("Profiles\\" + BotCore.profilePath + "\\bot.ini");
+                Process.Start("Profiles\\" + AdbInstance.Instance.profilePath + "\\bot.ini");
                 Environment.Exit(0);
             }
         }

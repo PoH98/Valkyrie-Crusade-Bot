@@ -20,7 +20,7 @@ namespace CustomizeEmulator
             {
                 if (!process.HasExited)
                 {
-                    BotCore.KillProcessAndChildren(process.Id);
+                   EmulatorLoader.KillProcessAndChildren(process.Id);
                 }
             }
         }

@@ -15,20 +15,20 @@ namespace UI
         {
             Debug_.WriteLine();
             BotCore.Delay(1000, false);
-            var image = BotCore.ImageCapture();
+            var image = Screenshot.ImageCapture();
             Point? point = BotCore.FindImage(image, Img.Close2, false);
             if (point != null)
             {
                 BotCore.SendTap(new Point(point.Value.X, point.Value.Y));
                 BotCore.Delay(1000, false);
             }
-            image = BotCore.ImageCapture();
+            image = Screenshot.ImageCapture();
             Variables.ScriptLog("Locating Tower Event UI!", Color.White);
             if (BotCore.FindImage(image, Img.Locate_Tower, true) != null)
             {
-                image = BotCore.ImageCapture();
-                VCBotScript.Tower_Floor = OCR.OcrImage(BotCore.CropImage(image, new Point(280, 110), new Point(440, 145)), "eng");
-                VCBotScript.Tower_Rank = OCR.OcrImage(BotCore.CropImage(image, new Point(280, 145), new Point(410, 170)), "eng");
+                image = Screenshot.ImageCapture();
+                VCBotScript.Tower_Floor = OCR.OcrImage(Screenshot.CropImage(image, new Point(280, 110), new Point(440, 145)), "eng");
+                VCBotScript.Tower_Rank = OCR.OcrImage(Screenshot.CropImage(image, new Point(280, 145), new Point(410, 170)), "eng");
                 Variables.ScriptLog("Tower Event Found!", Color.Lime);
                 PrivateVariable.InEventScreen = true;
             }
@@ -38,11 +38,11 @@ namespace UI
                 PrivateVariable.InEventScreen = false;
                 return;
             }
-            image = BotCore.ImageCapture();
+            image = Screenshot.ImageCapture();
             while (!BotCore.RGBComparer( new Point(135, 526), 13, 46, 74, 10))
             {
                 BotCore.Delay(1000, true);
-                image = BotCore.ImageCapture();
+                image = Screenshot.ImageCapture();
             }
             VCBotScript.energy = VCBotScript.GetEnergy();
             VCBotScript.runes = VCBotScript.GetRune();
@@ -86,7 +86,7 @@ namespace UI
                 }
             }
             Variables.ScriptLog("Entering Stage!", Color.Lime);
-            image = BotCore.ImageCapture();
+            image = Screenshot.ImageCapture();
             if(BotCore.FindImage(image, Img.GreenButton, false) == null)
             {
                 Variables.ScriptLog("Rune Boss found!", Color.Lime);
@@ -100,7 +100,7 @@ namespace UI
                     case 0:
                         for(int x = 0; x < 5; x++)
                         {
-                            VCBotScript.image = BotCore.ImageCapture();
+                            VCBotScript.image = Screenshot.ImageCapture();
                             if(BotCore.FindImage(VCBotScript.image,Img.LV0, true) == null)
                             {
                                 BotCore.SendTap(rnd.Next(410,420), rnd.Next(650, 660));
@@ -112,7 +112,7 @@ namespace UI
                     case 1:
                         for (int x = 0; x < 5; x++)
                         {
-                            VCBotScript.image = BotCore.ImageCapture();
+                            VCBotScript.image = Screenshot.ImageCapture();
                             if (BotCore.FindImage(VCBotScript.image, Img.LV1, true) == null)
                             {
                                 BotCore.SendTap(rnd.Next(410, 420), rnd.Next(650, 660));
@@ -130,7 +130,7 @@ namespace UI
                     case 2:
                         for (int x = 0; x < 5; x++)
                         {
-                            VCBotScript.image = BotCore.ImageCapture();
+                            VCBotScript.image = Screenshot.ImageCapture();
                             if (BotCore.FindImage(VCBotScript.image, Img.LV2, true) == null)
                             {
                                 BotCore.SendTap(rnd.Next(410, 420), rnd.Next(650, 660));
@@ -154,7 +154,7 @@ namespace UI
                     case 3:
                         for (int x = 0; x < 5; x++)
                         {
-                            VCBotScript.image = BotCore.ImageCapture();
+                            VCBotScript.image = Screenshot.ImageCapture();
                             if (BotCore.FindImage(VCBotScript.image, Img.LV3, true) == null)
                             {
                                 BotCore.SendTap(rnd.Next(410, 420), rnd.Next(650, 660));
@@ -172,7 +172,7 @@ namespace UI
                     case 4:
                         for (int x = 0; x < 5; x++)
                         {
-                            VCBotScript.image = BotCore.ImageCapture();
+                            VCBotScript.image = Screenshot.ImageCapture();
                             if (BotCore.FindImage(VCBotScript.image, Img.LV4, true) == null)
                             {
                                 BotCore.SendTap(rnd.Next(410, 420), rnd.Next(650, 660));
@@ -193,7 +193,7 @@ namespace UI
             BotCore.Delay(2000);
             BotCore.SendTap(800, 660);
             /*
-            image = BotCore.ImageCapture();
+            image = Screenshot.ImageCapture();
             switch (MainScreen.Level)
             {
                 case 0:
@@ -281,14 +281,14 @@ namespace UI
                 }
                 /*if (PrivateVariable.Use_Item && VCBotScript.energy == 0 && VCBotScript.runes == 5)
                 {
-                    image = BotCore.ImageCapture();
+                    image = Screenshot.ImageCapture();
                     if (BotCore.GetPixel(new Point(798, 313), image) != Color.FromArgb(27, 95, 22))
                     {
                         BotCore.Delay(1000, false);
                         continue;
                     }
                     BotCore.SendTap(798, 313);
-                    image = BotCore.ImageCapture();
+                    image = Screenshot.ImageCapture();
                     Point? p = BotCore.FindImage(image, Img.GreenButton, false);
                     while (p == null)
                     {
@@ -297,14 +297,14 @@ namespace UI
                             return;
                         }
                         BotCore.Delay(400, 600);
-                        image = BotCore.ImageCapture();
+                        image = Screenshot.ImageCapture();
                         p = BotCore.FindImage(image, Img.GreenButton, false);
                     }
                     BotCore.SendTap(p.Value);
                     VCBotScript.energy = 5;
                     BotCore.Delay(5000, false);
                 }*/
-                image = BotCore.ImageCapture();
+                image = Screenshot.ImageCapture();
                 if (BotCore.RGBComparer( new Point(959, 656), 31, 102, 26, 4))
                 {
                     Variables.ScriptLog("Start battle", Color.Lime);
@@ -325,8 +325,8 @@ namespace UI
                 }
                 else
                 {
-                    image = BotCore.ImageCapture();
-                    var crop = BotCore.CropImage(image, new Point(125, 600), new Point(1270, 10));
+                    image = Screenshot.ImageCapture();
+                    var crop = Screenshot.CropImage(image, new Point(125, 600), new Point(1270, 10));
                     point = BotCore.FindImage(crop, Img.Red_Button, false);
                     if (point != null)
                     {
@@ -340,7 +340,7 @@ namespace UI
                         ScriptErrorHandler.ErrorHandle();
                     }
                 }
-                image = BotCore.ImageCapture();
+                image = Screenshot.ImageCapture();
                 ScriptErrorHandler.ErrorHandle();
             }
             while (!PrivateVariable.Battling);

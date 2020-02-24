@@ -18,7 +18,7 @@ namespace DefaultScript
         public void Attack()
         {
             Random rnd = new Random();
-            byte[] KO = BotCore.CropImage(VCBotScript.image, new Point(230, 70), new Point(1140, 160));
+            byte[] KO = Screenshot.CropImage(VCBotScript.image, new Point(230, 70), new Point(1140, 160));
             var points = BotCore.FindImages(KO, new Bitmap[] { Resource.Stun1, Resource.Stun2 }, false);
             if(points != null && points.Length > 2)
             {
@@ -38,7 +38,7 @@ namespace DefaultScript
                     case 0:
                         if (!cboxchecked[index] || PrivateVariable.VCevent != PrivateVariable.EventType.Tower)
                         {
-                            byte[] crop = BotCore.CropImage(VCBotScript.image, new Point(176, 356), new Point(330, 611));
+                            byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(176, 356), new Point(330, 611));
                             /*foreach (var f in PrivateVariable.Skills)
                             {
                                 if (!ScriptRun.Run)
@@ -80,7 +80,7 @@ namespace DefaultScript
                         }
                         else if(KOChance)
                         {
-                            byte[] crop = BotCore.CropImage(VCBotScript.image, new Point(176, 356), new Point(330, 611));
+                            byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(176, 356), new Point(330, 611));
                             /*foreach (var f in PrivateVariable.Skills)
                             {
                                 if (!ScriptRun.Run)
@@ -124,7 +124,7 @@ namespace DefaultScript
                     case 1:
                         if (!cboxchecked[index] || PrivateVariable.VCevent != PrivateVariable.EventType.ArchWitch)
                         {
-                            byte[] crop = BotCore.CropImage(VCBotScript.image, new Point(357, 356), new Point(543, 610));
+                            byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(357, 356), new Point(543, 610));
                             /*foreach (var f in PrivateVariable.Skills)
                             {
                                 if (!ScriptRun.Run)
@@ -166,10 +166,10 @@ namespace DefaultScript
                         }
                         else if(KOChance)
                         {
-                            byte[] crop = BotCore.CropImage(VCBotScript.image, new Point(500, 0), new Point(800, 50));
+                            byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(500, 0), new Point(800, 50));
                             /*if (BotCore.FindImage(crop, "Img\\KO_Chance\\KO.png", false) != null)//Ko Chance, active skill
                             {
-                                crop = BotCore.CropImage(VCBotScript.image, new Point(357, 356), new Point(543, 610));
+                                crop = Screenshot.CropImage(VCBotScript.image, new Point(357, 356), new Point(543, 610));
                                 foreach (var f in PrivateVariable.Skills)
                                 {
                                     if (!ScriptRun.Run)
@@ -214,7 +214,7 @@ namespace DefaultScript
                     case 2:
                         if (!cboxchecked[index] || PrivateVariable.VCevent != PrivateVariable.EventType.ArchWitch)
                         {
-                            byte[] crop = BotCore.CropImage(VCBotScript.image, new Point(546, 376), new Point(724, 597));
+                            byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(546, 376), new Point(724, 597));
                             /*foreach (var f in PrivateVariable.Skills)
                             {
                                 if (!ScriptRun.Run)
@@ -256,10 +256,10 @@ namespace DefaultScript
                         }
                         else if(KOChance)
                         {
-                            byte[] crop = BotCore.CropImage(VCBotScript.image, new Point(500, 0), new Point(800, 50));
+                            byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(500, 0), new Point(800, 50));
                             /*if (BotCore.FindImage(crop, "Img\\KO_Chance\\KO.png", false) != null)//Ko Chance, active skill
                             {
-                                crop = BotCore.CropImage(VCBotScript.image, new Point(546, 376), new Point(724, 597));
+                                crop = Screenshot.CropImage(VCBotScript.image, new Point(546, 376), new Point(724, 597));
                                 foreach (var f in PrivateVariable.Skills)
                                 {
                                     if (!ScriptRun.Run)
@@ -304,7 +304,7 @@ namespace DefaultScript
                     case 3:
                         if (!cboxchecked[index] || PrivateVariable.VCevent != PrivateVariable.EventType.ArchWitch)
                         {
-                            byte[] crop = BotCore.CropImage(VCBotScript.image, new Point(761, 356), new Point(921, 613));
+                            byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(761, 356), new Point(921, 613));
                             /*foreach (var f in PrivateVariable.Skills)
                             {
                                 if (!ScriptRun.Run)
@@ -346,10 +346,10 @@ namespace DefaultScript
                         }
                         else if(KOChance)
                         {
-                            byte[] crop = BotCore.CropImage(VCBotScript.image, new Point(500, 0), new Point(800, 50));
+                            byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(500, 0), new Point(800, 50));
                             /*if (BotCore.FindImage(crop, "Img\\KO_Chance\\KO.png", false) != null)//Ko Chance, active skill
                             {
-                                crop = BotCore.CropImage(VCBotScript.image, new Point(761, 356), new Point(921, 613));
+                                crop = Screenshot.CropImage(VCBotScript.image, new Point(761, 356), new Point(921, 613));
                                 foreach (var f in PrivateVariable.Skills)
                                 {
                                     if (!ScriptRun.Run)
@@ -394,7 +394,7 @@ namespace DefaultScript
                     case 4:
                         if (!cboxchecked[index] || PrivateVariable.VCevent != PrivateVariable.EventType.ArchWitch)
                         {
-                            byte[] crop = BotCore.CropImage(VCBotScript.image, new Point(934, 356), new Point(1090, 578));
+                            byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(934, 356), new Point(1090, 578));
                             /*foreach (var f in PrivateVariable.Skills)
                             {
                                 if (!ScriptRun.Run)
@@ -436,10 +436,10 @@ namespace DefaultScript
                         }
                         else if(KOChance)
                         {
-                            byte[] crop = BotCore.CropImage(VCBotScript.image, new Point(500, 0), new Point(800, 50));
+                            byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(500, 0), new Point(800, 50));
                             /*if (BotCore.FindImage(crop, "Img\\KO_Chance\\KO.png", false) != null)//Ko Chance, active skill
                             {
-                                crop = BotCore.CropImage(VCBotScript.image, new Point(934, 356), new Point(1090, 578));
+                                crop = Screenshot.CropImage(VCBotScript.image, new Point(934, 356), new Point(1090, 578));
                                 foreach (var f in PrivateVariable.Skills)
                                 {
                                     if (!ScriptRun.Run)

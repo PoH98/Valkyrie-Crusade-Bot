@@ -180,7 +180,7 @@ namespace MEmu
                 if (!File.Exists(Variables.VBoxManagerPath))
                 {
                     MessageBox.Show("Unable to locate path of emulator!");
-                    Process.Start("Profiles\\" + BotCore.profilePath + "\\bot.ini");
+                    Process.Start("Profiles\\" + AdbInstance.Instance.profilePath + "\\bot.ini");
                 }
                 ProcessStartInfo info = new ProcessStartInfo();
                 info.FileName = Variables.VBoxManagerPath.Replace(@"\MEmuHyperv\MEmuManage.exe", @"\MEmu\MEmuConsole.exe");
@@ -204,7 +204,7 @@ namespace MEmu
             catch (Exception ex)
             {
                 MessageBox.Show("Error while starting emulator! Error message: " + ex.Message);
-                Process.Start("Profiles\\" + BotCore.profilePath + "\\bot.ini");
+                Process.Start("Profiles\\" + AdbInstance.Instance.profilePath + "\\bot.ini");
                 Environment.Exit(0);
             }
         }

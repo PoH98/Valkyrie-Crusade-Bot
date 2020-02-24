@@ -18,7 +18,7 @@ namespace UI
             int error = 0;
             while (true)
             {
-                var image = BotCore.ImageCapture();
+                var image = Screenshot.ImageCapture();
                 point = BotCore.FindImage(image, Img.Close2, false);
                 if (point != null)
                 {
@@ -47,8 +47,8 @@ namespace UI
                 Variables.ScriptLog("Locating Demon Realm Event UI!", Color.White);
                 if (BotCore.RGBComparer(new Point(600, 405), Color.FromArgb(59, 30, 37), 15))
                 {
-                    VCBotScript.Tower_Floor = OCR.OcrImage(BotCore.CropImage(image, new Point(300, 115), new Point(484, 142)), "eng");
-                    VCBotScript.Tower_Rank = OCR.OcrImage(BotCore.CropImage(image, new Point(300, 150), new Point(458, 170)), "eng");
+                    VCBotScript.Tower_Floor = OCR.OcrImage(Screenshot.CropImage(image, new Point(300, 115), new Point(484, 142)), "eng");
+                    VCBotScript.Tower_Rank = OCR.OcrImage(Screenshot.CropImage(image, new Point(300, 150), new Point(458, 170)), "eng");
                     Variables.ScriptLog("Demon Realm Event Found!", Color.Lime);
                     PrivateVariable.InEventScreen = true;
                     VCBotScript.energy = VCBotScript.GetEnergy();
@@ -230,10 +230,10 @@ namespace UI
                 {
                     return;
                 }
-                VCBotScript.image = BotCore.ImageCapture();
-                var crop = BotCore.CropImage(VCBotScript.image, new Point(0, 0), new Point(1280, 615));
+                VCBotScript.image = Screenshot.ImageCapture();
+                var crop = Screenshot.CropImage(VCBotScript.image, new Point(0, 0), new Point(1280, 615));
                 Variables.ScriptLog("Trying to find stages to enter", Color.LightSkyBlue);
-                Bitmap screen = BotCore.Decompress(crop);
+                Bitmap screen = Screenshot.Decompress(crop);
                 foreach (var blacklist in BlackListedLocation)
                 {
                     using (Graphics grf = Graphics.FromImage(screen))
@@ -315,7 +315,7 @@ namespace UI
                         }
                     }
                 }
-                VCBotScript.image = BotCore.ImageCapture();
+                VCBotScript.image = Screenshot.ImageCapture();
                 Point? p2 = BotCore.FindImage(crop, Img.GreenButton, false);
                 if (p2 != null)
                 {
@@ -336,7 +336,7 @@ namespace UI
             BotCore.Delay(5000, false);
             for (int x = 0; x < 20; x++)
             {
-                VCBotScript.image = BotCore.ImageCapture();
+                VCBotScript.image = Screenshot.ImageCapture();
                 Point? p2 = BotCore.FindImage(VCBotScript.image, Img.GreenButton, false);
                 if (p2 != null)
                 {

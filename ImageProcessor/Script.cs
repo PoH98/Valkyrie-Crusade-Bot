@@ -141,7 +141,7 @@ namespace BotFramework
                             Start:
                             try
                             {
-                                BotCore.server.RestartServer();
+                                AdbInstance.Instance.server.RestartServer();
                             }
                             catch
                             {
@@ -149,9 +149,9 @@ namespace BotFramework
                                 BotCore.Delay(3000);
                                 goto Start;
                             }
-                            BotCore.RestartEmulator();
+                            EmulatorLoader.RestartEmulator();
                             BotCore.Delay(10000);
-                            BotCore.ConnectAndroidEmulator();
+                            EmulatorLoader.ConnectAndroidEmulator();
                             script.ResetScript();
                             continue;
                         }

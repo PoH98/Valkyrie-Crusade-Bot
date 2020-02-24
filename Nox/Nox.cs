@@ -210,7 +210,7 @@ namespace Nox
                 if (!File.Exists(Variables.VBoxManagerPath))
                 {
                     MessageBox.Show("Unable to locate path of emulator!");
-                    Process.Start("Profiles\\" + BotCore.profilePath + "\\bot.ini");
+                    Process.Start("Profiles\\" + AdbInstance.Instance.profilePath + "\\bot.ini");
                 }
                 ProcessStartInfo info = new ProcessStartInfo();
                 info.FileName = NoxFile + "\\bin\\Nox.exe";
@@ -234,7 +234,7 @@ namespace Nox
             catch (Exception ex)
             {
                 MessageBox.Show("Error while starting emulator! Error message: " + ex.Message);
-                Process.Start("Profiles\\" + BotCore.profilePath + "\\bot.ini");
+                Process.Start("Profiles\\" + AdbInstance.Instance.profilePath + "\\bot.ini");
                 Environment.Exit(0);
             }
         }

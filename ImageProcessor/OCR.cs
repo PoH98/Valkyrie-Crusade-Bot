@@ -27,7 +27,26 @@ namespace BotFramework
             {
                 throw new Exception("Run PrepairOcr First!");
             }
-            Image<Bgr, byte> img = new Image<Bgr, byte>(BotCore.Decompress(source));
+            int error = 0;
+            while (source == null && error < 5)
+            {
+                if (Variables.ProchWnd != IntPtr.Zero)
+                {
+                    source = Screenshot.ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd);
+                }
+                else
+                {
+                    source = Screenshot.ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd);
+                }
+                error++;
+            }
+
+            if (source == null)
+            {
+                Variables.AdvanceLog("Source image is null and unable to recapture!");
+                return string.Empty;
+            }
+            Image<Bgr, byte> img = new Image<Bgr, byte>(Screenshot.Decompress(source));
             if (File.Exists($"C:\\ProgramData\\tessdata\\{lang}.traineddata"))
             {
                 FileInfo f = new FileInfo(($"C:\\ProgramData\\tessdata\\{lang}.traineddata"));

@@ -33,7 +33,7 @@ namespace UI
                             VCBotScript.LocateMainScreen();
                             x = 0;
                         }
-                        var image = BotCore.ImageCapture();
+                        var image = Screenshot.ImageCapture();
                         var point = BotCore.FindImage(image, Img.GreenButton, false);
                         if (point != null)
                         {
@@ -102,7 +102,7 @@ namespace UI
         //Guild wars
         private static void GuildWar(TimeSpan time)
         {
-            var image = BotCore.ImageCapture();
+            var image = Screenshot.ImageCapture();
             //Read energy
             var greenbutton = BotCore.FindImage(image, Img.GreenButton, false);
             if (greenbutton !=null)

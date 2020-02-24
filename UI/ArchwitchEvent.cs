@@ -21,7 +21,7 @@ namespace UI
             BotCore.Delay(5000, false);
             for (int x = 0; x < 5; x++)
             {
-                VCBotScript.image = BotCore.ImageCapture();
+                VCBotScript.image = Screenshot.ImageCapture();
                 Point? located = BotCore.FindImage(VCBotScript.image, Environment.CurrentDirectory + "\\Img\\LocateEventSwitch.png", true);
                 if (located == null)
                 {
@@ -85,7 +85,7 @@ namespace UI
             do
             {
                 BotCore.Delay(1000, 1200);
-                VCBotScript.image = BotCore.ImageCapture();
+                VCBotScript.image = Screenshot.ImageCapture();
             }
             while (BotCore.FindImage(VCBotScript.image, Img.Archwitch, true) == null);
             //swipe to start of UI
@@ -285,7 +285,7 @@ namespace UI
             do
             {
                 BotCore.Delay(1500);
-                VCBotScript.image = BotCore.ImageCapture();
+                VCBotScript.image = Screenshot.ImageCapture();
                 p = BotCore.FindImage(VCBotScript.image, Img.GreenButton, false);
             } while (p == null);
             BotCore.SendTap(p.Value);
@@ -311,8 +311,8 @@ namespace UI
                 }
                 ScriptErrorHandler.ErrorHandle();
                 Random rnd = new Random();
-                VCBotScript.image = BotCore.ImageCapture();
-                var crop = BotCore.CropImage(VCBotScript.image, new Point(420, 360), new Point(855, 430));
+                VCBotScript.image = Screenshot.ImageCapture();
+                var crop = Screenshot.CropImage(VCBotScript.image, new Point(420, 360), new Point(855, 430));
                 Point? buttons = BotCore.FindImage(crop, Img.GreenButton, false);
                 if(buttons != null)
                 {
@@ -335,7 +335,7 @@ namespace UI
                 buttons = BotCore.FindImage(VCBotScript.image, Img.Close2, true);
                 if (buttons != null)
                 {
-                    VCBotScript.image = BotCore.ImageCapture();
+                    VCBotScript.image = Screenshot.ImageCapture();
                     if(BotCore.FindImage(VCBotScript.image, Img.NoEnergy, true) != null)
                     {
                         //Means we should kill it as no energy left
@@ -344,7 +344,7 @@ namespace UI
                     }
                     BotCore.SendTap(buttons.Value);
                     BotCore.Delay(1000, 1500);
-                    VCBotScript.image = BotCore.ImageCapture();
+                    VCBotScript.image = Screenshot.ImageCapture();
                 }
                 buttons = BotCore.FindImage(VCBotScript.image, Img.GreenButton, false);
                 if(buttons != null)
@@ -353,7 +353,7 @@ namespace UI
                     BotCore.Delay(1000, 1500);
                     continue;
                 }
-                crop = BotCore.CropImage(VCBotScript.image, new Point(665, 565), new Point(970, 640));
+                crop = Screenshot.CropImage(VCBotScript.image, new Point(665, 565), new Point(970, 640));
                 buttons = BotCore.FindImage(crop, Img.Red_Button, false);
                 if(buttons != null)
                 {
@@ -367,14 +367,14 @@ namespace UI
                     buttons = null;
                     do
                     {
-                        VCBotScript.image = BotCore.ImageCapture();
-                        crop = BotCore.CropImage(VCBotScript.image, new Point(665, 565), new Point(970, 640));
+                        VCBotScript.image = Screenshot.ImageCapture();
+                        crop = Screenshot.CropImage(VCBotScript.image, new Point(665, 565), new Point(970, 640));
                         buttons = BotCore.FindImage(crop, Img.Red_Button, false);
                         if (buttons != null)
                         {
                             BotCore.SendTap(buttons.Value.X + rnd.Next(675, 960), buttons.Value.Y + rnd.Next(575, 630));
                         }
-                        crop = BotCore.CropImage(VCBotScript.image, new Point(420, 360), new Point(855, 430));
+                        crop = Screenshot.CropImage(VCBotScript.image, new Point(420, 360), new Point(855, 430));
                         buttons = BotCore.FindImage(crop, Img.Red_Button, false);
                         if (buttons != null)
                         {
@@ -408,7 +408,7 @@ namespace UI
                         return;
                     }
                 }
-                crop = BotCore.CropImage(VCBotScript.image, new Point(420, 360), new Point(855, 430));
+                crop = Screenshot.CropImage(VCBotScript.image, new Point(420, 360), new Point(855, 430));
                 buttons = BotCore.FindImage(crop, Img.Red_Button, false);
                 if (buttons != null )
                 {
@@ -430,7 +430,7 @@ namespace UI
         {
             try
             {
-                var temp = OCR.OcrImage(BotCore.CropImage(VCBotScript.image, new Point(33, 49), new Point(119, 78)), "eng");
+                var temp = OCR.OcrImage(Screenshot.CropImage(VCBotScript.image, new Point(33, 49), new Point(119, 78)), "eng");
                 var temp_arr = temp.Split('/');
                 FullBossEnergy = Convert.ToInt32(temp_arr[1]);
                 CurrentBossEnergy = Convert.ToInt32(temp_arr[0]);
@@ -452,7 +452,7 @@ namespace UI
         {
             try
             {
-                var temp = OCR.OcrImage(BotCore.CropImage(VCBotScript.image, new Point(65, 54), new Point(166, 78)), "eng");
+                var temp = OCR.OcrImage(Screenshot.CropImage(VCBotScript.image, new Point(65, 54), new Point(166, 78)), "eng");
                 var temp_arr = temp.Split('/');
                 FullWalkEnergy = Convert.ToInt32(temp_arr[1]);
                 CurrentWalkEnergy = Convert.ToInt32(temp_arr[0]);

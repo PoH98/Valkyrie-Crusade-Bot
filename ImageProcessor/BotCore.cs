@@ -31,555 +31,6 @@ namespace BotFramework
     public class BotCore
     {
         /// <summary>
-        /// The path to bot.ini
-        /// </summary>
-        public static string profilePath = Variables.Instance;
-        /// <summary>
-        /// Adb Server
-        /// </summary>
-        public static readonly AdbServer server = new AdbServer();
-        static string pcimagepath = "", androidimagepath = "";
-        static readonly AdbClient client = new AdbClient();
-        static IAdbSocket socket;
-        static bool StartingEmulator; //To confirm only start the emulator once in the same time!
-        /// <summary>
-        /// Minitouch port number
-        /// </summary>
-        public static int minitouchPort = 1111;
-        /// <summary>
-        /// minitouch Tcp socket. Default null, use connectEmulator to gain a socket connection!
-        /// </summary>
-        public static TcpSocket minitouchSocket;
-        /// <summary>
-        /// Read emulators dll
-        /// </summary>
-        public static void LoadEmulatorInterface([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
-        {
-            if (!new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator))
-            {
-                MessageBox.Show("Admin needed to run this framework!");
-                Environment.Exit(0);
-            }
-            List<EmulatorInterface> emulators = new List<EmulatorInterface>();
-            if (!Directory.Exists("Emulators"))
-            {
-                Directory.CreateDirectory("Emulators");
-            }
-            var dlls = Directory.GetFiles("Emulators", "*.dll");
-            if (dlls != null)
-            {
-                foreach (var dll in dlls)
-                {
-                    Assembly a = Assembly.LoadFrom(dll);
-                    foreach (var t in a.GetTypes())
-                    {
-                        if (t.GetInterface("EmulatorInterface") != null)
-                        {
-                            emulators.Add(Activator.CreateInstance(t) as EmulatorInterface);
-                        }
-                    }
-                }
-            }
-            bool[] installed = new bool[emulators.Count];
-            for (int x = 0; x < emulators.Count; x++)
-            {
-                installed[x] = emulators[x].LoadEmulatorSettings();
-                if (installed[x])
-                {
-                    Variables.AdvanceLog("Detected emulator " + emulators[x].EmulatorName(), lineNumber, caller);
-                    EmuSelection_Resource.emu.Add(emulators[x]);
-                }
-            }
-            Variables.AdbIpPort = "";
-            Variables.AndroidSharedPath = "";
-            Variables.SharedPath = "";
-            Variables.VBoxManagerPath = "";
-            Variables.ForceWinApiCapt = false;
-            Emulator:
-            if (EmuSelection_Resource.emu.Count() > 1) //More than one installed
-            {
-                if (!File.Exists("Emulators\\Use_Emulator.ini"))
-                {
-                    Emulator_Selection em = new Emulator_Selection();
-                    em.ShowDialog();
-                    if (em.DialogResult == DialogResult.OK)
-                    {
-                        foreach (var e in emulators)
-                        {
-                            if (e.EmulatorName() == EmuSelection_Resource.selected)
-                            {
-                                Variables.emulator = e;
-                                e.LoadEmulatorSettings();
-                                
-                                File.WriteAllText("Emulators\\Use_Emulator.ini", "use=" + e.EmulatorName());
-                                return;
-                            }
-                        }
-                    }
-                    else //No selection
-                    {
-                        for (int x = 0; x < emulators.Count(); x++)
-                        {
-                            if (installed[x])
-                            {
-                                Variables.emulator = emulators[x];
-                                emulators[x].LoadEmulatorSettings();
-                                CheckSharedPath();
-                                File.WriteAllText("Emulators\\Use_Emulator.ini","use="+emulators[x].EmulatorName());
-                                return;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    var line = File.ReadAllLines("Emulators\\Use_Emulator.ini")[0].Replace("use=","");
-                    foreach(var e in emulators)
-                    {
-                        if(e.EmulatorName() == line)
-                        {
-                            Variables.emulator = e;
-                            e.LoadEmulatorSettings();
-                            CheckSharedPath();
-                            return;
-                        }
-                    }
-                    if(Variables.emulator == null)
-                    {
-                        File.Delete("Emulators\\Use_Emulator.ini");
-                        goto Emulator;
-                    }
-                }
-            }
-            else if (EmuSelection_Resource.emu.Count() < 1) //No installed
-            {
-                MessageBox.Show("Please install any supported emulator first or install extentions to support your current installed emulator!","No supported emulator found!");
-                Environment.Exit(0);
-            }
-            else
-            {
-                Variables.emulator = EmuSelection_Resource.emu[0];
-                Variables.emulator.LoadEmulatorSettings();
-                CheckSharedPath();
-            }
-        }
-
-        private static void CheckSharedPath()
-        {
-            Variables.SharedPath = new string(Variables.SharedPath.Select(ch => Path.GetInvalidPathChars().Contains(ch) ? Path.DirectorySeparatorChar : ch).ToArray());
-            Variables.SharedPath = Variables.SharedPath.Replace("'","");
-            Path.GetFullPath(Variables.SharedPath);
-        }
-        /// <summary>
-        /// Compress image into byte array to avoid conflict while multiple function trying to access the image
-        /// </summary>
-        /// <param name="image">The image for compress</param>
-        /// <returns></returns>
-        [HandleProcessCorruptedStateExceptions]
-        [SecurityCritical]
-        public static byte[] Compress(Image image)
-        {
-            try
-            {
-                ImageConverter _imageConverter = new ImageConverter();
-                byte[] xByte = (byte[])_imageConverter.ConvertTo(image, typeof(byte[]));
-                return xByte;
-            }
-            catch
-            {
-                return null;
-            }
-
-        }
-        /// <summary>
-        /// Decompress the byte array back to image for other usage
-        /// </summary>
-        /// <param name="buffer">the byte array of image compressed by Compress(Image image)</param>
-        /// <returns>Image</returns>
-        public static Bitmap Decompress(byte[] buffer)
-        {
-            try
-            {
-                using (var ms = new MemoryStream(buffer))
-                {
-                    return Image.FromStream(ms) as Bitmap;
-                }
-            }
-            catch
-            {
-                return null;
-            }
-        }
-        /// <summary>
-        /// Install an apk to selected device from path
-        /// </summary>
-        public static void InstallAPK(string path)
-        {
-            if (!ScriptRun.Run)
-            {
-                return;
-            }
-            try
-            {
-                ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
-                client.ExecuteRemoteCommand("adb install " + path, (Variables.Controlled_Device as DeviceData), receiver);
-            }
-            catch (InvalidOperationException)
-            {
-
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-
-            }
-        }
-        /// <summary>
-        /// Close the emulator by using vBox command lines
-        /// </summary>
-        public static void CloseEmulator()
-        {
-            if (!ScriptRun.Run)
-            {
-                return;
-            }
-            EjectSockets();
-            Variables.emulator.CloseEmulator();
-            Variables.Proc = null;
-            Variables.Controlled_Device = null;
-            Variables.ScriptLog("Emulator Closed",Color.Red);
-        }
-        /// <summary>
-        /// Restart emulator
-        /// </summary>
-        public static void RestartEmulator()
-        {
-            if (!ScriptRun.Run)
-            {
-                return;
-            }
-            CloseEmulator();
-            Variables.ScriptLog("Restarting Emulator...",Color.Red);
-            Thread.Sleep(1000);
-            StartEmulator();
-        }
-        /// <summary>
-        /// Method for resizing emulators using Variables.EmulatorWidth, Variables.EmulatorHeight, Variables.EmulatorDpi
-        /// </summary>
-        public static void ResizeEmulator()
-        {
-            if (!ScriptRun.Run)
-            {
-                return;
-            }
-            CloseEmulator();
-            Delay(3000);
-            Variables.emulator.SetResolution(Variables.EmulatorWidth, Variables.EmulatorHeight, Variables.EmulatorDpi);
-            Variables.ScriptLog("Restarting Emulator after setting size", Color.Lime);
-            StartEmulator();
-        }
-        /// <summary>
-        /// Refresh (Variables.Controlled_Device as DeviceData), Variables.Proc and BotCore.Handle, following with connection with Minitouch. 
-        /// Remember to run EjectSockets before exit program to avoid errors!
-        /// </summary>
-        public static void ConnectAndroidEmulator([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
-        {
-            int error = 0;
-            Connect:
-            StartAdb();
-            if (!ScriptRun.Run)
-            {
-                return;
-            }
-            Variables.AdvanceLog("Connecting emulator...", lineNumber, caller);
-            ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
-            if (Variables.Proc == null)
-            {
-                if (!ScriptRun.Run)
-                {
-                    return;
-                }
-                Variables.emulator.ConnectEmulator();
-                Variables.AdvanceLog("Emulator not connected, retrying in 2 second...", lineNumber, caller);
-                Thread.Sleep(1000);
-                error++;
-                if(error > 15) //We had await for 15 seconds
-                {
-                    Variables.ScriptLog("Unable to connect to emulator! Emulator refused to load! Restarting it now!",Color.Red);
-                    RestartEmulator();
-                    Thread.Sleep(10000);
-                    error = 0;
-                }
-                if(error % 5 == 0)
-                {
-                    Variables.ScriptLog("Emulator is still not running...",Color.Red);
-                }
-                goto Connect;
-            }
-            else
-            {
-                if (Variables.Proc.HasExited)
-                {
-                    StartEmulator();
-                }
-            }
-            try
-            {
-                socket = new AdbSocket(new IPEndPoint(IPAddress.Parse("127.0.0.1"), Adb.CurrentPort));
-                client.Connect(new DnsEndPoint("127.0.0.1", Convert.ToInt32(Variables.AdbIpPort.Split(':').Last())));
-                Variables.AdvanceLog("Connecting Adb EndPoint " + Variables.AdbIpPort, lineNumber, caller);
-                do
-                {
-                    foreach (var device in client.GetDevices())
-                    {
-                        Variables.AdvanceLog("Detected "+device.ToString(), lineNumber, caller);
-                        if (device.ToString() == Variables.AdbIpPort)
-                        {
-                            Variables.Controlled_Device = device;
-                            Variables.DeviceChanged = true;
-                            if (error % 5 == 0)
-                            {
-                                Variables.AdvanceLog("Device found, connection establish on " + Variables.AdbIpPort, lineNumber, caller);
-                            }
-                            client.SetDevice(socket, device);
-                            Delay(5000);
-                            //await emulator start
-                            do
-                            {
-                                client.ExecuteRemoteCommand("getprop sys.boot_completed", (Variables.Controlled_Device as DeviceData),receiver);
-                                if (receiver.ToString().Contains("1"))
-                                {
-                                    break;
-                                }
-                                else
-                                {
-                                    Delay(100);
-                                }
-                            }
-                            while (true);
-                            error = 0;
-                            break;
-                        }
-                    }
-                    Thread.Sleep(2000);
-                    error++;
-                } while (!Variables.DeviceChanged  && error < 30);
-                if (error > 20 && !Variables.DeviceChanged) //We had await for 1 minute
-                {
-                    Variables.ScriptLog("Unable to connect to emulator! Emulator refused to load! Restarting it now!", Color.Red);
-                    RestartEmulator();
-                    Thread.Sleep(10000);
-                    error = 0;
-                }
-                //Ok, so now we have no device change
-                Variables.DeviceChanged = false;
-            }
-            catch(Exception ex)
-            {
-                Variables.AdvanceLog(ex.ToString(), lineNumber, caller);
-                Thread.Sleep(2000);
-                goto Connect;
-            }
-            if (Variables.Controlled_Device == null)
-            {
-                //Unable to connect device
-                Variables.AdvanceLog("Unable to connect to device " + Variables.AdbIpPort, lineNumber, caller);
-                Variables.ScriptLog("Emulator refused to connect or start, restarting...", Color.Red);
-                RestartEmulator();
-                return;
-            }
-
-           client.ExecuteRemoteCommand("settings put system font_scale 1.0", (Variables.Controlled_Device as DeviceData), receiver);
-            ConnectMinitouch();
-        }
-        /// <summary>
-        /// Warning!!Must run this before exit program, else all sockets records will continue in the PC even when restarted!!
-        /// </summary>
-        public static void EjectSockets()
-        {
-            try
-            {
-                if(minitouchSocket != null)
-                {
-                    minitouchSocket.Dispose();
-                    minitouchSocket = new TcpSocket();
-                }
-            }
-            catch
-            {
-
-            }
-            ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
-            var path = Path.GetTempPath() + "minitouch";
-            if (File.Exists(path))
-            {
-                //Remove current socket port from record as we had dispose it!
-                var ports = File.ReadAllLines(path);
-                int x = 0;
-                string [] newports = new string[ports.Length];
-                foreach(var port in ports)
-                {
-                    if(port.Length > 0)
-                    {
-                        if (Convert.ToInt32(port) != minitouchPort)
-                        {
-                            newports[x] = port;
-                            x++;
-                        }
-                    }
-                }
-                File.WriteAllLines(path, newports.Where(y => !string.IsNullOrEmpty(y)).ToArray());
-            }
-            if(Variables.SharedPath != "")
-            {
-                try
-                {
-                    var files = Directory.GetFiles(Variables.SharedPath, "*.rgba");
-                    foreach (var file in files)
-                    {
-                        try
-                        {
-                            File.Delete(file);
-                        }
-                        catch
-                        {
-
-                        }
-                    }
-                }
-                catch
-                {
-
-                }
-                
-            }
-        }
-        /// <summary>
-        /// Connect minitouch
-        /// </summary>
-        private static void ConnectMinitouch([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
-        {
-            try
-            {
-                if (minitouchSocket != null)
-                {
-                    minitouchSocket = null;
-                }
-            }
-            catch
-            {
-
-            }
-            Thread.Sleep(100);
-            try
-            {
-                var path = Path.GetTempPath() + "minitouch";
-                if (File.Exists(path))
-                {
-                    var ports = File.ReadAllLines(path);
-                    foreach (var tmp in ports)
-                    {
-                        foreach (var port in ports)
-                        {
-                            if (minitouchPort == Convert.ToInt32(port))
-                            {
-                                minitouchPort++;
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-                    }
-                }
-                using (var stream = File.AppendText(path))
-                {
-                    stream.WriteLine(minitouchPort); //Let other instance know that this socket is in use!
-                }
-            }
-            catch
-            {
-
-            }
-            if (!ScriptRun.Run)
-            {
-                return;
-            }
-            Variables.AdvanceLog("Connecting Minitouch", lineNumber, caller);
-            Push(Environment.CurrentDirectory + "//adb//minitouch", "/data/local/tmp/minitouch", 777);
-            try
-            {
-                int error = 0;
-                while(Variables.Controlled_Device == null && ScriptRun.Run)
-                {
-                    error++;
-                    Thread.Sleep(1000);
-                    foreach (var device in client.GetDevices())
-                    {
-                        Variables.AdvanceLog(device.ToString(), lineNumber, caller);
-                        if (device.ToString() == Variables.AdbIpPort)
-                        {
-                            Variables.Controlled_Device = device;
-                            Variables.DeviceChanged = true;
-                            Variables.AdvanceLog("Device found, connection establish on " + Variables.AdbIpPort, lineNumber, caller);
-                            break;
-                        }
-                    }
-                    if (error > 30)
-                    {
-                        RestartEmulator();
-                        error = 0;
-                    }
-                }
-                if (!ScriptRun.Run)
-                {
-                    return;
-                }
-                Cm:
-                ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
-                client.ExecuteRemoteCommandAsync("/data/local/tmp/minitouch", (Variables.Controlled_Device as DeviceData), receiver, CancellationToken.None, int.MaxValue);
-                client.CreateForward((Variables.Controlled_Device as DeviceData), ForwardSpec.Parse($"tcp:{minitouchPort}"), ForwardSpec.Parse("localabstract:minitouch"), true);
-                minitouchSocket = new TcpSocket();
-                minitouchSocket.Connect(new IPEndPoint(IPAddress.Parse("127.0.0.1"),minitouchPort));
-                if (minitouchSocket.Connected)
-                {
-                    try
-                    {
-                        string cmd = "d 0 0 0 100\nc\nu 0\nc\n";
-                        byte[] bytes = AdbClient.Encoding.GetBytes(cmd);
-                        minitouchSocket.Send(bytes, 0, bytes.Length, SocketFlags.None);
-                    }
-                    catch
-                    {
-                        Variables.AdvanceLog("Socket disconnected, retrying...", lineNumber, caller);
-                        goto Cm;
-                    }
-                    Variables.AdvanceLog("Minitouch connected on Port number " + minitouchPort, lineNumber, caller);
-                }
-                else
-                {
-                    Variables.AdvanceLog("Socket disconnected, retrying...", lineNumber, caller);
-                    EjectSockets();
-                    minitouchPort++;
-                    goto Cm;
-                }
-            }
-            catch(Exception ex)
-            {
-                if(ex is AdbException)
-                {
-                    server.RestartServer();
-                    RestartEmulator();
-                    minitouchPort = 1111;
-                    return;
-                }
-                Variables.AdvanceLog(ex.ToString(), lineNumber, caller);
-                EjectSockets();
-                minitouchPort++;
-                ConnectMinitouch();
-            }
-
-        }
-        /// <summary>
         /// Check Game is foreground and return a bool
         /// </summary>
         /// <param name="packagename">Applications Name in Android, such as com.supercell.clashofclans</param>
@@ -597,7 +48,7 @@ namespace BotFramework
                     return false;
                 }
                 var receiver = new ConsoleOutputReceiver();
-                client.ExecuteRemoteCommand("dumpsys window windows | grep -E 'mCurrentFocus'", (Variables.Controlled_Device as DeviceData), receiver);
+                AdbInstance.Instance.client.ExecuteRemoteCommand("dumpsys window windows | grep -E 'mCurrentFocus'", (Variables.Controlled_Device as DeviceData), receiver);
                 if (receiver.ToString().Contains(packagename))
                 {
                     return true;
@@ -623,89 +74,8 @@ namespace BotFramework
                 throw new DeviceNotFoundException();
             }
             ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
-            client.ExecuteRemoteCommand(command, (Variables.Controlled_Device as DeviceData), receiver);
+            AdbInstance.Instance.client.ExecuteRemoteCommand(command, (Variables.Controlled_Device as DeviceData), receiver);
             return receiver.ToString();
-        }
-
-        private static void StartAdb([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
-        {
-            if (!ScriptRun.Run)
-            {
-                return;
-            }
-            string adbname = Environment.CurrentDirectory + "\\adb\\adb.exe";
-            {
-                if (!File.Exists(adbname))
-                {
-                    if(Variables.FindConfig("General","AdbPath", out var path))
-                    {
-                        path = path.Remove(path.LastIndexOf('\\'));
-                        IEnumerable<string> exe = Directory.EnumerateFiles(path, "*.exe");
-                        foreach (var e in exe)
-                        {
-                            if (e.Contains("adb"))
-                            {
-                                adbname = e;
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        File.WriteAllBytes("adb.zip", AdbResource.adb);
-                        ZipFile.ExtractToDirectory("adb.zip", Environment.CurrentDirectory);
-                        File.Delete("adb.zip");
-                    }
-                }
-            }
-            Start:
-            try
-            {
-                server.StartServer(adbname, false);
-            }
-            catch
-            {
-                goto Start;
-            }
-
-            Variables.AdvanceLog("Adb server started", lineNumber, caller);
-            return;
-        }
-        /// <summary>
-        /// Start Game by using CustomImg\Icon.png
-        /// </summary>
-        public static bool StartGame(Bitmap icon, byte[] img)
-        {
-            if (!ScriptRun.Run)
-            {
-                return false;
-            }
-            try
-            {
-                if (Variables.Controlled_Device == null)
-                {
-                    return false;
-                }
-                ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
-                client.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", (Variables.Controlled_Device as DeviceData), receiver);
-                Thread.Sleep(1000);
-                var ico = FindImage(img, icon, true);
-                if (ico != null)
-                {
-                    SendTap(ico.Value);
-                    Thread.Sleep(1000);
-                    return true;
-                }
-            }
-            catch (InvalidOperationException)
-            {
-
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-
-            }
-            return false;
         }
         /// <summary>
         /// Start game using game package name
@@ -724,10 +94,11 @@ namespace BotFramework
                 {
                     return false;
                 }
+                AdbInstance.Instance.GameName = "";
                 ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
-                client.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", (Variables.Controlled_Device as DeviceData), receiver);
+                AdbInstance.Instance.client.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", (Variables.Controlled_Device as DeviceData), receiver);
                 Thread.Sleep(1000);
-                client.ExecuteRemoteCommand("am start -n " + packagename, (Variables.Controlled_Device as DeviceData), receiver);
+                AdbInstance.Instance.client.ExecuteRemoteCommand("am start -n " + packagename, (Variables.Controlled_Device as DeviceData), receiver);
                 Thread.Sleep(1000);
                 return GameIsForeground(packagename);
             }
@@ -758,9 +129,9 @@ namespace BotFramework
                     return;
                 }
                 ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
-                client.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", (Variables.Controlled_Device as DeviceData), receiver);
+                AdbInstance.Instance.client.ExecuteRemoteCommand("input keyevent KEYCODE_HOME", (Variables.Controlled_Device as DeviceData), receiver);
                 Thread.Sleep(1000);
-                client.ExecuteRemoteCommand("am force-stop " + packagename, (Variables.Controlled_Device as DeviceData), receiver);
+                AdbInstance.Instance.client.ExecuteRemoteCommand("am force-stop " + packagename, (Variables.Controlled_Device as DeviceData), receiver);
             }
             catch (InvalidOperationException)
             {
@@ -771,175 +142,7 @@ namespace BotFramework
 
             }
         }
-        /// <summary>
-        /// Kill All process tree
-        /// </summary>
-        /// <param name="pid"></param>
-        public static void KillProcessAndChildren(int pid)
-        {
-            // Cannot close 'system idle process'.
-            if (pid == 0)
-            {
-                return;
-            }
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher ("Select * From Win32_Process Where ParentProcessID=" + pid);
-            ManagementObjectCollection moc = searcher.Get();
-            foreach (ManagementObject mo in moc)
-            {
-                KillProcessAndChildren(Convert.ToInt32(mo["ProcessID"]));
-            }
-            try
-            {
-                Process proc = Process.GetProcessById(pid);
-                proc.Kill();
-            }
-            catch (ArgumentException)
-            {
-                // Process already exited.
-            }
-        }
-        static bool captureerror = false;
-        private static byte[] ImageCapture(IntPtr hWnd, Point cropstart, Point cropend, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
-        {
-            try
-            {
-                Stopwatch s = Stopwatch.StartNew();
-                Rectangle rc = new Rectangle();
-                DllImport.GetWindowRect(hWnd, ref rc);
-                Bitmap bmp = new Bitmap(rc.Width, rc.Height, PixelFormat.Format32bppArgb);
-                Graphics gfxBmp = Graphics.FromImage(bmp);
-                IntPtr hdcBitmap = gfxBmp.GetHdc();
-                DllImport.PrintWindow(hWnd, hdcBitmap, 0);
-                gfxBmp.ReleaseHdc(hdcBitmap);
-                gfxBmp.Dispose();
-                Variables.AdvanceLog("Screenshot saved to memory used " + s.ElapsedMilliseconds + " ms", lineNumber, caller);
-                s.Stop();
-                bmp = CropImage(bmp, cropstart, cropend, lineNumber, caller);
-                if (Variables.ImageDebug)
-                {
-                    bmp.Save("Profiles\\Logs\\" + Encryption.SHA256(DateTime.Now.ToString()) + ".bmp");
-                }
-                return Compress(bmp);
-            }
-            catch
-            {
-                captureerror = true;
-                return ImageCapture();
-            }
-        }
-        /// <summary>
-        /// Fast Capturing screen and return the image, uses WinAPI capture if Variables.Background is false.
-        /// </summary>
-        public static byte[] ImageCapture([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
-        {
-            if (!ScriptRun.Run)
-            {
-                return null;
-            }
-            if (Variables.WinApiCapt && !captureerror)
-            {
-                if(Variables.ProchWnd != IntPtr.Zero)
-                {
-                    return ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
-                }
-                else
-                {
-                    return ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
-                }
-            }
-            captureerror = false;
-            try
-            {
-                Stopwatch s = Stopwatch.StartNew();
-                if (!Directory.Exists(Variables.SharedPath))
-                {
-                    Variables.ScriptLog("Warning, unable to find shared folder! Trying to use WinAPI!", Color.Red);
-                    Variables.WinApiCapt = true;
-                    return ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
-                }
-                if (pcimagepath == "" || androidimagepath == "")
-                {
-                    var tempname = Encryption.SHA256(DateTime.Now.ToString());
-                    pcimagepath = (Variables.SharedPath + "\\" + tempname + ".rgba").Replace("\\\\","\\");
-                    if (Variables.AndroidSharedPath.Contains("|"))
-                    {
-                        foreach(var path in Variables.AndroidSharedPath.Split('|'))
-                        {
-                            if (AndroidDirectoryExist(path))
-                            {
-                                string temppath = path;
-                                if(temppath.Last() != '/')
-                                {
-                                    temppath += "/";
-                                }
-                                androidimagepath = (temppath + tempname + ".rgba");
-                                Variables.AdvanceLog("Multiple Android Path settes, selected " + androidimagepath);
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        androidimagepath = (Variables.AndroidSharedPath + tempname + ".rgba");
-                    }
-                }
-                byte[] raw = null;
-                
-                if (Variables.Controlled_Device == null)
-                {
-                    Variables.AdvanceLog("No device connected!", lineNumber, caller);
-                    ConnectAndroidEmulator();
-                    return null;
-                }
-                if ((Variables.Controlled_Device as DeviceData).State == DeviceState.Offline || !ScriptRun.Run)
-                {
-                    return null;
-                }
-                ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
-                client.ExecuteRemoteCommand("screencap " + androidimagepath, (Variables.Controlled_Device as DeviceData), receiver);
-                if (Variables.NeedPull)
-                {
-                    if (File.Exists(pcimagepath))
-                    {
-                        File.Delete(pcimagepath);
-                    }
-                    Pull(androidimagepath, pcimagepath);
-                }
-                if (!File.Exists(pcimagepath))
-                {
-                    Variables.AdvanceLog("Unable to read rgba file because of file not exist!", lineNumber, caller);
-                    return null;
-                }
-                raw = File.ReadAllBytes(pcimagepath);
-                int expectedsize = (Variables.EmulatorHeight * Variables.EmulatorWidth * 4) + 12;
-                if (raw.Length != expectedsize || raw.Length > int.MaxValue || raw.Length < 1)
-                {
-                    //Image is not in same size, resize emulator
-                    ResizeEmulator();
-                    return null;
-                }
-                byte[] img = new byte[raw.Length - 12]; //remove header
-                Array.Copy(raw,12, img,0, img.Length);
-                Image<Rgba, byte> image = new Image<Rgba, byte>(Variables.EmulatorWidth,Variables.EmulatorHeight);
-                image.Bytes = img;
-                if (Variables.ImageDebug)
-                {
-                    image.Save("Profiles\\Logs\\" + Encryption.SHA256(DateTime.Now.ToString()) + ".bmp");
-                }
-                Variables.AdvanceLog("Screenshot saved to memory used " + s.ElapsedMilliseconds + " ms",lineNumber,caller);
-                s.Stop();
-                return Compress(image.Bitmap);
-            }
-            catch (IOException)
-            {
-
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-
-            }
-            return null;
-        }
+        
         /// <summary>
         /// Tap at location
         /// </summary>
@@ -974,7 +177,7 @@ namespace BotFramework
                 return;
             }
             ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
-            client.ExecuteRemoteCommand("input touchscreen swipe " + x + " " + y + " " + ex + " " + ey + " " + usedTime, (Variables.Controlled_Device as DeviceData), receiver);
+            AdbInstance.Instance.client.ExecuteRemoteCommand("input touchscreen swipe " + x + " " + y + " " + ex + " " + ey + " " + usedTime, (Variables.Controlled_Device as DeviceData), receiver);
             if (receiver.ToString().Contains("Error"))
             {
                 Variables.AdvanceLog(receiver.ToString(), lineNumber, caller);
@@ -1011,19 +214,19 @@ namespace BotFramework
             try
             {
                 Stopwatch s = Stopwatch.StartNew();
-                if(minitouchSocket == null)
+                if(AdbInstance.Instance.minitouchSocket == null)
                 {
-                    ConnectMinitouch();
+                    EmulatorLoader.ConnectMinitouch();
                 }
                 byte[] bytes = AdbClient.Encoding.GetBytes(command);
-                minitouchSocket.Send(bytes, 0, bytes.Length, SocketFlags.None);
+                AdbInstance.Instance.minitouchSocket.Send(bytes, 0, bytes.Length, SocketFlags.None);
                 s.Stop();
                 Variables.AdvanceLog("Minitouch command "+ command.Replace("\n","\\n") + " sended. Used time: " + s.ElapsedMilliseconds + "ms");
             }
             catch(SocketException)
             {
-                minitouchPort++;
-                ConnectMinitouch();
+                AdbInstance.Instance.minitouchPort++;
+                EmulatorLoader.ConnectMinitouch();
                 Minitouch(command);
             }
         }
@@ -1047,7 +250,7 @@ namespace BotFramework
                 return;
             }
             ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
-            client.ExecuteRemoteCommand("input touchscreen swipe " + startX + " " + startY + " " + endX + " " + endY + " " + usedTime, (Variables.Controlled_Device as DeviceData), receiver);
+            AdbInstance.Instance.client.ExecuteRemoteCommand("input touchscreen swipe " + startX + " " + startY + " " + endX + " " + endY + " " + usedTime, (Variables.Controlled_Device as DeviceData), receiver);
             if (receiver.ToString().Contains("Error"))
             {
                 Variables.AdvanceLog(receiver.ToString());
@@ -1076,44 +279,33 @@ namespace BotFramework
             return false;
         }
         /// <summary>
-        /// Start Emulator according to EmulatorInterface
-        /// </summary>
-        public static void StartEmulator()
-        {
-            if (StartingEmulator)
-            {
-                return;
-            }
-            StartingEmulator = true;
-            if (!ScriptRun.Run)
-            {
-                return;
-            }
-            Variables.emulator.StartEmulator();
-            Variables.ScriptLog("Starting Emulator...", Color.LimeGreen);
-            StartingEmulator = false;
-        }
-        /// <summary>
         /// Get color of location in screenshots
         /// </summary>
         /// <param name="position">The position of image</param>
         /// <returns>color</returns>
-        public static Color GetPixel(Point position)
+        public static Color GetPixel(Point position, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
                 return Color.Black;
             }
             byte[] image = null;
-            if (Variables.ProchWnd != IntPtr.Zero)
+            int error = 0;
+            do
             {
-                image = ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd);
+                if (Variables.ProchWnd != IntPtr.Zero)
+                {
+                    image = Screenshot.ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd,lineNumber, caller);
+                }
+                else
+                {
+                    image = Screenshot.ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                }
+                error++;
             }
-            else
-            {
-                image = ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd);
-            }
-            return Decompress(image).GetPixel(position.X, position.Y);
+            while (image == null && error < 5);
+
+            return Screenshot.Decompress(image).GetPixel(position.X, position.Y);
         }
 
         private static Color GetPixel(int x, int y, int step, int Width, int Depth, byte[] pixel)
@@ -1149,8 +341,9 @@ namespace BotFramework
         /// <param name="point">The point to check for color</param>
         /// <param name="color">The color to check at point is true or false</param>
         /// <param name="tolerance">The tolerance on color, larger will more inaccurate</param>
+        /// <param name="image">The image to check color. If not set will auto screenshot using WinAPI</param>
         /// <returns>bool</returns>
-        public static bool RGBComparer(Point point, Color color, int tolerance, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static bool RGBComparer(Point point, Color color, int tolerance, byte[] image = null, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
@@ -1159,20 +352,25 @@ namespace BotFramework
             int red = color.R;
             int blue = color.B;
             int green = color.G;
-            byte[] image = null;
-            if (Variables.ProchWnd != IntPtr.Zero)
+            int error = 0;
+            do
             {
-                image = ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                if (Variables.ProchWnd != IntPtr.Zero)
+                {
+                    image = Screenshot.ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                }
+                else
+                {
+                    image = Screenshot.ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                }
+                error++;
             }
-            else
-            {
-                image = ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
-            }
+            while (image == null && error < 5);
             if (image == null)
             {
                 return false;
             }
-            Bitmap bmp = Decompress(image);
+            Bitmap bmp = Screenshot.Decompress(image);
             int Width = bmp.Width;
             int Height = bmp.Height;
             int PixelCount = Width * Height;
@@ -1220,80 +418,45 @@ namespace BotFramework
         /// <param name="blue">Blue value of color</param>
         /// <param name="green">Green value of color</param>
         /// <param name="red">Red value of color</param>
+        /// <param name="image">The image to check color. If not set will auto screenshot using WinAPI</param>
         /// <returns>bool</returns>
-        public static bool RGBComparer(Point point, int red, int green, int blue, int tolerance, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static bool RGBComparer(Point point, int red, int green, int blue, int tolerance, byte[] image = null, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
                 return false;
             }
-            byte[] image = null;
-            if (Variables.ProchWnd != IntPtr.Zero)
-            {
-                image = ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
-            }
-            else
-            {
-                image = ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
-            }
-            if (image == null)
-            {
-                return false;
-            }
-            Bitmap bmp = Decompress(image);
-            int Width = bmp.Width;
-            int Height = bmp.Height;
-            int PixelCount = Width * Height;
-            Rectangle rect = new Rectangle(0, 0, Width, Height);
-            int Depth = Bitmap.GetPixelFormatSize(bmp.PixelFormat);
-            if (Depth != 8 && Depth != 24 && Depth != 32)
-            {
-                Variables.AdvanceLog("Image bit per pixel format not supported", lineNumber, caller);
-                return false;
-            }
-            BitmapData bd = bmp.LockBits(rect, ImageLockMode.ReadOnly, bmp.PixelFormat);
-            int step = Depth / 8;
-            try
-            {
-                byte[] pixel = new byte[PixelCount * step];
-                IntPtr ptr = bd.Scan0;
-                Marshal.Copy(ptr, pixel, 0, pixel.Length);
-                Color clr = GetPixel(point.X, point.Y, step, Width, Depth, pixel);
-                if(clr.R >= (red - tolerance) && clr.R <= (red + tolerance))
-                { 
-                    if(clr.G >= (green - tolerance) && clr.G <= (green + tolerance))
-                    {
-                        if(clr.B >= (blue - tolerance) && clr.B <= (blue + tolerance))
-                        {
-                            bmp.UnlockBits(bd);
-                            return true;
-                        }
-                    }
-                }
-                Variables.AdvanceLog("The point " + point.X + ", " + point.Y + " color is " + clr.R + ", " + clr.G + ", " + clr.B, lineNumber, caller);
-            }
-            catch
-            {
-
-            }
-            bmp.UnlockBits(bd);
-            return false;
+            return RGBComparer(point, Color.FromArgb(red, green, blue), tolerance, image);
         }
         /// <summary>
         /// Compare point RGB from image
         /// </summary>
         /// <returns>bool</returns>
-        public static bool RGBComparer(byte[] rawimage, Color color, int tolerance)
+        public static bool RGBComparer(byte[] image, Color color, int tolerance)
         {
             if (!ScriptRun.Run)
             {
                 return false;
             }
-            if (rawimage == null)
+            int error = 0;
+            while (image == null && error < 5) 
+            {
+                if (Variables.ProchWnd != IntPtr.Zero)
+                {
+                    image = Screenshot.ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd);
+                }
+                else
+                {
+                    image = Screenshot.ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd);
+                }
+                error++;
+            }
+
+            if (image == null)
             {
                 return false;
             }
-            Bitmap bmp = Decompress(rawimage);
+            Bitmap bmp = Screenshot.Decompress(image);
             int Width = bmp.Width;
             int Height = bmp.Height;
             int PixelCount = Width * Height;
@@ -1335,92 +498,66 @@ namespace BotFramework
         /// Compare point RGB from image
         /// </summary>
         /// <returns>bool</returns>
-        public static bool RGBComparer(Color color, Point start, Point end, int tolerance, out Point? point, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static bool RGBComparer(Color color, Point start, Point end, int tolerance, out Point? point, byte[] image = null, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
                 point = null;
                 return false;
             }
-            byte[] rawimage = null;
-            if (Variables.ProchWnd != IntPtr.Zero)
+            int error = 0;
+            while (image == null && error < 5)
             {
-                rawimage = ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                if (Variables.ProchWnd != IntPtr.Zero)
+                {
+                    image = Screenshot.ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                }
+                else
+                {
+                    image = Screenshot.ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                }
+                error++;
             }
-            else
-            {
-                rawimage = ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
-            }
-            var image = CropImage(rawimage, start, end);
             if (image == null)
             {
                 point = null;
                 return false;
             }
-            var bmp = Decompress(image);
-            int Width = bmp.Width;
-            int Height = bmp.Height;
-            int PixelCount = Width * Height;
-            Rectangle rect = new Rectangle(0, 0, Width, Height);
-            int Depth = Bitmap.GetPixelFormatSize(bmp.PixelFormat);
-            if (Depth != 8 && Depth != 24 && Depth != 32)
-            {
-                Variables.AdvanceLog("Image bit per pixel format not supported");
-                point = null;
-                return false;
-            }
-            BitmapData bd = bmp.LockBits(rect, ImageLockMode.ReadOnly, bmp.PixelFormat);
-            int step = Depth / 8;
-            byte[] pixel = new byte[PixelCount * step];
-            IntPtr ptr = bd.Scan0;
-            Marshal.Copy(ptr, pixel, 0, pixel.Length);
-            for (int i = 0; i < bmp.Height; i++)
-            {
-                for (int j = 0; j < bmp.Width; j++)
-                {
-                    //Get the color at each pixel
-                    Color now_color = GetPixel(j, i, step, Width, Depth, pixel);
-                    Color clr = GetPixel(j, i, step, Width, Depth, pixel);
-                    if (clr.R >= (color.R - tolerance) && clr.R <= (color.R + tolerance))
-                    {
-                        if (clr.G >= (color.G - tolerance) && clr.G <= (color.G + tolerance))
-                        {
-                            if (clr.B >= (color.B - tolerance) && clr.B <= (color.B + tolerance))
-                            {
-                                bmp.UnlockBits(bd);
-                                point = new Point(j, i);
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-            bmp.UnlockBits(bd);
-            point = null;
-            return false;
+            var crop = Screenshot.CropImage(image, start, end);
+            var result = RGBComparer(color, tolerance, out point,crop, lineNumber, caller);
+            return result;
         }
 
         /// <summary>
         /// Compare point RGB from image
         /// </summary>
         /// <returns>bool</returns>
-        public static bool RGBComparer(Color color,int tolerance, out Point? point, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static bool RGBComparer(Color color, int tolerance, out Point? point, byte[] image = null,[CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
                 point = null;
                 return false;
             }
-            byte[] rawimage = null;
-            if (Variables.ProchWnd != IntPtr.Zero)
+            int error = 0;
+            while (image == null && error < 5)
             {
-                rawimage = ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                if (Variables.ProchWnd != IntPtr.Zero)
+                {
+                    image = Screenshot.ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                }
+                else
+                {
+                    image = Screenshot.ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                }
+                error++;
             }
-            else
+            if (image == null)
             {
-                rawimage=ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                point = null;
+                return false;
             }
-            var bmp = Decompress(rawimage);
+            var bmp = Screenshot.Decompress(image);
             int Width = bmp.Width;
             int Height = bmp.Height;
             int PixelCount = Width * Height;
@@ -1466,16 +603,34 @@ namespace BotFramework
         /// Return a Point location of the image in Variables.Image (will return null if not found)
         /// </summary>
         /// <param name="find">The smaller image for matching</param>
-        /// <param name="original">Original image that need to get the point on it</param>
+        /// <param name="image">Original image that need to get the point on it</param>
         /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
         /// <param name="lineNumber"></param>
         /// <param name="caller"></param>
+        /// <param name="FindOnlyOne"></param>
         /// <returns>Point or null</returns>
         /// <returns></returns>
-        public static Point[] FindImages(byte[] original, Bitmap[] find, bool GrayStyle, bool FindOnlyOne = false, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static Point[] FindImages(byte[] image, Bitmap[] find, bool GrayStyle, bool FindOnlyOne = false, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            Bitmap image = Decompress(original);
-            return FindImages(image, find, GrayStyle,FindOnlyOne, lineNumber, caller);
+            int error = 0;
+            while (image == null && error < 5)
+            {
+                if (Variables.ProchWnd != IntPtr.Zero)
+                {
+                    image = Screenshot.ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                }
+                else
+                {
+                    image = Screenshot.ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                }
+                error++;
+            }
+            if (image == null)
+            {
+                return null;
+            }
+            Bitmap original = Screenshot.Decompress(image);
+            return FindImages(original, find, GrayStyle, FindOnlyOne, lineNumber, caller);
         }
 
         /// <summary>
@@ -1484,6 +639,7 @@ namespace BotFramework
         /// <param name="find">The smaller image for matching</param>
         /// <param name="original">Original image that need to get the point on it</param>
         /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
+        /// <param name="FindOnlyOne"></param>
         /// <param name="lineNumber"></param>
         /// <param name="caller"></param>
         /// <returns>Point or null</returns>
@@ -1586,10 +742,10 @@ namespace BotFramework
             {
                 if (GrayStyle)
                 {
-                    Image<Gray, byte> source = new Image<Gray, byte>(Decompress(original));
+                    Image<Gray, byte> source = new Image<Gray, byte>(Screenshot.Decompress(original));
                     foreach (var image in find)
                     {
-                        Image<Gray, byte> template = new Image<Gray, byte>(Decompress(image));
+                        Image<Gray, byte> template = new Image<Gray, byte>(Screenshot.Decompress(image));
                         using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
                         {
                             result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
@@ -1610,10 +766,10 @@ namespace BotFramework
                 }
                 else
                 {
-                    Image<Bgr, byte> source = new Image<Bgr, byte>(Decompress(original));
+                    Image<Bgr, byte> source = new Image<Bgr, byte>(Screenshot.Decompress(original));
                     foreach (var image in find)
                     {
-                        Image<Bgr, byte> template = new Image<Bgr, byte>(Decompress(image));
+                        Image<Bgr, byte> template = new Image<Bgr, byte>(Screenshot.Decompress(image));
                         using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
                         {
                             result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
@@ -1669,7 +825,7 @@ namespace BotFramework
             }
             try
             {
-                return FindImage(Decompress(screencapture), find, GrayStyle, lineNumber, caller);
+                return FindImage(Screenshot.Decompress(screencapture), find, GrayStyle, lineNumber, caller);
             }
             catch (Exception ex)
             {
@@ -1762,7 +918,7 @@ namespace BotFramework
                 Variables.AdvanceLog("Result return null because of null original image",lineNumber,caller);
                 return null;
             }
-            Bitmap original = Decompress(screencapture);
+            Bitmap original = Screenshot.Decompress(screencapture);
             if (!File.Exists(findPath))
             {
                 Variables.AdvanceLog("Unable to find image " + findPath.Split('\\').Last() + ", image path not valid", lineNumber,caller);
@@ -1830,48 +986,9 @@ namespace BotFramework
                 Variables.AdvanceLog("Result return null because of null original image", lineNumber, caller);
                 return null;
             }
-            return FindImage(Decompress(screencapture), Decompress(image), GrayStyle);
+            return FindImage(Screenshot.Decompress(screencapture), Screenshot.Decompress(image), GrayStyle);
         }
-        /// <summary> 
-        /// Crop the image and return the cropped image
-        /// </summary>
-        /// <param name="original">Image that need to be cropped</param>
-        /// <param name="Start">Starting Point</param>
-        /// <param name="End">Ending Point</param>
-        /// <returns></returns>
-        public static byte[] CropImage(byte[] original, Point Start, Point End, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
-        {
-            if (!ScriptRun.Run)
-            {
-                return null;
-            }
-            return Compress(CropImage(Decompress(original), Start, End, lineNumber, caller));
-        }
-
-        private static Bitmap CropImage(Bitmap original, Point start, Point End, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
-        {
-            Stopwatch s = Stopwatch.StartNew();
-            if (original == null)
-            {
-                Variables.AdvanceLog("Result return null because of null original image");
-                return null;
-            }
-            Image<Bgr, byte> imgInput = new Image<Bgr, byte>(original);
-            Rectangle rect = new Rectangle
-            {
-                X = Math.Min(start.X, End.X),
-                Y = Math.Min(start.Y, End.Y),
-                Width = Math.Abs(start.X - End.X),
-                Height = Math.Abs(start.Y - End.Y)
-            };
-            imgInput.ROI = rect;
-            Image<Bgr, byte> temp = imgInput.CopyBlank();
-            imgInput.CopyTo(temp);
-            imgInput.Dispose();
-            s.Stop();
-            Variables.AdvanceLog("Image cropped. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber, caller);
-            return temp.Bitmap;
-        }
+        
         /// <summary>
         /// Force emulator keep potrait
         /// </summary>
@@ -1885,35 +1002,11 @@ namespace BotFramework
             if ((Variables.Controlled_Device as DeviceData).State == DeviceState.Online)
             {
                 ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
-                client.ExecuteRemoteCommand("content insert --uri content://settings/system --bind name:s:accelerometer_rotation --bind value:i:0", (Variables.Controlled_Device as DeviceData), receiver);
-                client.ExecuteRemoteCommand("content insert --uri content://settings/system --bind name:s:user_rotation --bind value:i:0", (Variables.Controlled_Device as DeviceData), receiver);
+                AdbInstance.Instance.client.ExecuteRemoteCommand("content insert --uri content://settings/system --bind name:s:accelerometer_rotation --bind value:i:0", (Variables.Controlled_Device as DeviceData), receiver);
+                AdbInstance.Instance.client.ExecuteRemoteCommand("content insert --uri content://settings/system --bind name:s:user_rotation --bind value:i:0", (Variables.Controlled_Device as DeviceData), receiver);
             }
         }
-        /// <summary>
-        /// Rotate image
-        /// </summary>
-        /// <param name="image"></param>
-        /// <param name="angle"></param>
-        /// <returns></returns>
-        public static Bitmap RotateImage(Image image, float angle)
-        {
-            if (!ScriptRun.Run)
-            {
-                return null;
-            }
-            if (image == null)
-                throw new ArgumentNullException("image is not exist!");
-            PointF offset = new PointF((float)image.Width / 2, (float)image.Height / 2);
-            Bitmap rotatedBmp = new Bitmap(image.Width, image.Height);
-            rotatedBmp.SetResolution(image.HorizontalResolution, image.VerticalResolution);
-            Graphics g = Graphics.FromImage(rotatedBmp);
-            g.TranslateTransform(offset.X, offset.Y);
-            g.RotateTransform(angle);
-            g.TranslateTransform(-offset.X, -offset.Y);
-            g.DrawImage(image, new PointF(0, 0));
-
-            return rotatedBmp;
-        }
+       
         /// <summary>
         /// Pull file from emulator to PC
         /// </summary>
@@ -1930,8 +1023,9 @@ namespace BotFramework
             {
                 return false;
             }
-            socket = new AdbSocket(new IPEndPoint(IPAddress.Parse("127.0.0.1"), Adb.CurrentPort));
-            using (SyncService service = new SyncService(socket, (Variables.Controlled_Device as DeviceData)))
+            if(!AdbInstance.Instance.socket.Connected)
+                AdbInstance.Instance.socket = new AdbSocket(new IPEndPoint(IPAddress.Parse("127.0.0.1"), Adb.CurrentPort));
+            using (SyncService service = new SyncService(AdbInstance.Instance.socket, (Variables.Controlled_Device as DeviceData)))
             using (Stream stream = File.OpenWrite(to))
             {
                 service.Pull(from, stream, null, CancellationToken.None);
@@ -1954,8 +1048,9 @@ namespace BotFramework
             {
                 return;
             }
-            socket = new AdbSocket(new IPEndPoint(IPAddress.Parse("127.0.0.1"), Adb.CurrentPort));
-            using (SyncService service = new SyncService(socket, (Variables.Controlled_Device as DeviceData)))
+            if (!AdbInstance.Instance.socket.Connected)
+                AdbInstance.Instance.socket = new AdbSocket(new IPEndPoint(IPAddress.Parse("127.0.0.1"), Adb.CurrentPort));
+            using (SyncService service = new SyncService(AdbInstance.Instance.socket, (Variables.Controlled_Device as DeviceData)))
             {
                 using (Stream stream = File.OpenRead(from))
                 {
@@ -2038,7 +1133,7 @@ namespace BotFramework
             try
             {
                 ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
-                client.ExecuteRemoteCommand("input text \"" + text.Replace(" ", "%s") + "\"", (Variables.Controlled_Device as DeviceData), receiver);
+                AdbInstance.Instance.client.ExecuteRemoteCommand("input text \"" + text.Replace(" ", "%s") + "\"", (Variables.Controlled_Device as DeviceData), receiver);
             }
             catch (InvalidOperationException)
             {
@@ -2066,53 +1161,8 @@ namespace BotFramework
         public static string AdbCommand(string command, object device)
         {
             ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
-            client.ExecuteRemoteCommand(command, (device as DeviceData), receiver);
+            AdbInstance.Instance.client.ExecuteRemoteCommand(command, (device as DeviceData), receiver);
             return receiver.ToString();
-        }
-        /// <summary>
-        /// Return objects of connected devices
-        /// </summary>
-        /// <returns></returns>
-        public static object[] GetDevices(out string[] names)
-        {
-            List<object> devices = new List<object>();
-            List<string> name = new List<string>();
-            foreach (var device in client.GetDevices())
-            {
-                devices.Add(device);
-                name.Add(device.Name);
-            }
-            names = name.ToArray();
-            return devices.ToArray();
-        }
-        /// <summary>
-        /// Enlarge image and its pixel amounts
-        /// </summary>
-        /// <param name="image"></param>
-        /// <param name="width">The new width of image</param>
-        /// <param name="height">The new height of image</param>
-        /// <returns></returns>
-        public static Bitmap EnlargeImage(Bitmap image, int width, int height)
-        {
-            Image<Rgb, byte> captureImage = new Image<Rgb, byte>(image);
-            Image<Rgb, byte> resizedImage = captureImage.Resize(width, height, Inter.Linear);
-            return resizedImage.ToBitmap();
-        }
-        /// <summary>
-        /// Check if the android directory is exist
-        /// </summary>
-        /// <param name="androidpath">The path to check</param>
-        /// <returns></returns>
-        public static bool AndroidDirectoryExist(string androidpath)
-        {
-            if (AdbCommand("ls " + androidpath + " > /dev/null 2>&1 && echo \"exists\" || echo \"not exists\"").Contains("exist"))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
         }
     }
 }

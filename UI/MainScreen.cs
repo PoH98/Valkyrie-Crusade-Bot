@@ -161,13 +161,13 @@ namespace BotFramework
             Variables.EmulatorPath();
             if (File.Exists("bot.ini"))
             {
-                if (File.Exists(Environment.CurrentDirectory + "\\Profiles\\" + BotCore.profilePath + "\\bot.ini"))
+                if (File.Exists(Environment.CurrentDirectory + "\\Profiles\\" + AdbInstance.Instance.profilePath + "\\bot.ini"))
                 {
-                    File.Delete(Environment.CurrentDirectory + "\\Profiles\\" + BotCore.profilePath + "\\bot.ini");
+                    File.Delete(Environment.CurrentDirectory + "\\Profiles\\" + AdbInstance.Instance.profilePath + "\\bot.ini");
                 }
                 try
                 {
-                    File.Copy("bot.ini", Environment.CurrentDirectory + "\\Profiles\\" + BotCore.profilePath + "\\bot.ini", true);
+                    File.Copy("bot.ini", Environment.CurrentDirectory + "\\Profiles\\" + AdbInstance.Instance.profilePath + "\\bot.ini", true);
                     File.Delete("bot.ini");
                 }
                 catch
@@ -515,7 +515,7 @@ namespace BotFramework
                 using (Stream bmp = File.Open(f, FileMode.Open))
                 {
                     Image image = Image.FromStream(bmp);
-                    PrivateVariable.Skills.Add(BotCore.Compress(image as Bitmap));
+                    PrivateVariable.Skills.Add(Screenshot.Compress(image as Bitmap));
                 }
             }
             if (panel3.Visible == false)
@@ -570,7 +570,7 @@ namespace BotFramework
             PrivateVariable.InEventScreen = false;
             PrivateVariable.InMainScreen = false;
             PrivateVariable.InMap = false;
-            BotCore.EjectSockets();
+            EmulatorLoader.EjectSockets();
             Variables.ScriptLog("Script Stopped!", Color.White);
             if (Width > 1280)
             {
@@ -864,7 +864,7 @@ namespace BotFramework
                 {
                     Bitmap OriginalBitmap = new Bitmap(pictureBox4.Image);
                     int new_wid = 640, new_hgt = 896;
-                    var bmp = BotCore.EnlargeImage(OriginalBitmap, new_wid, new_hgt);
+                    var bmp = Screenshot.EnlargeImage(OriginalBitmap, new_wid, new_hgt);
                     bmp.Save(s.FileName);
                 }
             }
@@ -903,7 +903,7 @@ namespace BotFramework
         {
             if (File.Exists("OCR.png"))
             {
-                var img = BotCore.Compress(Image.FromFile("OCR.png") as Bitmap);
+                var img = Screenshot.Compress(Image.FromFile("OCR.png") as Bitmap);
                 MessageBox.Show(OCR.OcrImage(img, "eng"));
             }
         }
@@ -945,7 +945,7 @@ namespace BotFramework
             {
                 Button3_Click(sender, e);
             }
-            BotCore.EjectSockets();
+            EmulatorLoader.EjectSockets();
             Environment.Exit(0);
         }
 

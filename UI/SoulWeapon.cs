@@ -27,7 +27,7 @@ namespace UI
             BotCore.Delay(5000, false);
             for (int x = 0; x < 5; x++)
             {
-                VCBotScript.image = BotCore.ImageCapture();
+                VCBotScript.image = Screenshot.ImageCapture();
                 Point? located = BotCore.FindImage(VCBotScript.image, Environment.CurrentDirectory + "\\Img\\LocateEventSwitch.png", true);
                 if (located == null)
                 {
@@ -75,8 +75,8 @@ namespace UI
             /*do
             {
                 BotCore.Delay(1000, 1200);
-                VCBotScript.image = BotCore.ImageCapture();
-                if (BotCore.FindImage(BotCore.CropImage(VCBotScript.image, new Point(634, 374), new Point(694, 421)), Img.Archwitch_Rec, false) != null)
+                VCBotScript.image = Screenshot.ImageCapture();
+                if (BotCore.FindImage(Screenshot.CropImage(VCBotScript.image, new Point(634, 374), new Point(694, 421)), Img.Archwitch_Rec, false) != null)
                 {
                     Attack();
                     return;
@@ -87,7 +87,7 @@ namespace UI
             //Check if we didnt need to switch stage
             do
             {
-                /*var crop = BotCore.CropImage(VCBotScript.image, new Point(73, 83), new Point(112, 102));
+                /*var crop = Screenshot.CropImage(VCBotScript.image, new Point(73, 83), new Point(112, 102));
                 var tempstring = OCR.OcrImage(crop, "eng");
                 var leftTimes = tempstring.Split('/')[0];
                 if (leftTimes == "0")
@@ -97,7 +97,7 @@ namespace UI
                 }
                 else
                 {*/
-                VCBotScript.image = BotCore.ImageCapture();
+                VCBotScript.image = Screenshot.ImageCapture();
                 if (BotCore.FindImage(VCBotScript.image, Img.SoulArrow, false) != null)
                 {
                     Variables.ScriptLog("Already in a stage, running now...",Color.Lime);
@@ -111,6 +111,13 @@ namespace UI
                     {
                         var New = BotCore.FindImage(VCBotScript.image, Img.NEW, false);
                         if(New != null)
+                        {
+                            Variables.ScriptLog("Found new stage!", Color.Blue);
+                            BotCore.SendTap(New.Value);
+                            goto SkipSelectStage;
+                        }
+                        New = BotCore.FindImage(VCBotScript.image, Img.NEW1, false);
+                        if (New != null)
                         {
                             Variables.ScriptLog("Found new stage!", Color.Blue);
                             BotCore.SendTap(New.Value);
@@ -165,7 +172,7 @@ namespace UI
                 }
                 SkipSelectStage:
                 BotCore.Delay(1000, 1200);
-                VCBotScript.image = BotCore.ImageCapture();
+                VCBotScript.image = Screenshot.ImageCapture();
                 var point = BotCore.FindImage(VCBotScript.image, Img.GreenButton, false);
                 if (point != null)
                 {
@@ -223,7 +230,7 @@ namespace UI
             do
             {
                 BotCore.Delay(1500);
-                VCBotScript.image = BotCore.ImageCapture();
+                VCBotScript.image = Screenshot.ImageCapture();
             }
             while (BotCore.RGBComparer( new Point(400, 400), Color.Black, 10));
             Variables.ScriptLog("Running stage!", Color.Lime);
@@ -231,8 +238,8 @@ namespace UI
             do
             {
                 Random rnd = new Random();
-                VCBotScript.image = BotCore.ImageCapture();
-                var crop = BotCore.CropImage(VCBotScript.image, new Point(420, 360), new Point(855, 430));
+                VCBotScript.image = Screenshot.ImageCapture();
+                var crop = Screenshot.CropImage(VCBotScript.image, new Point(420, 360), new Point(855, 430));
                 Point? buttons = BotCore.FindImage(crop, Img.GreenButton, false);
                 if (buttons != null)
                 {
@@ -307,7 +314,7 @@ namespace UI
                 error++;
                 if(error > 30)
                 {
-                    BotCore.Decompress(VCBotScript.image).Save("Profiles\\Logs\\error.png");
+                    Screenshot.Decompress(VCBotScript.image).Save("Profiles\\Logs\\error.png");
                     //UnhandledException = true;
                     Variables.ScriptLog("Unhandled exception. Contact PoH98 for fix!", Color.Red);
                     return;
