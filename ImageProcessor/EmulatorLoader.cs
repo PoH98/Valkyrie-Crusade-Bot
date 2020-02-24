@@ -45,24 +45,38 @@ namespace BotFramework
             {
                 foreach (var dll in dlls)
                 {
-                    Assembly a = Assembly.LoadFrom(dll);
-                    foreach (var t in a.GetTypes())
+                    try
                     {
-                        if (t.GetInterface("EmulatorInterface") != null)
+                        Assembly a = Assembly.LoadFrom(dll);
+                        foreach (var t in a.GetTypes())
                         {
-                            emulators.Add(Activator.CreateInstance(t) as EmulatorInterface);
+                            if (t.GetInterface("EmulatorInterface") != null)
+                            {
+                                emulators.Add(Activator.CreateInstance(t) as EmulatorInterface);
+                            }
                         }
+                    }
+                    catch
+                    {
+
                     }
                 }
             }
             bool[] installed = new bool[emulators.Count];
             for (int x = 0; x < emulators.Count; x++)
             {
-                installed[x] = emulators[x].LoadEmulatorSettings();
-                if (installed[x])
+                try
                 {
-                    Variables.AdvanceLog("Detected emulator " + emulators[x].EmulatorName(), lineNumber, caller);
-                    EmuSelection_Resource.emu.Add(emulators[x]);
+                    installed[x] = emulators[x].LoadEmulatorSettings();
+                    if (installed[x])
+                    {
+                        Variables.AdvanceLog("Detected emulator " + emulators[x].EmulatorName(), lineNumber, caller);
+                        EmuSelection_Resource.emu.Add(emulators[x]);
+                    }
+                }
+                catch
+                {
+
                 }
             }
             Variables.AdbIpPort = "";
