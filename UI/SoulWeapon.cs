@@ -123,6 +123,13 @@ namespace UI
                             BotCore.SendTap(New.Value);
                             goto SkipSelectStage;
                         }
+                        New = BotCore.FindImage(VCBotScript.image, Img.NEW2, false);
+                        if (New != null)
+                        {
+                            Variables.ScriptLog("Found new stage!", Color.Blue);
+                            BotCore.SendTap(New.Value);
+                            goto SkipSelectStage;
+                        }
                         else
                         {
                             Variables.ScriptLog("New stage not found! Try getting into Boss stage!", Color.Blue);
@@ -137,7 +144,7 @@ namespace UI
                     }
                 }
                 //BotCore.Minitouch("d 0 290 340 150\nc\nm 0 340 340 150\nc\nm 0 390 340 150\nc\nm 0 440 340 150\nc\nm 0 490 340 150\nc\nm 0 540 340 150\nc\nm 0 590 340 150\nc\nm 0 640 340 150\nc\nm 0 740 340 150\nc\nm 0 840 340 150\nc\nm 0 940 340 150\nc\nu 0\nc\n");
-                BotCore.SendSwipe(400, 340,1200, 360, 1000);//Why it can't swipe????
+                BotCore.SendSwipe(500, 440,1200, 360, 1000);//Why it can't swipe????
                 BotCore.Delay(1000);
 
                 switch (VCBotScript.Weapon_Stage)
@@ -221,7 +228,7 @@ namespace UI
                 //}
 
             }
-            while (error != 10);
+            while (error < 10);
             
         }
 
@@ -302,8 +309,47 @@ namespace UI
                 buttons = BotCore.FindImage(VCBotScript.image, Img.ShopKeeper, true);
                 if(buttons != null)
                 {
-                    BotCore.SendTap(530, 660);
-                    BotCore.Delay(1500);
+                    BotCore.SendTap(770, 640);
+                    Variables.ScriptLog("Shop keeper found! Getting in and see what to buy!", Color.White);
+                    BotCore.Delay(3000);
+                    VCBotScript.image = Screenshot.ImageCapture();
+                    if(BotCore.FindImage(VCBotScript.image, Img.MisteryBox, true)!= null)
+                    {
+                        Variables.ScriptLog("Mistory Box found! Purchasing all products!", Color.Lime);
+                        for(int x = 0; x < 3; x++)
+                        {
+                            switch (x)
+                            {
+                                case 0:
+                                    BotCore.SendTap(1030, 220);
+                                    break;
+                                case 1:
+                                    BotCore.SendTap(1030, 390);
+                                    break;
+                                case 2:
+                                    BotCore.SendTap(1030, 550);
+                                    break;
+                            }
+                            BotCore.Delay(500);
+                            Point? greenButton;
+                            do
+                            {
+                                BotCore.SendTap(2,2);
+                                BotCore.Delay(300);
+                                VCBotScript.image = Screenshot.ImageCapture();
+                                greenButton = BotCore.FindImage(VCBotScript.image, Img.GreenButton, false);
+                            }
+                            while (greenButton == null);
+                            BotCore.SendTap(greenButton.Value);
+                            for(int y = 0; y < 10; y++)
+                            {
+                                BotCore.SendTap(2,2);
+                                BotCore.Delay(300);
+                            }
+                        }
+                    }
+                    BotCore.SendTap(1110, 875);
+                    BotCore.Delay(500);
                     continue;
                 }
                 if(BotCore.FindImage(VCBotScript.image, Img.ArchwitchHunt, true) != null)

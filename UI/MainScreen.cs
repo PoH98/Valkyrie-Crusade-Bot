@@ -605,22 +605,22 @@ namespace BotFramework
                 progressBar2.Value = VCBotScript.runes;
                 label7.Text = VCBotScript.runes + "/5";
                 label6.Text = VCBotScript.energy + "/5";
-                if (VCBotScript.Tower_Floor.Length > 0)
+                if (!string.IsNullOrEmpty(VCBotScript.Tower_Floor))
                 {
                     try
                     {
-                        label15.Text = VCBotScript.Tower_Floor.Replace(" ", "").Replace("F", " F");
+                        label15.Text = Regex.Match(VCBotScript.Tower_Floor, @"\d+").Value + " F";
                     }
                     catch
                     {
 
                     }
                 }
-                if (VCBotScript.Tower_Rank.Length > 0)
+                if (!string.IsNullOrEmpty(VCBotScript.Tower_Rank))
                 {
                     try
                     {
-                        label16.Text = VCBotScript.Tower_Rank.Replace(" ", "");
+                        label16.Text = Regex.Match(VCBotScript.Tower_Rank, @"\d+").Value;
                     }
                     catch
                     {
@@ -649,22 +649,22 @@ namespace BotFramework
                 progressBar2.Maximum = 4;
                 progressBar1.Value = VCBotScript.energy;
                 progressBar2.Value = VCBotScript.runes;
-                if (VCBotScript.Tower_Floor.Length > 0)
+                if (!string.IsNullOrEmpty(VCBotScript.Tower_Floor))
                 {
                     try
                     {
-                        label15.Text = VCBotScript.Tower_Floor.Replace(" ", "").Replace("F", " F");
+                        label15.Text = Regex.Match(VCBotScript.Tower_Floor, @"\d+").Value + " F";
                     }
                     catch
                     {
 
                     }
                 }
-                if (VCBotScript.Tower_Rank.Length > 0)
+                if (!string.IsNullOrEmpty(VCBotScript.Tower_Rank))
                 {
                     try
                     {
-                        label16.Text = VCBotScript.Tower_Rank.Replace(" ", "");
+                        label16.Text = Regex.Match(VCBotScript.Tower_Rank, @"\d+").Value;
                     }
                     catch
                     {

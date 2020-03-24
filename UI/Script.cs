@@ -46,6 +46,10 @@ namespace UI
                 {
                     BotCore.Delay(1000, true);
                     image = Screenshot.ImageCapture();
+                    if (!BotCore.GameIsForeground(game))
+                    {
+                        BotCore.StartGame(game + activity);
+                    }
                 }
                 if (!ScriptErrorHandler.ErrorHandle())
                 {
@@ -497,6 +501,19 @@ namespace UI
                         locateUIError = 0;
                         return;
                     }
+                    if (BotCore.FindImage(image, Img.GodArch, true) != null)
+                    {
+                        //Ignore it
+                        BotCore.SendTap(1067, 54);
+                        BotCore.Delay(800);
+                        BotCore.SendTap(1224, 42);
+                        PrivateVariable.Battling = false;
+                        Variables.ScriptLog("Battle Ended!", Color.Lime);
+                        stop.Stop();
+                        Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
+                        stop.Reset();
+                        return;
+                    }
                 }
                 if(PrivateVariable.VCevent == PrivateVariable.EventType.SoulWeapon || PrivateVariable.VCevent == PrivateVariable.EventType.ArchWitch)
                 {
@@ -753,16 +770,15 @@ namespace UI
                     Variables.ScriptLog("Start battle", Color.Lime);
                     BotCore.SendTap(959, 656);
                     PrivateVariable.Battling = true;
-                    
                     locateUIError = 0;
                     return;
                 }
-                if (BotCore.RGBComparer(new Point(415, 678), Color.FromArgb(223, 192, 63), 40, image))
+                /*if (BotCore.RGBComparer(new Point(415, 678), Color.FromArgb(223, 192, 63), 40, image))
                 {
                     PrivateVariable.Battling = false;
                     BotCore.Delay(9000, 12000);
                     return;
-                }
+                }*/
                 locateUIError++;
                 if (locateUIError > 30)
                 {
