@@ -319,12 +319,25 @@ namespace BotFramework
                     chk_GWW.Checked = true;
                 }
             }
-            if (Variables.FindConfig("Version", "Version", out output))
+            try
             {
-                if (output != CheckVersion.currentVersion)
+                if (Variables.FindConfig("Version", "Version", out output))
+                {
+                    if (output != CheckVersion.currentVersion)
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        foreach (var line in CheckVersion.BufferUpdateText)
+                        {
+                            sb.Append(line + "\n");
+                        }
+                        CheckVersion.UpdateText = "# Thanks for supporting VCBot! \n" + sb.ToString();
+                        Variables.ModifyConfig("Version", "Version", CheckVersion.currentVersion);
+                    }
+                }
+                else
                 {
                     StringBuilder sb = new StringBuilder();
-                    foreach(var line in CheckVersion.BufferUpdateText)
+                    foreach (var line in CheckVersion.BufferUpdateText)
                     {
                         sb.Append(line + "\n");
                     }
@@ -332,16 +345,11 @@ namespace BotFramework
                     Variables.ModifyConfig("Version", "Version", CheckVersion.currentVersion);
                 }
             }
-            else
+            catch
             {
-                StringBuilder sb = new StringBuilder();
-                foreach (var line in CheckVersion.BufferUpdateText)
-                {
-                    sb.Append(line + "\n");
-                }
-                CheckVersion.UpdateText = "# Thanks for supporting VCBot! \n" + sb.ToString();
-                Variables.ModifyConfig("Version", "Version", CheckVersion.currentVersion);
+
             }
+
             webBrowser1.ScriptErrorsSuppressed = true;
             webBrowser3.ScriptErrorsSuppressed = true;
             webBrowser2.ScriptErrorsSuppressed = true;

@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Net.Sockets;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using BotFramework;
 using Microsoft.Win32;
@@ -18,37 +12,6 @@ namespace Nox
     public class Nox : EmulatorInterface
     {
         private static string NoxFile;
-
-        private static IntPtr ToolBox;
-        public void CloseEmulator()
-        {
-            ProcessStartInfo close = new ProcessStartInfo();
-            close.FileName = Variables.VBoxManagerPath;
-
-            if (Variables.Instance.Length > 0)
-            {
-                close.Arguments = "controlvm " + Variables.Instance + " poweroff";
-            }
-            else
-            {
-                close.Arguments = "controlvm Nox poweroff";
-            }
-            close.CreateNoWindow = true;
-            close.WindowStyle = ProcessWindowStyle.Hidden;
-            try
-            {
-                if (Variables.Proc != null || !Variables.Proc.HasExited)
-                {
-                    Variables.Proc.Kill();
-                }
-            }
-            catch
-            {
-
-            }
-            Process p = Process.Start(close);
-        }
-
         public string EmulatorName()
         {
             return "Nox";
@@ -179,7 +142,6 @@ namespace Nox
             var match = regex.Match(result);
             if (match.Success)
             {
-                //"Name: 'Other', Host path: 'C:\\Users\\csy22\\Nox_share\\OtherShare' (machine mapping), writable\r"
                 var shared = match.Value.Substring(match.Value.IndexOf("'",25));
                 Variables.SharedPath = shared.Remove(shared.LastIndexOf("'"));
             }
@@ -265,23 +227,19 @@ namespace Nox
             }
         }
 
-        public void ConnectEmulator()
+        public void CloseEmulator()
         {
-            string[] Nox = { "NoxPlayer", "夜神模拟器" };
-            foreach (var p in Process.GetProcessesByName("Nox"))
-            {
-                Debug_.WriteLine(p.MainWindowTitle);
-                if (Nox.Contains(p.MainWindowTitle))
-                {
-                    IntPtr handle = DllImport.FindWindowEx(p.MainWindowHandle, IntPtr.Zero, string.Empty, string.Empty);
-                    Variables.Proc = p;
-                    Variables.ScriptLog("Emulator ID: " + p.Id, Color.DarkGreen);
-                    ToolBox = DllImport.FindWindowEx(IntPtr.Zero, IntPtr.Zero, "Qt5QWindowToolSaveBits", "nox");
-                    DllImport.ShowWindow(ToolBox, 0);
-                    break;
-                }
-            }
+            throw new NotImplementedException();
+        }
 
+        public string EmulatorDefaultInstanceName()
+        {
+            return "Nox_0";
+        }
+
+        public string EmulatorProcessName()
+        {
+            return "Nox";
         }
     }
 }

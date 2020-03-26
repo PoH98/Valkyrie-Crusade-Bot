@@ -12,6 +12,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
@@ -25,6 +26,28 @@ namespace BotFramework
     /// </summary>
     public class EmulatorLoader
     {
+
+        [DllImport("ProcCmdLine32.dll", CharSet = CharSet.Unicode, EntryPoint = "GetProcCmdLine")]
+        private extern static bool GetProcCmdLine32(uint nProcId, StringBuilder sb, uint dwSizeBuf);
+
+        [DllImport("ProcCmdLine64.dll", CharSet = CharSet.Unicode, EntryPoint = "GetProcCmdLine")]
+        private extern static bool GetProcCmdLine64(uint nProcId, StringBuilder sb, uint dwSizeBuf);
+        /// <summary>
+        /// Get Process 64it version command line
+        /// </summary>
+        /// <param name="proc">The process to get command line</param>
+        /// <returns>Command Line</returns>
+        public static string GetCommandLineOfProcess(Process proc)
+        {
+            var sb = new StringBuilder(0xFFFF);
+            switch (IntPtr.Size)
+            {
+                case 4: GetProcCmdLine32((uint)proc.Id, sb, (uint)sb.Capacity); break;
+                case 8: GetProcCmdLine64((uint)proc.Id, sb, (uint)sb.Capacity); break;
+            }
+            return sb.ToString();
+        }
+
         /// <summary>
         /// Read emulators dll
         /// </summary>
@@ -157,7 +180,7 @@ namespace BotFramework
         {
             Variables.SharedPath = new string(Variables.SharedPath.Select(ch => Path.GetInvalidPathChars().Contains(ch) ? Path.DirectorySeparatorChar : ch).ToArray());
             Variables.SharedPath = Variables.SharedPath.Replace("'", "");
-            Path.GetFullPath(Variables.SharedPath);
+            Variables.SharedPath = Path.GetFullPath(Variables.SharedPath);
         }
 
         /// <summary>
@@ -193,7 +216,59 @@ namespace BotFramework
                 return;
             }
             EjectSockets();
-            Variables.emulator.CloseEmulator();
+            if(Variables.VBoxManagerPath != null && (Variables.emulator.EmulatorDefaultInstanceName() != null || Variables.Instance != null))
+            {
+                ProcessStartInfo close = new ProcessStartInfo();
+                close.FileName = Variables.VBoxManagerPath;
+                if (Variables.Instance.Length > 0)
+                {
+                    close.Arguments = "controlvm " + Variables.Instance + " poweroff";
+                }
+                else
+                {
+                    close.Arguments = "controlvm "+Variables.emulator.EmulatorDefaultInstanceName() + " poweroff";
+                }
+                close.CreateNoWindow = true;
+                close.WindowStyle = ProcessWindowStyle.Hidden;
+                try
+                {
+                    if (Variables.Proc != null)
+                    {
+                        Variables.Proc.Kill();
+                    }
+                }
+                catch
+                {
+
+                }
+                Process p = Process.Start(close);
+                Thread.Sleep(5000);
+                if (!p.HasExited)
+                {
+                    try
+                    {
+                        p.Kill();
+                    }
+                    catch
+                    {
+
+                    }
+                }
+            }
+            if(Variables.Proc != null)
+            {
+                if (!Variables.Proc.HasExited)
+                {
+                    try
+                    {
+                        Variables.Proc.Kill();
+                    }
+                    catch
+                    {
+
+                    }
+                }
+            }
             Variables.Proc = null;
             Variables.Controlled_Device = null;
             Variables.ScriptLog("Emulator Closed", Color.Red);
@@ -266,7 +341,29 @@ namespace BotFramework
                 {
                     return;
                 }
-                Variables.emulator.ConnectEmulator();
+                foreach (var p in Process.GetProcessesByName(Variables.emulator.EmulatorProcessName()))
+                {
+                    string command = GetCommandLineOfProcess(p);
+                    Variables.AdvanceLog(command);
+                    if (Variables.Instance != null)
+                    {
+                        if (command.EndsWith(Variables.Instance))
+                        {
+                            Variables.Proc = p;
+                            Variables.ScriptLog("Emulator ID: " + p.Id, Color.DarkGreen);
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        if (command.EndsWith(Variables.emulator.EmulatorDefaultInstanceName()))
+                        {
+                            Variables.Proc = p;
+                            Variables.ScriptLog("Emulator ID: " + p.Id, Color.DarkGreen);
+                            break;
+                        }
+                    }
+                }
                 Variables.AdvanceLog("Emulator not connected, retrying in 2 second...", lineNumber, caller);
                 Thread.Sleep(1000);
                 error++;

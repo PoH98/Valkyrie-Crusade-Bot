@@ -14,21 +14,6 @@ namespace CustomizeEmulator
         private static Process process;
         private static readonly string emulatorINI = "Emulator.ini";
         private static IniData Config;
-        public void CloseEmulator()
-        {
-            if(process != null)
-            {
-                if (!process.HasExited)
-                {
-                   EmulatorLoader.KillProcessAndChildren(process.Id);
-                }
-            }
-        }
-
-        public void ConnectEmulator()
-        {
-            
-        }
 
         public string EmulatorName()
         {
@@ -163,6 +148,16 @@ namespace CustomizeEmulator
         public void StartEmulator()
         {
             Variables.Proc = Process.Start(Variables.VBoxManagerPath);
+        }
+
+        public string EmulatorDefaultInstanceName()
+        {
+            return "";
+        }
+
+        public string EmulatorProcessName()
+        {
+            throw new NotImplementedException();
         }
     }
 }

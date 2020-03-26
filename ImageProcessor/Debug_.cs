@@ -41,6 +41,10 @@ namespace BotFramework
                     Directory.CreateDirectory("Profiles\\" + Variables.Instance + "\\Logs\\");
                 s = File.AppendText(FileName);
             }
+            else
+            {
+                s = File.AppendText(FileName);
+            }
             EncryptLog = encrypt;
         }
         /// <summary>

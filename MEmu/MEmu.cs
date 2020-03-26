@@ -7,7 +7,6 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using BotFramework;
 using Microsoft.Win32;
@@ -16,52 +15,18 @@ namespace MEmu
 {
     public class MEmu : EmulatorInterface
     {
-        public void CloseEmulator()
+
+        public string EmulatorProcessName()
         {
-            ProcessStartInfo close = new ProcessStartInfo();
-            close.FileName = Variables.VBoxManagerPath;
-
-            if (Variables.Instance.Length > 0)
-            {
-                close.Arguments = "controlvm " + Variables.Instance + " poweroff";
-            }
-            else
-            {
-                close.Arguments = "controlvm MEmu poweroff";
-            }
-            close.CreateNoWindow = true;
-            close.WindowStyle = ProcessWindowStyle.Hidden;
-            try
-            {
-                if (Variables.Proc != null)
-                {
-                    Variables.Proc.Kill();
-                }
-            }
-            catch
-            {
-
-            }
-            Process p = Process.Start(close);
-        }
-
-        public void ConnectEmulator()
-        {
-            string[] MEmu = { "MEmu", "逍遥模拟器" };
-            foreach (var p in Process.GetProcessesByName("MEmu"))
-            {
-                Debug_.WriteLine(p.MainWindowTitle);
-                if (MEmu.Contains(p.MainWindowTitle))
-                {
-                    IntPtr handle = DllImport.FindWindowEx(p.MainWindowHandle, IntPtr.Zero, string.Empty, string.Empty);
-                    Variables.Proc = p;
-                    Variables.ScriptLog("Emulator ID: " + p.Id, Color.DarkGreen);
-                    break;
-                }
-            }
+            return "MEmu";
         }
 
         public string EmulatorName()
+        {
+            return "MEmu";
+        }
+
+        public string EmulatorDefaultInstanceName()
         {
             return "MEmu";
         }

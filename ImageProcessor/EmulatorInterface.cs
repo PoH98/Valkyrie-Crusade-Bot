@@ -14,9 +14,10 @@
         /// </summary>
         void StartEmulator();
         /// <summary>
-        /// Close emulator function here
+        /// The default emulator instance name.
         /// </summary>
-        void CloseEmulator();
+        /// <returns>The emulator default instance</returns>
+        string EmulatorDefaultInstanceName();
         /// <summary>
         /// The name of emulator
         /// </summary>
@@ -30,8 +31,9 @@
         /// <param name="dpi">dpi of emulator</param>
         void SetResolution(int x, int y, int dpi);
         /// <summary>
-        /// Connect Emulator's adb, Variables.Proc and etc
+        /// The process name used to Process.GetProcessByName
         /// </summary>
-        void ConnectEmulator();
+        /// <returns></returns>
+        string EmulatorProcessName();
     }
 }

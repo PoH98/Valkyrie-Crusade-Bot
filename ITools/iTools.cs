@@ -13,44 +13,20 @@ namespace ITools
     public class ITools : EmulatorInterface
     {
         string emulatorpath;
-        public void CloseEmulator()
-        {
-            Variables.Proc.Kill();
-            ProcessStartInfo fetch = new ProcessStartInfo(Variables.VBoxManagerPath);
-            if (Variables.Instance.Length > 0)
-            {
-                fetch.Arguments = "controlvm " + Variables.Instance + " poweroff";
-            }
-            else
-            {
-                fetch.Arguments = "controlvm iToolsVM poweroff";
-            }
-            fetch.CreateNoWindow = true;
-            fetch.RedirectStandardOutput = true;
-            fetch.UseShellExecute = false;
-            Process.Start(fetch);
-        }
 
-        public void ConnectEmulator()
+        public string EmulatorDefaultInstanceName()
         {
-            IntPtr handle = DllImport.FindWindow("CHWindow", "iTools 安卓模拟器");
-            if (handle != null)
-            {
-                foreach (Process p in Process.GetProcessesByName("iToolsAVM"))
-                {
-                    if (p.MainWindowHandle == handle)
-                    {
-                        Variables.Proc = p;
-                        break;
-                    }
-                }
-            }
-            
+            return "iToolsVM";
         }
 
         public string EmulatorName()
         {
             return "iTools";
+        }
+
+        public string EmulatorProcessName()
+        {
+            return "iToolsAVM";
         }
 
         public bool LoadEmulatorSettings()

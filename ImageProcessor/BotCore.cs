@@ -49,6 +49,7 @@ namespace BotFramework
                 }
                 var receiver = new ConsoleOutputReceiver();
                 AdbInstance.Instance.client.ExecuteRemoteCommand("dumpsys window windows | grep -E 'mCurrentFocus'", (Variables.Controlled_Device as DeviceData), receiver);
+                Variables.AdvanceLog(receiver.ToString());
                 if (receiver.ToString().Contains(packagename))
                 {
                     return true;
@@ -579,7 +580,6 @@ namespace BotFramework
                 for (int j = 0; j < bmp.Width; j++)
                 {
                     //Get the color at each pixel
-                    Color now_color = GetPixel(j, i,  step, Width, Depth, pixel);
                     Color clr = GetPixel(j, i, step, Width, Depth, pixel);
                     if (clr.R >= (color.R - tolerance) && clr.R <= (color.R + tolerance))
                     {
@@ -949,7 +949,6 @@ namespace BotFramework
                     using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
                     {
                         result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
-
                         // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
                         if (maxValues[0] > 0.9)
                         {
