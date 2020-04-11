@@ -289,7 +289,7 @@ namespace UI
         private static int selectedeventlocations = 0;
         private static void CheckEvent()
         {
-            if (selectedeventlocations > eventlocations.Length)
+            if (selectedeventlocations >= eventlocations.Length)
             {
                 selectedeventlocations = 0;
             }

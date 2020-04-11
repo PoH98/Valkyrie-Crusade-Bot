@@ -46,6 +46,8 @@ namespace UI
                         if(point != null)
                         {
                             BotCore.SendTap(point.Value);
+                            PrivateVariable.InMainScreen = false;
+                            Located = false;
                             VCBotScript.LocateMainScreen();
                         }
                         if (BotCore.FindImage(image, "Img\\GuildWar\\Locate.png", false) != null)

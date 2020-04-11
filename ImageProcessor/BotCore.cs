@@ -11,17 +11,10 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Management;
 using System.Runtime.CompilerServices;
-using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
-using System.Security;
 using System.Threading;
-using System.Windows.Forms;
-using System.Reflection;
 using System.Net.Sockets;
-using System.Security.Principal;
-using System.IO.Compression;
 
 namespace BotFramework
 {

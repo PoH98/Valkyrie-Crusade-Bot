@@ -17,7 +17,6 @@ using System.Windows.Forms;
 using System.Linq;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
 
 namespace BotFramework
 {
@@ -27,8 +26,6 @@ namespace BotFramework
         public static string html;
 
         public static int Level;
-
-        static bool Docked = false;
 
         static readonly System.Windows.Forms.Timer timeout = new System.Windows.Forms.Timer();
 
@@ -589,7 +586,6 @@ namespace BotFramework
             {
                 DllImport.SetParent(Variables.Proc.MainWindowHandle, IntPtr.Zero);
                 DllImport.MoveWindow(Variables.Proc.MainWindowHandle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 1318, 752, true);
-                Docked = false;
             }
             foreach (Control control in Debug.Controls)
             {
@@ -718,6 +714,7 @@ namespace BotFramework
 
         private void Capt()
         {
+            bool Docked = false;
             do
             {
                 Thread.Sleep(1000);
@@ -732,7 +729,6 @@ namespace BotFramework
                     try
                     {
                         var handle = Variables.Proc.MainWindowHandle;
-                        var parent = DllImport.GetParent(handle);
                         Rectangle rect = new Rectangle();
                         DllImport.GetWindowRect(handle, ref rect);
                         if (!Docked)

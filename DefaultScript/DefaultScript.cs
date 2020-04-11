@@ -17,6 +17,8 @@ namespace DefaultScript
         private static bool KOChance;
         public void Attack()
         {
+            int loopCount = 0;
+            Loop:
             Random rnd = new Random();
             byte[] KO = Screenshot.CropImage(VCBotScript.image, new Point(230, 70), new Point(1140, 160));
             var points = BotCore.FindImages(KO, new Bitmap[] { Resource.Stun1, Resource.Stun2 }, false);
@@ -482,6 +484,16 @@ namespace DefaultScript
                         }
                         break;
                 }
+            }
+            if (PrivateVariable.VCevent == PrivateVariable.EventType.GuildWar && loopCount < 7)
+            {
+                VCBotScript.image = Screenshot.ImageCapture();
+                if (BotCore.FindImage(VCBotScript.image, ImgXml.Img.GreenButton, false) != null)
+                {
+                    return;
+                }
+                loopCount++;
+                goto Loop;
             }
         }
         public static string cboxselected ="";
