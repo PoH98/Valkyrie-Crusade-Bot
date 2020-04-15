@@ -446,9 +446,11 @@ namespace UI
                     return;
                 }
                 crop = Screenshot.CropImage(image, new Point(140, 0), new Point(1160, 720));
-                if (BotCore.FindImage(crop, Img.Red_Button, false) != null)
+                point = BotCore.FindImage(crop, Img.Red_Button, false);
+                if (point != null)
                 {
                     Variables.ScriptLog("Battle Screen found. Starting battle!", Color.Lime);
+                    BotCore.SendTap(point.Value);
                     PrivateVariable.Battling = true;
                     PrivateVariable.InEventScreen = true;
                     return;

@@ -330,7 +330,7 @@ namespace UI
                                     BotCore.SendTap(1030, 550);
                                     break;
                             }
-                            BotCore.Delay(500);
+                            BotCore.Delay(3000);
                             Point? greenButton;
                             do
                             {
@@ -344,7 +344,7 @@ namespace UI
                             for(int y = 0; y < 10; y++)
                             {
                                 BotCore.SendTap(2,2);
-                                BotCore.Delay(300);
+                                BotCore.Delay(500);
                             }
                         }
                     }
