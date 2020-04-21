@@ -14,7 +14,7 @@ namespace Nox
         private static string NoxFile;
         public string EmulatorName()
         {
-            return "Nox";
+            return "Nox|夜神模拟器";
         }
 
         public bool LoadEmulatorSettings()
@@ -227,19 +227,14 @@ namespace Nox
             }
         }
 
-        public void CloseEmulator()
-        {
-            throw new NotImplementedException();
-        }
-
         public string EmulatorDefaultInstanceName()
         {
-            return "Nox_0";
+            return "Nox";
         }
 
         public string EmulatorProcessName()
         {
-            return "Nox";
+            return "Nox|夜神模拟器";
         }
     }
 }

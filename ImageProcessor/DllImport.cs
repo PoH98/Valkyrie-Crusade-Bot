@@ -68,11 +68,22 @@ namespace BotFramework
         /// <returns></returns>
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string lclassName, string windowTitle);
+        /// <summary>
+        /// Set the window state with show or hide
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <param name="nCmdShow"></param>
+        /// <returns></returns>
         [DllImport("user32.dll")]
         public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
         [DllImport("user32")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool EnumChildWindows(IntPtr window, EnumWindowProc callback, IntPtr lParam);
+        /// <summary>
+        /// Get all the child handle IntPtr of a program
+        /// </summary>
+        /// <param name="mainHandle"></param>
+        /// <returns></returns>
         public static List<IntPtr> GetAllChildHandles(IntPtr mainHandle)
         {
             List<IntPtr> childHandles = new List<IntPtr>();
@@ -92,22 +103,53 @@ namespace BotFramework
 
             return childHandles;
         }
+        /// <summary>
+        /// Register Hotkey for some UI or button
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <param name="id"></param>
+        /// <param name="fsModifiers"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
 
         [DllImport("user32.dll", PreserveSig = false)]
         public static extern bool RegisterHotKey(IntPtr hWnd,int id,uint fsModifiers,Keys key);
-
+        /// <summary>
+        /// Unregister the hotkey from UI or button
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [DllImport("user32.dll")]
         public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
-
+        /// <summary>
+        /// Send Message to Program
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <param name="Msg"></param>
+        /// <param name="wParam"></param>
+        /// <param name="lParam"></param>
+        /// <returns></returns>
         [DllImport("user32.dll", EntryPoint = "SendMessage", CharSet = CharSet.Auto)]
         public static extern bool SendMessage(IntPtr hWnd, uint Msg, int wParam, StringBuilder lParam);
-
+        /// <summary>
+        /// Send Message to Program
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <param name="Msg"></param>
+        /// <param name="wparam"></param>
+        /// <param name="lparam"></param>
+        /// <returns></returns>
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr SendMessage(int hWnd, int Msg, int wparam, int lparam);
 
         const int WM_GETTEXT = 0x000D;
         const int WM_GETTEXTLENGTH = 0x000E;
-
+        /// <summary>
+        /// Get control's Text
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <returns></returns>
         public static string GetControlText(IntPtr hWnd)
         {
 
@@ -138,16 +180,46 @@ namespace BotFramework
 
             return true;
         }
+        /// <summary>
+        /// Set program location
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <param name="hWndInsertAfter"></param>
+        /// <param name="X"></param>
+        /// <param name="Y"></param>
+        /// <param name="cx"></param>
+        /// <param name="cy"></param>
+        /// <param name="uFlags">Reference <see cref="SWP_NOSIZE"/> <see cref="SWP_NOZORDER"/></param>
+        /// <returns></returns>
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
-        public const uint SWP_NOSIZE = 0x0001;
-        public const uint SWP_NOZORDER = 0x0004;
-
+        /// <summary>
+        /// uflags of <see cref="SetWindowPos"/>
+        /// </summary>
+        public const uint SWP_NOSIZE = 0x0001, SWP_NOZORDER = 0x0004;
+        /// <summary>
+        /// Get Window's Rectangle
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <param name="rect"></param>
+        /// <returns></returns>
         [DllImport("user32.dll")]
         public static extern IntPtr GetWindowRect(IntPtr hWnd, ref Rectangle rect);
+        /// <summary>
+        /// Set window to foreground
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <returns></returns>
         [DllImport("USER32.DLL")]
         public static extern bool SetForegroundWindow(IntPtr hWnd);
-
+        /// <summary>
+        /// Get all child window handles
+        /// </summary>
+        /// <param name="hParent"></param>
+        /// <param name="Class"></param>
+        /// <param name="name"></param>
+        /// <param name="maxCount"></param>
+        /// <returns></returns>
         public static List<IntPtr> GetAllChildrenWindowHandles(IntPtr hParent, string Class, string name, int maxCount)
         {
             List<IntPtr> result = new List<IntPtr>();
@@ -164,19 +236,33 @@ namespace BotFramework
             }
             return result;
         }
-
-        [DllImport("wininet.dll", SetLastError = true)]
-        public static extern long DeleteUrlCacheEntry(string lpszUrlName);
-
+        /// <summary>
+        /// Send Message to window
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <param name="Msg"></param>
+        /// <param name="wParam"></param>
+        /// <param name="lParam"></param>
+        /// <returns></returns>
         [DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
-
+        /// <summary>
+        /// Used for borderless window to release mouse click
+        /// </summary>
+        /// <returns></returns>
         [DllImport("user32.dll")]
         public static extern bool ReleaseCapture();
-
+        /// <summary>
+        /// Get this process
+        /// </summary>
+        /// <returns></returns>
         [DllImport("kernel32.dll")]
         public static extern IntPtr GetCurrentProcess();
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="moduleName"></param>
+        /// <returns></returns>
         [DllImport("kernel32.dll")]
         public static extern IntPtr GetModuleHandle(string moduleName);
 

@@ -32,6 +32,7 @@ namespace BotFramework
 
         [DllImport("ProcCmdLine64.dll", CharSet = CharSet.Unicode, EntryPoint = "GetProcCmdLine")]
         private extern static bool GetProcCmdLine64(uint nProcId, StringBuilder sb, uint dwSizeBuf);
+
         /// <summary>
         /// Get Process 64it version command line
         /// </summary>
@@ -93,7 +94,7 @@ namespace BotFramework
                     installed[x] = emulators[x].LoadEmulatorSettings();
                     if (installed[x])
                     {
-                        Variables.AdvanceLog("Detected emulator " + emulators[x].EmulatorName(), lineNumber, caller);
+                        Variables.AdvanceLog("[" + DateTime.Now.ToLongTimeString() + "]:Detected emulator " + emulators[x].EmulatorName(), lineNumber, caller);
                         EmuSelection_Resource.emu.Add(emulators[x]);
                     }
                 }
@@ -107,6 +108,7 @@ namespace BotFramework
             Variables.SharedPath = "";
             Variables.VBoxManagerPath = "";
             Variables.ForceWinApiCapt = false;
+            Variables.ClickPointMultiply = 1;
         Emulator:
             if (EmuSelection_Resource.emu.Count() > 1) //More than one installed
             {
@@ -122,8 +124,9 @@ namespace BotFramework
                             {
                                 Variables.emulator = e;
                                 e.LoadEmulatorSettings();
-
+                                CheckSharedPath();
                                 File.WriteAllText("Emulators\\Use_Emulator.ini", "use=" + e.EmulatorName());
+                                Debug_.WriteLine("[" + DateTime.Now.ToLongTimeString() + "]:Emulator used: " + Variables.emulator.GetType().Name);
                                 return;
                             }
                         }
@@ -138,6 +141,7 @@ namespace BotFramework
                                 emulators[x].LoadEmulatorSettings();
                                 CheckSharedPath();
                                 File.WriteAllText("Emulators\\Use_Emulator.ini", "use=" + emulators[x].EmulatorName());
+                                Debug_.WriteLine("[" + DateTime.Now.ToLongTimeString() + "]:Emulator used: " + Variables.emulator.GetType().Name);
                                 return;
                             }
                         }
@@ -153,6 +157,7 @@ namespace BotFramework
                             Variables.emulator = e;
                             e.LoadEmulatorSettings();
                             CheckSharedPath();
+                            Debug_.WriteLine("[" + DateTime.Now.ToLongTimeString() + "]:Emulator used: " + Variables.emulator.GetType().Name);
                             return;
                         }
                     }
@@ -165,6 +170,7 @@ namespace BotFramework
             }
             else if (EmuSelection_Resource.emu.Count() < 1) //No installed
             {
+                Debug_.WriteLine("[" + DateTime.Now.ToLongTimeString() + "]:However none of this are usable!");
                 MessageBox.Show("Please install any supported emulator first or install extentions to support your current installed emulator!", "No supported emulator found!");
                 Environment.Exit(0);
             }
@@ -172,15 +178,25 @@ namespace BotFramework
             {
                 Variables.emulator = EmuSelection_Resource.emu[0];
                 Variables.emulator.LoadEmulatorSettings();
+                Debug_.WriteLine("[" + DateTime.Now.ToLongTimeString() + "]:Emulator used: " + Variables.emulator.GetType().Name);
                 CheckSharedPath();
             }
         }
 
         private static void CheckSharedPath()
         {
-            Variables.SharedPath = new string(Variables.SharedPath.Select(ch => Path.GetInvalidPathChars().Contains(ch) ? Path.DirectorySeparatorChar : ch).ToArray());
-            Variables.SharedPath = Variables.SharedPath.Replace("'", "");
-            Variables.SharedPath = Path.GetFullPath(Variables.SharedPath);
+            try
+            {
+                Variables.SharedPath = new string(Variables.SharedPath.Select(ch => Path.GetInvalidPathChars().Contains(ch) ? Path.DirectorySeparatorChar : ch).ToArray());
+                Variables.SharedPath = Variables.SharedPath.Replace("'", "");
+                Variables.SharedPath = Path.GetFullPath(Variables.SharedPath);
+            }
+            catch
+            {
+                //Error path
+                Variables.SharedPath = "";
+                Variables.ForceWinApiCapt = true;
+            }
         }
 
         /// <summary>
@@ -341,33 +357,27 @@ namespace BotFramework
                 {
                     return;
                 }
-                foreach (var p in Process.GetProcessesByName(Variables.emulator.EmulatorProcessName()))
+                foreach (var p in Process.GetProcesses().Where(x => Variables.emulator.EmulatorProcessName().Split('|').Contains(x.ProcessName)))
                 {
                     string command = GetCommandLineOfProcess(p);
                     Variables.AdvanceLog(command);
-                    if (Variables.Instance != null)
+                    if (command.EndsWith(Variables.Instance))
                     {
-                        if (command.EndsWith(Variables.Instance))
-                        {
-                            Variables.Proc = p;
-                            Variables.ScriptLog("Emulator ID: " + p.Id, Color.DarkGreen);
-                            break;
-                        }
+                        Variables.Proc = p;
+                        Variables.ScriptLog("Emulator ID: " + p.Id, Color.DarkGreen);
+                        break;
                     }
-                    else
+                    else if (command.Contains(Variables.emulator.EmulatorDefaultInstanceName()))
                     {
-                        if (command.EndsWith(Variables.emulator.EmulatorDefaultInstanceName()))
-                        {
-                            Variables.Proc = p;
-                            Variables.ScriptLog("Emulator ID: " + p.Id, Color.DarkGreen);
-                            break;
-                        }
+                        Variables.Proc = p;
+                        Variables.ScriptLog("Emulator ID: " + p.Id, Color.DarkGreen);
+                        break;
                     }
                 }
                 Variables.AdvanceLog("Emulator not connected, retrying in 2 second...", lineNumber, caller);
                 Thread.Sleep(1000);
                 error++;
-                if (error > 15) //We had await for 15 seconds
+                if (error > 10) //We had await for 10 seconds
                 {
                     Variables.ScriptLog("Unable to connect to emulator! Emulator refused to load! Restarting it now!", Color.Red);
                     RestartEmulator();
@@ -394,6 +404,13 @@ namespace BotFramework
                 Variables.AdvanceLog("Connecting Adb EndPoint " + Variables.AdbIpPort, lineNumber, caller);
                 do
                 {
+                    if (error > 10 && !Variables.DeviceChanged) //We had await for 30 second
+                    {
+                        Variables.ScriptLog("Unable to connect to emulator! Emulator refused to load! Restarting it now!", Color.Red);
+                        RestartEmulator();
+                        Thread.Sleep(10000);
+                        error = 0;
+                    }
                     foreach (var device in AdbInstance.Instance.client.GetDevices())
                     {
                         Variables.AdvanceLog("Detected " + device.ToString(), lineNumber, caller);
@@ -405,7 +422,26 @@ namespace BotFramework
                             {
                                 Variables.AdvanceLog("Device found, connection establish on " + Variables.AdbIpPort, lineNumber, caller);
                             }
-                            AdbInstance.Instance.client.SetDevice(AdbInstance.Instance.socket, device);
+                            try
+                            {
+                                AdbInstance.Instance.client.SetDevice(AdbInstance.Instance.socket, device);
+                            }
+                            catch(AdbException ex)
+                            {
+                                if (ex.ToString().Contains("Offline"))
+                                {
+                                    //Replace old adb
+                                    var oldAdb = Directory.GetFiles(Variables.VBoxManagerPath).Where(x => x.EndsWith("adb.exe"));
+                                    if (oldAdb.Count() > 0)
+                                    {
+                                        foreach (var adb in oldAdb)
+                                        {
+                                            File.Move(adb, adb.Replace(".exe", ".bak"));
+                                        }
+                                    }
+                                    error = 20;
+                                }
+                            }
                             BotCore.Delay(5000);
                             //await emulator start
                             do
@@ -427,14 +463,7 @@ namespace BotFramework
                     }
                     Thread.Sleep(2000);
                     error++;
-                } while (!Variables.DeviceChanged && error < 30);
-                if (error > 20 && !Variables.DeviceChanged) //We had await for 1 minute
-                {
-                    Variables.ScriptLog("Unable to connect to emulator! Emulator refused to load! Restarting it now!", Color.Red);
-                    RestartEmulator();
-                    Thread.Sleep(10000);
-                    error = 0;
-                }
+                } while (!Variables.DeviceChanged && error < 10);
                 //Ok, so now we have no device change
                 Variables.DeviceChanged = false;
             }
@@ -442,6 +471,7 @@ namespace BotFramework
             {
                 Variables.AdvanceLog(ex.ToString(), lineNumber, caller);
                 Thread.Sleep(2000);
+                error++;
                 goto Connect;
             }
             if (Variables.Controlled_Device == null)
@@ -453,6 +483,14 @@ namespace BotFramework
                 return;
             }
             AdbInstance.Instance.client.ExecuteRemoteCommand("settings put system font_scale 1.0", (Variables.Controlled_Device as DeviceData), receiver);
+            AdbInstance.Instance.client.ExecuteRemoteCommand("getprop ro.product.locale", (Variables.Controlled_Device as DeviceData), receiver);
+            Variables.AdvanceLog(receiver.ToString().Trim());
+            if (!receiver.ToString().Contains("zh-Hans"))
+            {
+                //Language is not correct;
+                AdbInstance.Instance.client.ExecuteRemoteCommand("setprop ro.product.locale zh-Hans", (Variables.Controlled_Device as DeviceData), receiver);
+                Variables.AdvanceLog(receiver.ToString().Trim());
+            }
             ConnectMinitouch();
         }
 

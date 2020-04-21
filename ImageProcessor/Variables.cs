@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Forms;
@@ -85,10 +86,10 @@ namespace BotFramework
         /// </summary>
         public static void ReadConfig()
         {
-            string path = "Profiles\\" + emulator.EmulatorName() + "\\bot.ini";
-            if(!Directory.Exists("Profiles\\" + emulator.EmulatorName()))
+            string path = "Profiles\\" + new string(emulator.EmulatorName().Where(char.IsLetter).ToArray()) + "\\bot.ini";
+            if(!Directory.Exists("Profiles\\" + new string(emulator.EmulatorName().Where(char.IsLetter).ToArray())))
             {
-                Directory.CreateDirectory("Profiles\\" + emulator.EmulatorName());
+                Directory.CreateDirectory("Profiles\\" + new string(emulator.EmulatorName().Where(char.IsLetter).ToArray()));
             }
             if (File.Exists(path))
             {
@@ -133,7 +134,7 @@ namespace BotFramework
         /// </summary>
         public static void SaveConfig()
         {
-            string path = "Profiles\\" + emulator.EmulatorName() + "\\bot.ini";
+            string path = "Profiles\\" + new string(emulator.EmulatorName().Where(char.IsLetter).ToArray()) + "\\bot.ini";
             FileIniDataParser p = new FileIniDataParser();
             Config.Configuration.AssigmentSpacer = "";
             p.WriteFile(path, Config, Encoding.Unicode);
@@ -251,5 +252,9 @@ namespace BotFramework
         /// WinApi capture cropping as it might captured some garbage inside
         /// </summary>
         public static Point WinApiCaptCropStart = new Point(0, 0), WinApiCaptCropEnd = new Point(EmulatorWidth, EmulatorHeight);
+        /// <summary>
+        /// Some emulator might contains larger resolution which need to set the multiplier
+        /// </summary>
+        public static decimal ClickPointMultiply = 1;
     }
 }

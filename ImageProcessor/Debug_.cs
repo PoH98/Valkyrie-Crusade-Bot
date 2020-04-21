@@ -55,27 +55,16 @@ namespace BotFramework
         /// <param name="caller"></param>
         public static void WriteLine(string log_, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            if (!ScriptRun.Run)
+            if (s != null)
             {
-                return;
-            }
-            try
-            {
-                if(s != null)
+                if (EncryptLog)
                 {
-                    if (EncryptLog)
-                    {
-                        s.WriteLine(Encrypt(log_ + " Line: " + lineNumber + " Caller: " + caller as string));
-                    }
-                    else
-                    {
-                        s.WriteLine(log_ + " Line: " + lineNumber + " Caller: " + caller as string);
-                    }
+                    s.WriteLine(Encrypt(log_ + " Line: " + lineNumber + " Caller: " + caller as string));
                 }
-            }
-            catch
-            {
-
+                else
+                {
+                    s.WriteLine(log_ + " Line: " + lineNumber + " Caller: " + caller as string);
+                }
             }
         }
         /// <summary>
@@ -85,27 +74,16 @@ namespace BotFramework
         /// <param name="caller"></param>
         public static void WriteLine([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            if (!ScriptRun.Run)
+            if (s != null)
             {
-                return;
-            }
-            try
-            {
-                if(s != null)
+                if (EncryptLog)
                 {
-                    if (EncryptLog)
-                    {
-                        s.WriteLine(Encrypt("Line: " + lineNumber + " Called by : " + caller as string));
-                    }
-                    else
-                    {
-                        s.WriteLine("Line: " + lineNumber + " Called by : " + caller as string);
-                    }
+                    s.WriteLine(Encrypt("Line: " + lineNumber + " Called by : " + caller as string));
                 }
-            }
-            catch
-            {
-
+                else
+                {
+                    s.WriteLine("Line: " + lineNumber + " Called by : " + caller as string);
+                }
             }
 
         }

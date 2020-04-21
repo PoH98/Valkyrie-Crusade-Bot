@@ -11,10 +11,8 @@ namespace CustomizeEmulator
 {
     public class Customized : EmulatorInterface
     {
-        private static Process process;
         private static readonly string emulatorINI = "Emulator.ini";
         private static IniData Config;
-
         public string EmulatorName()
         {
             return "Customize Emulator";
@@ -38,6 +36,20 @@ namespace CustomizeEmulator
                         if (FindConfig("Emulator", "ExePath", out string path))
                         {
                             Variables.VBoxManagerPath = path;
+                            if (!File.Exists(path))
+                            {
+                                OpenFileDialog folder = new OpenFileDialog();
+                                if (folder.ShowDialog() == DialogResult.OK)
+                                {
+                                    ModifyConfig("Emulator", "ExePath", folder.FileName);
+                                    Variables.VBoxManagerPath = folder.FileName;
+                                }
+                                else
+                                {
+                                    ModifyConfig("Emulator", "UseThis", "false");
+                                    readsuccess = false;
+                                }
+                            }
                         }
                         else
                         {
@@ -56,6 +68,19 @@ namespace CustomizeEmulator
                         if (FindConfig("Emulator", "PC_SharedPath", out shared))
                         {
                             Variables.SharedPath = shared;
+                            if (!Directory.Exists(shared))
+                            {
+                                FolderBrowserDialog folder = new FolderBrowserDialog();
+                                if(folder.ShowDialog() == DialogResult.OK)
+                                {
+                                    ModifyConfig("Emulator", "PC_SharedPath", folder.SelectedPath);
+                                    Variables.SharedPath = folder.SelectedPath;
+                                }
+                                else
+                                {
+                                    readsuccess = false;
+                                }
+                            }
                         }
                         else
                         {
@@ -79,11 +104,18 @@ namespace CustomizeEmulator
                             ModifyConfig("Emulator", "Adb_Ip", "");
                             readsuccess = false;
                         }
+                        if(FindConfig("Click", "Multiplier", out string value))
+                        {
+                            if(decimal.TryParse(value, out decimal multiplier))
+                            {
+                                Variables.ClickPointMultiply = multiplier;
+                            }
+                        }
                     }
                 }
                 else
                 {
-                    
+                    readsuccess = false;
                 }
             }
             else
@@ -94,9 +126,17 @@ namespace CustomizeEmulator
                 ModifyConfig("Emulator", "PC_SharedPath", "");
                 ModifyConfig("Emulator", "Adb_Ip", "");
                 ModifyConfig("Emulator", "Adb_Port", "");
+                ModifyConfig("Emulator", "DefaultInstance", "");
+                ModifyConfig("Emulator", "ProcessName", "");
+                ModifyConfig("Emulator", "Arguments", "");
+                ModifyConfig("Click", "Multiplier", "1");
                 readsuccess = false;
             }
-            
+            if (Variables.AndroidSharedPath == "Null")
+            {
+                Variables.ForceWinApiCapt = true;
+            }
+            Variables.Instance = "";
             return readsuccess;
         }
         private static void ModifyConfig(string section, string key, string value)
@@ -147,17 +187,33 @@ namespace CustomizeEmulator
 
         public void StartEmulator()
         {
-            Variables.Proc = Process.Start(Variables.VBoxManagerPath);
+            if(FindConfig("Emulator", "Argument", out string args))
+            {
+                Variables.Proc = Process.Start(Variables.VBoxManagerPath, args);
+            }
+            else
+            {
+                Variables.Proc = Process.Start(Variables.VBoxManagerPath);
+            }
+
         }
 
         public string EmulatorDefaultInstanceName()
         {
+            if(FindConfig("Emulator", "DefaultInstance", out string value))
+            {
+                return value;
+            }
             return "";
         }
 
         public string EmulatorProcessName()
         {
-            throw new NotImplementedException();
+            if (FindConfig("Emulator", "ProcessName", out string value))
+            {
+                return value;
+            }
+            return "";
         }
     }
 }

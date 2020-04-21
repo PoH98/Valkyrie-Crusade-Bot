@@ -41,9 +41,11 @@ namespace BotFramework
         /// <summary>
         /// The encoded data
         /// </summary>
-        public byte[] data;
+        public object locker = new object();
 
         bool captureerror = false;
+
+        private ImageConverter _imageConverter = new ImageConverter();
         /// <summary>
         /// Compress image into byte array to avoid conflict while multiple function trying to access the image
         /// </summary>
@@ -53,17 +55,19 @@ namespace BotFramework
         [SecurityCritical]
         public static byte[] Compress(Image image)
         {
-            try
+            lock (Instance.locker)
             {
-                ImageConverter _imageConverter = new ImageConverter();
-                byte[] xByte = (byte[])_imageConverter.ConvertTo(image, typeof(byte[]));
-                return xByte;
+                try
+                {
+                    byte[] xByte = (byte[])Instance._imageConverter.ConvertTo(image, typeof(byte[]));
+                    return xByte;
+                }
+                catch (Exception ex)
+                {
+                    Variables.AdvanceLog(ex.ToString());
+                    return null;
+                }
             }
-            catch
-            {
-                return null;
-            }
-
         }
         /// <summary>
         /// Decompress the byte array back to image for other usage
@@ -79,8 +83,9 @@ namespace BotFramework
                     return Image.FromStream(ms) as Bitmap;
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Variables.AdvanceLog(ex.ToString());
                 return null;
             }
         }
@@ -97,32 +102,35 @@ namespace BotFramework
             {
                 return null;
             }
-            return Screenshot.Compress(CropImage(Screenshot.Decompress(original), Start, End, lineNumber, caller));
+            return Compress(CropImage(Decompress(original), Start, End, lineNumber, caller));
         }
 
         private static Bitmap CropImage(Bitmap original, Point start, Point End, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            Stopwatch s = Stopwatch.StartNew();
-            if (original == null)
+            lock (Instance.locker)
             {
-                Variables.AdvanceLog("Result return null because of null original image");
-                return null;
+                Stopwatch s = Stopwatch.StartNew();
+                if (original == null)
+                {
+                    Variables.AdvanceLog("Result return null because of null original image");
+                    return null;
+                }
+                Image<Bgr, byte> imgInput = new Image<Bgr, byte>(original);
+                Rectangle rect = new Rectangle
+                {
+                    X = Math.Min(start.X, End.X),
+                    Y = Math.Min(start.Y, End.Y),
+                    Width = Math.Abs(start.X - End.X),
+                    Height = Math.Abs(start.Y - End.Y)
+                };
+                imgInput.ROI = rect;
+                Image<Bgr, byte> temp = imgInput.CopyBlank();
+                imgInput.CopyTo(temp);
+                imgInput.Dispose();
+                s.Stop();
+                Variables.AdvanceLog("Image cropped. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber, caller);
+                return temp.Bitmap;
             }
-            Image<Bgr, byte> imgInput = new Image<Bgr, byte>(original);
-            Rectangle rect = new Rectangle
-            {
-                X = Math.Min(start.X, End.X),
-                Y = Math.Min(start.Y, End.Y),
-                Width = Math.Abs(start.X - End.X),
-                Height = Math.Abs(start.Y - End.Y)
-            };
-            imgInput.ROI = rect;
-            Image<Bgr, byte> temp = imgInput.CopyBlank();
-            imgInput.CopyTo(temp);
-            imgInput.Dispose();
-            s.Stop();
-            Variables.AdvanceLog("Image cropped. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber, caller);
-            return temp.Bitmap;
         }
         /// <summary>
         /// Capture image using WinAPI
@@ -137,7 +145,6 @@ namespace BotFramework
         {
             try
             {
-
                 Stopwatch s = Stopwatch.StartNew();
                 Rectangle rc = new Rectangle();
                 DllImport.GetWindowRect(hWnd, ref rc);

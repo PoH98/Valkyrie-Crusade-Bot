@@ -18,12 +18,12 @@ namespace MEmu
 
         public string EmulatorProcessName()
         {
-            return "MEmu";
+            return "MEmu|逍遥模拟器";
         }
 
         public string EmulatorName()
         {
-            return "MEmu";
+            return "MEmu|逍遥模拟器";
         }
 
         public string EmulatorDefaultInstanceName()
@@ -62,7 +62,6 @@ namespace MEmu
                         location = r.GetValue("DisplayIcon");
                         if(location != null)
                         {
-                            location = location.ToString().Remove(location.ToString().LastIndexOf("\\"));
                             location = location.ToString().Remove(location.ToString().LastIndexOf("\\"));
                         }
                     }
@@ -116,6 +115,7 @@ namespace MEmu
                         }
                         while (Variables.SharedPath == null || Variables.AdbIpPort == null);
                         Variables.AndroidSharedPath = "/sdcard/Download/";
+                        Variables.ClickPointMultiply = 1;
                         return true;
                     }
                 }

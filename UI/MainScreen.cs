@@ -35,6 +35,8 @@ namespace BotFramework
 
         private static Point loc;
 
+        private Thread cap;
+
         private static TransparentPanel tp;
         [DllImport("kernel32.dll",
             EntryPoint = "GetStdHandle",
@@ -54,7 +56,7 @@ namespace BotFramework
         public MainScreen()
         {
             InitializeComponent();
-            Debug_.PrepairDebug(true);
+            Debug_.PrepairDebug(false);
             Variables.richTextBox = richTextBox1;
             timeout.Interval = 15000;
             timeout.Tick += Timeout_Tick;
@@ -449,6 +451,9 @@ namespace BotFramework
                 }
                 box.MouseDown += Tp_MouseDown;
             }
+            Text = "VCBot (" + Variables.emulator.GetType().Name + ")";
+            label2.Text = Variables.AdbIpPort;
+            Refresh();
             ED_Box.MouseDown += Tp_MouseDown;
             metroTabControl1.SelectedIndex = 0;
             chk_item.Enabled = chk_autoRT.Checked;
@@ -546,7 +551,7 @@ namespace BotFramework
                 }
             }
             ScriptRun.RunScript(true, (new VCBotScript() as ScriptInterface));
-            Thread cap = new Thread(Capt);
+            cap = new Thread(Capt);
             cap.Start();
         }
 
@@ -570,6 +575,20 @@ namespace BotFramework
 
         private void Button3_Click(object sender, EventArgs e)
         {
+            if(cap != null)
+            {
+                try
+                {
+                    if (cap.IsAlive)
+                    {
+                        cap.Abort();
+                    }
+                }
+                catch
+                {
+
+                }
+            }
             PrivateVariable.nospam = DateTime.Now;
             PrivateVariable.Battling = false;
             PrivateVariable.InEventScreen = false;
@@ -1242,6 +1261,11 @@ namespace BotFramework
         private void checkBox1_CheckedChanged_1(object sender, EventArgs e)
         {
             Variables.ModifyConfig("General", "SoulEv", chk_SoulEv.Checked.ToString().ToLower());
+        }
+
+        private void checkBox1_CheckedChanged_2(object sender, EventArgs e)
+        {
+            Variables.ImageDebug = checkBox1.Checked;
         }
     }
 }

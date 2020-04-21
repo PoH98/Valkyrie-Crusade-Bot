@@ -12,6 +12,9 @@ using System.Windows.Forms;
 
 namespace BotFramework
 {
+    /// <summary>
+    /// Download File UI
+    /// </summary>
     public partial class Download : Form
     {
         /// <summary>

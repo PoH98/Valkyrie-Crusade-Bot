@@ -23,6 +23,23 @@ namespace BotFramework
     /// </summary>
     public class BotCore
     {
+        private static BotCore Instance
+        {
+            get
+            {
+                if(instance == null)
+                {
+                    instance = new BotCore();
+                }
+                return instance;
+            }
+        }
+
+        private static BotCore instance;
+
+        private Random rnd = new Random();
+
+        private object locker = new object();
         /// <summary>
         /// Check Game is foreground and return a bool
         /// </summary>
@@ -171,7 +188,7 @@ namespace BotFramework
                 return;
             }
             ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
-            AdbInstance.Instance.client.ExecuteRemoteCommand("input touchscreen swipe " + x + " " + y + " " + ex + " " + ey + " " + usedTime, (Variables.Controlled_Device as DeviceData), receiver);
+            AdbInstance.Instance.client.ExecuteRemoteCommand("input touchscreen swipe " + (x * Variables.ClickPointMultiply).ToString("0") + " " + (y * Variables.ClickPointMultiply).ToString("0") + " " + (ex * Variables.ClickPointMultiply).ToString("0") + " " + (ey * Variables.ClickPointMultiply).ToString("0") + " " + usedTime, (Variables.Controlled_Device as DeviceData), receiver);
             if (receiver.ToString().Contains("Error"))
             {
                 Variables.AdvanceLog(receiver.ToString(), lineNumber, caller);
@@ -192,7 +209,8 @@ namespace BotFramework
             {
                 return;
             }
-            string cmd = $"d 0 {x} {y} 300\nc\nu 0\nc\n";
+            int pressure = Instance.rnd.Next(300, 500);
+            string cmd = $"d 0 {(x * Variables.ClickPointMultiply).ToString("0")} {(y * Variables.ClickPointMultiply).ToString("0")} {(pressure * Variables.ClickPointMultiply).ToString("0")}\nc\nu 0\nc\n";
             Minitouch(cmd);
         }
         /// <summary>
@@ -232,7 +250,7 @@ namespace BotFramework
         /// <param name="endX">Swiping end position</param>
         /// <param name="endY">Swiping end position</param>
         /// <param name="usedTime">The time used for swiping, milliseconds</param>
-        public static void SendSwipe(int startX, int startY, int endX, int endY, int usedTime)
+        public static void SendSwipe(int startX, int startY, int endX, int endY, int usedTime, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
@@ -243,12 +261,7 @@ namespace BotFramework
             {
                 return;
             }
-            ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
-            AdbInstance.Instance.client.ExecuteRemoteCommand("input touchscreen swipe " + startX + " " + startY + " " + endX + " " + endY + " " + usedTime, (Variables.Controlled_Device as DeviceData), receiver);
-            if (receiver.ToString().Contains("Error"))
-            {
-                Variables.AdvanceLog(receiver.ToString());
-            }
+            SendSwipe(new Point(startX, startY), new Point(endX, endY), usedTime, lineNumber, caller);
         }
         /// <summary>
         /// Emulator supported by this dll
@@ -279,55 +292,60 @@ namespace BotFramework
         /// <returns>color</returns>
         public static Color GetPixel(Point position, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            if (!ScriptRun.Run)
+            lock (Instance.locker)
             {
-                return Color.Black;
-            }
-            byte[] image = null;
-            int error = 0;
-            do
-            {
-                if (Variables.ProchWnd != IntPtr.Zero)
+                if (!ScriptRun.Run)
                 {
-                    image = Screenshot.ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd,lineNumber, caller);
+                    return Color.Black;
                 }
-                else
+                byte[] image = null;
+                int error = 0;
+                do
                 {
-                    image = Screenshot.ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                    if (Variables.ProchWnd != IntPtr.Zero)
+                    {
+                        image = Screenshot.ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                    }
+                    else
+                    {
+                        image = Screenshot.ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                    }
+                    error++;
                 }
-                error++;
+                while (image == null && error < 5);
+                return Screenshot.Decompress(image).GetPixel(position.X, position.Y);
             }
-            while (image == null && error < 5);
-
-            return Screenshot.Decompress(image).GetPixel(position.X, position.Y);
         }
 
         private static Color GetPixel(int x, int y, int step, int Width, int Depth, byte[] pixel)
         {
-            if (!ScriptRun.Run)
+            lock (Instance.locker)
             {
-                return Color.Black;
-            }
-            Color clr = Color.Empty;
-            int i = ((y * Width + x) * step);
-            if (i > pixel.Length)
-            {
-                Variables.AdvanceLog("index of pixel array out of range at GetPixel");
+                if (!ScriptRun.Run)
+                {
+                    return Color.Black;
+                }
+                Color clr = Color.Empty;
+                int i = ((y * Width + x) * step);
+                if (i > pixel.Length)
+                {
+                    Variables.AdvanceLog("index of pixel array out of range at GetPixel");
+                    return clr;
+                }
+                if (Depth == 32 || Depth == 24)
+                {
+                    byte b = pixel[i];
+                    byte g = pixel[i + 1];
+                    byte r = pixel[i + 2];
+                    clr = Color.FromArgb(r, g, b);
+                }
+                else if (Depth == 8)
+                {
+                    byte b = pixel[i];
+                    clr = Color.FromArgb(b, b, b);
+                }
                 return clr;
             }
-            if (Depth == 32 || Depth == 24)
-            {
-                byte b = pixel[i];
-                byte g = pixel[i + 1];
-                byte r = pixel[i + 2];
-                clr = Color.FromArgb(r, g, b);
-            }
-            else if (Depth == 8)
-            {
-                byte b = pixel[i];
-                clr = Color.FromArgb(b, b, b);
-            }
-            return clr;
         }
         /// <summary>
         /// Compare point RGB from image
@@ -347,7 +365,7 @@ namespace BotFramework
             int blue = color.B;
             int green = color.G;
             int error = 0;
-            do
+            while (image == null && error < 5)
             {
                 if (Variables.ProchWnd != IntPtr.Zero)
                 {
@@ -359,7 +377,6 @@ namespace BotFramework
                 }
                 error++;
             }
-            while (image == null && error < 5);
             if (image == null)
             {
                 return false;
@@ -428,65 +445,68 @@ namespace BotFramework
         /// <returns>bool</returns>
         public static bool RGBComparer(byte[] image, Color color, int tolerance)
         {
-            if (!ScriptRun.Run)
+            lock (Instance.locker)
             {
-                return false;
-            }
-            int error = 0;
-            while (image == null && error < 5) 
-            {
-                if (Variables.ProchWnd != IntPtr.Zero)
+                if (!ScriptRun.Run)
                 {
-                    image = Screenshot.ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd);
+                    return false;
                 }
-                else
+                int error = 0;
+                while (image == null && error < 5)
                 {
-                    image = Screenshot.ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd);
-                }
-                error++;
-            }
-
-            if (image == null)
-            {
-                return false;
-            }
-            Bitmap bmp = Screenshot.Decompress(image);
-            int Width = bmp.Width;
-            int Height = bmp.Height;
-            int PixelCount = Width * Height;
-            Rectangle rect = new Rectangle(0, 0, Width, Height);
-            int Depth = Bitmap.GetPixelFormatSize(bmp.PixelFormat);
-            if (Depth != 8 && Depth != 24 && Depth != 32)
-            {
-                Variables.AdvanceLog("Image bit per pixel format not supported");
-                return false;
-            }
-            BitmapData bd = bmp.LockBits(rect, ImageLockMode.ReadOnly, bmp.PixelFormat);
-            int step = Depth / 8;
-            byte[] pixel = new byte[PixelCount * step];
-            IntPtr ptr = bd.Scan0;
-            Marshal.Copy(ptr, pixel, 0, pixel.Length);
-            for (int i = 0; i < bmp.Height; i++)
-            {
-                for (int j = 0; j < bmp.Width; j++)
-                {
-                    //Get the color at each pixel
-                    Color clr = GetPixel(j, i, step, Width, Depth, pixel);
-                    if (clr.R >= (color.R - tolerance) && clr.R <= (color.R + tolerance))
+                    if (Variables.ProchWnd != IntPtr.Zero)
                     {
-                        if (clr.G >= (color.G - tolerance) && clr.G <= (color.G + tolerance))
+                        image = Screenshot.ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd);
+                    }
+                    else
+                    {
+                        image = Screenshot.ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd);
+                    }
+                    error++;
+                }
+
+                if (image == null)
+                {
+                    return false;
+                }
+                Bitmap bmp = Screenshot.Decompress(image);
+                int Width = bmp.Width;
+                int Height = bmp.Height;
+                int PixelCount = Width * Height;
+                Rectangle rect = new Rectangle(0, 0, Width, Height);
+                int Depth = Bitmap.GetPixelFormatSize(bmp.PixelFormat);
+                if (Depth != 8 && Depth != 24 && Depth != 32)
+                {
+                    Variables.AdvanceLog("Image bit per pixel format not supported");
+                    return false;
+                }
+                BitmapData bd = bmp.LockBits(rect, ImageLockMode.ReadOnly, bmp.PixelFormat);
+                int step = Depth / 8;
+                byte[] pixel = new byte[PixelCount * step];
+                IntPtr ptr = bd.Scan0;
+                Marshal.Copy(ptr, pixel, 0, pixel.Length);
+                for (int i = 0; i < bmp.Height; i++)
+                {
+                    for (int j = 0; j < bmp.Width; j++)
+                    {
+                        //Get the color at each pixel
+                        Color clr = GetPixel(j, i, step, Width, Depth, pixel);
+                        if (clr.R >= (color.R - tolerance) && clr.R <= (color.R + tolerance))
                         {
-                            if (clr.B >= (color.B - tolerance) && clr.B <= (color.B + tolerance))
+                            if (clr.G >= (color.G - tolerance) && clr.G <= (color.G + tolerance))
                             {
-                                bmp.UnlockBits(bd);
-                                return true;
+                                if (clr.B >= (color.B - tolerance) && clr.B <= (color.B + tolerance))
+                                {
+                                    bmp.UnlockBits(bd);
+                                    return true;
+                                }
                             }
                         }
                     }
                 }
+                bmp.UnlockBits(bd);
+                return false;
             }
-            bmp.UnlockBits(bd);
-            return false;
         }
         /// <summary>
         /// Compare point RGB from image
@@ -494,32 +514,35 @@ namespace BotFramework
         /// <returns>bool</returns>
         public static bool RGBComparer(Color color, Point start, Point end, int tolerance, out Point? point, byte[] image = null, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            if (!ScriptRun.Run)
+            lock (Instance.locker)
             {
-                point = null;
-                return false;
-            }
-            int error = 0;
-            while (image == null && error < 5)
-            {
-                if (Variables.ProchWnd != IntPtr.Zero)
+                if (!ScriptRun.Run)
                 {
-                    image = Screenshot.ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                    point = null;
+                    return false;
                 }
-                else
+                int error = 0;
+                while (image == null && error < 5)
                 {
-                    image = Screenshot.ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                    if (Variables.ProchWnd != IntPtr.Zero)
+                    {
+                        image = Screenshot.ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                    }
+                    else
+                    {
+                        image = Screenshot.ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                    }
+                    error++;
                 }
-                error++;
+                if (image == null)
+                {
+                    point = null;
+                    return false;
+                }
+                var crop = Screenshot.CropImage(image, start, end);
+                var result = RGBComparer(color, tolerance, out point, crop, lineNumber, caller);
+                return result;
             }
-            if (image == null)
-            {
-                point = null;
-                return false;
-            }
-            var crop = Screenshot.CropImage(image, start, end);
-            var result = RGBComparer(color, tolerance, out point,crop, lineNumber, caller);
-            return result;
         }
 
         /// <summary>
@@ -528,75 +551,78 @@ namespace BotFramework
         /// <returns>bool</returns>
         public static bool RGBComparer(Color color, int tolerance, out Point? point, byte[] image = null,[CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            if (!ScriptRun.Run)
+            lock (Instance.locker)
             {
-                point = null;
-                return false;
-            }
-            int error = 0;
-            while (image == null && error < 5)
-            {
-                if (Variables.ProchWnd != IntPtr.Zero)
+                if (!ScriptRun.Run)
                 {
-                    image = Screenshot.ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                    point = null;
+                    return false;
                 }
-                else
+                int error = 0;
+                while (image == null && error < 5)
                 {
-                    image = Screenshot.ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
-                }
-                error++;
-            }
-            if (image == null)
-            {
-                point = null;
-                return false;
-            }
-            var bmp = Screenshot.Decompress(image);
-            int Width = bmp.Width;
-            int Height = bmp.Height;
-            int PixelCount = Width * Height;
-            Rectangle rect = new Rectangle(0, 0, Width, Height);
-            int Depth = Bitmap.GetPixelFormatSize(bmp.PixelFormat);
-            if (Depth != 8 && Depth != 24 && Depth != 32)
-            {
-                Variables.AdvanceLog("Image bit per pixel format not supported");
-                point = null;
-                return false;
-            }
-            BitmapData bd = bmp.LockBits(rect, ImageLockMode.ReadOnly, bmp.PixelFormat);
-            int step = Depth / 8;
-            byte[] pixel = new byte[PixelCount * step];
-            IntPtr ptr = bd.Scan0;
-            Marshal.Copy(ptr, pixel, 0, pixel.Length);
-            for (int i = 0; i < bmp.Height; i++)
-            {
-                for (int j = 0; j < bmp.Width; j++)
-                {
-                    //Get the color at each pixel
-                    Color clr = GetPixel(j, i, step, Width, Depth, pixel);
-                    if (clr.R >= (color.R - tolerance) && clr.R <= (color.R + tolerance))
+                    if (Variables.ProchWnd != IntPtr.Zero)
                     {
-                        if (clr.G >= (color.G - tolerance) && clr.G <= (color.G + tolerance))
+                        image = Screenshot.ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                    }
+                    else
+                    {
+                        image = Screenshot.ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                    }
+                    error++;
+                }
+                if (image == null)
+                {
+                    point = null;
+                    return false;
+                }
+                var bmp = Screenshot.Decompress(image);
+                int Width = bmp.Width;
+                int Height = bmp.Height;
+                int PixelCount = Width * Height;
+                Rectangle rect = new Rectangle(0, 0, Width, Height);
+                int Depth = Bitmap.GetPixelFormatSize(bmp.PixelFormat);
+                if (Depth != 8 && Depth != 24 && Depth != 32)
+                {
+                    Variables.AdvanceLog("Image bit per pixel format not supported");
+                    point = null;
+                    return false;
+                }
+                BitmapData bd = bmp.LockBits(rect, ImageLockMode.ReadOnly, bmp.PixelFormat);
+                int step = Depth / 8;
+                byte[] pixel = new byte[PixelCount * step];
+                IntPtr ptr = bd.Scan0;
+                Marshal.Copy(ptr, pixel, 0, pixel.Length);
+                for (int i = 0; i < bmp.Height; i++)
+                {
+                    for (int j = 0; j < bmp.Width; j++)
+                    {
+                        //Get the color at each pixel
+                        Color clr = GetPixel(j, i, step, Width, Depth, pixel);
+                        if (clr.R >= (color.R - tolerance) && clr.R <= (color.R + tolerance))
                         {
-                            if (clr.B >= (color.B - tolerance) && clr.B <= (color.B + tolerance))
+                            if (clr.G >= (color.G - tolerance) && clr.G <= (color.G + tolerance))
                             {
-                                bmp.UnlockBits(bd);
-                                point = new Point(j, i);
-                                return true;
+                                if (clr.B >= (color.B - tolerance) && clr.B <= (color.B + tolerance))
+                                {
+                                    bmp.UnlockBits(bd);
+                                    point = new Point(j, i);
+                                    return true;
+                                }
                             }
                         }
                     }
                 }
+                bmp.UnlockBits(bd);
+                point = null;
+                return false;
             }
-            bmp.UnlockBits(bd);
-            point = null;
-            return false;
         }
         /// <summary>
-        /// Return a Point location of the image in Variables.Image (will return null if not found)
+        /// Return a Point location of the image in screencapture <see cref="Screenshot.ImageCapture(int, string)"/> (will return null if not found)
         /// </summary>
         /// <param name="find">The smaller image for matching</param>
-        /// <param name="image">Original image that need to get the point on it</param>
+        /// <param name="image">Result from <see cref="Screenshot.ImageCapture(int, string)"/></param>
         /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
         /// <param name="lineNumber"></param>
         /// <param name="caller"></param>
@@ -605,32 +631,35 @@ namespace BotFramework
         /// <returns></returns>
         public static Point[] FindImages(byte[] image, Bitmap[] find, bool GrayStyle, bool FindOnlyOne = false, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            int error = 0;
-            while (image == null && error < 5)
+            lock (Instance.locker)
             {
-                if (Variables.ProchWnd != IntPtr.Zero)
+                int error = 0;
+                while (image == null && error < 5)
                 {
-                    image = Screenshot.ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                    if (Variables.ProchWnd != IntPtr.Zero)
+                    {
+                        image = Screenshot.ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                    }
+                    else
+                    {
+                        image = Screenshot.ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                    }
+                    error++;
                 }
-                else
+                if (image == null)
                 {
-                    image = Screenshot.ImageCapture(Variables.Proc.MainWindowHandle, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
+                    return null;
                 }
-                error++;
-            }
-            if (image == null)
-            {
-                return null;
             }
             Bitmap original = Screenshot.Decompress(image);
             return FindImages(original, find, GrayStyle, FindOnlyOne, lineNumber, caller);
         }
 
         /// <summary>
-        /// Return a Point location of the image in Variables.Image (will return null if not found)
+        /// Return a Point location of the image in screencapture <see cref="Screenshot.ImageCapture(int, string)"/> (will return null if not found)
         /// </summary>
         /// <param name="find">The smaller image for matching</param>
-        /// <param name="original">Original image that need to get the point on it</param>
+        /// <param name="original">Result from <see cref="Screenshot.ImageCapture(int, string)"/></param>
         /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
         /// <param name="FindOnlyOne"></param>
         /// <param name="lineNumber"></param>
@@ -639,85 +668,88 @@ namespace BotFramework
         /// <returns></returns>
         public static Point[] FindImages(Bitmap original, Bitmap[] find, bool GrayStyle, bool FindOnlyOne = false, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            if (!ScriptRun.Run)
+            lock (Instance.locker)
             {
-                return null;
-            }
-            Stopwatch s = Stopwatch.StartNew();
-            List<Point> matched = new List<Point>();
-            try
-            {
-                if (GrayStyle)
+                if (!ScriptRun.Run)
                 {
-                    Image<Gray, byte> source = new Image<Gray, byte>(original);
-                    foreach (var image in find)
+                    return null;
+                }
+                Stopwatch s = Stopwatch.StartNew();
+                List<Point> matched = new List<Point>();
+                try
+                {
+                    if (GrayStyle)
                     {
-                        Image<Gray, byte> template = new Image<Gray, byte>(image);
-                        using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
+                        Image<Gray, byte> source = new Image<Gray, byte>(original);
+                        foreach (var image in find)
                         {
-                            result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
-                            for (int x = 0; x < maxValues.Length; x++)
+                            Image<Gray, byte> template = new Image<Gray, byte>(image);
+                            using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
                             {
-                                if (maxValues[x] > 0.9)
+                                result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
+                                for (int x = 0; x < maxValues.Length; x++)
                                 {
-                                    source.FillConvexPoly(new Point[] {new Point(maxLocations[x].X - 2, maxLocations[x].Y - 2), new Point(maxLocations[x].X +2, maxLocations[x].Y + 2) }, new Gray());
-                                    matched.Add(maxLocations[x]);
-                                    if (FindOnlyOne)
+                                    if (maxValues[x] > 0.9)
                                     {
-                                        break;
+                                        source.FillConvexPoly(new Point[] { new Point(maxLocations[x].X - 2, maxLocations[x].Y - 2), new Point(maxLocations[x].X + 2, maxLocations[x].Y + 2) }, new Gray());
+                                        matched.Add(maxLocations[x]);
+                                        if (FindOnlyOne)
+                                        {
+                                            break;
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+                    else
+                    {
+                        Image<Bgr, byte> source = new Image<Bgr, byte>(original);
+                        foreach (var image in find)
+                        {
+                            Image<Bgr, byte> template = new Image<Bgr, byte>(image);
+                            using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
+                            {
+                                result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
+                                for (int x = 0; x < maxValues.Length; x++)
+                                {
+                                    if (maxValues[x] > 0.9)
+                                    {
+                                        source.FillConvexPoly(new Point[] { new Point(maxLocations[x].X - 2, maxLocations[x].Y - 2), new Point(maxLocations[x].X + 2, maxLocations[x].Y + 2) }, new Bgr());
+                                        matched.Add(maxLocations[x]);
+                                        if (FindOnlyOne)
+                                        {
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Variables.AdvanceLog(ex.ToString());
+                }
+                s.Stop();
+                Variables.AdvanceLog("Image processed. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber, caller);
+                if (matched.Count < 1)
+                {
+                    return null;
                 }
                 else
                 {
-                    Image<Bgr, byte> source = new Image<Bgr, byte>(original);
-                    foreach (var image in find)
-                    {
-                        Image<Bgr, byte> template = new Image<Bgr, byte>(image);
-                        using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
-                        {
-                            result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
-                            for (int x = 0; x < maxValues.Length; x++)
-                            {
-                                if (maxValues[x] > 0.9 )
-                                {
-                                    source.FillConvexPoly(new Point[] { new Point(maxLocations[x].X - 2, maxLocations[x].Y - 2), new Point(maxLocations[x].X + 2, maxLocations[x].Y + 2) }, new Bgr());
-                                    matched.Add(maxLocations[x]);
-                                    if (FindOnlyOne)
-                                    {
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
+                    return matched.ToArray();
                 }
-            }
-            catch (Exception ex)
-            {
-                Variables.AdvanceLog(ex.ToString());
-            }
-            s.Stop();
-            Variables.AdvanceLog("Image processed. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber, caller);
-            if (matched.Count < 1)
-            {
-                return null;
-            }
-            else
-            {
-                return matched.ToArray();
             }
         }
 
         /// <summary>
-        /// Return a Point location of the image in Variables.Image (will return null if not found)
+        /// Return a Point location of the image in screencapture <see cref="Screenshot.ImageCapture(int, string)"/> (will return null if not found)
         /// </summary>
         /// <param name="find">The smaller image for matching</param>
-        /// <param name="original">Original image that need to get the point on it</param>
+        /// <param name="original">Result from <see cref="Screenshot.ImageCapture(int, string)"/></param>
         /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
         /// <param name="lineNumber"></param>
         /// <param name="caller"></param>
@@ -725,81 +757,84 @@ namespace BotFramework
         /// <returns></returns>
         public static Point[] FindImages(byte[] original, List<byte[]> find, bool GrayStyle,bool FindOnlyOne = false, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
-            if (!ScriptRun.Run)
+            lock (Instance.locker)
             {
-                return null;
-            }
-            Stopwatch s = Stopwatch.StartNew();
-            List<Point> matched = new List<Point>();
-            try
-            {
-                if (GrayStyle)
+                if (!ScriptRun.Run)
                 {
-                    Image<Gray, byte> source = new Image<Gray, byte>(Screenshot.Decompress(original));
-                    foreach (var image in find)
+                    return null;
+                }
+                Stopwatch s = Stopwatch.StartNew();
+                List<Point> matched = new List<Point>();
+                try
+                {
+                    if (GrayStyle)
                     {
-                        Image<Gray, byte> template = new Image<Gray, byte>(Screenshot.Decompress(image));
-                        using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
+                        Image<Gray, byte> source = new Image<Gray, byte>(Screenshot.Decompress(original));
+                        foreach (var image in find)
                         {
-                            result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
-                            for (int x = 0; x < maxValues.Length; x++)
+                            Image<Gray, byte> template = new Image<Gray, byte>(Screenshot.Decompress(image));
+                            using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
                             {
-                                if (maxValues[x] > 0.9)
+                                result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
+                                for (int x = 0; x < maxValues.Length; x++)
                                 {
-                                    source.FillConvexPoly(new Point[] { new Point(maxLocations[x].X - 2, maxLocations[x].Y - 2), new Point(maxLocations[x].X + 2, maxLocations[x].Y + 2) }, new Gray());
-                                    matched.Add(maxLocations[x]);
-                                    if (FindOnlyOne)
+                                    if (maxValues[x] > 0.9)
                                     {
-                                        break;
+                                        source.FillConvexPoly(new Point[] { new Point(maxLocations[x].X - 2, maxLocations[x].Y - 2), new Point(maxLocations[x].X + 2, maxLocations[x].Y + 2) }, new Gray());
+                                        matched.Add(maxLocations[x]);
+                                        if (FindOnlyOne)
+                                        {
+                                            break;
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+                    else
+                    {
+                        Image<Bgr, byte> source = new Image<Bgr, byte>(Screenshot.Decompress(original));
+                        foreach (var image in find)
+                        {
+                            Image<Bgr, byte> template = new Image<Bgr, byte>(Screenshot.Decompress(image));
+                            using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
+                            {
+                                result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
+                                for (int x = 0; x < maxValues.Length; x++)
+                                {
+                                    if (maxValues[x] > 0.9)
+                                    {
+                                        source.FillConvexPoly(new Point[] { new Point(maxLocations[x].X - 2, maxLocations[x].Y - 2), new Point(maxLocations[x].X + 2, maxLocations[x].Y + 2) }, new Bgr());
+                                        matched.Add(maxLocations[x]);
+                                        if (FindOnlyOne)
+                                        {
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Variables.AdvanceLog(ex.ToString());
+                }
+                s.Stop();
+                Variables.AdvanceLog("Image processed. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber, caller);
+                if (matched.Count < 1)
+                {
+                    return null;
                 }
                 else
                 {
-                    Image<Bgr, byte> source = new Image<Bgr, byte>(Screenshot.Decompress(original));
-                    foreach (var image in find)
-                    {
-                        Image<Bgr, byte> template = new Image<Bgr, byte>(Screenshot.Decompress(image));
-                        using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
-                        {
-                            result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
-                            for (int x = 0; x < maxValues.Length; x++)
-                            {
-                                if (maxValues[x] > 0.9)
-                                {
-                                    source.FillConvexPoly(new Point[] { new Point(maxLocations[x].X - 2, maxLocations[x].Y - 2), new Point(maxLocations[x].X + 2, maxLocations[x].Y + 2) }, new Bgr());
-                                    matched.Add(maxLocations[x]);
-                                    if (FindOnlyOne)
-                                    {
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
+                    return matched.ToArray();
                 }
-            }
-            catch (Exception ex)
-            {
-                Variables.AdvanceLog(ex.ToString());
-            }
-            s.Stop();
-            Variables.AdvanceLog("Image processed. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber, caller);
-            if (matched.Count < 1)
-            {
-                return null;
-            }
-            else
-            {
-                return matched.ToArray();
             }
         }
         /// <summary>
-        /// Return a Point location of the image in Variables.Image (will return null if not found)
+        /// Return a Point location of the image in screencapture <see cref="Screenshot.ImageCapture(int, string)"/> (will return null if not found)
         /// </summary>
         /// <param name="find">The smaller image for matching</param>
         /// <param name="screencapture">Original image that need to get the point on it</param>
@@ -827,10 +862,10 @@ namespace BotFramework
             }
         }
         /// <summary>
-        /// Return a Point location of the image in Variables.Image (will return null if not found)
+        /// Return a Point location of the image in screencapture <see cref="Screenshot.ImageCapture(int, string)"/> (will return null if not found)
         /// </summary>
         /// <param name="find">The smaller image for matching</param>
-        /// <param name="original">Original image that need to get the point on it</param>
+        /// <param name="original">Result from <see cref="Screenshot.ImageCapture(int, string)"/></param>
         /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
         /// <param name="lineNumber"></param>
         /// <param name="caller"></param>
@@ -842,129 +877,152 @@ namespace BotFramework
             {
                 return null;
             }
-            Stopwatch s = Stopwatch.StartNew();
-            try
+            lock (Instance.locker)
             {
-                if (GrayStyle)
+                Stopwatch s = Stopwatch.StartNew();
+                try
                 {
-
-                    Image<Gray, byte> source = new Image<Gray, byte>(original);
-                    Image<Gray, byte> template = new Image<Gray, byte>(find);
-                    using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
+                    if (GrayStyle)
                     {
-                        result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
 
-                        // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
-                        if (maxValues[0] > 0.9)
+                        Image<Gray, byte> source = new Image<Gray, byte>(original);
+                        Image<Gray, byte> template = new Image<Gray, byte>(find);
+                        using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
                         {
-                            s.Stop();
-                            Variables.AdvanceLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber,caller);
-                            return maxLocations[0];
+                            result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
+
+                            // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
+                            if (maxValues[0] > 0.9)
+                            {
+                                s.Stop();
+                                Variables.AdvanceLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber, caller);
+                                return maxLocations[0];
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Image<Bgr, byte> source = new Image<Bgr, byte>(original);
+                        Image<Bgr, byte> template = new Image<Bgr, byte>(find);
+                        using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
+                        {
+                            result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
+
+                            // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
+                            if (maxValues[0] > 0.9)
+                            {
+                                s.Stop();
+                                Variables.AdvanceLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber, caller);
+                                return maxLocations[0];
+                            }
                         }
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    Image<Bgr, byte> source = new Image<Bgr, byte>(original);
-                    Image<Bgr, byte> template = new Image<Bgr, byte>(find);
-                    using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
-                    {
-                        result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
-
-                        // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
-                        if (maxValues[0] > 0.9)
-                        {
-                            s.Stop();
-                            Variables.AdvanceLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms",lineNumber,caller);
-                            return maxLocations[0];
-                        }
-                    }
+                    Variables.AdvanceLog(ex.ToString());
                 }
-            }
-            catch (Exception ex)
-            {
-                Variables.AdvanceLog(ex.ToString());
-            }
-            s.Stop();
-            Variables.AdvanceLog("Image not matched. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber,caller);
-            return null;
+                s.Stop();
+                Variables.AdvanceLog("Image not matched. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber, caller);
+                return null;
+            }            
         }
         /// <summary>
-        /// Return a Point location of the image in Variables.Image (will return null if not found)
+        /// Return a Point location of the image in screencapture <see cref="Screenshot.ImageCapture(int, string)"/> (will return null if not found)
         /// </summary>
-        /// <param name="findPath">The path of smaller image for matching</param>
-        /// <param name="screencapture">Original image that need to get the point on it</param>
+        /// <param name="screencapture">Result from <see cref="Screenshot.ImageCapture(int, string)"/></param>
+        /// <param name="findPath">Can be set with params:<code>imageName_startX_startY_endX_endY.png</code></param>
         /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
         /// <param name="lineNumber"></param>
         /// <param name="caller"></param>
-        /// <returns>Point or null</returns>
         public static Point? FindImage(byte[] screencapture, string findPath, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
                 return null;
             }
-            Stopwatch s = Stopwatch.StartNew();
-            
-            if (screencapture == null)
+            lock (Instance.locker)
             {
-                Variables.AdvanceLog("Result return null because of null original image",lineNumber,caller);
-                return null;
-            }
-            Bitmap original = Screenshot.Decompress(screencapture);
-            if (!File.Exists(findPath))
-            {
-                Variables.AdvanceLog("Unable to find image " + findPath.Split('\\').Last() + ", image path not valid", lineNumber,caller);
-                return null;
-            }
-            try
-            {
-                if (GrayStyle)
+                Stopwatch s = Stopwatch.StartNew();
+                if (screencapture == null)
                 {
-                    Image <Gray, byte> source = new Image<Gray, byte>(original);
-                    Image<Gray, byte> template = new Image<Gray, byte>(findPath);
-                    using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
+                    Variables.AdvanceLog("Result return null because of null original image", lineNumber, caller);
+                    return null;
+                }
+                Bitmap original;
+                var split = findPath.Split('\\').Last().Split('_');
+                if (split.Length == 5)
+                {
+                    try
                     {
-                        result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
-                        // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
-                        if (maxValues[0] > 0.9)
-                        {
-                            s.Stop();
-                            Variables.AdvanceLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber,caller);
-                            return maxLocations[0];
-                        }
+                        //Have params
+                        Point start = new Point(Convert.ToInt32(new string(split[1].Where(char.IsDigit).ToArray())), Convert.ToInt32(new string(split[2].Where(char.IsDigit).ToArray())));
+                        Point end = new Point(Convert.ToInt32(new string(split[3].Where(char.IsDigit).ToArray())), Convert.ToInt32(new string(split[4].Where(char.IsDigit).ToArray())));
+                        original = Screenshot.Decompress(Screenshot.CropImage(screencapture, start, end));
+                    }
+                    catch (Exception ex)
+                    {
+                        //The file parse failed! We need inform user!
+                        Variables.ScriptLog("Invalid file name used error as: " + ex.ToString(), Color.Red);
+                        return null;
                     }
                 }
                 else
+                    original = Screenshot.Decompress(screencapture);
+                if (!File.Exists(findPath))
                 {
-                    Image<Bgr, byte> source = new Image<Bgr, byte>(original);
-                    Image<Bgr, byte> template = new Image<Bgr, byte>(findPath);
-                    using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
+                    Variables.AdvanceLog("Unable to find image " + findPath.Split('\\').Last() + ", image path not valid", lineNumber, caller);
+                    return null;
+                }
+                try
+                {
+                    if (GrayStyle)
                     {
-                        result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
-                        // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
-                        if (maxValues[0] > 0.9)
+                        Image<Gray, byte> source = new Image<Gray, byte>(original);
+                        Image<Gray, byte> template = new Image<Gray, byte>(findPath);
+                        using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
                         {
-                            s.Stop();
-                            Variables.AdvanceLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms",lineNumber,caller);
-                            return maxLocations[0];
+                            result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
+                            // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
+                            if (maxValues[0] > 0.9)
+                            {
+                                s.Stop();
+                                Variables.AdvanceLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber, caller);
+                                return maxLocations[0];
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Image<Bgr, byte> source = new Image<Bgr, byte>(original);
+                        Image<Bgr, byte> template = new Image<Bgr, byte>(findPath);
+                        using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
+                        {
+                            result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
+                            // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
+                            if (maxValues[0] > 0.9)
+                            {
+                                s.Stop();
+                                Variables.AdvanceLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber, caller);
+                                return maxLocations[0];
+                            }
                         }
                     }
                 }
+                catch (Exception ex)
+                {
+                    Variables.AdvanceLog(ex.ToString());
+                }
+                s.Stop();
+                Variables.AdvanceLog("Image not matched. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber, caller);
+                return null;
             }
-            catch (Exception ex)
-            {
-                Variables.AdvanceLog(ex.ToString());
-            }
-            s.Stop();
-            Variables.AdvanceLog("Image not matched. Used time: " + s.ElapsedMilliseconds + " ms",lineNumber,caller);
-            return null;
         }
         /// <summary>
-        /// Return a Point location of the image in Variables.Image (will return null if not found)
+        /// Return a Point location of the image in screencapture <see cref="Screenshot.ImageCapture(int, string)"/> (will return null if not found)
         /// </summary>
         /// <param name="image">The smaller image for matching</param>
-        /// <param name="screencapture">Original image that need to get the point on it</param>
+        /// <param name="screencapture">Result from <see cref="Screenshot.ImageCapture(int, string)"/></param>
         /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
         /// <returns>Point or null</returns>
         public static Point? FindImage(byte[] screencapture, byte[] image, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
@@ -980,7 +1038,7 @@ namespace BotFramework
             }
             return FindImage(Screenshot.Decompress(screencapture), Screenshot.Decompress(image), GrayStyle);
         }
-        
+
         /// <summary>
         /// Force emulator keep potrait
         /// </summary>
@@ -1050,8 +1108,6 @@ namespace BotFramework
                 }
             }
         }
-
-        private static readonly Random rnd = new Random();
         /// <summary>
         /// Add delays on script with human like randomize
         /// </summary>
@@ -1074,7 +1130,7 @@ namespace BotFramework
                 mintime = 1;
             if (maxtime < 1)
                 maxtime = 1;
-            Thread.Sleep(rnd.Next(mintime, maxtime));
+            Thread.Sleep(Instance.rnd.Next(mintime, maxtime));
         }
         /// <summary>
         /// Add delays on script with human like randomize

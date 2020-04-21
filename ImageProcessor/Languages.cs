@@ -15,26 +15,42 @@ namespace BotFramework
         /// <summary>
         /// The path to language ini files
         /// </summary>
-        public static string LanguagePath {private get; set;}
+        public string LanguagePath {private get; set;}
         /// <summary>
         /// The ini files detected after LoadLanguages
         /// </summary>
-        public static string[] LanguageInis { get; private set; }
+        public string[] LanguageInis { get; private set; }
 
-        private static Dictionary<string, string> LanguageKeyValue = new Dictionary<string, string>();
+        private Dictionary<string, string> LanguageKeyValue = new Dictionary<string, string>();
+        /// <summary>
+        /// The singleton instance
+        /// </summary>
+        public static Languages Instance
+        {
+            get
+            {
+                if(instance == null)
+                {
+                    instance = new Languages();
+                }
+                return instance;
+            }
+        }
+
+        private static Languages instance;
         /// <summary>
         /// Load language files in LanguagePath
         /// </summary>
         /// <param name="language">Default Language file to load</param>
         public static string[] GetLanguages(string language)
         {
-            LanguageKeyValue.Clear();
-            if (LanguagePath == null)
+            Instance.LanguageKeyValue.Clear();
+            if (Instance.LanguagePath == null)
             {
                 throw new ArgumentException("LanguagePath is not set yet!");
             }
-            LanguageInis = Directory.GetFiles(LanguagePath,"*.ini");
-            string[] selectedfile = LanguageInis.Where(ini => ini.Contains(language)).ToArray();
+            Instance.LanguageInis = Directory.GetFiles(Instance.LanguagePath,"*.ini");
+            string[] selectedfile = Instance.LanguageInis.Where(ini => ini.Contains(language)).ToArray();
             if (selectedfile.Count() < 1)//No defult language exist
             {
                 throw new FileNotFoundException("Default Language file not found!");
@@ -47,11 +63,11 @@ namespace BotFramework
                     var splitted = line.Split('=');
                     if(splitted.Count() == 2)
                     {
-                        LanguageKeyValue.Add(splitted[0],splitted[1]);
+                        Instance.LanguageKeyValue.Add(splitted[0],splitted[1]);
                     }
                 }
             }
-            return LanguageInis;
+            return Instance.LanguageInis;
         }
         /// <summary>
         /// Load new language and overwrite old one
@@ -59,14 +75,14 @@ namespace BotFramework
         /// <param name="languagepath">The path to new language, can be loaded from GetLanguage</param>
         public static void LoadLanguage(string languagepath)
         {
-            LanguageKeyValue.Clear();
+            Instance.LanguageKeyValue.Clear();
             var temp = File.ReadAllLines(languagepath);
             foreach (var line in temp)
             {
                 var splitted = line.Split('=');
                 if (splitted.Count() == 2)
                 {
-                    LanguageKeyValue.Add(splitted[0], splitted[1]);
+                    Instance.LanguageKeyValue.Add(splitted[0], splitted[1]);
                 }
             }
         }
@@ -76,7 +92,7 @@ namespace BotFramework
         /// <param name="languageindex">The index number of language which loaded from GetLanguage</param>
         public static void LoadLanguage(int languageindex)
         {
-            LoadLanguage(LanguageInis[languageindex]);
+            LoadLanguage(Instance.LanguageInis[languageindex]);
         }
         /// <summary>
         /// Get value after LoadLanguage
@@ -86,7 +102,7 @@ namespace BotFramework
         /// <returns>Value string</returns>
         public static string GetText(string key, bool throw_exception = false)
         {
-            if (!LanguageKeyValue.ContainsKey(key))
+            if (!Instance.LanguageKeyValue.ContainsKey(key))
             {
                 if (!throw_exception)
                 {
@@ -99,7 +115,7 @@ namespace BotFramework
             }
             else
             {
-                return LanguageKeyValue[key];
+                return Instance.LanguageKeyValue[key];
             }
         }
     }

@@ -92,6 +92,10 @@
             this.Settings = new MetroFramework.Controls.MetroTabPage();
             this.metroTabControl2 = new MetroFramework.Controls.MetroTabControl();
             this.NormalEvent_Tab = new MetroFramework.Controls.MetroTabPage();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.chk_SoulEv = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.Combo_Weapon = new MetroFramework.Controls.MetroComboBox();
             this.ArchwitchEvent_Tab = new MetroFramework.Controls.MetroTabPage();
             this.webBrowser2 = new System.Windows.Forms.WebBrowser();
             this.GuildWar = new System.Windows.Forms.GroupBox();
@@ -103,6 +107,7 @@
             this.btn_absys = new System.Windows.Forms.Button();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.Debug = new MetroFramework.Controls.MetroTabPage();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.btn_SwitchImg = new System.Windows.Forms.Button();
             this.btn_Sleep = new MetroFramework.Controls.MetroButton();
             this.btn_OCR = new MetroFramework.Controls.MetroButton();
@@ -113,10 +118,8 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.chk_Log = new MetroFramework.Controls.MetroCheckBox();
             this.metroLink1 = new MetroFramework.Controls.MetroLink();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.Combo_Weapon = new MetroFramework.Controls.MetroComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.chk_SoulEv = new System.Windows.Forms.CheckBox();
+            this.lbl_adb = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.ED_Box.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.M_Box.SuspendLayout();
@@ -131,6 +134,7 @@
             this.Settings.SuspendLayout();
             this.metroTabControl2.SuspendLayout();
             this.NormalEvent_Tab.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.ArchwitchEvent_Tab.SuspendLayout();
             this.GuildWar.SuspendLayout();
             this.Archwitch.SuspendLayout();
@@ -141,7 +145,6 @@
             this.Script.SuspendLayout();
             this.Info.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // timer2
@@ -264,7 +267,7 @@
             this.lbl_Rank.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.lbl_Rank.Location = new System.Drawing.Point(6, 100);
             this.lbl_Rank.Name = "lbl_Rank";
-            this.lbl_Rank.Size = new System.Drawing.Size(85, 13);
+            this.lbl_Rank.Size = new System.Drawing.Size(91, 13);
             this.lbl_Rank.TabIndex = 40;
             this.lbl_Rank.Text = "当前塔楼排名：";
             // 
@@ -284,7 +287,7 @@
             this.lbl_PT.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.lbl_PT.Location = new System.Drawing.Point(6, 60);
             this.lbl_PT.Name = "lbl_PT";
-            this.lbl_PT.Size = new System.Drawing.Size(85, 13);
+            this.lbl_PT.Size = new System.Drawing.Size(91, 13);
             this.lbl_PT.TabIndex = 38;
             this.lbl_PT.Text = "当前塔楼层数：";
             // 
@@ -602,6 +605,8 @@
             // sysd_box
             // 
             this.sysd_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
+            this.sysd_box.Controls.Add(this.label2);
+            this.sysd_box.Controls.Add(this.lbl_adb);
             this.sysd_box.Controls.Add(this.label4);
             this.sysd_box.Controls.Add(this.label3);
             this.sysd_box.Controls.Add(this.lbl_esph);
@@ -638,7 +643,7 @@
             this.lbl_esph.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.lbl_esph.Location = new System.Drawing.Point(6, 89);
             this.lbl_esph.Name = "lbl_esph";
-            this.lbl_esph.Size = new System.Drawing.Size(130, 13);
+            this.lbl_esph.Size = new System.Drawing.Size(139, 13);
             this.lbl_esph.TabIndex = 20;
             this.lbl_esph.Text = "逍遥模拟器共享文件夹：";
             // 
@@ -648,7 +653,7 @@
             this.lbl_eins.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.lbl_eins.Location = new System.Drawing.Point(6, 29);
             this.lbl_eins.Name = "lbl_eins";
-            this.lbl_eins.Size = new System.Drawing.Size(121, 13);
+            this.lbl_eins.Size = new System.Drawing.Size(127, 13);
             this.lbl_eins.TabIndex = 19;
             this.lbl_eins.Text = "逍遥模拟器安装位置：";
             // 
@@ -813,7 +818,7 @@
             this.metroTabControl1.Controls.Add(this.Info);
             this.metroTabControl1.Location = new System.Drawing.Point(8, 63);
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 1;
+            this.metroTabControl1.SelectedIndex = 2;
             this.metroTabControl1.Size = new System.Drawing.Size(460, 537);
             this.metroTabControl1.Style = MetroFramework.MetroColorStyle.Brown;
             this.metroTabControl1.TabIndex = 32;
@@ -884,6 +889,59 @@
             this.NormalEvent_Tab.VerticalScrollbarBarColor = true;
             this.NormalEvent_Tab.VerticalScrollbarHighlightOnWheel = false;
             this.NormalEvent_Tab.VerticalScrollbarSize = 10;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
+            this.groupBox2.Controls.Add(this.chk_SoulEv);
+            this.groupBox2.Controls.Add(this.label1);
+            this.groupBox2.Controls.Add(this.Combo_Weapon);
+            this.groupBox2.ForeColor = System.Drawing.Color.White;
+            this.groupBox2.Location = new System.Drawing.Point(6, 248);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(423, 100);
+            this.groupBox2.TabIndex = 10;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "战器活动";
+            // 
+            // chk_SoulEv
+            // 
+            this.chk_SoulEv.AutoSize = true;
+            this.chk_SoulEv.Location = new System.Drawing.Point(15, 20);
+            this.chk_SoulEv.Name = "chk_SoulEv";
+            this.chk_SoulEv.Size = new System.Drawing.Size(110, 17);
+            this.chk_SoulEv.TabIndex = 6;
+            this.chk_SoulEv.Text = "自动打最新关卡";
+            this.chk_SoulEv.UseVisualStyleBackColor = true;
+            this.chk_SoulEv.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged_1);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 40);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(67, 13);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "自定义关卡";
+            // 
+            // Combo_Weapon
+            // 
+            this.Combo_Weapon.FormattingEnabled = true;
+            this.Combo_Weapon.ItemHeight = 23;
+            this.Combo_Weapon.Items.AddRange(new object[] {
+            "1-1",
+            "1-2",
+            "1-3",
+            "2-1",
+            "2-2",
+            "2-3",
+            "3-1"});
+            this.Combo_Weapon.Location = new System.Drawing.Point(15, 56);
+            this.Combo_Weapon.Name = "Combo_Weapon";
+            this.Combo_Weapon.Size = new System.Drawing.Size(183, 29);
+            this.Combo_Weapon.TabIndex = 4;
+            this.Combo_Weapon.UseSelectable = true;
+            this.Combo_Weapon.SelectedIndexChanged += new System.EventHandler(this.Combo_Weapon_SelectedIndexChanged);
             // 
             // ArchwitchEvent_Tab
             // 
@@ -1028,6 +1086,7 @@
             // 
             // Debug
             // 
+            this.Debug.Controls.Add(this.checkBox1);
             this.Debug.Controls.Add(this.btn_SwitchImg);
             this.Debug.Controls.Add(this.btn_Sleep);
             this.Debug.Controls.Add(this.btn_OCR);
@@ -1045,6 +1104,19 @@
             this.Debug.VerticalScrollbarBarColor = true;
             this.Debug.VerticalScrollbarHighlightOnWheel = false;
             this.Debug.VerticalScrollbarSize = 10;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.BackColor = System.Drawing.Color.Black;
+            this.checkBox1.ForeColor = System.Drawing.Color.White;
+            this.checkBox1.Location = new System.Drawing.Point(227, 295);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(82, 17);
+            this.checkBox1.TabIndex = 32;
+            this.checkBox1.Text = "图片Debug";
+            this.checkBox1.UseVisualStyleBackColor = false;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged_2);
             // 
             // btn_SwitchImg
             // 
@@ -1155,7 +1227,7 @@
             this.chk_Log.ForeColor = System.Drawing.Color.White;
             this.chk_Log.Location = new System.Drawing.Point(21, 695);
             this.chk_Log.Name = "chk_Log";
-            this.chk_Log.Size = new System.Drawing.Size(110, 15);
+            this.chk_Log.Size = new System.Drawing.Size(114, 15);
             this.chk_Log.TabIndex = 33;
             this.chk_Log.Text = "显示更详细日志";
             this.chk_Log.Theme = MetroFramework.MetroThemeStyle.Dark;
@@ -1173,58 +1245,23 @@
             this.metroLink1.UseSelectable = true;
             this.metroLink1.Click += new System.EventHandler(this.MetroLink1_Click);
             // 
-            // groupBox2
+            // lbl_adb
             // 
-            this.groupBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(19)))));
-            this.groupBox2.Controls.Add(this.chk_SoulEv);
-            this.groupBox2.Controls.Add(this.label1);
-            this.groupBox2.Controls.Add(this.Combo_Weapon);
-            this.groupBox2.ForeColor = System.Drawing.Color.White;
-            this.groupBox2.Location = new System.Drawing.Point(6, 248);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(423, 100);
-            this.groupBox2.TabIndex = 10;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "战器活动";
+            this.lbl_adb.AutoSize = true;
+            this.lbl_adb.Location = new System.Drawing.Point(6, 43);
+            this.lbl_adb.Name = "lbl_adb";
+            this.lbl_adb.Size = new System.Drawing.Size(53, 13);
+            this.lbl_adb.TabIndex = 27;
+            this.lbl_adb.Text = "Adb端口:";
             // 
-            // Combo_Weapon
+            // label2
             // 
-            this.Combo_Weapon.FormattingEnabled = true;
-            this.Combo_Weapon.ItemHeight = 23;
-            this.Combo_Weapon.Items.AddRange(new object[] {
-            "1-1",
-            "1-2",
-            "1-3",
-            "2-1",
-            "2-2",
-            "2-3",
-            "3-1"});
-            this.Combo_Weapon.Location = new System.Drawing.Point(15, 56);
-            this.Combo_Weapon.Name = "Combo_Weapon";
-            this.Combo_Weapon.Size = new System.Drawing.Size(183, 29);
-            this.Combo_Weapon.TabIndex = 4;
-            this.Combo_Weapon.UseSelectable = true;
-            this.Combo_Weapon.SelectedIndexChanged += new System.EventHandler(this.Combo_Weapon_SelectedIndexChanged);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 40);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(67, 13);
-            this.label1.TabIndex = 5;
-            this.label1.Text = "自定义关卡";
-            // 
-            // chk_SoulEv
-            // 
-            this.chk_SoulEv.AutoSize = true;
-            this.chk_SoulEv.Location = new System.Drawing.Point(15, 20);
-            this.chk_SoulEv.Name = "chk_SoulEv";
-            this.chk_SoulEv.Size = new System.Drawing.Size(110, 17);
-            this.chk_SoulEv.TabIndex = 6;
-            this.chk_SoulEv.Text = "自动打最新关卡";
-            this.chk_SoulEv.UseVisualStyleBackColor = true;
-            this.chk_SoulEv.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged_1);
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(65, 43);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(23, 13);
+            this.label2.TabIndex = 28;
+            this.label2.Text = "null";
             // 
             // MainScreen
             // 
@@ -1272,6 +1309,8 @@
             this.Settings.ResumeLayout(false);
             this.metroTabControl2.ResumeLayout(false);
             this.NormalEvent_Tab.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ArchwitchEvent_Tab.ResumeLayout(false);
             this.GuildWar.ResumeLayout(false);
             this.GuildWar.PerformLayout();
@@ -1280,12 +1319,11 @@
             this.OtherSettings_Tab.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.Debug.ResumeLayout(false);
+            this.Debug.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
             this.Script.ResumeLayout(false);
             this.Info.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1379,6 +1417,9 @@
         private System.Windows.Forms.CheckBox chk_SoulEv;
         private System.Windows.Forms.Label label1;
         private MetroFramework.Controls.MetroComboBox Combo_Weapon;
+        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.Label lbl_adb;
+        private System.Windows.Forms.Label label2;
     }
 }
 

@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Drawing;
 using System.IO;
 using System;
 using BotFramework;
@@ -67,7 +68,7 @@ namespace UI
                             return;
                         }
                         Variables.ScriptLog("Main Screen not visible", Color.White);
-                        point = BotCore.FindImage(image, Img.Start_Game, true);
+                        point = BotCore.FindImage(image, Img.Start_Game, false);
                         if (point != null)
                         {
                             Variables.ScriptLog("Start Game Button Located!", Color.Lime);
@@ -202,7 +203,7 @@ namespace UI
                             BotCore.SendSwipe(new Point(925, 576), new Point(614, 26), 1000);
                             break;
                         case 1:
-                            BotCore.SendSwipe(new Point(300, 580), new Point(877, 127), 1000);
+                            BotCore.SendSwipe(new Point(320, 550), new Point(877, 127), 1000);
                             break;
                         case 2:
                             BotCore.SendSwipe(new Point(226, 175), new Point(997, 591), 1000);
@@ -450,7 +451,7 @@ namespace UI
                 if (point != null)
                 {
                     Variables.ScriptLog("Battle Screen found. Starting battle!", Color.Lime);
-                    BotCore.SendTap(point.Value);
+                    BotCore.SendTap(point.Value.X + 140, point.Value.Y);
                     PrivateVariable.Battling = true;
                     PrivateVariable.InEventScreen = true;
                     return;
@@ -758,7 +759,7 @@ namespace UI
                 {
                     return;
                 }
-                point = BotCore.FindImage(image, Img.Start_Game, true);
+                point = BotCore.FindImage(Screenshot.CropImage(image, new Point(340, 535), new Point(385, 585)), Img.Start_Game, true);
                 if (point != null)
                 {
                     BotCore.SendTap(point.Value);

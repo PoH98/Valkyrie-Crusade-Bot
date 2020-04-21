@@ -1,4 +1,4 @@
-﻿using SharpAdbClient;
+﻿    using SharpAdbClient;
 using SharpAdbClient.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -47,6 +47,14 @@ namespace BotFramework
         /// <param name="dllPath">The path to be readed</param>
         public static void ReadScript(string dllPath)
         {
+            if (File.Exists("ImgDebug.txt"))
+            {
+                Variables.ImageDebug = true;
+            }
+            else
+            {
+                Variables.ImageDebug = false;
+            }
             DirectoryInfo dinfo = new DirectoryInfo(dllPath);
             FileInfo[] dlls = new string[] { "*.dll", "*.exe" }.SelectMany(i => dinfo.GetFiles(i)).ToArray();
             if (dlls != null)

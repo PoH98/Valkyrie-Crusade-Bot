@@ -6,6 +6,7 @@ using Emgu.CV;
 using System.Windows.Forms;
 using System.IO;
 using System.Net;
+using System.Linq;
 
 namespace BotFramework
 {
@@ -14,7 +15,21 @@ namespace BotFramework
     /// </summary>
     public class OCR
     {
-        private static Tesseract t;
+        private Tesseract t;
+        private bool NumOnly;
+        private static OCR Instance
+        {
+            get
+            {
+                if(instance == null)
+                {
+                    instance = new OCR();
+                }
+                return instance;
+            }
+        }
+
+        private static OCR instance;
         /// <summary>
         /// OCR the image. Need Prepair OCR first!
         /// </summary>
@@ -23,7 +38,7 @@ namespace BotFramework
         /// <returns></returns>
         public static string OcrImage(byte[] source, string lang)
         {
-            if(t == null)
+            if(Instance.t == null)
             {
                 throw new Exception("Run PrepairOcr First!");
             }
@@ -55,8 +70,13 @@ namespace BotFramework
                     throw new FileNotFoundException("The given ocr data is incomplete or not found!");
                 }
             }
-            t.SetImage(img);
-            return t.GetUTF8Text();
+            Instance.t.SetImage(img);
+            var result = Instance.t.GetUTF8Text();
+            if (Instance.NumOnly)
+            {
+                result = new string(result.Where(Char.IsDigit).ToArray());
+            }
+            return result.Trim();
         }
         /// <summary>
         /// Prepair to OCR
@@ -64,12 +84,13 @@ namespace BotFramework
         /// <param name="lang">Language for OCR</param>
         /// <param name="blacklist">Blacklisted characters while OCR</param>
         /// <param name="whitelist">Only allow these specific characters while OCR</param>
+        /// <param name="numbersonly">Only numbers are allowed in OCR</param>
         /// <returns></returns>
         public static void PrepairOcr(string whitelist = "", string blacklist = "", string lang = "eng", bool numbersonly = false)
         {
-            if (t == null)
+            if (Instance.t == null)
             {
-                t = new Tesseract();
+                Instance.t = new Tesseract();
                 if (!Directory.Exists("C:\\ProgramData\\tessdata"))
                 {
                     Directory.CreateDirectory("C:\\ProgramData\\tessdata");
@@ -92,23 +113,24 @@ namespace BotFramework
                 }
                 if(whitelist.Length > 0)
                 {
-                    t.SetVariable("tessedit_char_whitelist", whitelist);
+                    Instance.t.SetVariable("tessedit_char_whitelist", whitelist);
                 }
                 if (blacklist.Length > 0)
                 {
-                    t.SetVariable("tessedit_char_blacklist", blacklist);
+                    Instance.t.SetVariable("tessedit_char_blacklist", blacklist);
                 }
+                Instance.NumOnly = numbersonly;
                 if (numbersonly)
                 {
-                    t.SetVariable("classify_bln_numeric_mode", "1");
+                    Instance.t.SetVariable("classify_bln_numeric_mode", "1");
                 }
                 else
                 {
-                    t.SetVariable("classify_bln_numeric_mode", "0");
+                    Instance.t.SetVariable("classify_bln_numeric_mode", "0");
                 }
                 try
                 {
-                    t.Init("C:\\ProgramData\\tessdata\\", lang, OcrEngineMode.TesseractOnly);
+                    Instance.t.Init("C:\\ProgramData\\tessdata\\", lang, OcrEngineMode.TesseractOnly);
                 }
                 catch
                 {
