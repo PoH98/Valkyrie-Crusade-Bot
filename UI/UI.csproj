@@ -255,4 +255,11 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>cd $(TargetDir)
+del *.pdb /q
+del *.xml /q
+del *.config /q
+RD /S /Q "$(TargetDir)x64\"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
