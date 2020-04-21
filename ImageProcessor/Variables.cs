@@ -8,7 +8,6 @@ using System.Text;
 using System.Windows.Forms;
 using IniParser;
 using IniParser.Model;
-using IniParser.Parser;
 
 namespace BotFramework
 {
@@ -40,18 +39,13 @@ namespace BotFramework
         /// <summary>
         /// The emulator path that is installed at PC with outputing the emulator enum
         /// </summary>
-        public static void EmulatorPath()
+        public static void LoadEmulator()
         {
             EmulatorLoader.LoadEmulatorInterface();
             if (emulator == null)
             {
                 throw new FileNotFoundException("No supported emulators detected!");
             }
-            if (Instance == "")
-            {
-                Instance = emulator.EmulatorName();
-            }
-            AdbInstance.Instance.profilePath = Instance;
         }
         /// <summary>
         /// The controlled device

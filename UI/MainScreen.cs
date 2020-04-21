@@ -157,7 +157,7 @@ namespace BotFramework
             }
             comboBox1.Items.Clear();
             OCR.PrepairOcr(whitelist: "$0123456789", blacklist: "!?@#$%&*()<>_-+=/:;'\"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
-            Variables.EmulatorPath();
+            Variables.LoadEmulator();
             if (File.Exists("bot.ini"))
             {
                 if (File.Exists(Environment.CurrentDirectory + "\\Profiles\\" + AdbInstance.Instance.profilePath + "\\bot.ini"))

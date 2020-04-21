@@ -66,7 +66,7 @@ namespace MEmu
                         }
                     }
                 }
-                
+                //Found all the path of MEmu
                 if (location != null)
                 {
                     var path = location.ToString().Replace("\0", "");
@@ -120,9 +120,9 @@ namespace MEmu
                     }
                 }
             }
-            catch
+            catch(Exception ex)
             {
-
+                Variables.AdvanceLog(ex.ToString());
             }
             return false;
         }
@@ -142,11 +142,6 @@ namespace MEmu
         {
             try
             {
-                if (!File.Exists(Variables.VBoxManagerPath))
-                {
-                    MessageBox.Show("Unable to locate path of emulator!");
-                    Process.Start("Profiles\\" + AdbInstance.Instance.profilePath + "\\bot.ini");
-                }
                 ProcessStartInfo info = new ProcessStartInfo();
                 info.FileName = Variables.VBoxManagerPath.Replace(@"\MEmuHyperv\MEmuManage.exe", @"\MEmu\MEmuConsole.exe");
                 if (Variables.Instance.Length > 0)

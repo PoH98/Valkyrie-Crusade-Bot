@@ -136,7 +136,6 @@ namespace CustomizeEmulator
             {
                 Variables.ForceWinApiCapt = true;
             }
-            Variables.Instance = "";
             return readsuccess;
         }
         private static void ModifyConfig(string section, string key, string value)

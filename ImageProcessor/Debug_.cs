@@ -18,11 +18,11 @@ namespace BotFramework
         /// </summary>
         public static void PrepairDebug(bool encrypt)
         {
-            if (!Directory.Exists("Profiles\\" + Variables.Instance + "\\Logs\\"))
+            if (!Directory.Exists("Profiles\\Logs\\"))
             {
-                Directory.CreateDirectory(("Profiles\\" + Variables.Instance + "\\Logs\\"));
+                Directory.CreateDirectory("Profiles\\Logs\\");
             }
-            foreach (var file in Directory.GetFiles("Profiles\\" + Variables.Instance + "\\Logs\\"))
+            foreach (var file in Directory.GetFiles("Profiles\\Logs\\"))
             {
                 FileInfo fi = new FileInfo(file);
                 if (fi.Length < 10000)
@@ -36,9 +36,9 @@ namespace BotFramework
             }
             if (FileName == null)
             {
-                FileName = "Profiles\\" + Variables.Instance + "\\Logs\\" + DateTime.Now.ToString().Replace(' ', '_').Replace('/', '_').Replace(':', '_') + ".log";
-                if (!Directory.Exists("Profiles\\" + Variables.Instance + "\\Logs\\"))
-                    Directory.CreateDirectory("Profiles\\" + Variables.Instance + "\\Logs\\");
+                FileName = "Profiles\\Logs\\" + DateTime.Now.ToString().Replace(' ', '_').Replace('/', '_').Replace(':', '_') + ".log";
+                if (!Directory.Exists("Profiles\\Logs\\"))
+                    Directory.CreateDirectory("Profiles\\Logs\\");
                 s = File.AppendText(FileName);
             }
             else

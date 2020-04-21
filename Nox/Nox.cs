@@ -22,31 +22,11 @@ namespace Nox
             RegistryKey reg = Registry.LocalMachine;
             string path;
             var r = reg.OpenSubKey(@"SOFTWARE\BigNox\VirtualBox\");
-            try
+            if(r != null)
             {
-                var result = r.GetValue("InstallDir");
-                if (result != null)
-                {
-                    path = result.ToString();
-                    if (Directory.Exists(path))
-                    {
-                        NoxFile = path;
-                        Variables.VBoxManagerPath = GetRTPath() + "BigNoxVMMgr.exe";
-                        InitNox();
-                        return true;
-                    }
-                }
-            }
-            catch
-            {
-
-            }
-            if (BotCore.Is64BitOperatingSystem())
-            {
-                r = reg.OpenSubKey("SOFTWARE\\Wow6432Node\\DuoDianOnline\\SetupInfo\\");
                 try
                 {
-                    var result = r.GetValue("InstallPath");
+                    var result = r.GetValue("InstallDir");
                     if (result != null)
                     {
                         path = result.ToString();
@@ -59,36 +39,66 @@ namespace Nox
                         }
                     }
                 }
-                catch
+                catch(Exception ex)
                 {
+                    Variables.AdvanceLog(ex.ToString());
+                }
+            }
+            if (BotCore.Is64BitOperatingSystem())
+            {
+                r = reg.OpenSubKey("SOFTWARE\\Wow6432Node\\DuoDianOnline\\SetupInfo\\");
+                if(r != null)
+                {
+                    try
+                    {
+                        var result = r.GetValue("InstallPath");
+                        if (result != null)
+                        {
+                            path = result.ToString();
+                            if (Directory.Exists(path))
+                            {
+                                NoxFile = path;
+                                Variables.VBoxManagerPath = GetRTPath() + "BigNoxVMMgr.exe";
+                                InitNox();
+                                return true;
+                            }
+                        }
+                    }
+                    catch
+                    {
 
+                    }
                 }
             }
             else
             {
                 r = reg.OpenSubKey("SOFTWARE\\DuoDianOnline\\SetupInfo\\");
-                try
+                if(r != null)
                 {
-                    var result = r.GetValue("InstallPath");
-                    if (result != null)
+                    try
                     {
-                        path = result.ToString();
-                        if (Directory.Exists(path))
+                        var result = r.GetValue("InstallPath");
+                        if (result != null)
                         {
-                            NoxFile = path + "\\bin\\Nox.exe";
-                            Variables.VBoxManagerPath = GetRTPath() + "BigNoxVMMgr.exe";
-                            InitNox();
-                            return true;
+                            path = result.ToString();
+                            if (Directory.Exists(path))
+                            {
+                                NoxFile = path + "\\bin\\Nox.exe";
+                                Variables.VBoxManagerPath = GetRTPath() + "BigNoxVMMgr.exe";
+                                InitNox();
+                                return true;
+                            }
                         }
                     }
-                }
-                catch
-                {
+                    catch
+                    {
 
+                    }
                 }
             }
             return false;
         }
+
         private static string GetRTPath()
         {
             var path = Environment.ExpandEnvironmentVariables("%ProgramW6432%") + "\\BigNox\\BigNoxVM\\RT\\";

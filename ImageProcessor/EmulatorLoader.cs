@@ -16,7 +16,6 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace BotFramework
@@ -120,12 +119,12 @@ namespace BotFramework
                     {
                         foreach (var e in emulators)
                         {
-                            if (e.EmulatorName() == EmuSelection_Resource.selected)
+                            if (e.GetType().Name == EmuSelection_Resource.selected)
                             {
                                 Variables.emulator = e;
                                 e.LoadEmulatorSettings();
                                 CheckSharedPath();
-                                File.WriteAllText("Emulators\\Use_Emulator.ini", "use=" + e.EmulatorName());
+                                File.WriteAllText("Emulators\\Use_Emulator.ini", "use=" + e.GetType().Name);
                                 Debug_.WriteLine("[" + DateTime.Now.ToLongTimeString() + "]:Emulator used: " + Variables.emulator.GetType().Name);
                                 return;
                             }
@@ -152,7 +151,7 @@ namespace BotFramework
                     var line = File.ReadAllLines("Emulators\\Use_Emulator.ini")[0].Replace("use=", "");
                     foreach (var e in emulators)
                     {
-                        if (e.EmulatorName() == line)
+                        if (e.GetType().Name == line)
                         {
                             Variables.emulator = e;
                             e.LoadEmulatorSettings();

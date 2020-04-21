@@ -86,10 +86,11 @@ namespace ITools
                 Variables.AndroidSharedPath = "/data/iToolsVMShare/";
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                Variables.AdvanceLog(ex.ToString());
             }
+            return false;
         }
 
         public void SetResolution(int x, int y, int dpi)

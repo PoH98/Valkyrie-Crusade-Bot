@@ -38,7 +38,7 @@ namespace BotFramework
                 MessageBox.Show("Please select a emulator first!\n请选择一个模拟器！");
                 return;
             }
-            EmuSelection_Resource.selected = comboBox1.SelectedItem.ToString();
+            EmuSelection_Resource.selected = EmuSelection_Resource.emu[comboBox1.SelectedIndex].GetType().Name;
             DialogResult = DialogResult.OK;
             Close();
         }
