@@ -37,24 +37,56 @@ namespace MEmu
             try
             {
                 object location = null;
-                if(File.Exists(@"D:\Program Files\Microvirt\MEmu\MEmu.exe"))
+                var drives = DriveInfo.GetDrives();
+                foreach(var d in drives)
                 {
-                    location = @"D:\Program Files\Microvirt";
-                }
-                else if (File.Exists(@"C:\Program Files\Microvirt\MEmu\MEmu.exe"))
-                {
-                    location = @"C:\Program Files\Microvirt";
-                }
-                else
-                {
-                    RegistryKey r;
-                    if (BotCore.Is64BitOperatingSystem())
+                    if (File.Exists(d.Name + @"Program Files\Microvirt\MEmu\MEmu.exe"))
                     {
-                        r = reg.OpenSubKey("SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MEmu");
+                        location = d.Name + @"Program Files\Microvirt";
                     }
-                    else
+                }
+                if(location == null)
+                {
+                    //We will try getting running processes as user might helped us opened it
+                    foreach (var process in Process.GetProcesses().Where(x => x.ProcessName.Contains("MEmu")))
+                    {
+                        if (File.Exists(process.MainModule.FileName) && process.MainModule.FileName.EndsWith("MEmu.exe"))
+                        {
+                            location = process.MainModule.FileName.Replace(@"\MEmu\MEmu.exe", "");
+                            if (BotCore.Is64BitOperatingSystem())
+                            {
+                                RegistryKey r = reg.OpenSubKey("SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MEmu");
+                                if (r == null)
+                                {
+                                    //MEmu didnt have this registered, lets do it for next load we will able to get file easily
+                                    r = reg.CreateSubKey("SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MEmu");
+                                    r.SetValue("InstallLocation", location);
+                                }
+                            }
+                            else
+                            {
+                                RegistryKey r = reg.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MEmu");
+                                if (r == null)
+                                {
+                                    //MEmu didnt have this registered, lets do it for next load we will able to get file easily
+                                    r = reg.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MEmu");
+                                    r.SetValue("InstallLocation", location);
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+                if(location == null)
+                {
+                    RegistryKey r = reg.OpenSubKey("SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MEmu");
+                    if(r == null)
                     {
                         r = reg.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MEmu");
+                    }
+                    if(r == null)
+                    {
+                        return false;
                     }
                     location = r.GetValue("InstallLocation");
                     if(location == null)
@@ -166,6 +198,22 @@ namespace MEmu
                 MessageBox.Show("Error while starting emulator! Error message: " + ex.Message);
                 Process.Start("Profiles\\" + AdbInstance.Instance.profilePath + "\\bot.ini");
                 Environment.Exit(0);
+            }
+        }
+
+        public void UnUnBotify()
+        {
+            try
+            {
+                //Remove 4 files which detect by Unbotify
+                BotCore.AdbCommand("rm -f /system/bin/microvirtd", Variables.Controlled_Device);
+                BotCore.AdbCommand("rm -f /system/etc/init.microvirt.sh", Variables.Controlled_Device);
+                BotCore.AdbCommand("rm -f /system/bin/memud", Variables.Controlled_Device);
+                BotCore.AdbCommand("rm -f /system/lib/memuguest.ko", Variables.Controlled_Device);
+            }
+            catch
+            {
+
             }
         }
     }

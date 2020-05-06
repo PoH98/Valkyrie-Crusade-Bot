@@ -60,9 +60,13 @@ namespace BotFramework
                 var receiver = new ConsoleOutputReceiver();
                 AdbInstance.Instance.client.ExecuteRemoteCommand("dumpsys window windows | grep -E 'mCurrentFocus'", (Variables.Controlled_Device as DeviceData), receiver);
                 Variables.AdvanceLog(receiver.ToString());
-                if (receiver.ToString().Contains(packagename))
+                if (receiver.ToString().Contains(packagename) && !receiver.ToString().ToLower().Contains("error"))
                 {
                     return true;
+                }
+                else if (receiver.ToString().ToLower().Contains("error"))
+                {
+                    AdbInstance.Instance.client.ExecuteRemoteCommand("am force-stop " + receiver.ToString(), (Variables.Controlled_Device as DeviceData), receiver);
                 }
             }
             catch (InvalidOperationException)
@@ -209,8 +213,34 @@ namespace BotFramework
             {
                 return;
             }
-            int pressure = Instance.rnd.Next(300, 500);
-            string cmd = $"d 0 {(x * Variables.ClickPointMultiply).ToString("0")} {(y * Variables.ClickPointMultiply).ToString("0")} {(pressure * Variables.ClickPointMultiply).ToString("0")}\nc\nu 0\nc\n";
+            int pressure = Instance.rnd.Next(200, 500);
+            int rndX = Convert.ToInt32(x * Variables.ClickPointMultiply);
+            if (Variables.RandomClickX && rndX >= 10 && rndX <= Variables.EmulatorWidth)
+            {
+                rndX = Instance.rnd.Next(rndX - 10, rndX + 10);
+            }
+            else if (Variables.RandomClickX && rndX <= Variables.EmulatorWidth)
+            {
+                rndX = Instance.rnd.Next(rndX, rndX + 10);
+            }
+            else if (Variables.RandomClickX)
+            {
+                rndX = Instance.rnd.Next(rndX + 10, rndX);
+            }
+            int rndY = Convert.ToInt32(y * Variables.ClickPointMultiply);
+            if (Variables.RandomClickY && rndY >= 10 && rndY <= Variables.EmulatorHeight)
+            {
+                rndY = Instance.rnd.Next(rndY - 10, rndY + 10);
+            }
+            else if (Variables.RandomClickY && rndY <= Variables.EmulatorHeight)
+            {
+                rndY = Instance.rnd.Next(rndY, rndY + 10);
+            }
+            else if (Variables.RandomClickX)
+            {
+                rndX = Instance.rnd.Next(rndY + 10, rndY);
+            }
+            string cmd = $"d 0 {rndX.ToString("0")} {rndY.ToString("0")} {(pressure * Variables.ClickPointMultiply).ToString("0")}\nc\nu 0\nc\n";
             Minitouch(cmd);
         }
         /// <summary>
@@ -268,22 +298,7 @@ namespace BotFramework
         /// </summary>
         public static bool Is64BitOperatingSystem()
         {
-            // Check if this process is natively an x64 process. If it is, it will only run on x64 environments, thus, the environment must be x64.
-            if (IntPtr.Size == 8)
-                return true;
-            // Check if this process is an x86 process running on an x64 environment.
-            IntPtr moduleHandle = DllImport.GetModuleHandle("kernel32");
-            if (moduleHandle != IntPtr.Zero)
-            {
-                IntPtr processAddress = DllImport.GetProcAddress(moduleHandle, "IsWow64Process");
-                if (processAddress != IntPtr.Zero)
-                {
-                    if (DllImport.IsWow64Process(DllImport.GetCurrentProcess(), out bool result) && result)
-                        return true;
-                }
-            }
-            // The environment must be an x86 environment.
-            return false;
+            return Environment.Is64BitOperatingSystem;
         }
         /// <summary>
         /// Get color of location in screenshots
@@ -1100,6 +1115,10 @@ namespace BotFramework
             }
             if (!AdbInstance.Instance.socket.Connected)
                 AdbInstance.Instance.socket = new AdbSocket(new IPEndPoint(IPAddress.Parse("127.0.0.1"), Adb.CurrentPort));
+            ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
+            to = to.Replace("\\", "/");
+            AdbInstance.Instance.client.ExecuteRemoteCommand("mount -o remount rw " + to.Remove(to.LastIndexOf('/')), (Variables.Controlled_Device as DeviceData), receiver);
+            Variables.AdvanceLog(receiver.ToString());
             using (SyncService service = new SyncService(AdbInstance.Instance.socket, (Variables.Controlled_Device as DeviceData)))
             {
                 using (Stream stream = File.OpenRead(from))

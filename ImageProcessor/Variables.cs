@@ -250,5 +250,13 @@ namespace BotFramework
         /// Some emulator might contains larger resolution which need to set the multiplier
         /// </summary>
         public static decimal ClickPointMultiply = 1;
+        /// <summary>
+        /// This will make sure all the clicks will be randomly +-10px in X-axis, which won't always be the same point
+        /// </summary>
+        public static bool RandomClickX = true;
+        /// <summary>
+        /// This will make sure all the clicks will be randomly +-10px in Y-axis, which won't always be the same point
+        /// </summary>
+        public static bool RandomClickY = true;
     }
 }

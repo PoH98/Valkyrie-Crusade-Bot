@@ -118,6 +118,10 @@ namespace Nox
                 {
                     path = value.ToString();
                 }
+                else
+                {
+                    path = string.Empty;
+                }
             }
             return path;
         }
@@ -245,6 +249,11 @@ namespace Nox
         public string EmulatorProcessName()
         {
             return "Nox|夜神模拟器";
+        }
+
+        public void UnUnBotify()
+        {
+            
         }
     }
 }

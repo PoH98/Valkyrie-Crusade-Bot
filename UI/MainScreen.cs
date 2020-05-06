@@ -762,6 +762,10 @@ namespace BotFramework
                                 DllImport.SetParent(Variables.Proc.MainWindowHandle, panel3.Handle);
                             });
                             tp.Invoke((MethodInvoker)delegate { tp.BringToFront(); });
+                            panel3.Invoke((MethodInvoker)delegate
+                            {
+                                DllImport.SetParent(Variables.Proc.MainWindowHandle, panel3.Handle);
+                            });
                             Docked = true;
                         }
                         if (rect.X != -1 || rect.Y != -30)

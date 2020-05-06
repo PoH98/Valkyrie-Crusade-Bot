@@ -356,17 +356,20 @@ namespace BotFramework
                 {
                     return;
                 }
-                foreach (var p in Process.GetProcesses().Where(x => Variables.emulator.EmulatorProcessName().Split('|').Contains(x.ProcessName)))
+                foreach (var p in Process.GetProcesses().Where(x => Variables.emulator.EmulatorProcessName().ToLower().Split('|').Contains(x.ProcessName.ToLower())))
                 {
                     string command = GetCommandLineOfProcess(p);
                     Variables.AdvanceLog(command);
-                    if (command.EndsWith(Variables.Instance))
+                    if (Variables.Instance.Length > 0)
                     {
-                        Variables.Proc = p;
-                        Variables.ScriptLog("Emulator ID: " + p.Id, Color.DarkGreen);
-                        break;
+                        if (command.ToLower().EndsWith(Variables.Instance.ToLower()))
+                        {
+                            Variables.Proc = p;
+                            Variables.ScriptLog("Emulator ID: " + p.Id, Color.DarkGreen);
+                            break;
+                        }
                     }
-                    else if (command.Contains(Variables.emulator.EmulatorDefaultInstanceName()))
+                    else if (command.ToLower().EndsWith(Variables.emulator.EmulatorDefaultInstanceName().ToLower()))
                     {
                         Variables.Proc = p;
                         Variables.ScriptLog("Emulator ID: " + p.Id, Color.DarkGreen);
@@ -427,17 +430,25 @@ namespace BotFramework
                             }
                             catch(AdbException ex)
                             {
-                                if (ex.ToString().Contains("Offline"))
+                                if (ex.ToString().ToLower().Contains("offline"))
                                 {
-                                    //Replace old adb
-                                    var oldAdb = Directory.GetFiles(Variables.VBoxManagerPath).Where(x => x.EndsWith("adb.exe"));
-                                    if (oldAdb.Count() > 0)
+                                    try
                                     {
-                                        foreach (var adb in oldAdb)
+                                        //Replace old adb
+                                        var oldAdb = Directory.GetFiles(Variables.VBoxManagerPath).Where(x => x.EndsWith("adb.exe"));
+                                        if (oldAdb.Count() > 0)
                                         {
-                                            File.Move(adb, adb.Replace(".exe", ".bak"));
+                                            foreach (var adb in oldAdb)
+                                            {
+                                                File.Move(adb, adb.Replace(".exe", ".bak"));
+                                            }
                                         }
                                     }
+                                    catch
+                                    {
+
+                                    }
+
                                     error = 20;
                                 }
                             }
@@ -465,6 +476,8 @@ namespace BotFramework
                 } while (!Variables.DeviceChanged && error < 10);
                 //Ok, so now we have no device change
                 Variables.DeviceChanged = false;
+                //Here is to crack unbotify system, which used to scan bots
+
             }
             catch (Exception ex)
             {
@@ -473,6 +486,7 @@ namespace BotFramework
                 error++;
                 goto Connect;
             }
+            
             if (Variables.Controlled_Device == null)
             {
                 //Unable to connect device
@@ -481,8 +495,19 @@ namespace BotFramework
                 RestartEmulator();
                 return;
             }
-            AdbInstance.Instance.client.ExecuteRemoteCommand("settings put system font_scale 1.0", (Variables.Controlled_Device as DeviceData), receiver);
-            AdbInstance.Instance.client.ExecuteRemoteCommand("getprop ro.product.locale", (Variables.Controlled_Device as DeviceData), receiver);
+            try
+            {
+                AdbInstance.Instance.client.ExecuteRemoteCommand("settings put system font_scale 1.0", (Variables.Controlled_Device as DeviceData), receiver);
+                AdbInstance.Instance.client.ExecuteRemoteCommand("getprop ro.product.locale", (Variables.Controlled_Device as DeviceData), receiver);
+            }
+            catch(AdbException ex)
+            {
+                if(ex.ToString().Contains("not found"))
+                {
+                    StartAdb();
+                    AdbInstance.Instance.client.Connect(new DnsEndPoint("127.0.0.1", Convert.ToInt32(Variables.AdbIpPort.Split(':').Last())));
+                }
+            }
             Variables.AdvanceLog(receiver.ToString().Trim());
             if (!receiver.ToString().Contains("zh-Hans"))
             {
@@ -508,7 +533,7 @@ namespace BotFramework
             }
             catch
             {
-
+                AdbInstance.Instance.minitouchSocket = new TcpSocket();
             }
             ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
             var path = Path.GetTempPath() + "minitouch";
@@ -530,6 +555,14 @@ namespace BotFramework
                     }
                 }
                 File.WriteAllLines(path, newports.Where(y => !string.IsNullOrEmpty(y)).ToArray());
+            }
+            try
+            {
+                AdbInstance.Instance.client.ExecuteRemoteCommand("find /data/local/tmp/ -maxdepth 1 -type f -delete", (Variables.Controlled_Device as DeviceData), receiver);
+            }
+            catch(Exception ex)
+            {
+                Variables.AdvanceLog("Unable to delete temp minitouch file, will try at next round!");
             }
             if (Variables.SharedPath != "")
             {
@@ -607,7 +640,17 @@ namespace BotFramework
                 return;
             }
             Variables.AdvanceLog("Connecting Minitouch", lineNumber, caller);
-            BotCore.Push(Environment.CurrentDirectory + "//adb//minitouch", "/data/local/tmp/minitouch", 777);
+            string rndMiniTouch = Path.GetRandomFileName();
+            ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
+            try
+            {
+                AdbInstance.Instance.client.ExecuteRemoteCommand("find /data/local/tmp/ -maxdepth 1 -type f -delete", (Variables.Controlled_Device as DeviceData), receiver);
+            }
+            catch
+            {
+                Variables.AdvanceLog("Unable to delete temp minitouch file, will try at next round!");
+            }
+            BotCore.Push(Environment.CurrentDirectory + "//adb//minitouch", "/data/local/tmp/" + rndMiniTouch, 777);
             try
             {
                 int error = 0;
@@ -637,8 +680,7 @@ namespace BotFramework
                     return;
                 }
             Cm:
-                ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
-                AdbInstance.Instance.client.ExecuteRemoteCommandAsync("/data/local/tmp/minitouch", (Variables.Controlled_Device as DeviceData), receiver, CancellationToken.None, int.MaxValue);
+                AdbInstance.Instance.client.ExecuteRemoteCommandAsync("/data/local/tmp/" + rndMiniTouch, (Variables.Controlled_Device as DeviceData), receiver, CancellationToken.None, int.MaxValue);
                 AdbInstance.Instance.client.CreateForward((Variables.Controlled_Device as DeviceData), ForwardSpec.Parse($"tcp:{AdbInstance.Instance.minitouchPort}"), ForwardSpec.Parse("localabstract:minitouch"), true);
                 AdbInstance.Instance.minitouchSocket = new TcpSocket();
                 AdbInstance.Instance.minitouchSocket.Connect(new IPEndPoint(IPAddress.Parse("127.0.0.1"), AdbInstance.Instance.minitouchPort));

@@ -35,5 +35,9 @@
         /// </summary>
         /// <returns></returns>
         string EmulatorProcessName();
+        /// <summary>
+        /// Un Unbotify system
+        /// </summary>
+        void UnUnBotify();
     }
 }

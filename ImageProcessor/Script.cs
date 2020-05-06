@@ -156,10 +156,28 @@ namespace BotFramework
                                 BotCore.Delay(3000);
                                 goto Start;
                             }
-                            EmulatorLoader.RestartEmulator();
-                            BotCore.Delay(10000);
-                            EmulatorLoader.ConnectAndroidEmulator();
-                            script.ResetScript();
+                            try
+                            {
+                                EmulatorLoader.RestartEmulator();
+                                BotCore.Delay(10000);
+                                EmulatorLoader.ConnectAndroidEmulator();
+                                script.ResetScript();
+                            }
+                            catch (Exception ex2)
+                            {
+                                if (ex2 is SocketException || ex2 is DeviceNotFoundException || ex2 is AdbException)
+                                {
+                                    goto Start;
+                                }
+                                else if (ex is ThreadAbortException) //Bot stopped
+                                {
+
+                                }
+                                else
+                                {
+                                    ThrowException(ex2);
+                                }
+                            }
                             continue;
                         }
                         else if (ex is ThreadAbortException) //Bot stopped
