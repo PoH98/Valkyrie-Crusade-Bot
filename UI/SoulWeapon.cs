@@ -239,7 +239,7 @@ namespace UI
                 BotCore.Delay(1500);
                 VCBotScript.image = Screenshot.ImageCapture();
             }
-            while (BotCore.RGBComparer( new Point(400, 400), Color.Black, 10));
+            while (BotCore.RGBComparer(new Point(400, 400), Color.Black, 10, VCBotScript.image));
             Variables.ScriptLog("Running stage!", Color.Lime);
             int error = 0;
             do
@@ -251,7 +251,7 @@ namespace UI
                 if (buttons != null)
                 {
                     ArchwitchEvent.CheckWalkEnergy();
-                    if (ArchwitchEvent.CurrentWalkEnergy < 15)
+                    if (ArchwitchEvent.CurrentWalkEnergy < 15 || (ArchwitchEvent.CurrentBossEnergy < 3 && ArchwitchEvent.FullBossEnergy > 0))
                     {
                         //No energy
                         Variables.ScriptLog("SoulWeapon Event have no energy. Exiting now! ", Color.Yellow);
@@ -287,19 +287,6 @@ namespace UI
                 if (buttons != null)
                 {
                     ArchwitchEvent.CheckBossEnergy();
-                    if (ArchwitchEvent.CurrentBossEnergy < 3)
-                    {
-                        Variables.ScriptLog("SoulWeapon Event have no energy. Exiting now! ", Color.Yellow);
-                        TimeSpan delay = new TimeSpan(0, ((ArchwitchEvent.FullBossEnergy - ArchwitchEvent.CurrentBossEnergy) * 15), 0);
-                        VCBotScript.nextOnline = DateTime.Now + delay;
-                        Variables.ScriptLog("Estimate online time is " + VCBotScript.nextOnline, Color.Lime);
-                        BotCore.KillGame(VCBotScript.game);
-                        BotCore.Delay(delay);
-                        PrivateVariable.InEventScreen = false;
-                        PrivateVariable.InMainScreen = false;
-                        BotCore.StartGame(VCBotScript.game + VCBotScript.activity);
-                        return;
-                    }
                     BotCore.SendTap(buttons.Value.X + rnd.Next(430, 845), buttons.Value.Y + rnd.Next(370, 420));
                     BotCore.Delay(2000, 3000);
                     PrivateVariable.Battling = true;

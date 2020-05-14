@@ -56,10 +56,17 @@ namespace UI
                 {
                     var crop = Screenshot.CropImage(image, new Point(315, 150), new Point(1005, 700));
                     Point? point = BotCore.FindImage(crop, Img.GreenButton, false);
-                    if (point != null)
+                    if (point != null && !BotCore.RGBComparer(new Point(116, 37), Color.FromArgb(36, 8, 39), 15, image))
                     {
                         BotCore.SendTap(point.Value.X + 315, point.Value.Y + 150);
                         x--;
+                    }
+                    // We are inside draw card page!!
+                    else if(point != null)
+                    {
+                        Variables.ScriptLog("Unexpected UI found! Restarting game!", Color.Red);
+                        BotCore.KillGame(game);
+                        return;
                     }
                     if (BotCore.FindImage(image, Img.MainScreen, true) == null)
                     {
@@ -69,7 +76,7 @@ namespace UI
                         }
                         Variables.ScriptLog("Main Screen not visible", Color.White);
                         point = BotCore.FindImage(image, Img.Start_Game, false);
-                        if (point != null)
+                        if (point != null && BotCore.RGBComparer(new Point(379, 642), Color.FromArgb(37,37,37), 15, image))
                         {
                             Variables.ScriptLog("Start Game Button Located!", Color.Lime);
                             BotCore.SendTap(point.Value);

@@ -225,7 +225,14 @@ namespace BotFramework
             }
             else if (Variables.RandomClickX)
             {
-                rndX = Instance.rnd.Next(rndX + 10, rndX);
+                if(rndX - 10 > 0)
+                {
+                    rndX = Instance.rnd.Next(rndX - 10, rndX);
+                }
+                else
+                {
+                    rndX = Instance.rnd.Next(rndX, rndX + 10);
+                }
             }
             int rndY = Convert.ToInt32(y * Variables.ClickPointMultiply);
             if (Variables.RandomClickY && rndY >= 10 && rndY <= Variables.EmulatorHeight)
@@ -238,7 +245,14 @@ namespace BotFramework
             }
             else if (Variables.RandomClickX)
             {
-                rndX = Instance.rnd.Next(rndY + 10, rndY);
+                if (rndY - 10 > 0)
+                {
+                    rndY = Instance.rnd.Next(rndY - 10, rndY);
+                }
+                else
+                {
+                    rndY = Instance.rnd.Next(rndY, rndY + 10);
+                }
             }
             string cmd = $"d 0 {rndX.ToString("0")} {rndY.ToString("0")} {(pressure * Variables.ClickPointMultiply).ToString("0")}\nc\nu 0\nc\n";
             Minitouch(cmd);
