@@ -35,6 +35,9 @@ namespace BotFramework
 
         private static Point loc;
 
+        [DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        static extern bool InternetSetCookie(string lpszUrlName, string lpszCookieName, string lpszCookieData);
+
         private Thread cap;
 
         private static TransparentPanel tp;
@@ -956,6 +959,18 @@ namespace BotFramework
                     {
                         div.InnerText = "";
                     }
+                    else
+                    {
+                        div.Style = "color:White;background-color:#172636;";
+                    }
+                }
+                foreach (HtmlElement li in webBrowser3.Document.GetElementsByTagName("li"))
+                {
+                    if(li.InnerHtml != null)
+                    {
+                        li.InnerHtml = li.InnerHtml.Replace("<a ", "<a style=\"color:#cfcffc;\" ").Replace("_神女控图鉴搜索", "").Replace("_Valkyrie Crusade Manual","");
+                    }
+
                 }
                 foreach (HtmlElement footer in webBrowser3.Document.GetElementsByTagName("footer"))
                 {
@@ -1110,6 +1125,8 @@ namespace BotFramework
         {
             if (comboBox1.Text == "sch")
             {
+                Cookie temp = new Cookie("va_lang", "zh-cn", "/", ".xldsdr.com");
+                InternetSetCookie("http://www.xldsdr.com/valkyriecrusade", null, temp.ToString() + ";");
                 if (rdb_card.Checked)
                 {
                     if (chk_browser.Checked)
@@ -1127,9 +1144,21 @@ namespace BotFramework
             }
             else
             {
+                Cookie temp = new Cookie("va_lang", "en", "/", ".xldsdr.com");
+                InternetSetCookie("http://www.xldsdr.com/valkyriecrusade", null, temp.ToString() + ";");
                 if (rdb_card.Checked)
                 {
-                    Process.Start("https://valkyriecrusade.fandom.com/wiki/Category:Cards");
+                    if (chk_browser.Checked)
+                    {
+                        Process.Start("http://www.xldsdr.com/valkyriecrusade");
+                    }
+                    else
+                    {
+                        if (webBrowser3.Url != new Uri("http://www.xldsdr.com/valkyriecrusade"))
+                        {
+                            webBrowser3.Navigate(new Uri("http://www.xldsdr.com/valkyriecrusade"));
+                        }
+                    }
                 }
             }
         }

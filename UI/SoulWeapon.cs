@@ -262,6 +262,8 @@ namespace UI
                         BotCore.Delay(delay);
                         PrivateVariable.InEventScreen = false;
                         PrivateVariable.InMainScreen = false;
+                        ArchwitchEvent.CurrentBossEnergy = ArchwitchEvent.FullBossEnergy;
+                        ArchwitchEvent.CurrentWalkEnergy = ArchwitchEvent.FullWalkEnergy;
                         BotCore.StartGame(VCBotScript.game + VCBotScript.activity);
                         return;
                     }
