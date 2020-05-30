@@ -547,11 +547,19 @@ namespace BotFramework
                 {
                     if (port.Length > 0)
                     {
-                        if (Convert.ToInt32(port) != AdbInstance.Instance.minitouchPort)
+                        try
                         {
-                            newports[x] = port;
-                            x++;
+                            if (Convert.ToInt32(port) != AdbInstance.Instance.minitouchPort)
+                            {
+                                newports[x] = port;
+                                x++;
+                            }
                         }
+                        catch
+                        {
+                            newports[x] = "";
+                        }
+
                     }
                 }
                 File.WriteAllLines(path, newports.Where(y => !string.IsNullOrEmpty(y)).ToArray());
