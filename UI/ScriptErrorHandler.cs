@@ -59,10 +59,11 @@ namespace UI
         //Reset back to just started the script
         public static void Reset(string log)
         {
-            PrivateVariable.InMainScreen = false;
-            PrivateVariable.InEventScreen = false;
-            PrivateVariable.Battling = false;
-            PrivateVariable.InMap = false;
+            PrivateVariable.Instance.InMainScreen = false;
+            PrivateVariable.Instance.InEventScreen = false;
+            PrivateVariable.Instance.Battling = false;
+            PrivateVariable.Instance.InMap = false;
+            PrivateVariable.Instance.LocatedGuildWar = false;
             Variables.ScriptLog(log,Color.Yellow);
         }
     }

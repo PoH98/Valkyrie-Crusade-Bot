@@ -30,12 +30,12 @@ namespace UI
                 VCBotScript.Tower_Floor = OCR.OcrImage(Screenshot.CropImage(image, new Point(280, 110), new Point(440, 145)), "eng");
                 VCBotScript.Tower_Rank = OCR.OcrImage(Screenshot.CropImage(image, new Point(280, 145), new Point(410, 170)), "eng");
                 Variables.ScriptLog("Tower Event Found!", Color.Lime);
-                PrivateVariable.InEventScreen = true;
+                PrivateVariable.Instance.InEventScreen = true;
             }
             else
             {
-                PrivateVariable.InMainScreen = false;
-                PrivateVariable.InEventScreen = false;
+                PrivateVariable.Instance.InMainScreen = false;
+                PrivateVariable.Instance.InEventScreen = false;
                 return;
             }
             image = Screenshot.ImageCapture();
@@ -50,7 +50,7 @@ namespace UI
             if (VCBotScript.energy == 0)
             {
                 Variables.ScriptLog("Waiting for energy", Color.Yellow);
-                if (PrivateVariable.TakePartInNormalStage)
+                if (PrivateVariable.Instance.TakePartInNormalStage)
                 {
                     BotCore.SendTap(1218, 662);
                     BotCore.Delay(400, 600);
@@ -58,7 +58,7 @@ namespace UI
                 }
                 else
                 {
-                    if (PrivateVariable.Use_Item)
+                    if (PrivateVariable.Instance.Use_Item)
                     {
                         if (VCBotScript.runes == 5)
                         {
@@ -68,9 +68,9 @@ namespace UI
                         {
                             Variables.ScriptLog("Close game and wait for energy because of no energy left", Color.White);
                             VCBotScript.NoEnergy();
-                            PrivateVariable.InEventScreen = false;
-                            PrivateVariable.InMainScreen = false;
-                            PrivateVariable.Battling = false;
+                            PrivateVariable.Instance.InEventScreen = false;
+                            PrivateVariable.Instance.InMainScreen = false;
+                            PrivateVariable.Instance.Battling = false;
                             return;
                         }
                     }
@@ -78,9 +78,9 @@ namespace UI
                     {
                         Variables.ScriptLog("Close game and wait for energy because of no energy left", Color.White);
                         VCBotScript.NoEnergy();
-                        PrivateVariable.InEventScreen = false;
-                        PrivateVariable.InMainScreen = false;
-                        PrivateVariable.Battling = false;
+                        PrivateVariable.Instance.InEventScreen = false;
+                        PrivateVariable.Instance.InMainScreen = false;
+                        PrivateVariable.Instance.Battling = false;
                         return;
                     }
                 }
@@ -313,7 +313,7 @@ namespace UI
                     BotCore.SendTap(640, 400); //Tap away Round Battle Text
                     BotCore.Delay(2000, false);
                     VCBotScript.stop.Start();
-                    PrivateVariable.Battling = true;
+                    PrivateVariable.Instance.Battling = true;
                     VCBotScript.energy--; //Calculate Energy used
                     if (VCBotScript.nextOnline < DateTime.Now)
                     {
@@ -343,7 +343,7 @@ namespace UI
                 image = Screenshot.ImageCapture();
                 ScriptErrorHandler.ErrorHandle();
             }
-            while (!PrivateVariable.Battling);
+            while (!PrivateVariable.Instance.Battling);
 
         }
     }

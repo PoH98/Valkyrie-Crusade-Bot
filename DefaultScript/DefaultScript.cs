@@ -38,7 +38,7 @@ namespace DefaultScript
                 switch (index)
                 {
                     case 0:
-                        if (!cboxchecked[index] || PrivateVariable.VCevent != PrivateVariable.EventType.Tower)
+                        if (!cboxchecked[index] || PrivateVariable.Instance.VCevent != PrivateVariable.EventType.Tower)
                         {
                             byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(176, 356), new Point(330, 611));
                             /*foreach (var f in PrivateVariable.Skills)
@@ -68,7 +68,7 @@ namespace DefaultScript
 
                                 }
                             }*/
-                            var results = BotCore.FindImages(crop, PrivateVariable.Skills, false, true);
+                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, true);
                             if(results != null)
                             {
                                 Variables.ScriptLog("Skill actived", Color.Blue);
@@ -110,7 +110,7 @@ namespace DefaultScript
 
                                 }
                             }*/
-                            var results = BotCore.FindImages(crop, PrivateVariable.Skills, false, true);
+                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, true);
                             if (results != null)
                             {
                                 Variables.ScriptLog("Skill actived", Color.Blue);
@@ -124,7 +124,7 @@ namespace DefaultScript
                         }
                         break;
                     case 1:
-                        if (!cboxchecked[index] || PrivateVariable.VCevent != PrivateVariable.EventType.ArchWitch)
+                        if (!cboxchecked[index] || PrivateVariable.Instance.VCevent != PrivateVariable.EventType.ArchWitch)
                         {
                             byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(357, 356), new Point(543, 610));
                             /*foreach (var f in PrivateVariable.Skills)
@@ -154,7 +154,7 @@ namespace DefaultScript
 
                                 }
                             }*/
-                            var results = BotCore.FindImages(crop, PrivateVariable.Skills, false, true);
+                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, true);
                             if (results != null)
                             {
                                 Variables.ScriptLog("Skill actived", Color.Blue);
@@ -200,7 +200,7 @@ namespace DefaultScript
                                     }
                                 }
                             }*/
-                            var results = BotCore.FindImages(crop, PrivateVariable.Skills, false, true);
+                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, true);
                             if (results != null)
                             {
                                 Variables.ScriptLog("Skill actived", Color.Blue);
@@ -214,7 +214,7 @@ namespace DefaultScript
                         }
                         break;
                     case 2:
-                        if (!cboxchecked[index] || PrivateVariable.VCevent != PrivateVariable.EventType.ArchWitch)
+                        if (!cboxchecked[index] || PrivateVariable.Instance.VCevent != PrivateVariable.EventType.ArchWitch)
                         {
                             byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(546, 376), new Point(724, 597));
                             /*foreach (var f in PrivateVariable.Skills)
@@ -244,7 +244,7 @@ namespace DefaultScript
 
                                 }
                             }*/
-                            var results = BotCore.FindImages(crop, PrivateVariable.Skills, false, true);
+                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, true);
                             if (results != null)
                             {
                                 Variables.ScriptLog("Skill actived", Color.Blue);
@@ -290,7 +290,7 @@ namespace DefaultScript
                                     }
                                 }
                             }*/
-                            var results = BotCore.FindImages(crop, PrivateVariable.Skills, false, true);
+                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, true);
                             if (results != null)
                             {
                                 Variables.ScriptLog("Skill actived", Color.Blue);
@@ -304,7 +304,7 @@ namespace DefaultScript
                         }
                         break;
                     case 3:
-                        if (!cboxchecked[index] || PrivateVariable.VCevent != PrivateVariable.EventType.ArchWitch)
+                        if (!cboxchecked[index] || PrivateVariable.Instance.VCevent != PrivateVariable.EventType.ArchWitch)
                         {
                             byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(761, 356), new Point(921, 613));
                             /*foreach (var f in PrivateVariable.Skills)
@@ -334,7 +334,7 @@ namespace DefaultScript
 
                                 }
                             }*/
-                            var results = BotCore.FindImages(crop, PrivateVariable.Skills, false, true);
+                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, true);
                             if (results != null)
                             {
                                 Variables.ScriptLog("Skill actived", Color.Blue);
@@ -380,7 +380,7 @@ namespace DefaultScript
                                     }
                                 }
                             }*/
-                            var results = BotCore.FindImages(crop, PrivateVariable.Skills, false, true);
+                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, true);
                             if (results != null)
                             {
                                 Variables.ScriptLog("Skill actived", Color.Blue);
@@ -394,7 +394,7 @@ namespace DefaultScript
                         }
                         break;
                     case 4:
-                        if (!cboxchecked[index] || PrivateVariable.VCevent != PrivateVariable.EventType.ArchWitch)
+                        if (!cboxchecked[index] || PrivateVariable.Instance.VCevent != PrivateVariable.EventType.ArchWitch)
                         {
                             byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(934, 356), new Point(1090, 578));
                             /*foreach (var f in PrivateVariable.Skills)
@@ -424,7 +424,7 @@ namespace DefaultScript
 
                                 }
                             }*/
-                            var results = BotCore.FindImages(crop, PrivateVariable.Skills, false, true);
+                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, true);
                             if (results != null)
                             {
                                 Variables.ScriptLog("Skill actived", Color.Blue);
@@ -470,7 +470,7 @@ namespace DefaultScript
                                     }
                                 }
                             }*/
-                            var results = BotCore.FindImages(crop, PrivateVariable.Skills, false, true);
+                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, true);
                             if (results != null)
                             {
                                 Variables.ScriptLog("Skill actived", Color.Blue);
@@ -485,7 +485,7 @@ namespace DefaultScript
                         break;
                 }
             }
-            if (PrivateVariable.VCevent == PrivateVariable.EventType.GuildWar && loopCount < 7)
+            if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.GuildWar && loopCount < 7)
             {
                 VCBotScript.image = Screenshot.ImageCapture();
                 if (BotCore.FindImage(VCBotScript.image, ImgXml.Img.GreenButton, false) != null)

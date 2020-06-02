@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Drawing;
 using System.IO;
 using System;
 using BotFramework;
@@ -29,7 +28,7 @@ namespace UI
         {
             Debug_.WriteLine();
             BotCore.Delay(1000, false);
-            PrivateVariable.InMainScreen = false;
+            PrivateVariable.Instance.InMainScreen = false;
             BotCore.Delay(100, 200);
             bool StartGame = false;
             for (int x = 0; x < 30; x++)
@@ -123,7 +122,7 @@ namespace UI
                         {
                             Variables.ScriptLog("Going back to Main screen", Color.Lime);
                             BotCore.SendTap(point.Value);
-                            PrivateVariable.InMainScreen = true;
+                            PrivateVariable.Instance.InMainScreen = true;
                             Variables.ScriptLog("Screen Located", Color.Lime);
                         }
                         point = BotCore.FindImage(image, Img.Menu, true);
@@ -167,9 +166,9 @@ namespace UI
                         Retry++;
                         if (Retry > 5)
                         {
-                            PrivateVariable.InMainScreen = true;
+                            PrivateVariable.Instance.InMainScreen = true;
                             Variables.ScriptLog("Screen Located", Color.White);
-                            if (PrivateVariable.VCevent != PrivateVariable.EventType.GuildWar)
+                            if (PrivateVariable.Instance.VCevent != PrivateVariable.EventType.GuildWar)
                             {
                                 Collect();
                             }
@@ -411,29 +410,29 @@ namespace UI
                 {
                     
                     //Is SoulWeapon Event
-                    PrivateVariable.VCevent = PrivateVariable.EventType.SoulWeapon;
-                    PrivateVariable.InEventScreen = true;
+                    PrivateVariable.Instance.VCevent = PrivateVariable.EventType.SoulWeapon;
+                    PrivateVariable.Instance.InEventScreen = true;
                     return;
                 }
                 if (BotCore.FindImage(image, Img.Locate_Tower, true) != null)
                 {
                     //Is Tower Event
-                    PrivateVariable.VCevent = PrivateVariable.EventType.Tower;
-                    PrivateVariable.InEventScreen = true;
+                    PrivateVariable.Instance.VCevent = PrivateVariable.EventType.Tower;
+                    PrivateVariable.Instance.InEventScreen = true;
                     return;
                 }
-                if (BotCore.FindImage(image, Img.Demon_InEvent, true) != null)
+                if (BotCore.RGBComparer(new Point(824, 651), Color.FromArgb(80, 1, 9), 15) && BotCore.RGBComparer(new Point(466, 673), Color.FromArgb(77, 75, 84), 15))
                 {
                     //Is Demon Event
-                    PrivateVariable.VCevent = PrivateVariable.EventType.DemonRealm;
-                    PrivateVariable.InEventScreen = true;
+                    PrivateVariable.Instance.VCevent = PrivateVariable.EventType.DemonRealm;
+                    PrivateVariable.Instance.InEventScreen = true;
                     return;
                 }
                 if (BotCore.FindImage(image, Img.HellLoc, true) != null)
                 {
                     //Is Demon Event
-                    PrivateVariable.VCevent = PrivateVariable.EventType.DemonRealm;
-                    PrivateVariable.InEventScreen = true;
+                    PrivateVariable.Instance.VCevent = PrivateVariable.EventType.DemonRealm;
+                    PrivateVariable.Instance.InEventScreen = true;
                     return;
                 }
                 if (BotCore.FindImage(image, Img.Archwitch, true) != null)
@@ -450,7 +449,7 @@ namespace UI
                 if (BotCore.FindImage(image, Img.MainScreen, true) != null)
                 {
                     Variables.ScriptLog("Rare error happens, still in main screen!", Color.Red);
-                    PrivateVariable.InMainScreen = false;
+                    PrivateVariable.Instance.InMainScreen = false;
                     return;
                 }
                 crop = Screenshot.CropImage(image, new Point(140, 0), new Point(1160, 720));
@@ -459,8 +458,8 @@ namespace UI
                 {
                     Variables.ScriptLog("Battle Screen found. Starting battle!", Color.Lime);
                     BotCore.SendTap(point.Value.X + 140, point.Value.Y);
-                    PrivateVariable.Battling = true;
-                    PrivateVariable.InEventScreen = true;
+                    PrivateVariable.Instance.Battling = true;
+                    PrivateVariable.Instance.InEventScreen = true;
                     return;
                 }
                 if (error > 5)
@@ -498,11 +497,11 @@ namespace UI
             {
                 Variables.ScriptLog("HP bar not found. Finding UIs", Color.Yellow);
                 Attackable = false;
-                if (PrivateVariable.VCevent == PrivateVariable.EventType.SoulWeapon)
+                if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.SoulWeapon)
                 {
                     if (BotCore.FindImage(image, Img.ArchwitchHunt, true) != null)
                     {
-                        PrivateVariable.Battling = false;
+                        PrivateVariable.Instance.Battling = false;
                         Variables.ScriptLog("Battle Ended!", Color.Lime);
                         stop.Stop();
                         Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
@@ -517,7 +516,7 @@ namespace UI
                         BotCore.SendTap(1067, 54);
                         BotCore.Delay(800);
                         BotCore.SendTap(1224, 42);
-                        PrivateVariable.Battling = false;
+                        PrivateVariable.Instance.Battling = false;
                         Variables.ScriptLog("Battle Ended!", Color.Lime);
                         stop.Stop();
                         Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
@@ -525,7 +524,7 @@ namespace UI
                         return;
                     }
                 }
-                if(PrivateVariable.VCevent == PrivateVariable.EventType.SoulWeapon || PrivateVariable.VCevent == PrivateVariable.EventType.ArchWitch)
+                if(PrivateVariable.Instance.VCevent == PrivateVariable.EventType.SoulWeapon || PrivateVariable.Instance.VCevent == PrivateVariable.EventType.ArchWitch)
                 {
                     BotCore.SendTap(640, 156);
                 }
@@ -541,7 +540,7 @@ namespace UI
                     locateUIError = 0;
                     image = Screenshot.ImageCapture();
                 }
-                if (PrivateVariable.VCevent == PrivateVariable.EventType.SoulWeapon || PrivateVariable.VCevent == PrivateVariable.EventType.ArchWitch)
+                if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.SoulWeapon || PrivateVariable.Instance.VCevent == PrivateVariable.EventType.ArchWitch)
                 {
                     BotCore.SendTap(640, 156);
                 }
@@ -556,7 +555,7 @@ namespace UI
                     locateUIError = 0;
                     return;
                 }
-                if (PrivateVariable.VCevent == PrivateVariable.EventType.SoulWeapon || PrivateVariable.VCevent == PrivateVariable.EventType.ArchWitch)
+                if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.SoulWeapon || PrivateVariable.Instance.VCevent == PrivateVariable.EventType.ArchWitch)
                 {
                     BotCore.SendTap(640, 156);
                 }
@@ -564,13 +563,13 @@ namespace UI
                 {
                     BotCore.SendTap(10, 10);
                 }
-                if (!PrivateVariable.Battling)
+                if (!PrivateVariable.Instance.Battling)
                 {
                     return;
                 }
-                if (BotCore.FindImage(image, Img.Demon_Start, true) != null)
-                {
-                    PrivateVariable.Battling = false;
+                if (BotCore.RGBComparer(new Point(824, 651), Color.FromArgb(80, 1, 9), 15) && BotCore.RGBComparer(new Point(466, 673), Color.FromArgb(77, 75, 84), 15))
+                    {
+                    PrivateVariable.Instance.Battling = false;
                     Variables.ScriptLog("Battle Ended!", Color.Lime);
                     stop.Stop();
                     Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
@@ -579,7 +578,7 @@ namespace UI
                     locateUIError = 0;
                     return;
                 }
-                if (PrivateVariable.VCevent == PrivateVariable.EventType.SoulWeapon || PrivateVariable.VCevent == PrivateVariable.EventType.ArchWitch)
+                if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.SoulWeapon || PrivateVariable.Instance.VCevent == PrivateVariable.EventType.ArchWitch)
                 {
                     BotCore.SendTap(640, 156);
                 }
@@ -587,13 +586,13 @@ namespace UI
                 {
                     BotCore.SendTap(10, 10);
                 }
-                if (!PrivateVariable.Battling)
+                if (!PrivateVariable.Instance.Battling)
                 {
                     return;
                 }
                 if (BotCore.FindImage(image, Img.Locate_Tower, true) != null)
                 {
-                    PrivateVariable.Battling = false;
+                    PrivateVariable.Instance.Battling = false;
                     Variables.ScriptLog("Battle Ended!", Color.Lime);
                     stop.Stop();
                     Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
@@ -601,7 +600,7 @@ namespace UI
                     locateUIError = 0;
                     return;
                 }
-                if (PrivateVariable.VCevent == PrivateVariable.EventType.SoulWeapon || PrivateVariable.VCevent == PrivateVariable.EventType.ArchWitch)
+                if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.SoulWeapon || PrivateVariable.Instance.VCevent == PrivateVariable.EventType.ArchWitch)
                 {
                     BotCore.SendTap(640, 156);
                 }
@@ -609,13 +608,14 @@ namespace UI
                 {
                     BotCore.SendTap(10, 10);
                 }
-                if (!PrivateVariable.Battling)
+                if (!PrivateVariable.Instance.Battling)
                 {
                     return;
                 }
-                if (BotCore.FindImage(image, Img.Demon_InEvent, true) != null)
+                if (BotCore.RGBComparer(new Point(824, 651), Color.FromArgb(80, 1, 9), 10) && BotCore.RGBComparer(new Point(466, 673), Color.FromArgb(77, 75, 84), 10))
                 {
-                    PrivateVariable.Battling = false;
+                    //Is Demon Event
+                    PrivateVariable.Instance.Battling = false;
                     Variables.ScriptLog("Battle Ended!", Color.Lime);
                     stop.Stop();
                     Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
@@ -623,11 +623,11 @@ namespace UI
                     locateUIError = 0;
                     return;
                 }
-                if (!PrivateVariable.Battling)
+                if (!PrivateVariable.Instance.Battling)
                 {
                     return;
                 }
-                if (PrivateVariable.VCevent == PrivateVariable.EventType.SoulWeapon || PrivateVariable.VCevent == PrivateVariable.EventType.ArchWitch)
+                if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.SoulWeapon || PrivateVariable.Instance.VCevent == PrivateVariable.EventType.ArchWitch)
                 {
                     BotCore.SendTap(640, 156);
                 }
@@ -640,13 +640,13 @@ namespace UI
                 if (point != null)
                 {
                     Variables.ScriptLog("Green Button Found!", Color.Lime);
-                    if (PrivateVariable.VCevent == PrivateVariable.EventType.Tower)
+                    if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.Tower)
                     {
                         if (RuneBoss && runes >= 3 && runes != 5 && BotCore.FindImage(image, Img.TowerFinished, true) != null)
                         {
-                            PrivateVariable.InEventScreen = false;
-                            PrivateVariable.InMainScreen = false;
-                            PrivateVariable.Battling = false;
+                            PrivateVariable.Instance.InEventScreen = false;
+                            PrivateVariable.Instance.InMainScreen = false;
+                            PrivateVariable.Instance.Battling = false;
                             Stuck = true;
                             Variables.ScriptLog("Battle Ended!", Color.Lime);
                             stop.Stop();
@@ -660,7 +660,7 @@ namespace UI
                         {
                             if (BotCore.FindImage(image, Img.Locate_Tower, true) != null)
                             {
-                                PrivateVariable.Battling = false;
+                                PrivateVariable.Instance.Battling = false;
                                 Variables.ScriptLog("Battle Ended!", Color.Lime);
                                 stop.Stop();
                                 Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
@@ -671,19 +671,18 @@ namespace UI
                             else
                             {
                                 BotCore.SendTap(point.Value.X + 125, point.Value.Y);
-
                                 BotCore.Delay(1000);
                                 locateUIError = 0;
                                 return;
                             }
                         }
                     }
-                    else if (PrivateVariable.VCevent == PrivateVariable.EventType.DemonRealm)
+                    else if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.DemonRealm)
                     {
                         crop = Screenshot.CropImage(image, new Point(147, 234), new Point(613, 299));
                         if (BotCore.FindImage(crop, Img.DemonEnd, true) != null)
                         {
-                            PrivateVariable.Battling = false;
+                            PrivateVariable.Instance.Battling = false;
                             BotCore.SendTap(point.Value.X + 125, point.Value.Y);
                             Variables.ScriptLog("Battle Ended!", Color.Lime);
                             stop.Stop();
@@ -707,7 +706,7 @@ namespace UI
                         if (BotCore.FindImages(image, new Bitmap[] { Img.SoulArrow, Img.PT, Img.ArchwitchHunt }, true, true) != null)
                         {
                             Variables.ScriptLog("Battle Ended!", Color.Lime);
-                            PrivateVariable.Battling = false;
+                            PrivateVariable.Instance.Battling = false;
                             return;
                         }
                         else
@@ -722,11 +721,11 @@ namespace UI
                 point = BotCore.FindImage(crop, Img.Red_Button, false);
                 if (point != null)
                 {
-                    if (PrivateVariable.VCevent == PrivateVariable.EventType.DemonRealm)
+                    if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.DemonRealm)
                     {
                         if (BotCore.RGBComparer(new Point(133, 35), Color.FromArgb(30, 30, 30), 50, image))
                         {
-                            PrivateVariable.Battling = false;
+                            PrivateVariable.Instance.Battling = false;
                             Variables.ScriptLog("Battle Ended!", Color.Lime);
                             stop.Stop();
                             Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
@@ -735,11 +734,11 @@ namespace UI
                             return;
                         }
                     }
-                    else if (PrivateVariable.VCevent == PrivateVariable.EventType.GuildWar)
+                    else if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.GuildWar)
                     {
                         if (BotCore.FindImage(image, "Img\\GuildWar\\Locate.png", false) != null)
                         {
-                            PrivateVariable.Battling = false;
+                            PrivateVariable.Instance.Battling = false;
                             Variables.ScriptLog("Battle Ended!", Color.Lime);
                             stop.Stop();
                             Variables.ScriptLog("Battle used up " + stop.Elapsed, Color.Lime);
@@ -750,7 +749,7 @@ namespace UI
                     }
                     Variables.ScriptLog("Starting Battle", Color.Lime);
                     BotCore.SendTap(point.Value.X + 125, point.Value.Y);
-                    PrivateVariable.Battling = true;
+                    PrivateVariable.Instance.Battling = true;
                     BotCore.Delay(900, 1000);
                     crop = Screenshot.CropImage(image, new Point(682, 544), new Point(905, 589));
                     if (BotCore.RGBComparer(crop, Color.FromArgb(29, 98, 24), 30))
@@ -762,7 +761,7 @@ namespace UI
                     locateUIError = 0;
                     return;
                 }
-                if (!PrivateVariable.Battling)
+                if (!PrivateVariable.Instance.Battling)
                 {
                     return;
                 }
@@ -770,7 +769,7 @@ namespace UI
                 if (point != null)
                 {
                     BotCore.SendTap(point.Value);
-                    PrivateVariable.Battling = false;
+                    PrivateVariable.Instance.Battling = false;
                     ScriptErrorHandler.Reset("Start Game Button Located!");
                     locateUIError = 0;
                     return;
@@ -779,13 +778,13 @@ namespace UI
                 {
                     Variables.ScriptLog("Start battle", Color.Lime);
                     BotCore.SendTap(959, 656);
-                    PrivateVariable.Battling = true;
+                    PrivateVariable.Instance.Battling = true;
                     locateUIError = 0;
                     return;
                 }
                 /*if (BotCore.RGBComparer(new Point(415, 678), Color.FromArgb(223, 192, 63), 40, image))
                 {
-                    PrivateVariable.Battling = false;
+                    PrivateVariable.Instance.Battling = false;
                     BotCore.Delay(9000, 12000);
                     return;
                 }*/
@@ -822,12 +821,12 @@ namespace UI
                 }
                 else
                 {
-                    if (PrivateVariable.Battling == true && PrivateVariable.VCevent == PrivateVariable.EventType.DemonRealm)
+                    if (PrivateVariable.Instance.Battling == true && PrivateVariable.Instance.VCevent == PrivateVariable.EventType.DemonRealm)
                     {
-                        var point = BotCore.FindImage(image, "Img\\HellLoc.png", false);
+                        var point = BotCore.FindImage(image, Img.HellLoc, false);
                         if (point != null)
                         {
-                            PrivateVariable.Battling = false;
+                            PrivateVariable.Instance.Battling = false;
                             Variables.ScriptLog("Battle Ended!", Color.Lime);
                             return;
                         }
@@ -860,9 +859,9 @@ namespace UI
                 if (Attackable)
                 {
                     Variables.ScriptLog("Locating Skills and enemies", Color.Gold);
-                    if (PrivateVariable.BattleScript.Count > 0)
+                    if (PrivateVariable.Instance.BattleScript.Count > 0)
                     {
-                        PrivateVariable.BattleScript[PrivateVariable.Selected_Script].Attack();
+                        PrivateVariable.Instance.BattleScript[PrivateVariable.Instance.Selected_Script].Attack();
                         BotCore.Delay(300);
                     }
                     CheckEnemy();
@@ -870,7 +869,7 @@ namespace UI
                     for (int x = 0; x < 10; x++)
                     {
                         BotCore.Delay(100, 300);
-                        if (PrivateVariable.VCevent == PrivateVariable.EventType.DemonRealm || PrivateVariable.VCevent == PrivateVariable.EventType.Tower)
+                        if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.DemonRealm || PrivateVariable.Instance.VCevent == PrivateVariable.EventType.Tower)
                         {
                             Random rnd = new Random();
                             BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
@@ -892,7 +891,7 @@ namespace UI
                     return;
                 }
             }
-            while (PrivateVariable.Battling);
+            while (PrivateVariable.Instance.Battling);
         }
         //Get energy
         public static int GetEnergy()
@@ -900,7 +899,7 @@ namespace UI
             Debug_.WriteLine();
             image = Screenshot.ImageCapture();
             int num = 0;
-            if (PrivateVariable.VCevent == PrivateVariable.EventType.Tower)
+            if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.Tower)
             {
                     Color energy = Color.FromArgb(50, 233, 34);
                     if (BotCore.RGBComparer(new Point(417, 535), energy, 30, image))
@@ -925,7 +924,7 @@ namespace UI
                     }
                 
             }
-            else if(PrivateVariable.VCevent == PrivateVariable.EventType.DemonRealm)
+            else if(PrivateVariable.Instance.VCevent == PrivateVariable.EventType.DemonRealm)
             {
                 Color energy = Color.FromArgb(104, 45, 22);
                 if (BotCore.RGBComparer(new Point(208, 445), energy, 30, image))
@@ -985,7 +984,7 @@ namespace UI
         public static int GetRune()
         {
             Debug_.WriteLine();
-            if (PrivateVariable.VCevent == PrivateVariable.EventType.Tower)
+            if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.Tower)
             {
                 int num = 5;
                 if (BotCore.RGBComparer(new Point(945, 207), 118, 117, 118, 30, image))
@@ -1010,22 +1009,22 @@ namespace UI
                 }
                 return num;
             }
-            else if (PrivateVariable.VCevent == PrivateVariable.EventType.DemonRealm)
+            else if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.DemonRealm)
             {
                 int num = 0;
-                if (!BotCore.RGBComparer(new Point(965, 158), 74, 56, 68, 30, image))
+                if (!BotCore.RGBComparer(new Point(970, 149), 98, 120, 140, 30, image))
                 {
                     num++;
                 }
-                if (!BotCore.RGBComparer(new Point(1097, 156), 59, 45, 55, 30, image))
+                if (!BotCore.RGBComparer(new Point(1090, 150), 86, 118, 136, 30, image))
                 {
                     num++;
                 }
-                if (!BotCore.RGBComparer(new Point(974, 250), 67, 49, 54 , 30, image))
+                if (!BotCore.RGBComparer(new Point(961, 253), 65, 74, 84, 30, image))
                 {
                     num++;
                 }
-                if (!BotCore.RGBComparer(new Point(1116, 261), 44, 31, 35, 30, image))
+                if (!BotCore.RGBComparer(new Point(1106, 262), 85, 98, 77, 30, image))
                 {
                     num++;
                 }
@@ -1110,7 +1109,7 @@ namespace UI
                         for (int e = 0; e < 10; e++)
                         {
                             Variables.ScriptLog("Starting Game", Color.Lime);
-                            if (PrivateVariable.biubiu)
+                            if (PrivateVariable.Instance.biubiu)
                             {
                                 BotCore.StartGame("com.njh.biubiu/com.njh.ping.core.business.LauncherActivity");
                                 do
@@ -1153,11 +1152,11 @@ namespace UI
                             }
                         }
                     }
-                    var temp = PrivateVariable.VCevent;
-                    PrivateVariable.VCevent = PrivateVariable.EventType.SoulWeapon;
+                    var temp = PrivateVariable.Instance.VCevent;
+                    PrivateVariable.Instance.VCevent = PrivateVariable.EventType.SoulWeapon;
                     //Enter ArchwitchStage
                     SoulWeapon.SoulWeaponEnter();
-                    PrivateVariable.VCevent = temp;
+                    PrivateVariable.Instance.VCevent = temp;
                 }
             }
             if (Variables.FindConfig("General", "ArWiEv", out conf))
@@ -1170,7 +1169,7 @@ namespace UI
                         for (int e = 0; e < 10; e++)
                         {
                             Variables.ScriptLog("Starting Game", Color.Lime);
-                            if (PrivateVariable.biubiu)
+                            if (PrivateVariable.Instance.biubiu)
                             {
                                 BotCore.StartGame("com.njh.biubiu/com.njh.ping.core.business.LauncherActivity");
                                 do
@@ -1213,11 +1212,11 @@ namespace UI
                             }
                         }
                     }
-                    var temp = PrivateVariable.VCevent;
-                    PrivateVariable.VCevent = PrivateVariable.EventType.ArchWitch;
+                    var temp = PrivateVariable.Instance.VCevent;
+                    PrivateVariable.Instance.VCevent = PrivateVariable.EventType.ArchWitch;
                     //Enter ArchwitchStage
                     ArchwitchEvent.ArchwitchEnter();
-                    PrivateVariable.VCevent = temp;
+                    PrivateVariable.Instance.VCevent = temp;
                 }
             }
             if(DateTime.Now < nextOnline.AddMinutes(-5))
@@ -1261,17 +1260,17 @@ namespace UI
         public static void NoEnergy()
         {
             Debug_.WriteLine();
-            if (PrivateVariable.VCevent == PrivateVariable.EventType.Tower || PrivateVariable.VCevent == PrivateVariable.EventType.DemonRealm)
+            if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.Tower || PrivateVariable.Instance.VCevent == PrivateVariable.EventType.DemonRealm)
             {
                 if(Variables.FindConfig("General", "SoWeEv", out string conf))
                 {
                     if (bool.Parse(conf))
                     {
                         Variables.ScriptLog("Entering Soul Weapon Event", Color.AliceBlue);
-                        var temp = PrivateVariable.VCevent;
-                        PrivateVariable.VCevent = PrivateVariable.EventType.SoulWeapon;
+                        var temp = PrivateVariable.Instance.VCevent;
+                        PrivateVariable.Instance.VCevent = PrivateVariable.EventType.SoulWeapon;
                         SoulWeapon.SoulWeaponEnter();
-                        PrivateVariable.VCevent = temp;
+                        PrivateVariable.Instance.VCevent = temp;
                     }
                 }
                 if (Variables.FindConfig("General", "ArWiEv", out conf))
@@ -1279,11 +1278,11 @@ namespace UI
                     if (bool.Parse(conf))
                     {
                         Variables.ScriptLog("Entering Archwitch Event", Color.AliceBlue);
-                        var temp = PrivateVariable.VCevent;
-                        PrivateVariable.VCevent = PrivateVariable.EventType.ArchWitch;
+                        var temp = PrivateVariable.Instance.VCevent;
+                        PrivateVariable.Instance.VCevent = PrivateVariable.EventType.ArchWitch;
                         //Enter ArchwitchStage
                         ArchwitchEvent.ArchwitchEnter();
-                        PrivateVariable.VCevent = temp;
+                        PrivateVariable.Instance.VCevent = temp;
                     }
                 }
             }
@@ -1355,11 +1354,11 @@ namespace UI
                     {
                         if (t.GetInterface("BattleScript") != null)
                         {
-                            PrivateVariable.BattleScript.Add(Activator.CreateInstance(t) as BattleScript);
+                            PrivateVariable.Instance.BattleScript.Add(Activator.CreateInstance(t) as BattleScript);
                         }
                     }
                 }
-                foreach (var s in PrivateVariable.BattleScript)
+                foreach (var s in PrivateVariable.Instance.BattleScript)
                 {
                     s.ReadConfig();
                 }
@@ -1525,7 +1524,7 @@ namespace UI
                 for (int e = 0; e < 10; e++)
                 {
                     Variables.ScriptLog("Starting Game", Color.Lime);
-                    if (PrivateVariable.biubiu)
+                    if (PrivateVariable.Instance.biubiu)
                     {
                         BotCore.StartGame("com.njh.biubiu/com.njh.ping.core.business.LauncherActivity");
                         do
@@ -1596,21 +1595,21 @@ namespace UI
                         WaitGuildWar(time);
                     }
                 }
-                if (!PrivateVariable.InMainScreen && !PrivateVariable.InEventScreen && !PrivateVariable.Battling)
+                if (!PrivateVariable.Instance.InMainScreen && !PrivateVariable.Instance.InEventScreen && !PrivateVariable.Instance.Battling)
                 {
                     LocateMainScreen();
                 }
                 else
                 {
-                    if (!PrivateVariable.InEventScreen)
+                    if (!PrivateVariable.Instance.InEventScreen)
                     {
                         CheckEvent();
                     }
                     else
                     {
-                        if (!PrivateVariable.Battling)
+                        if (!PrivateVariable.Instance.Battling)
                         {
-                            switch (PrivateVariable.VCevent)
+                            switch (PrivateVariable.Instance.VCevent)
                             {
                                 case PrivateVariable.EventType.Tower:
                                     TowerEvent.Tower();
@@ -1625,7 +1624,7 @@ namespace UI
                                     break;
                                 default:
                                     Variables.ScriptLog("Unknown error occur, unable to detect event type.", Color.Red);
-                                    PrivateVariable.InEventScreen = false;
+                                    PrivateVariable.Instance.InEventScreen = false;
                                     break;
                             }
                         }

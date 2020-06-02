@@ -37,20 +37,20 @@ namespace UI
                 {
                     return;
                 }
-                if (BotCore.RGBComparer( new Point(415, 678), Color.FromArgb(223, 192, 63), 10))
+                if (BotCore.RGBComparer(new Point(824, 651), Color.FromArgb(80, 1, 9), 15) && BotCore.RGBComparer(new Point(466, 673), Color.FromArgb(77, 75, 84), 15))
                 {
-                    PrivateVariable.VCevent = PrivateVariable.EventType.DemonRealm;
-                    PrivateVariable.InEventScreen = true;
+                    PrivateVariable.Instance.VCevent = PrivateVariable.EventType.DemonRealm;
+                    PrivateVariable.Instance.InEventScreen = true;
                     DemonStage_Enter();
                     return;
                 }
                 Variables.ScriptLog("Locating Demon Realm Event UI!", Color.White);
-                if (BotCore.RGBComparer(new Point(600, 405), Color.FromArgb(59, 30, 37), 15))
+                if (BotCore.RGBComparer(new Point(938, 410), Color.FromArgb(36, 34, 38), 15))
                 {
                     VCBotScript.Tower_Floor = OCR.OcrImage(Screenshot.CropImage(image, new Point(300, 115), new Point(484, 142)), "eng");
                     VCBotScript.Tower_Rank = OCR.OcrImage(Screenshot.CropImage(image, new Point(300, 150), new Point(458, 170)), "eng");
                     Variables.ScriptLog("Demon Realm Event Found!", Color.Lime);
-                    PrivateVariable.InEventScreen = true;
+                    PrivateVariable.Instance.InEventScreen = true;
                     VCBotScript.energy = VCBotScript.GetEnergy();
                     VCBotScript.runes = VCBotScript.GetRune();
                     break;
@@ -72,9 +72,9 @@ namespace UI
                 Variables.ScriptLog("Waiting for energy", Color.Yellow);
                 Variables.ScriptLog("Close game and wait for energy because of no energy left", Color.Yellow);
                 VCBotScript.NoEnergy();
-                PrivateVariable.InEventScreen = false;
-                PrivateVariable.InMainScreen = false;
-                PrivateVariable.Battling = false;
+                PrivateVariable.Instance.InEventScreen = false;
+                PrivateVariable.Instance.InMainScreen = false;
+                PrivateVariable.Instance.Battling = false;
                 return;
             }
             Variables.ScriptLog("Enterting Stage", Color.White);
@@ -86,7 +86,7 @@ namespace UI
                     BotCore.SendTap(250, 284);
                     break;
                 case 1:
-                    if (BotCore.RGBComparer( new Point(143, 355), Color.FromArgb(51, 16, 5), 20))
+                    if (BotCore.RGBComparer(new Point(143, 355), Color.FromArgb(51, 16, 5), 20))
                     {
                         Variables.ScriptLog("中级还没被解锁！自动往下挑战中！", Color.Red);
                         BotCore.SendTap(250, 284);
@@ -198,7 +198,7 @@ namespace UI
         private static void DemonStage_Enter()
         {
             int error = 0;
-            while (!BotCore.RGBComparer( new Point(415, 678), Color.FromArgb(223, 192, 63), 10))
+            while (!BotCore.RGBComparer( new Point(824, 651), Color.FromArgb(80, 1, 9), 15))
             {
                 if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
                 {
@@ -362,7 +362,7 @@ namespace UI
                 return;
             }
             BotCore.SendTap(point.Value);
-            PrivateVariable.Battling = true;
+            PrivateVariable.Instance.Battling = true;
             VCBotScript.stop.Start();
         }
     }

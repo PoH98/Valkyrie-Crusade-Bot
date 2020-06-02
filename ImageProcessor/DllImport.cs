@@ -266,23 +266,52 @@ namespace BotFramework
         [DllImport("kernel32.dll")]
         public static extern IntPtr GetModuleHandle(string moduleName);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="hModule"></param>
+        /// <param name="procName"></param>
+        /// <returns></returns>
         [DllImport("kernel32")]
+        
         public static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="hProcess"></param>
+        /// <param name="wow64Process"></param>
+        /// <returns></returns>
         [DllImport("kernel32.dll")]
         public static extern bool IsWow64Process(IntPtr hProcess, out bool wow64Process);
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <returns></returns>
         [DllImport("user32.dll", EntryPoint = "GetParent", CharSet = CharSet.Auto)]
         public static extern IntPtr GetParent(IntPtr hWnd);
-
+        /// <summary>
+        /// 
+        /// </summary>
         public const int WM_NCLBUTTONDOWN = 0xA1;
-
+        /// <summary>
+        /// 
+        /// </summary>
         public const int HT_CAPTION = 0x2;
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <returns></returns>
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool IsWindow(IntPtr hWnd);
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public static IEnumerable<Control> GetAll(Control control, Type type = null)
         {
             var controls = control.Controls.Cast<Control>();
@@ -301,6 +330,10 @@ namespace BotFramework
         }
         [DllImport("user32.dll")]
         static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public static TimeSpan GetInactiveTime()
         {
             LASTINPUTINFO info = new LASTINPUTINFO();
@@ -310,19 +343,62 @@ namespace BotFramework
             else
                 return TimeSpan.FromMilliseconds(0);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dwFlags"></param>
+        /// <param name="dx"></param>
+        /// <param name="dy"></param>
+        /// <param name="cButtons"></param>
+        /// <param name="dwExtraInfo"></param>
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
         public static extern void mouse_event(uint dwFlags, int dx, int dy, uint cButtons, uint dwExtraInfo);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <param name="bRevert"></param>
+        /// <returns></returns>
         [DllImport("user32")]
         public static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="hMenu"></param>
+        /// <param name="itemId"></param>
+        /// <param name="uEnable"></param>
+        /// <returns></returns>
 
         [DllImport("user32")]
         public static extern bool EnableMenuItem(IntPtr hMenu, uint itemId, uint uEnable);
+        /// <summary>
+        /// 
+        /// </summary>
         //Mouse actions
         public const int MOUSEEVENTF_LEFTDOWN = 0x02;
+        /// <summary>
+        /// 
+        /// </summary>
         public const int MOUSEEVENTF_LEFTUP = 0x04;
+        /// <summary>
+        /// 
+        /// </summary>
         public const int MOUSEEVENTF_RIGHTDOWN = 0x08;
+        /// <summary>
+        /// 
+        /// </summary>
         public const int MOUSEEVENTF_RIGHTUP = 0x10;
+        /// <summary>
+        /// 
+        /// </summary>
         public const int MOUSEEVENTF_MOVE = 0x0001;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <param name="hdcBlt"></param>
+        /// <param name="nFlags"></param>
+        /// <returns></returns>
         [DllImport("user32.dll")]
         public static extern bool PrintWindow(IntPtr hWnd, IntPtr hdcBlt, int nFlags);
 

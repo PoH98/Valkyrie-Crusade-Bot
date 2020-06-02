@@ -15,7 +15,7 @@ namespace UI
             {
                 VCBotScript.LocateMainScreen();
             }
-            while (!PrivateVariable.InMainScreen);
+            while (!PrivateVariable.Instance.InMainScreen);
             //Enter battle screen
             BotCore.SendTap(170, 630);
             BotCore.Delay(5000, false);
@@ -69,7 +69,7 @@ namespace UI
                 {
                     VCBotScript.LocateMainScreen();
                 }
-                while (!PrivateVariable.InMainScreen);
+                while (!PrivateVariable.Instance.InMainScreen);
                 VCBotScript.Stuck = false;
             }
             else
@@ -400,7 +400,7 @@ namespace UI
                         }
                     }
                     while (buttons == null);
-                    PrivateVariable.Battling = true;
+                    PrivateVariable.Instance.Battling = true;
                     VCBotScript.Battle();
                     if (CurrentBossEnergy == 0)
                     {
@@ -416,7 +416,7 @@ namespace UI
                     BotCore.SendTap(buttons.Value.X + rnd.Next(410, 880), buttons.Value.Y + rnd.Next(330, 450));
                     BotCore.SendTap(buttons.Value.X + rnd.Next(410, 880), buttons.Value.Y + rnd.Next(330, 450));
                     BotCore.Delay(2000, 3000);
-                    PrivateVariable.Battling = true;
+                    PrivateVariable.Instance.Battling = true;
                     VCBotScript.Battle();
                     //End Event
                     return;

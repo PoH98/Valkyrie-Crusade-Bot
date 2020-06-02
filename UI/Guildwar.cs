@@ -8,26 +8,25 @@ namespace UI
 {
     class Guildwar
     {
-        private static bool Located = false;
         private static int error = 0, waittime = 0;
         private static readonly int[] guildwartime = {8, 12, 19, 22 };
         public static void Enter()
         {
-            var tempEvent = PrivateVariable.VCevent;
+            var tempEvent = PrivateVariable.Instance.VCevent;
             var Japan = TimeZoneInfo.FindSystemTimeZoneById("Tokyo Standard Time");
             var time = TimeZoneInfo.ConvertTime(DateTime.Now, Japan).TimeOfDay;
             var hour = time.Hours;
             while (guildwartime.Contains(hour))
             {
-                if (!Located)
+                if (!PrivateVariable.Instance.LocatedGuildWar)
                 {
                     Variables.ScriptLog("Entering Guildwar!", Color.Lime);
-                    PrivateVariable.VCevent = PrivateVariable.EventType.GuildWar;
+                    PrivateVariable.Instance.VCevent = PrivateVariable.EventType.GuildWar;
                     for (int x = 0; x < 30; x++)
                     {
                         while (!BotCore.GameIsForeground(VCBotScript.game))
                         {
-                            Located = false;
+                            PrivateVariable.Instance.LocatedGuildWar = false;
                             BotCore.StartGame(VCBotScript.game + VCBotScript.activity);
                             BotCore.Delay(5000);
                             VCBotScript.LocateMainScreen();
@@ -46,13 +45,13 @@ namespace UI
                         if(point != null)
                         {
                             BotCore.SendTap(point.Value);
-                            PrivateVariable.InMainScreen = false;
-                            Located = false;
+                            PrivateVariable.Instance.InMainScreen = false;
+                            PrivateVariable.Instance.LocatedGuildWar = false;
                             VCBotScript.LocateMainScreen();
                         }
                         if (BotCore.FindImage(image, "Img\\GuildWar\\Locate.png", false) != null)
                         {
-                            Located = true;
+                            PrivateVariable.Instance.LocatedGuildWar = true;
                             break;
                         }
                         if (x > 15)
@@ -96,8 +95,8 @@ namespace UI
                 time = TimeZoneInfo.ConvertTime(DateTime.Now, Japan).TimeOfDay;
                 hour = time.Hours;
             }
-            PrivateVariable.VCevent = tempEvent;
-            Located = false;
+            PrivateVariable.Instance.VCevent = tempEvent;
+            PrivateVariable.Instance.LocatedGuildWar = false;
             return;
         }
 
@@ -136,7 +135,7 @@ namespace UI
                         return;
                     }
                 }
-                PrivateVariable.Battling = true;
+                PrivateVariable.Instance.Battling = true;
                 var redbutton = BotCore.FindImage(image, Img.Red_Button, false);
                 if (redbutton != null)
                 {

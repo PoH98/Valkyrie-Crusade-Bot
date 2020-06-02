@@ -95,6 +95,8 @@ namespace BotFramework
         /// <param name="original">Image that need to be cropped</param>
         /// <param name="Start">Starting Point</param>
         /// <param name="End">Ending Point</param>
+        /// <param name="caller"></param>
+        /// <param name="lineNumber"></param>
         /// <returns></returns>
         public static byte[] CropImage(byte[] original, Point Start, Point End, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {

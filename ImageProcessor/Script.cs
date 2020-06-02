@@ -182,7 +182,7 @@ namespace BotFramework
                         }
                         else if (ex is ThreadAbortException) //Bot stopped
                         {
-
+                            script.ResetScript();
                         }
                         else
                         {

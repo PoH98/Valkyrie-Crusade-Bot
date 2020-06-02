@@ -355,7 +355,7 @@ namespace BotFramework
             webBrowser1.ScriptErrorsSuppressed = true;
             webBrowser3.ScriptErrorsSuppressed = true;
             webBrowser2.ScriptErrorsSuppressed = true;
-            PrivateVariable.nospam = DateTime.Now;
+            PrivateVariable.Instance.nospam = DateTime.Now;
             string ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36";
             DllImport.UrlMkSetSessionOption(DllImport.URLMON_OPTION_USERAGENT, ua, ua.Length, 0);
             webBrowser3.Navigating += OnNavigating;
@@ -397,7 +397,7 @@ namespace BotFramework
             }
 
             VCBotScript.Read_Plugins();
-            foreach (var s in PrivateVariable.BattleScript)
+            foreach (var s in PrivateVariable.Instance.BattleScript)
             {
                 tabControl2.TabPages.Add(s.ScriptName());
                 tabControl2.TabPages[tabControl2.TabPages.Count - 1].BackColor = Color.Black;
@@ -461,7 +461,7 @@ namespace BotFramework
             metroTabControl1.SelectedIndex = 0;
             chk_item.Enabled = chk_autoRT.Checked;
             Login.LoadCompleted = true;
-            PrivateVariable.VCevent = PrivateVariable.EventType.Unknown;
+            PrivateVariable.Instance.VCevent = PrivateVariable.EventType.Unknown;
             timer2.Start();
         }
 
@@ -470,8 +470,8 @@ namespace BotFramework
             CheckBox ck = sender as CheckBox;
             if (ck.Checked)
             {
-                PrivateVariable.Selected_Script = customScriptEnable.IndexOf(ck);
-                Variables.ModifyConfig("General", "Selected_Script", PrivateVariable.Selected_Script.ToString());
+                PrivateVariable.Instance.Selected_Script = customScriptEnable.IndexOf(ck);
+                Variables.ModifyConfig("General", "Selected_Script", PrivateVariable.Instance.Selected_Script.ToString());
             }
             foreach (var c in customScriptEnable)
             {
@@ -513,22 +513,22 @@ namespace BotFramework
                     ScriptErrorHandler.errorImages.Add(new Bitmap(temp));
                 }
             }
-            if ((PrivateVariable.nospam - DateTime.Now).Duration() < TimeSpan.FromSeconds(1))
+            if ((PrivateVariable.Instance.nospam - DateTime.Now).Duration() < TimeSpan.FromSeconds(1))
             {
                 return;
             }
-            PrivateVariable.nospam = DateTime.Now;
+            PrivateVariable.Instance.nospam = DateTime.Now;
             Variables.ProchWnd = panel3.Handle;
             richTextBox1.Text = "";
             btn_Start.Enabled = false;
-            PrivateVariable.Skills.Clear();
+            PrivateVariable.Instance.Skills.Clear();
             var files = Directory.GetFiles("Img\\Star");
             foreach (var f in files)
             {
                 using (Stream bmp = File.Open(f, FileMode.Open))
                 {
                     Image image = Image.FromStream(bmp);
-                    PrivateVariable.Skills.Add(Screenshot.Compress(image as Bitmap));
+                    PrivateVariable.Instance.Skills.Add(Screenshot.Compress(image as Bitmap));
                 }
             }
             if (panel3.Visible == false)
@@ -592,11 +592,11 @@ namespace BotFramework
 
                 }
             }
-            PrivateVariable.nospam = DateTime.Now;
-            PrivateVariable.Battling = false;
-            PrivateVariable.InEventScreen = false;
-            PrivateVariable.InMainScreen = false;
-            PrivateVariable.InMap = false;
+            PrivateVariable.Instance.nospam = DateTime.Now;
+            PrivateVariable.Instance.Battling = false;
+            PrivateVariable.Instance.InEventScreen = false;
+            PrivateVariable.Instance.InMainScreen = false;
+            PrivateVariable.Instance.InMap = false;
             EmulatorLoader.EjectSockets();
             Variables.ScriptLog("Script Stopped!", Color.White);
             if (Width > 1280)
@@ -607,7 +607,7 @@ namespace BotFramework
             if (Variables.Proc != null)
             {
                 DllImport.SetParent(Variables.Proc.MainWindowHandle, IntPtr.Zero);
-                DllImport.MoveWindow(Variables.Proc.MainWindowHandle, PrivateVariable.EmuDefaultLocation.X, PrivateVariable.EmuDefaultLocation.Y, 1318, 752, true);
+                DllImport.MoveWindow(Variables.Proc.MainWindowHandle, PrivateVariable.Instance.EmuDefaultLocation.X, PrivateVariable.Instance.EmuDefaultLocation.Y, 1318, 752, true);
             }
             foreach (Control control in Debug.Controls)
             {
@@ -621,7 +621,7 @@ namespace BotFramework
         private void Timer2_Tick(object sender, EventArgs e)
         {
             GC.Collect();
-            if (PrivateVariable.VCevent == PrivateVariable.EventType.Tower)
+            if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.Tower)
             {
                 lbl_CEvent.Text = UILanguage["Tower"];
                 lbl_Rune.Text = UILanguage["Rune_Tower"];
@@ -654,7 +654,7 @@ namespace BotFramework
                     }
                 }
             }
-            else if (PrivateVariable.VCevent == PrivateVariable.EventType.ArchWitch || PrivateVariable.VCevent == PrivateVariable.EventType.SoulWeapon)
+            else if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.ArchWitch || PrivateVariable.Instance.VCevent == PrivateVariable.EventType.SoulWeapon)
             {
                 lbl_CEvent.Text = UILanguage["Archwitch"];
                 lbl_Rune.Text = UILanguage["BossE_Archwitch"];
@@ -665,7 +665,7 @@ namespace BotFramework
                 progressBar2.Value = ArchwitchEvent.CurrentBossEnergy;
                 progressBar1.Value = ArchwitchEvent.CurrentWalkEnergy;
             }
-            else if (PrivateVariable.VCevent == PrivateVariable.EventType.DemonRealm)
+            else if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.DemonRealm)
             {
                 lbl_CEvent.Text = UILanguage["Demon"];
                 lbl_Rune.Text = UILanguage["Rune_Demon"];
@@ -698,7 +698,7 @@ namespace BotFramework
                     }
                 }
             }
-            else if (PrivateVariable.VCevent == PrivateVariable.EventType.GuildWar)
+            else if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.GuildWar)
             {
                 lbl_CEvent.Text = UILanguage["Guildwar"];
                 lbl_Rune.Text = UILanguage["Rune_Guildwar"];
@@ -759,7 +759,7 @@ namespace BotFramework
                             {
                                 return;
                             }
-                            PrivateVariable.EmuDefaultLocation = rect;
+                            PrivateVariable.Instance.EmuDefaultLocation = rect;
                             panel3.Invoke((MethodInvoker)delegate
                             {
                                 DllImport.SetParent(Variables.Proc.MainWindowHandle, panel3.Handle);
@@ -873,7 +873,7 @@ namespace BotFramework
         private void checkBox10_CheckedChanged(object sender, EventArgs e)
         {
             Variables.ModifyConfig("General", "Use_Item", chk_item.Checked.ToString().ToLower());
-            PrivateVariable.Use_Item = chk_item.Checked;
+            PrivateVariable.Instance.Use_Item = chk_item.Checked;
         }
 
         private void pictureBox4_Click(object sender, EventArgs e)
@@ -1211,7 +1211,7 @@ namespace BotFramework
 
         private void biubiu_CheckedChanged(object sender, EventArgs e)
         {
-            PrivateVariable.biubiu = Biubiu.Checked;
+            PrivateVariable.Instance.biubiu = Biubiu.Checked;
             Variables.ModifyConfig("General", "biubiu", Biubiu.Checked.ToString().ToLower());
         }
 

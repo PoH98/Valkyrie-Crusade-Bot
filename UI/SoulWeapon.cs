@@ -10,7 +10,7 @@ namespace UI
     {
         //static bool UnhandledException;
 
-        static int error = 0;
+        //static int error = 0;
         /*public static void SoulWeaponEnter()
         {
             if (UnhandledException)
@@ -186,10 +186,10 @@ namespace UI
                     BotCore.SendTap(point.Value);
                     BotCore.Delay(1000, 2000);
                     Attack();
-                    if (!PrivateVariable.InEventScreen || BotCore.GameIsForeground(VCBotScript.game))
+                    if (!PrivateVariable.Instance.InEventScreen || BotCore.GameIsForeground(VCBotScript.game))
                     {
-                        PrivateVariable.InEventScreen = false;
-                        PrivateVariable.InMainScreen = false;
+                        PrivateVariable.Instance.InEventScreen = false;
+                        PrivateVariable.Instance.InMainScreen = false;
                         return;
                     }
                     error = 0;
@@ -260,8 +260,8 @@ namespace UI
                         Variables.ScriptLog("Estimate online time is " + VCBotScript.nextOnline, Color.Lime);
                         BotCore.KillGame(VCBotScript.game);
                         BotCore.Delay(delay);
-                        PrivateVariable.InEventScreen = false;
-                        PrivateVariable.InMainScreen = false;
+                        PrivateVariable.Instance.InEventScreen = false;
+                        PrivateVariable.Instance.InMainScreen = false;
                         ArchwitchEvent.CurrentBossEnergy = ArchwitchEvent.FullBossEnergy;
                         ArchwitchEvent.CurrentWalkEnergy = ArchwitchEvent.FullWalkEnergy;
                         BotCore.StartGame(VCBotScript.game + VCBotScript.activity);
@@ -291,7 +291,7 @@ namespace UI
                     ArchwitchEvent.CheckBossEnergy();
                     BotCore.SendTap(buttons.Value.X + rnd.Next(430, 845), buttons.Value.Y + rnd.Next(370, 420));
                     BotCore.Delay(2000, 3000);
-                    PrivateVariable.Battling = true;
+                    PrivateVariable.Instance.Battling = true;
                     VCBotScript.Battle();
                     continue;
                 }

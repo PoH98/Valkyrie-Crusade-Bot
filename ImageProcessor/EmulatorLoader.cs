@@ -568,7 +568,7 @@ namespace BotFramework
             {
                 AdbInstance.Instance.client.ExecuteRemoteCommand("find /data/local/tmp/ -maxdepth 1 -type f -delete", (Variables.Controlled_Device as DeviceData), receiver);
             }
-            catch(Exception ex)
+            catch
             {
                 Variables.AdvanceLog("Unable to delete temp minitouch file, will try at next round!");
             }

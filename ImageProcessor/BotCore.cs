@@ -176,6 +176,8 @@ namespace BotFramework
         /// <param name="start">Swiping start position</param>
         /// <param name="end">Swiping end position</param>
         /// <param name="usedTime">The time used for swiping, milliseconds</param>
+        /// <param name="caller"></param>
+        /// <param name="lineNumber"></param>
         public static void SendSwipe(Point start, Point end, int usedTime, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
@@ -294,6 +296,8 @@ namespace BotFramework
         /// <param name="endX">Swiping end position</param>
         /// <param name="endY">Swiping end position</param>
         /// <param name="usedTime">The time used for swiping, milliseconds</param>
+         /// <param name="caller"></param>
+        /// <param name="lineNumber"></param>
         public static void SendSwipe(int startX, int startY, int endX, int endY, int usedTime, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
@@ -317,7 +321,9 @@ namespace BotFramework
         /// <summary>
         /// Get color of location in screenshots
         /// </summary>
-        /// <param name="position">The position of image</param>
+        /// <param name="position">The position of image</param>        
+        /// <param name="caller"></param>
+        /// <param name="lineNumber"></param>
         /// <returns>color</returns>
         public static Color GetPixel(Point position, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
@@ -383,6 +389,8 @@ namespace BotFramework
         /// <param name="color">The color to check at point is true or false</param>
         /// <param name="tolerance">The tolerance on color, larger will more inaccurate</param>
         /// <param name="image">The image to check color. If not set will auto screenshot using WinAPI</param>
+        /// <param name="caller"></param>
+        /// <param name="lineNumber"></param>
         /// <returns>bool</returns>
         public static bool RGBComparer(Point point, Color color, int tolerance, byte[] image = null, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {

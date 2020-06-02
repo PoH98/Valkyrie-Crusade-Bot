@@ -7,12 +7,25 @@ namespace UI
 {
     public class PrivateVariable
     {
+        public static PrivateVariable Instance
+        {
+            get
+            {
+                if(_instance == null)
+                {
+                    _instance = new PrivateVariable();
+                }
+                return _instance;
+            }
+        }
 
-        public static bool biubiu = false;
+        private static PrivateVariable _instance;
+
+        public bool biubiu = false;
         /// <summary>
         /// Check event type of the game
         /// </summary>
-        public static EventType VCevent;
+        public EventType VCevent;
         /// <summary>
         /// Event type
         /// </summary>
@@ -28,40 +41,43 @@ namespace UI
 
         //public static List<byte[]> Enemies = new List<byte[]>();
 
-        public static List<byte[]> Skills = new List<byte[]>();
+        public List<byte[]> Skills = new List<byte[]>();
 
-        public static bool Battling, InEventScreen, InMainScreen, InMap;
+        public bool Battling, InEventScreen, InMainScreen, InMap;
 
-        public static List<int> ProcessID = new List<int>();
+        public List<int> ProcessID = new List<int>();
 
-        public static bool TakePartInNormalStage, AlwaysAttackNew;
+        public bool TakePartInNormalStage, AlwaysAttackNew;
 
-        public static int UserSelectedStage;
+        public int UserSelectedStage;
 
-        public static int NormalStageNum; //Normal map 1 or map 2
+        public int NormalStageNum; //Normal map 1 or map 2
 
-        public static int FirstPageStageNum, FirstPageBossNum;
+        public int FirstPageStageNum, FirstPageBossNum;
 
-        public static Point[] NormalStage;
+        public Point[] NormalStage;
 
-        public static Point[] BossStage;
+        public Point[] BossStage;
 
-        public static bool CustomScript = false;
+        public bool CustomScript = false;
 
-        public static DateTime nospam;
+        public DateTime nospam;
 
         //public static List<byte[]> Enemies = new List<byte[]>();
-        public static List<BattleScript> BattleScript = new List<UI.BattleScript>();
+        public List<BattleScript> BattleScript = new List<UI.BattleScript>();
 
-        public static int Selected_Script = 0;
+        public int Selected_Script = 0;
 
-        public static bool Use_Item = false;
+        public bool Use_Item = false;
 
-        public static Dictionary<string, Point> Archwitch = new Dictionary<string, Point>();
+        public bool LocatedGuildWar = false;
 
-        public static Dictionary<string, Point> Archwitch2 = new Dictionary<string, Point>();
+        public Dictionary<string, Point> Archwitch = new Dictionary<string, Point>();
 
-        public static Rectangle EmuDefaultLocation = new Rectangle();
+        public Dictionary<string, Point> Archwitch2 = new Dictionary<string, Point>();
+
+        public Rectangle EmuDefaultLocation = new Rectangle();
 
     }
 }
+
