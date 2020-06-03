@@ -311,6 +311,36 @@ namespace UI
                                 return;
                             }
                             BotCore.SendTap(p.Value);
+                            Point? point = null;
+                            BotCore.Delay(5000, false);
+                            for (int x = 0; x < 20; x++)
+                            {
+                                VCBotScript.image = Screenshot.ImageCapture();
+                                var p3 = BotCore.FindImage(VCBotScript.image, Img.GreenButton, false);
+                                if (p3 != null)
+                                {
+                                    BotCore.SendTap(p3.Value);
+                                    BotCore.Delay(1000, false);
+                                    continue;
+                                }
+                                if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
+                                {
+                                    return;
+                                }
+                                point = BotCore.FindImage(VCBotScript.image, Img.Red_Button, false);
+                                if (point != null)
+                                {
+                                    break;
+                                }
+                                BotCore.Delay(1000, false);
+                            }
+                            if (point == null)
+                            {
+                                BotCore.KillGame("com.nubee.valkyriecrusade");
+                                ScriptErrorHandler.Reset("No expected UI is shown, restarting game!");
+                                return;
+                            }
+                            BotCore.SendTap(point.Value);
                             break;
                         }
                     }
@@ -332,36 +362,6 @@ namespace UI
                 BotCore.KillGame("com.nubee.valkyriecrusade");
                 ScriptErrorHandler.Reset("Restarting game as unable to detect stages properly!");
             }
-            Point? point = null;
-            BotCore.Delay(5000, false);
-            for (int x = 0; x < 20; x++)
-            {
-                VCBotScript.image = Screenshot.ImageCapture();
-                Point? p2 = BotCore.FindImage(VCBotScript.image, Img.GreenButton, false);
-                if (p2 != null)
-                {
-                    BotCore.SendTap(p2.Value);
-                    BotCore.Delay(1000, false);
-                    continue;
-                }
-                if (!BotCore.GameIsForeground("com.nubee.valkyriecrusade"))
-                {
-                    return;
-                }
-                point = BotCore.FindImage(VCBotScript.image, Img.Red_Button, false);
-                if (point != null)
-                {
-                    break;
-                }
-                BotCore.Delay(1000, false);
-            }
-            if (point == null)
-            {
-                BotCore.KillGame("com.nubee.valkyriecrusade");
-                ScriptErrorHandler.Reset("No expected UI is shown, restarting game!");
-                return;
-            }
-            BotCore.SendTap(point.Value);
             PrivateVariable.Instance.Battling = true;
             VCBotScript.stop.Start();
         }
