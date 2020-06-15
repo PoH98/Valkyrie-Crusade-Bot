@@ -14,6 +14,11 @@ namespace ITools
     {
         string emulatorpath;
 
+        public IntPtr DXScreen()
+        {
+            return IntPtr.Zero;
+        }
+
         public string EmulatorDefaultInstanceName()
         {
             return "iToolsVM";

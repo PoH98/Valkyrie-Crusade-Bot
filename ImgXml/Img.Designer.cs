@@ -452,6 +452,16 @@ namespace ImgXml {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap NEW3 {
+            get {
+                object obj = ResourceManager.GetObject("NEW3", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap NoEnergy {
             get {
                 object obj = ResourceManager.GetObject("NoEnergy", resourceCulture);

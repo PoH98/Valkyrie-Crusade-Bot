@@ -3,106 +3,28 @@ using ImgXml;
 using System;
 using System.Drawing;
 using System.IO;
+using System.Windows.Forms;
 
 namespace UI
 {
-    class SoulWeapon
+    public class SoulWeapon
     {
-        //static bool UnhandledException;
-
-        //static int error = 0;
-        /*public static void SoulWeaponEnter()
-        {
-            if (UnhandledException)
-            {
-                Variables.ScriptLog("Unhandled exception had found in SoulWeapon event UI. Skip it! ",Color.Red);
-                return;
-            }
-            do
-            {
-                VCBotScript.LocateMainScreen();
-            }
-            while (!PrivateVariable.InMainScreen);
-            BotCore.SendTap(170, 630);
-            BotCore.Delay(5000, false);
-            for (int x = 0; x < 5; x++)
-            {
-                VCBotScript.image = Screenshot.ImageCapture();
-                Point? located = BotCore.FindImage(VCBotScript.image, Environment.CurrentDirectory + "\\Img\\LocateEventSwitch.png", true);
-                if (located == null)
-                {
-                    x -= 1;
-                    BotCore.Delay(1000, false);
-                    if (error > 10)
-                    {
-                        ScriptErrorHandler.Reset("Unable to locate Event Switch screen! Returning main screen!");
-                        error = 0;
-                        return;
-                    }
-                    error++;
-                    ScriptErrorHandler.ErrorHandle();
-                    continue;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            if (File.Exists("Img\\WeaponEvent.png"))
-            {
-                var point = BotCore.FindImage(VCBotScript.image, "Img\\WeaponEvent.png", false);
-                if (point != null)
-                {
-                    BotCore.SendTap(point.Value);
-                    //Enter event
-                    SwitchStage();
-                }
-                else
-                {
-                    Variables.ScriptLog("Unable to find WeaponEvent.png at event page. Exiting function! ", Color.Red);
-                }
-            }
-            else
-            {
-                Variables.ScriptLog("WeaponEvent.png not found! Exiting function! ", Color.Red);
-            }
-        }*/
-        //public static void SwitchEvent
+        public static string PT, Rank;
         public static void SoulWeaponEnter()
         {
             Variables.ScriptLog("Soul Weapon Event found!",Color.Lime);
-            //Check do we still can get into the stage
-            /*do
-            {
-                BotCore.Delay(1000, 1200);
-                VCBotScript.image = Screenshot.ImageCapture();
-                if (BotCore.FindImage(Screenshot.CropImage(VCBotScript.image, new Point(634, 374), new Point(694, 421)), Img.Archwitch_Rec, false) != null)
-                {
-                    Attack();
-                    return;
-                }
-            }
-            while (BotCore.FindImage(VCBotScript.image, Img.SoulWeapon, true) == null);*/
             int error = 0;
             //Check if we didnt need to switch stage
             do
             {
-                /*var crop = Screenshot.CropImage(VCBotScript.image, new Point(73, 83), new Point(112, 102));
-                var tempstring = OCR.OcrImage(crop, "eng");
-                var leftTimes = tempstring.Split('/')[0];
-                if (leftTimes == "0")
-                {
-                    Variables.ScriptLog("Today had already attacked 5 times. Exiting...", Color.Lime);
-                    return;
-                }
-                else
-                {*/
                 VCBotScript.image = Screenshot.ImageCapture();
                 if (BotCore.FindImage(VCBotScript.image, Img.SoulArrow, false) != null)
                 {
                     Variables.ScriptLog("Already in a stage, running now...",Color.Lime);
                     Attack();
                 }
+                PT = OCR.OcrImage(Screenshot.CropImage(VCBotScript.image, new Point(840, 32), new Point(911, 59)), "en");
+                Rank = OCR.OcrImage(Screenshot.CropImage(VCBotScript.image, new Point(854, 74), new Point(911, 92)), "en");
                 //Back to 1-1 first before we continue
                 BotCore.Delay(1000);
                 if(Variables.FindConfig("General", "SoulEv", out string data))
@@ -130,6 +52,13 @@ namespace UI
                             BotCore.SendTap(New.Value);
                             goto SkipSelectStage;
                         }
+                        New = BotCore.FindImage(VCBotScript.image, Img.NEW3, false);
+                        if (New != null)
+                        {
+                            Variables.ScriptLog("Found new stage!", Color.Blue);
+                            BotCore.SendTap(New.Value);
+                            goto SkipSelectStage;
+                        }
                         else
                         {
                             Variables.ScriptLog("New stage not found! Try getting into Boss stage!", Color.Blue);
@@ -143,10 +72,8 @@ namespace UI
                         }
                     }
                 }
-                //BotCore.Minitouch("d 0 290 340 150\nc\nm 0 340 340 150\nc\nm 0 390 340 150\nc\nm 0 440 340 150\nc\nm 0 490 340 150\nc\nm 0 540 340 150\nc\nm 0 590 340 150\nc\nm 0 640 340 150\nc\nm 0 740 340 150\nc\nm 0 840 340 150\nc\nm 0 940 340 150\nc\nu 0\nc\n");
                 BotCore.SendSwipe(500, 440,1200, 360, 1000);//Why it can't swipe????
                 BotCore.Delay(1000);
-
                 switch (VCBotScript.Weapon_Stage)
                 {
                     case 1.1:
@@ -222,11 +149,7 @@ namespace UI
                         BotCore.SendSwipe(395, 365, 1100, 380, 1000);
                         error++;
                     }
-                    //Variables.ScriptLog("Unexpected error found! Unable to get into stage! Exiting for now!", Color.Red);
-                    //return;
                 }
-                //}
-
             }
             while (error < 10);
             
@@ -262,6 +185,8 @@ namespace UI
                         BotCore.Delay(delay);
                         PrivateVariable.Instance.InEventScreen = false;
                         PrivateVariable.Instance.InMainScreen = false;
+                        PrivateVariable.Instance.Battling = false;
+                        PrivateVariable.Instance.InMap = false;
                         ArchwitchEvent.CurrentBossEnergy = ArchwitchEvent.FullBossEnergy;
                         ArchwitchEvent.CurrentWalkEnergy = ArchwitchEvent.FullWalkEnergy;
                         BotCore.StartGame(VCBotScript.game + VCBotScript.activity);
@@ -310,12 +235,15 @@ namespace UI
                             switch (x)
                             {
                                 case 0:
+                                    Variables.ScriptLog("Purchasing First Item", Color.Wheat);
                                     BotCore.SendTap(1030, 220);
                                     break;
                                 case 1:
+                                    Variables.ScriptLog("Purchasing Second Item", Color.Wheat);
                                     BotCore.SendTap(1030, 390);
                                     break;
                                 case 2:
+                                    Variables.ScriptLog("Purchasing Third Item", Color.Wheat);
                                     BotCore.SendTap(1030, 550);
                                     break;
                             }

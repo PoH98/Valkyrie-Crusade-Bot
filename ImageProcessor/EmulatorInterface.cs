@@ -1,4 +1,6 @@
-﻿namespace BotFramework
+﻿using System;
+
+namespace BotFramework
 {
     /// <summary>
     /// Emulator controlling interface for different emulators
@@ -39,5 +41,10 @@
         /// Un Unbotify system
         /// </summary>
         void UnUnBotify();
+        /// <summary>
+        /// Used to get the hWnd which is rendered by DX, direct return <see cref="IntPtr.Zero"/> if not needed
+        /// </summary>
+        /// <returns></returns>
+        IntPtr DXScreen();
     }
 }

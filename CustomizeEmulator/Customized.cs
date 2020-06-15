@@ -219,5 +219,10 @@ namespace CustomizeEmulator
         {
             
         }
+
+        public IntPtr DXScreen()
+        {
+            return IntPtr.Zero;
+        }
     }
 }

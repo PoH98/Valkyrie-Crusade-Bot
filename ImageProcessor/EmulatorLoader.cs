@@ -424,9 +424,9 @@ namespace BotFramework
                             {
                                 Variables.AdvanceLog("Device found, connection establish on " + Variables.AdbIpPort, lineNumber, caller);
                             }
-                            try
+                            /*try
                             {
-                                AdbInstance.Instance.client.SetDevice(AdbInstance.Instance.socket, device);
+                                AdbInstance.Instance.client.Connect(AdbInstance.Instance.socket, device);
                             }
                             catch(AdbException ex)
                             {
@@ -451,7 +451,7 @@ namespace BotFramework
 
                                     error = 20;
                                 }
-                            }
+                            }*/
                             BotCore.Delay(5000);
                             //await emulator start
                             do
@@ -688,7 +688,7 @@ namespace BotFramework
                     return;
                 }
             Cm:
-                AdbInstance.Instance.client.ExecuteRemoteCommandAsync("/data/local/tmp/" + rndMiniTouch, (Variables.Controlled_Device as DeviceData), receiver, CancellationToken.None, int.MaxValue);
+                AdbInstance.Instance.client.ExecuteRemoteCommandAsync("/data/local/tmp/" + rndMiniTouch, (Variables.Controlled_Device as DeviceData), receiver, CancellationToken.None);
                 AdbInstance.Instance.client.CreateForward((Variables.Controlled_Device as DeviceData), ForwardSpec.Parse($"tcp:{AdbInstance.Instance.minitouchPort}"), ForwardSpec.Parse("localabstract:minitouch"), true);
                 AdbInstance.Instance.minitouchSocket = new TcpSocket();
                 AdbInstance.Instance.minitouchSocket.Connect(new IPEndPoint(IPAddress.Parse("127.0.0.1"), AdbInstance.Instance.minitouchPort));
@@ -729,7 +729,7 @@ namespace BotFramework
                 AdbInstance.Instance.minitouchPort++;
                 ConnectMinitouch();
             }
-
+            Variables.DirectXCapt = Variables.emulator.DXScreen();
         }
 
         private static void StartAdb([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)

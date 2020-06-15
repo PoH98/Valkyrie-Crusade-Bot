@@ -216,5 +216,40 @@ namespace MEmu
 
             }
         }
+
+        public IntPtr DXScreen()
+        {
+            var MEmus = DllImport.GetAllChildrenWindowHandles(IntPtr.Zero, "Qt5QWindowIcon", null, 10);
+            if(MEmus != null && MEmus.Count > 0)
+            {
+                foreach(var memu in MEmus)
+                {
+                    IntPtr MEmu = memu;
+                    if(DllImport.GetAllChildrenWindowHandles(MEmu, "Qt5QWindowIcon", null, 5).Count < 1)
+                    {
+                        MEmu = DllImport.GetParent(MEmu);
+                    }
+                    var MainWindowWindow = DllImport.FindWindowEx(MEmu, IntPtr.Zero, null, "MainWindowWindow");
+                    if (MainWindowWindow != null && MainWindowWindow != IntPtr.Zero)
+                    {
+                        var CenterWidgetWindow = DllImport.FindWindowEx(MainWindowWindow, IntPtr.Zero, null, "CenterWidgetWindow");
+                        if (CenterWidgetWindow != null && CenterWidgetWindow != IntPtr.Zero)
+                        {
+                            var RenderWindowWindow = DllImport.FindWindowEx(CenterWidgetWindow, IntPtr.Zero, null, "RenderWindowWindow");
+                            if (RenderWindowWindow != null && RenderWindowWindow != IntPtr.Zero)
+                            {
+                                var sub = DllImport.FindWindowEx(RenderWindowWindow, IntPtr.Zero, null, "sub");
+                                if (sub != null && sub != IntPtr.Zero)
+                                {
+                                    return sub;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            return IntPtr.Zero;
+        }
     }
 }

@@ -50,7 +50,7 @@ namespace BotFramework
         /// <summary>
         /// The controlled device
         /// </summary>
-        public static Object Controlled_Device = null;
+        public static object Controlled_Device = null;
         /// <summary>
         /// Confiures of bot.ini, use BotCore.ReadConfig() to fill up values
         /// </summary>
@@ -149,6 +149,14 @@ namespace BotFramework
         /// Use WinApi capture or adb capture?
         /// </summary>
         public static bool WinApiCapt = false, ForceWinApiCapt = false;
+        /// <summary>
+        /// Capturing image using DirectX, need to get the DirectX's hWnd to enable this
+        /// </summary>
+        public static IntPtr DirectXCapt = IntPtr.Zero;
+        /// <summary>
+        /// Define as DirectX is now unable to continue get screenshot
+        /// </summary>
+        public static int DirectXError = 0;
         /// <summary>
         /// Virtual box path
         /// </summary>

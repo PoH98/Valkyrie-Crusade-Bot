@@ -255,5 +255,18 @@ namespace Nox
         {
             
         }
+        public IntPtr DXScreen()
+        {
+            var ScreenBoardClassWindow = DllImport.FindWindowEx(Variables.Proc.Handle, IntPtr.Zero, "Qt5QWindowIcon", "ScreenBoardClassWindow");
+            if (ScreenBoardClassWindow != null)
+            {
+                var sub = DllImport.FindWindowEx(ScreenBoardClassWindow, IntPtr.Zero, "subWin", "sub");
+                if (sub != null)
+                {
+                    return sub;
+                }
+            }
+            return IntPtr.Zero;
+        }
     }
 }

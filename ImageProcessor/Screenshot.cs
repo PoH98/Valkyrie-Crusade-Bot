@@ -12,8 +12,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Security;
-using System.Text;
-using System.Threading.Tasks;
+using SlimDX.Direct3D9;
+using System.Runtime.InteropServices;
 
 namespace BotFramework
 {
@@ -39,11 +39,11 @@ namespace BotFramework
 
         private static Screenshot instance;
         /// <summary>
-        /// The encoded data
+        /// The lock object
         /// </summary>
         public object locker = new object();
 
-        bool captureerror = false;
+        private bool captureerror = false;
 
         private ImageConverter _imageConverter = new ImageConverter();
         /// <summary>
@@ -76,17 +76,20 @@ namespace BotFramework
         /// <returns>Image</returns>
         public static Bitmap Decompress(byte[] buffer)
         {
-            try
+            lock (Instance.locker)
             {
-                using (var ms = new MemoryStream(buffer))
+                try
                 {
-                    return Image.FromStream(ms) as Bitmap;
+                    using (var ms = new MemoryStream(buffer))
+                    {
+                        return Image.FromStream(ms) as Bitmap;
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                Variables.AdvanceLog(ex.ToString());
-                return null;
+                catch (Exception ex)
+                {
+                    Variables.AdvanceLog(ex.ToString());
+                    return null;
+                }
             }
         }
         /// <summary> 
@@ -183,6 +186,55 @@ namespace BotFramework
             }
             if (Variables.WinApiCapt && !Instance.captureerror)
             {
+                if (Variables.DirectXCapt != IntPtr.Zero && Variables.DirectXError < 10)
+                {
+                    try
+                    {
+                        Variables.AdvanceLog("Using DXCapture");
+                        using (var bmp = DXImageCapture(Variables.DirectXCapt))
+                        {
+                            Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+                            BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
+
+                            // Get the address of the first line.
+                            IntPtr ptr = bmpData.Scan0;
+
+                            // Declare an array to hold the bytes of the bitmap.
+                            int bytes = bmpData.Stride * bmp.Height;
+                            byte[] rgbValues = new byte[bytes];
+
+                            // Copy the RGB values into the array.
+                            Marshal.Copy(ptr, rgbValues, 0, bytes);
+
+                            // Scanning for non-zero bytes
+                            bool allBlack = true;
+                            for (int index = 0; index < rgbValues.Length; index++)
+                                if (rgbValues[index] != 0)
+                                {
+                                    allBlack = false;
+                                    break;
+                                }
+                            // Unlock the bits.
+                            bmp.UnlockBits(bmpData);
+                            if (!allBlack)
+                            {
+                                Variables.DirectXError = 0;
+                                return Compress(bmp);
+                            }
+                            else
+                            {
+                                Variables.AdvanceLog("DXCapture not available, received black bitmap!");
+                                Variables.DirectXError++;
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        Variables.AdvanceLog("DXCapture not available, received exception!");
+                        Variables.DirectXError++;
+                    }
+
+                }
                 if (Variables.ProchWnd != IntPtr.Zero)
                 {
                     return ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
@@ -236,7 +288,7 @@ namespace BotFramework
                     EmulatorLoader.ConnectAndroidEmulator();
                     return null;
                 }
-                if ((Variables.Controlled_Device as DeviceData).State == DeviceState.Offline || !ScriptRun.Run)
+                if ((Variables.Controlled_Device as DeviceData).State == SharpAdbClient.DeviceState.Offline || !ScriptRun.Run)
                 {
                     return null;
                 }
@@ -285,7 +337,76 @@ namespace BotFramework
             }
             return null;
         }
+        private static Direct3D _direct3D9 = new Direct3D();
+        private static Dictionary<IntPtr, Device> _direct3DDeviceCache = new Dictionary<IntPtr, Device>();
+        /// <summary>
+        /// Even Faster Capturing screen and return the image, uses DirectX to screenshot
+        /// </summary>
+        private static Bitmap DXImageCapture(IntPtr hWnd, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        {
+            return CaptureRegionDirect3D(hWnd, NativeMethods.GetAbsoluteClientRect(hWnd));
+        }
+        private static Bitmap CaptureRegionDirect3D(IntPtr handle, Rectangle region)
+        {
+            IntPtr hWnd = handle;
+            Bitmap bitmap = null;
 
+            // We are only supporting the primary display adapter for Direct3D mode
+            AdapterInformation adapterInfo = _direct3D9.Adapters.DefaultAdapter;
+            Device device = null;
+
+            #region Get Direct3D Device
+            // Retrieve the existing Direct3D device if we already created one for the given handle
+            if (_direct3DDeviceCache.ContainsKey(hWnd))
+            {
+                device = _direct3DDeviceCache[hWnd];
+            }
+            // We need to create a new device
+            else
+            {
+                try
+                {
+                    // Setup the device creation parameters
+                    PresentParameters parameters = new PresentParameters();
+                    parameters.BackBufferFormat = adapterInfo.CurrentDisplayMode.Format;
+                    Rectangle clientRect = NativeMethods.GetAbsoluteClientRect(hWnd);
+                    parameters.BackBufferHeight = clientRect.Height;
+                    parameters.BackBufferWidth = clientRect.Width;
+                    parameters.Multisample = MultisampleType.None;
+                    parameters.SwapEffect = SwapEffect.Discard;
+                    parameters.DeviceWindowHandle = hWnd;
+                    parameters.PresentationInterval = PresentInterval.Default;
+                    parameters.FullScreenRefreshRateInHertz = 0;
+
+                    // Create the Direct3D device
+                    device = new Device(_direct3D9, adapterInfo.Adapter, DeviceType.Hardware, hWnd, CreateFlags.SoftwareVertexProcessing, parameters);
+                    _direct3DDeviceCache.Add(hWnd, device);
+                }
+                catch
+                {
+                    device.Dispose();
+                    _direct3D9.Dispose();
+                    _direct3DDeviceCache.Clear();
+                    return new Bitmap(1,1);
+                }
+
+            }
+            #endregion
+
+            // Capture the screen and copy the region into a Bitmap
+            using (Surface surface = Surface.CreateOffscreenPlain(device, adapterInfo.CurrentDisplayMode.Width, adapterInfo.CurrentDisplayMode.Height, Format.A8R8G8B8, Pool.SystemMemory))
+            {
+                device.GetFrontBufferData(0, surface);
+
+                // Update: thanks digitalutopia1 for pointing out that SlimDX have fixed a bug
+                // where they previously expected a RECT type structure for their Rectangle
+                bitmap = new Bitmap(Surface.ToStream(surface, ImageFileFormat.Bmp, new Rectangle(region.Left, region.Top, region.Width, region.Height)));
+                // Previous SlimDX bug workaround: new Rectangle(region.Left, region.Top, region.Right, region.Bottom)));
+
+            }
+
+            return bitmap;
+        }
         /// <summary>
         /// Rotate image
         /// </summary>
@@ -325,4 +446,90 @@ namespace BotFramework
             return resizedImage.ToBitmap();
         }
     }
+
+    #region Native Win32 Interop
+    /// &lt;summary&gt;
+    /// The RECT structure defines the coordinates of the upper-left and lower-right corners of a rectangle.
+    /// &lt;/summary&gt;
+    [Serializable, StructLayout(LayoutKind.Sequential)]
+    internal struct RECT
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+
+        public RECT(int left, int top, int right, int bottom)
+        {
+            this.Left = left;
+            this.Top = top;
+            this.Right = right;
+            this.Bottom = bottom;
+        }
+
+        public Rectangle AsRectangle
+        {
+            get
+            {
+                return new Rectangle(this.Left, this.Top, this.Right - this.Left, this.Bottom - this.Top);
+            }
+        }
+
+        public static RECT FromXYWH(int x, int y, int width, int height)
+        {
+            return new RECT(x, y, x + width, y + height);
+        }
+
+        public static RECT FromRectangle(Rectangle rect)
+        {
+            return new RECT(rect.Left, rect.Top, rect.Right, rect.Bottom);
+        }
+    }
+
+    [SuppressUnmanagedCodeSecurity()]
+    internal sealed class NativeMethods
+    {
+        [DllImport("user32.dll")]
+        internal static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+
+        /// &lt;summary&gt;
+        /// Get a windows client rectangle in a .NET structure
+        /// &lt;/summary&gt;
+        /// &lt;param name="hwnd"&gt;The window handle to look up&lt;/param&gt;
+        /// &lt;returns&gt;The rectangle&lt;/returns&gt;
+        internal static Rectangle GetClientRect(IntPtr hwnd)
+        {
+            RECT rect = new RECT();
+            GetClientRect(hwnd, out rect);
+            return rect.AsRectangle;
+        }
+
+        /// &lt;summary&gt;
+        /// Get a windows rectangle in a .NET structure
+        /// &lt;/summary&gt;
+        /// &lt;param name="hwnd"&gt;The window handle to look up&lt;/param&gt;
+        /// &lt;returns&gt;The rectangle&lt;/returns&gt;
+        internal static Rectangle GetWindowRect(IntPtr hwnd)
+        {
+            RECT rect = new RECT();
+            GetWindowRect(hwnd, out rect);
+            return rect.AsRectangle;
+        }
+
+        internal static Rectangle GetAbsoluteClientRect(IntPtr hWnd)
+        {
+            Rectangle windowRect = NativeMethods.GetWindowRect(hWnd);
+            Rectangle clientRect = NativeMethods.GetClientRect(hWnd);
+
+            // This gives us the width of the left, right and bottom chrome - we can then determine the top height
+            int chromeWidth = (int)((windowRect.Width - clientRect.Width) / 2);
+
+            return new Rectangle(new Point(windowRect.X + chromeWidth, windowRect.Y + (windowRect.Height - clientRect.Height - chromeWidth)), clientRect.Size);
+        }
+    }
+    #endregion
 }

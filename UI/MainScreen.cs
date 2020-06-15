@@ -621,97 +621,107 @@ namespace BotFramework
         private void Timer2_Tick(object sender, EventArgs e)
         {
             GC.Collect();
-            if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.Tower)
+            switch (PrivateVariable.Instance.VCevent)
             {
-                lbl_CEvent.Text = UILanguage["Tower"];
-                lbl_Rune.Text = UILanguage["Rune_Tower"];
-                progressBar1.Maximum = 5;
-                progressBar2.Maximum = 5;
-                progressBar1.Value = VCBotScript.energy;
-                progressBar2.Value = VCBotScript.runes;
-                label7.Text = VCBotScript.runes + "/5";
-                label6.Text = VCBotScript.energy + "/5";
-                if (!string.IsNullOrEmpty(VCBotScript.Tower_Floor))
-                {
-                    try
+                case PrivateVariable.EventType.Tower:
+                    lbl_CEvent.Text = UILanguage["Tower"];
+                    lbl_Rune.Text = UILanguage["Rune_Tower"];
+                    progressBar1.Maximum = 5;
+                    progressBar2.Maximum = 5;
+                    progressBar1.Value = VCBotScript.energy;
+                    progressBar2.Value = VCBotScript.runes;
+                    label7.Text = VCBotScript.runes + "/5";
+                    label6.Text = VCBotScript.energy + "/5";
+                    if (!string.IsNullOrEmpty(VCBotScript.Tower_Floor))
                     {
-                        label15.Text = Regex.Match(VCBotScript.Tower_Floor, @"\d+").Value + " F";
-                    }
-                    catch
-                    {
+                        try
+                        {
+                            label15.Text = Regex.Match(VCBotScript.Tower_Floor, @"\d+").Value + " F";
+                        }
+                        catch
+                        {
 
+                        }
                     }
-                }
-                if (!string.IsNullOrEmpty(VCBotScript.Tower_Rank))
-                {
-                    try
+                    if (!string.IsNullOrEmpty(VCBotScript.Tower_Rank))
                     {
-                        label16.Text = Regex.Match(VCBotScript.Tower_Rank, @"\d+").Value;
-                    }
-                    catch
-                    {
+                        try
+                        {
+                            label16.Text = Regex.Match(VCBotScript.Tower_Rank, @"\d+").Value;
+                        }
+                        catch
+                        {
 
+                        }
                     }
-                }
-            }
-            else if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.ArchWitch || PrivateVariable.Instance.VCevent == PrivateVariable.EventType.SoulWeapon)
-            {
-                lbl_CEvent.Text = UILanguage["Archwitch"];
-                lbl_Rune.Text = UILanguage["BossE_Archwitch"];
-                label7.Text = ArchwitchEvent.CurrentBossEnergy + "/" + ArchwitchEvent.FullBossEnergy;
-                label6.Text = ArchwitchEvent.CurrentWalkEnergy + "/" + ArchwitchEvent.FullWalkEnergy;
-                progressBar2.Maximum = ArchwitchEvent.FullBossEnergy;
-                progressBar1.Maximum = ArchwitchEvent.FullWalkEnergy;
-                progressBar2.Value = ArchwitchEvent.CurrentBossEnergy;
-                progressBar1.Value = ArchwitchEvent.CurrentWalkEnergy;
-            }
-            else if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.DemonRealm)
-            {
-                lbl_CEvent.Text = UILanguage["Demon"];
-                lbl_Rune.Text = UILanguage["Rune_Demon"];
-                label7.Text = VCBotScript.runes + "/4";
-                label6.Text = VCBotScript.energy + "/5";
-                progressBar1.Maximum = 5;
-                progressBar2.Maximum = 4;
-                progressBar1.Value = VCBotScript.energy;
-                progressBar2.Value = VCBotScript.runes;
-                if (!string.IsNullOrEmpty(VCBotScript.Tower_Floor))
-                {
-                    try
+                    break;
+                case PrivateVariable.EventType.ArchWitch:
+                    lbl_CEvent.Text = UILanguage["Archwitch"];
+                    lbl_Rune.Text = UILanguage["BossE_Archwitch"];
+                    label7.Text = ArchwitchEvent.CurrentBossEnergy + "/" + ArchwitchEvent.FullBossEnergy;
+                    label6.Text = ArchwitchEvent.CurrentWalkEnergy + "/" + ArchwitchEvent.FullWalkEnergy;
+                    progressBar2.Maximum = ArchwitchEvent.FullBossEnergy;
+                    progressBar1.Maximum = ArchwitchEvent.FullWalkEnergy;
+                    progressBar2.Value = ArchwitchEvent.CurrentBossEnergy;
+                    progressBar1.Value = ArchwitchEvent.CurrentWalkEnergy;
+                    break;
+                case PrivateVariable.EventType.SoulWeapon:
+                    lbl_CEvent.Text = UILanguage["Archwitch"];
+                    lbl_Rune.Text = UILanguage["BossE_Archwitch"];
+                    label7.Text = ArchwitchEvent.CurrentBossEnergy + "/" + ArchwitchEvent.FullBossEnergy;
+                    label6.Text = ArchwitchEvent.CurrentWalkEnergy + "/" + ArchwitchEvent.FullWalkEnergy;
+                    progressBar2.Maximum = ArchwitchEvent.FullBossEnergy;
+                    progressBar1.Maximum = ArchwitchEvent.FullWalkEnergy;
+                    progressBar2.Value = ArchwitchEvent.CurrentBossEnergy;
+                    progressBar1.Value = ArchwitchEvent.CurrentWalkEnergy;
+                    label15.Text = SoulWeapon.PT;
+                    label16.Text = SoulWeapon.Rank;
+                    break;
+                case PrivateVariable.EventType.DemonRealm:
+                    lbl_CEvent.Text = UILanguage["Demon"];
+                    lbl_Rune.Text = UILanguage["Rune_Demon"];
+                    label7.Text = VCBotScript.runes + "/4";
+                    label6.Text = VCBotScript.energy + "/5";
+                    progressBar1.Maximum = 5;
+                    progressBar2.Maximum = 4;
+                    progressBar1.Value = VCBotScript.energy;
+                    progressBar2.Value = VCBotScript.runes;
+                    if (!string.IsNullOrEmpty(VCBotScript.Tower_Floor))
                     {
-                        label15.Text = Regex.Match(VCBotScript.Tower_Floor, @"\d+").Value + " F";
-                    }
-                    catch
-                    {
+                        try
+                        {
+                            label15.Text = Regex.Match(VCBotScript.Tower_Floor, @"\d+").Value + " F";
+                        }
+                        catch
+                        {
 
+                        }
                     }
-                }
-                if (!string.IsNullOrEmpty(VCBotScript.Tower_Rank))
-                {
-                    try
+                    if (!string.IsNullOrEmpty(VCBotScript.Tower_Rank))
                     {
-                        label16.Text = Regex.Match(VCBotScript.Tower_Rank, @"\d+").Value;
-                    }
-                    catch
-                    {
+                        try
+                        {
+                            label16.Text = Regex.Match(VCBotScript.Tower_Rank, @"\d+").Value;
+                        }
+                        catch
+                        {
 
+                        }
                     }
-                }
-            }
-            else if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.GuildWar)
-            {
-                lbl_CEvent.Text = UILanguage["Guildwar"];
-                lbl_Rune.Text = UILanguage["Rune_Guildwar"];
-                label7.Text = VCBotScript.runes + "/6";
-                label6.Text = VCBotScript.energy + "/5";
-                progressBar1.Maximum = 5;
-                progressBar2.Maximum = 6;
-                progressBar1.Value = VCBotScript.energy;
-                progressBar2.Value = VCBotScript.runes;
-            }
-            else
-            {
-                lbl_CEvent.Text = UILanguage["Unknown"];
+                    break;
+                case PrivateVariable.EventType.GuildWar:
+                    lbl_CEvent.Text = UILanguage["Guildwar"];
+                    lbl_Rune.Text = UILanguage["Rune_Guildwar"];
+                    label7.Text = VCBotScript.runes + "/6";
+                    label6.Text = VCBotScript.energy + "/5";
+                    progressBar1.Maximum = 5;
+                    progressBar2.Maximum = 6;
+                    progressBar1.Value = VCBotScript.energy;
+                    progressBar2.Value = VCBotScript.runes;
+                    break;
+                default:
+                    lbl_CEvent.Text = UILanguage["Unknown"];
+                    break;
             }
             if (VCBotScript.nextOnline != null)
             {

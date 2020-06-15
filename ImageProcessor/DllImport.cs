@@ -213,6 +213,13 @@ namespace BotFramework
         [DllImport("USER32.DLL")]
         public static extern bool SetForegroundWindow(IntPtr hWnd);
         /// <summary>
+        /// Get Parent's hWnd
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <returns></returns>
+        [DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
+        public static extern IntPtr GetParent(IntPtr hWnd);
+        /// <summary>
         /// Get all child window handles
         /// </summary>
         /// <param name="hParent"></param>
@@ -283,13 +290,6 @@ namespace BotFramework
         /// <returns></returns>
         [DllImport("kernel32.dll")]
         public static extern bool IsWow64Process(IntPtr hProcess, out bool wow64Process);
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="hWnd"></param>
-        /// <returns></returns>
-        [DllImport("user32.dll", EntryPoint = "GetParent", CharSet = CharSet.Auto)]
-        public static extern IntPtr GetParent(IntPtr hWnd);
         /// <summary>
         /// 
         /// </summary>
