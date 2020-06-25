@@ -12,7 +12,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Security;
-using SlimDX.Direct3D9;
 using System.Runtime.InteropServices;
 
 namespace BotFramework
@@ -186,55 +185,6 @@ namespace BotFramework
             }
             if (Variables.WinApiCapt && !Instance.captureerror)
             {
-                if (Variables.DirectXCapt != IntPtr.Zero && Variables.DirectXError < 10)
-                {
-                    try
-                    {
-                        Variables.AdvanceLog("Using DXCapture");
-                        using (var bmp = DXImageCapture(Variables.DirectXCapt))
-                        {
-                            Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
-                            BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
-
-                            // Get the address of the first line.
-                            IntPtr ptr = bmpData.Scan0;
-
-                            // Declare an array to hold the bytes of the bitmap.
-                            int bytes = bmpData.Stride * bmp.Height;
-                            byte[] rgbValues = new byte[bytes];
-
-                            // Copy the RGB values into the array.
-                            Marshal.Copy(ptr, rgbValues, 0, bytes);
-
-                            // Scanning for non-zero bytes
-                            bool allBlack = true;
-                            for (int index = 0; index < rgbValues.Length; index++)
-                                if (rgbValues[index] != 0)
-                                {
-                                    allBlack = false;
-                                    break;
-                                }
-                            // Unlock the bits.
-                            bmp.UnlockBits(bmpData);
-                            if (!allBlack)
-                            {
-                                Variables.DirectXError = 0;
-                                return Compress(bmp);
-                            }
-                            else
-                            {
-                                Variables.AdvanceLog("DXCapture not available, received black bitmap!");
-                                Variables.DirectXError++;
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        Variables.AdvanceLog("DXCapture not available, received exception!");
-                        Variables.DirectXError++;
-                    }
-
-                }
                 if (Variables.ProchWnd != IntPtr.Zero)
                 {
                     return ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
@@ -336,76 +286,6 @@ namespace BotFramework
 
             }
             return null;
-        }
-        private static Direct3D _direct3D9 = new Direct3D();
-        private static Dictionary<IntPtr, Device> _direct3DDeviceCache = new Dictionary<IntPtr, Device>();
-        /// <summary>
-        /// Even Faster Capturing screen and return the image, uses DirectX to screenshot
-        /// </summary>
-        private static Bitmap DXImageCapture(IntPtr hWnd, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
-        {
-            return CaptureRegionDirect3D(hWnd, NativeMethods.GetAbsoluteClientRect(hWnd));
-        }
-        private static Bitmap CaptureRegionDirect3D(IntPtr handle, Rectangle region)
-        {
-            IntPtr hWnd = handle;
-            Bitmap bitmap = null;
-
-            // We are only supporting the primary display adapter for Direct3D mode
-            AdapterInformation adapterInfo = _direct3D9.Adapters.DefaultAdapter;
-            Device device = null;
-
-            #region Get Direct3D Device
-            // Retrieve the existing Direct3D device if we already created one for the given handle
-            if (_direct3DDeviceCache.ContainsKey(hWnd))
-            {
-                device = _direct3DDeviceCache[hWnd];
-            }
-            // We need to create a new device
-            else
-            {
-                try
-                {
-                    // Setup the device creation parameters
-                    PresentParameters parameters = new PresentParameters();
-                    parameters.BackBufferFormat = adapterInfo.CurrentDisplayMode.Format;
-                    Rectangle clientRect = NativeMethods.GetAbsoluteClientRect(hWnd);
-                    parameters.BackBufferHeight = clientRect.Height;
-                    parameters.BackBufferWidth = clientRect.Width;
-                    parameters.Multisample = MultisampleType.None;
-                    parameters.SwapEffect = SwapEffect.Discard;
-                    parameters.DeviceWindowHandle = hWnd;
-                    parameters.PresentationInterval = PresentInterval.Default;
-                    parameters.FullScreenRefreshRateInHertz = 0;
-
-                    // Create the Direct3D device
-                    device = new Device(_direct3D9, adapterInfo.Adapter, DeviceType.Hardware, hWnd, CreateFlags.SoftwareVertexProcessing, parameters);
-                    _direct3DDeviceCache.Add(hWnd, device);
-                }
-                catch
-                {
-                    device.Dispose();
-                    _direct3D9.Dispose();
-                    _direct3DDeviceCache.Clear();
-                    return new Bitmap(1,1);
-                }
-
-            }
-            #endregion
-
-            // Capture the screen and copy the region into a Bitmap
-            using (Surface surface = Surface.CreateOffscreenPlain(device, adapterInfo.CurrentDisplayMode.Width, adapterInfo.CurrentDisplayMode.Height, Format.A8R8G8B8, Pool.SystemMemory))
-            {
-                device.GetFrontBufferData(0, surface);
-
-                // Update: thanks digitalutopia1 for pointing out that SlimDX have fixed a bug
-                // where they previously expected a RECT type structure for their Rectangle
-                bitmap = new Bitmap(Surface.ToStream(surface, ImageFileFormat.Bmp, new Rectangle(region.Left, region.Top, region.Width, region.Height)));
-                // Previous SlimDX bug workaround: new Rectangle(region.Left, region.Top, region.Right, region.Bottom)));
-
-            }
-
-            return bitmap;
         }
         /// <summary>
         /// Rotate image

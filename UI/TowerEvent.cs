@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using ImgXml;
 using BotFramework;
 using System.Drawing;
@@ -16,7 +13,7 @@ namespace UI
             Debug_.WriteLine();
             BotCore.Delay(1000, false);
             var image = Screenshot.ImageCapture();
-            Point? point = BotCore.FindImage(image, Img.Close2, false);
+            Point? point = BotCore.FindImage(image, Img.Close2, false, 0.8);
             if (point != null)
             {
                 BotCore.SendTap(new Point(point.Value.X, point.Value.Y));
@@ -24,7 +21,7 @@ namespace UI
             }
             image = Screenshot.ImageCapture();
             Variables.ScriptLog("Locating Tower Event UI!", Color.White);
-            if (BotCore.FindImage(image, Img.Locate_Tower, true) != null)
+            if (BotCore.FindImage(image, Img.Locate_Tower, true, 0.8) != null)
             {
                 image = Screenshot.ImageCapture();
                 VCBotScript.Tower_Floor = OCR.OcrImage(Screenshot.CropImage(image, new Point(280, 110), new Point(440, 145)), "eng");
@@ -87,7 +84,7 @@ namespace UI
             }
             Variables.ScriptLog("Entering Stage!", Color.Lime);
             image = Screenshot.ImageCapture();
-            if(BotCore.FindImage(image, Img.GreenButton, false) == null)
+            if(BotCore.FindImage(image, Img.GreenButton, false, 0.9) == null)
             {
                 Variables.ScriptLog("Rune Boss found!", Color.Lime);
             }
@@ -101,7 +98,7 @@ namespace UI
                         for(int x = 0; x < 5; x++)
                         {
                             VCBotScript.image = Screenshot.ImageCapture();
-                            if(BotCore.FindImage(VCBotScript.image,Img.LV0, true) == null)
+                            if(BotCore.FindImage(VCBotScript.image,Img.LV0, true, 0.85) == null)
                             {
                                 BotCore.SendTap(rnd.Next(410,420), rnd.Next(650, 660));
                                 BotCore.Delay(500);
@@ -113,13 +110,13 @@ namespace UI
                         for (int x = 0; x < 5; x++)
                         {
                             VCBotScript.image = Screenshot.ImageCapture();
-                            if (BotCore.FindImage(VCBotScript.image, Img.LV1, true) == null)
+                            if (BotCore.FindImage(VCBotScript.image, Img.LV1, true, 0.85) == null)
                             {
                                 BotCore.SendTap(rnd.Next(410, 420), rnd.Next(650, 660));
                                 BotCore.Delay(500);
                             }
                         }
-                        if (BotCore.FindImage(VCBotScript.image, Img.LV1, true) == null)
+                        if (BotCore.FindImage(VCBotScript.image, Img.LV1, true, 0.85) == null)
                         {
                             Variables.ScriptLog("Unable to switch to stage. Stage not unlocked?",Color.Red);
                             templevel--;
@@ -131,19 +128,19 @@ namespace UI
                         for (int x = 0; x < 5; x++)
                         {
                             VCBotScript.image = Screenshot.ImageCapture();
-                            if (BotCore.FindImage(VCBotScript.image, Img.LV2, true) == null)
+                            if (BotCore.FindImage(VCBotScript.image, Img.LV2, true, 0.85) == null)
                             {
                                 BotCore.SendTap(rnd.Next(410, 420), rnd.Next(650, 660));
                                 BotCore.Delay(500);
                             }
-                            else if(BotCore.FindImage(VCBotScript.image, Img.LV3, true) != null)
+                            else if(BotCore.FindImage(VCBotScript.image, Img.LV3, true, 0.85) != null)
                             {
                                 //This is not 上级，this is fucking 超上级
                                 BotCore.SendTap(rnd.Next(410, 420), rnd.Next(650, 660));
                                 BotCore.Delay(500);
                             }
                         }
-                        if (BotCore.FindImage(VCBotScript.image, Img.LV2, true) == null)
+                        if (BotCore.FindImage(VCBotScript.image, Img.LV2, true, 0.85) == null)
                         {
                             Variables.ScriptLog("Unable to switch to stage. Stage not unlocked?", Color.Red);
                             templevel--;
@@ -155,13 +152,13 @@ namespace UI
                         for (int x = 0; x < 5; x++)
                         {
                             VCBotScript.image = Screenshot.ImageCapture();
-                            if (BotCore.FindImage(VCBotScript.image, Img.LV3, true) == null)
+                            if (BotCore.FindImage(VCBotScript.image, Img.LV3, true, 0.85) == null)
                             {
                                 BotCore.SendTap(rnd.Next(410, 420), rnd.Next(650, 660));
                                 BotCore.Delay(500);
                             }
                         }
-                        if (BotCore.FindImage(VCBotScript.image, Img.LV3, true) == null)
+                        if (BotCore.FindImage(VCBotScript.image, Img.LV3, true, 0.85) == null)
                         {
                             Variables.ScriptLog("Unable to switch to stage. Stage not unlocked?", Color.Red);
                             templevel--;
@@ -173,13 +170,13 @@ namespace UI
                         for (int x = 0; x < 5; x++)
                         {
                             VCBotScript.image = Screenshot.ImageCapture();
-                            if (BotCore.FindImage(VCBotScript.image, Img.LV4, true) == null)
+                            if (BotCore.FindImage(VCBotScript.image, Img.LV4, true, 0.85) == null)
                             {
                                 BotCore.SendTap(rnd.Next(410, 420), rnd.Next(650, 660));
                                 BotCore.Delay(500);
                             }
                         }
-                        if (BotCore.FindImage(VCBotScript.image, Img.LV4, true) == null)
+                        if (BotCore.FindImage(VCBotScript.image, Img.LV4, true, 0.85) == null)
                         {
                             Variables.ScriptLog("Unable to switch to stage. Stage not unlocked?", Color.Red);
                             templevel--;
@@ -327,7 +324,7 @@ namespace UI
                 {
                     image = Screenshot.ImageCapture();
                     var crop = Screenshot.CropImage(image, new Point(125, 600), new Point(1270, 10));
-                    point = BotCore.FindImage(crop, Img.Red_Button, false);
+                    point = BotCore.FindImage(crop, Img.Red_Button, false, 0.9);
                     if (point != null)
                     {
                         Variables.ScriptLog("Rune boss found!", Color.Yellow);

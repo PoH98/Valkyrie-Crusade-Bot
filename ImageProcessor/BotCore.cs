@@ -666,7 +666,7 @@ namespace BotFramework
         /// <param name="FindOnlyOne"></param>
         /// <returns>Point or null</returns>
         /// <returns></returns>
-        public static Point[] FindImages(byte[] image, Bitmap[] find, bool GrayStyle, bool FindOnlyOne = false, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static Point[] FindImages(byte[] image, Bitmap[] find, bool GrayStyle, double matchRadius, bool FindOnlyOne = false,  [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             lock (Instance.locker)
             {
@@ -689,7 +689,7 @@ namespace BotFramework
                 }
             }
             Bitmap original = Screenshot.Decompress(image);
-            return FindImages(original, find, GrayStyle, FindOnlyOne, lineNumber, caller);
+            return FindImages(original, find, GrayStyle, matchRadius, FindOnlyOne, lineNumber, caller);
         }
 
         /// <summary>
@@ -703,7 +703,7 @@ namespace BotFramework
         /// <param name="caller"></param>
         /// <returns>Point or null</returns>
         /// <returns></returns>
-        public static Point[] FindImages(Bitmap original, Bitmap[] find, bool GrayStyle, bool FindOnlyOne = false, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static Point[] FindImages(Bitmap original, Bitmap[] find, bool GrayStyle, double matchRadius, bool FindOnlyOne = false, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             lock (Instance.locker)
             {
@@ -726,7 +726,7 @@ namespace BotFramework
                                 result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
                                 for (int x = 0; x < maxValues.Length; x++)
                                 {
-                                    if (maxValues[x] > 0.9)
+                                    if (maxValues[x] > matchRadius)
                                     {
                                         source.FillConvexPoly(new Point[] { new Point(maxLocations[x].X - 2, maxLocations[x].Y - 2), new Point(maxLocations[x].X + 2, maxLocations[x].Y + 2) }, new Gray());
                                         matched.Add(maxLocations[x]);
@@ -750,7 +750,7 @@ namespace BotFramework
                                 result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
                                 for (int x = 0; x < maxValues.Length; x++)
                                 {
-                                    if (maxValues[x] > 0.9)
+                                    if (maxValues[x] > matchRadius)
                                     {
                                         source.FillConvexPoly(new Point[] { new Point(maxLocations[x].X - 2, maxLocations[x].Y - 2), new Point(maxLocations[x].X + 2, maxLocations[x].Y + 2) }, new Bgr());
                                         matched.Add(maxLocations[x]);
@@ -792,7 +792,7 @@ namespace BotFramework
         /// <param name="caller"></param>
         /// <returns>Point or null</returns>
         /// <returns></returns>
-        public static Point[] FindImages(byte[] original, List<byte[]> find, bool GrayStyle,bool FindOnlyOne = false, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static Point[] FindImages(byte[] original, List<byte[]> find, bool GrayStyle,double matchRadius, bool FindOnlyOne = false, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             lock (Instance.locker)
             {
@@ -815,7 +815,7 @@ namespace BotFramework
                                 result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
                                 for (int x = 0; x < maxValues.Length; x++)
                                 {
-                                    if (maxValues[x] > 0.9)
+                                    if (maxValues[x] > matchRadius)
                                     {
                                         source.FillConvexPoly(new Point[] { new Point(maxLocations[x].X - 2, maxLocations[x].Y - 2), new Point(maxLocations[x].X + 2, maxLocations[x].Y + 2) }, new Gray());
                                         matched.Add(maxLocations[x]);
@@ -839,7 +839,7 @@ namespace BotFramework
                                 result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
                                 for (int x = 0; x < maxValues.Length; x++)
                                 {
-                                    if (maxValues[x] > 0.9)
+                                    if (maxValues[x] > matchRadius)
                                     {
                                         source.FillConvexPoly(new Point[] { new Point(maxLocations[x].X - 2, maxLocations[x].Y - 2), new Point(maxLocations[x].X + 2, maxLocations[x].Y + 2) }, new Bgr());
                                         matched.Add(maxLocations[x]);
@@ -877,7 +877,7 @@ namespace BotFramework
         /// <param name="screencapture">Original image that need to get the point on it</param>
         /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
         /// <returns>Point or null</returns>
-        public static Point? FindImage(byte[] screencapture, Bitmap find, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static Point? FindImage(byte[] screencapture, Bitmap find, bool GrayStyle, double matchRadius, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
@@ -890,7 +890,7 @@ namespace BotFramework
             }
             try
             {
-                return FindImage(Screenshot.Decompress(screencapture), find, GrayStyle, lineNumber, caller);
+                return FindImage(Screenshot.Decompress(screencapture), find, GrayStyle, matchRadius, lineNumber, caller);
             }
             catch (Exception ex)
             {
@@ -904,11 +904,12 @@ namespace BotFramework
         /// <param name="find">The smaller image for matching</param>
         /// <param name="original">Result from <see cref="Screenshot.ImageCapture(int, string)"/></param>
         /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
+        /// <param name="matchRadius">Convert the images to gray for faster detection</param>
         /// <param name="lineNumber"></param>
         /// <param name="caller"></param>
         /// <returns>Point or null</returns>
         /// <returns></returns>
-        public static Point? FindImage(Bitmap original, Bitmap find, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static Point? FindImage(Bitmap original, Bitmap find, bool GrayStyle, double matchRadius, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
@@ -928,8 +929,8 @@ namespace BotFramework
                         {
                             result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
 
-                            // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
-                            if (maxValues[0] > 0.9)
+                            // You can try different values of the threshold. I guess somewhere between 0.85 and 0.95 would be good.
+                            if (maxValues[0] > matchRadius)
                             {
                                 s.Stop();
                                 Variables.AdvanceLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber, caller);
@@ -945,8 +946,8 @@ namespace BotFramework
                         {
                             result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
 
-                            // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
-                            if (maxValues[0] > 0.9)
+                            // You can try different values of the threshold. I guess somewhere between 0.85 and 0.95 would be good.
+                            if (maxValues[0] > matchRadius)
                             {
                                 s.Stop();
                                 Variables.AdvanceLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber, caller);
@@ -972,7 +973,7 @@ namespace BotFramework
         /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
         /// <param name="lineNumber"></param>
         /// <param name="caller"></param>
-        public static Point? FindImage(byte[] screencapture, string findPath, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static Point? FindImage(byte[] screencapture, string findPath, bool GrayStyle, double matchRadius, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
@@ -1020,8 +1021,8 @@ namespace BotFramework
                         using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
                         {
                             result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
-                            // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
-                            if (maxValues[0] > 0.9)
+                            // You can try different values of the threshold. I guess somewhere between 0.85 and 0.95 would be good.
+                            if (maxValues[0] > matchRadius)
                             {
                                 s.Stop();
                                 Variables.AdvanceLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber, caller);
@@ -1036,8 +1037,8 @@ namespace BotFramework
                         using (Image<Gray, float> result = source.MatchTemplate(template, TemplateMatchingType.CcoeffNormed))
                         {
                             result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
-                            // You can try different values of the threshold. I guess somewhere between 0.75 and 0.95 would be good.
-                            if (maxValues[0] > 0.9)
+                            // You can try different values of the threshold. I guess somewhere between 0.85 and 0.95 would be good.
+                            if (maxValues[0] > matchRadius)
                             {
                                 s.Stop();
                                 Variables.AdvanceLog("Image matched. Used time: " + s.ElapsedMilliseconds + " ms", lineNumber, caller);
@@ -1062,7 +1063,7 @@ namespace BotFramework
         /// <param name="screencapture">Result from <see cref="Screenshot.ImageCapture(int, string)"/></param>
         /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
         /// <returns>Point or null</returns>
-        public static Point? FindImage(byte[] screencapture, byte[] image, bool GrayStyle, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static Point? FindImage(byte[] screencapture, byte[] image, bool GrayStyle, double matchRadius, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
@@ -1073,7 +1074,7 @@ namespace BotFramework
                 Variables.AdvanceLog("Result return null because of null original image", lineNumber, caller);
                 return null;
             }
-            return FindImage(Screenshot.Decompress(screencapture), Screenshot.Decompress(image), GrayStyle);
+            return FindImage(Screenshot.Decompress(screencapture), Screenshot.Decompress(image), GrayStyle, matchRadius);
         }
 
         /// <summary>

@@ -21,7 +21,7 @@ namespace DefaultScript
             Loop:
             Random rnd = new Random();
             byte[] KO = Screenshot.CropImage(VCBotScript.image, new Point(230, 70), new Point(1140, 160));
-            var points = BotCore.FindImages(KO, new Bitmap[] { Resource.Stun1, Resource.Stun2 }, false);
+            var points = BotCore.FindImages(KO, new Bitmap[] { Resource.Stun1, Resource.Stun2 }, false, 0.9);
             if(points != null && points.Length > 2)
             {
                 //Ko Chance
@@ -68,7 +68,7 @@ namespace DefaultScript
 
                                 }
                             }*/
-                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, true);
+                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, 0.9, true);
                             if(results != null)
                             {
                                 Variables.ScriptLog("Skill actived", Color.Blue);
@@ -110,7 +110,7 @@ namespace DefaultScript
 
                                 }
                             }*/
-                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, true);
+                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, 0.9, true);
                             if (results != null)
                             {
                                 Variables.ScriptLog("Skill actived", Color.Blue);
@@ -154,7 +154,7 @@ namespace DefaultScript
 
                                 }
                             }*/
-                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, true);
+                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, 0.9, true);
                             if (results != null)
                             {
                                 Variables.ScriptLog("Skill actived", Color.Blue);
@@ -200,7 +200,7 @@ namespace DefaultScript
                                     }
                                 }
                             }*/
-                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, true);
+                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, 0.9, true);
                             if (results != null)
                             {
                                 Variables.ScriptLog("Skill actived", Color.Blue);
@@ -244,7 +244,7 @@ namespace DefaultScript
 
                                 }
                             }*/
-                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, true);
+                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, 0.9, true);
                             if (results != null)
                             {
                                 Variables.ScriptLog("Skill actived", Color.Blue);
@@ -290,7 +290,7 @@ namespace DefaultScript
                                     }
                                 }
                             }*/
-                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, true);
+                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, 0.9, true);
                             if (results != null)
                             {
                                 Variables.ScriptLog("Skill actived", Color.Blue);
@@ -334,7 +334,7 @@ namespace DefaultScript
 
                                 }
                             }*/
-                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, true);
+                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, 0.9, true);
                             if (results != null)
                             {
                                 Variables.ScriptLog("Skill actived", Color.Blue);
@@ -380,7 +380,7 @@ namespace DefaultScript
                                     }
                                 }
                             }*/
-                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, true);
+                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, 0.9, true);
                             if (results != null)
                             {
                                 Variables.ScriptLog("Skill actived", Color.Blue);
@@ -424,7 +424,7 @@ namespace DefaultScript
 
                                 }
                             }*/
-                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, true);
+                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, 0.9, true);
                             if (results != null)
                             {
                                 Variables.ScriptLog("Skill actived", Color.Blue);
@@ -470,7 +470,7 @@ namespace DefaultScript
                                     }
                                 }
                             }*/
-                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, true);
+                            var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, 0.9, true);
                             if (results != null)
                             {
                                 Variables.ScriptLog("Skill actived", Color.Blue);
@@ -488,7 +488,7 @@ namespace DefaultScript
             if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.GuildWar && loopCount < 7)
             {
                 VCBotScript.image = Screenshot.ImageCapture();
-                if (BotCore.FindImage(VCBotScript.image, ImgXml.Img.GreenButton, false) != null)
+                if (BotCore.FindImage(VCBotScript.image, ImgXml.Img.GreenButton, false, 0.9) != null)
                 {
                     return;
                 }

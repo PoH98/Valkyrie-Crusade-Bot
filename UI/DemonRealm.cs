@@ -19,14 +19,14 @@ namespace UI
             while (true)
             {
                 var image = Screenshot.ImageCapture();
-                point = BotCore.FindImage(image, Img.Close2, false);
+                point = BotCore.FindImage(image, Img.Close2, false, 0.8);
                 if (point != null)
                 {
                     BotCore.SendTap(new Point(point.Value.X, point.Value.Y));
                     BotCore.Delay(1000, false);
                     continue;
                 }
-                point = BotCore.FindImage(image, Img.GreenButton, false);
+                point = BotCore.FindImage(image, Img.GreenButton, false, 0.9);
                 if (point != null)
                 {
                     BotCore.SendTap(new Point(point.Value.X, point.Value.Y));
@@ -248,7 +248,7 @@ namespace UI
                 {
                     for (int x = 0; x < 4; x++)
                     {
-                        p = BotCore.FindImage(screen, (Bitmap)stage, false);
+                        p = BotCore.FindImage(screen, (Bitmap)stage, false, 0.8);
                         if (p != null)
                         {
                             if (!BlackListedLocation.Contains(p.Value))
@@ -301,7 +301,7 @@ namespace UI
                     }
                     else
                     {
-                        p = BotCore.FindImage(screen, Img.Boss, true);
+                        p = BotCore.FindImage(screen, Img.Boss, true, 0.8);
                         if (p != null)
                         {
                             Variables.ScriptLog("Boss Stage found!", Color.Lime);
@@ -316,7 +316,7 @@ namespace UI
                             for (int x = 0; x < 20; x++)
                             {
                                 VCBotScript.image = Screenshot.ImageCapture();
-                                var p3 = BotCore.FindImage(VCBotScript.image, Img.GreenButton, false);
+                                var p3 = BotCore.FindImage(VCBotScript.image, Img.GreenButton, false, 0.9);
                                 if (p3 != null)
                                 {
                                     BotCore.SendTap(p3.Value);
@@ -327,7 +327,7 @@ namespace UI
                                 {
                                     return;
                                 }
-                                point = BotCore.FindImage(VCBotScript.image, Img.Red_Button, false);
+                                point = BotCore.FindImage(VCBotScript.image, Img.Red_Button, false, 0.9);
                                 if (point != null)
                                 {
                                     break;
@@ -346,7 +346,7 @@ namespace UI
                     }
                 }
                 VCBotScript.image = Screenshot.ImageCapture();
-                Point? p2 = BotCore.FindImage(crop, Img.GreenButton, false);
+                Point? p2 = BotCore.FindImage(crop, Img.GreenButton, false, 0.9);
                 if (p2 != null)
                 {
                     BotCore.SendTap(p2.Value);

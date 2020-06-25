@@ -33,7 +33,7 @@ namespace UI
                             x = 0;
                         }
                         var image = Screenshot.ImageCapture();
-                        var point = BotCore.FindImage(image, Img.GreenButton, false);
+                        var point = BotCore.FindImage(image, Img.GreenButton, false, 0.9);
                         if (point != null)
                         {
                             BotCore.SendTap(point.Value);
@@ -41,7 +41,7 @@ namespace UI
                             x--;
                             continue;
                         }
-                        point = BotCore.FindImage(image, Img.Start_Game, true);
+                        point = BotCore.FindImage(image, Img.Start_Game, true, 0.9);
                         if(point != null)
                         {
                             BotCore.SendTap(point.Value);
@@ -49,7 +49,7 @@ namespace UI
                             PrivateVariable.Instance.LocatedGuildWar = false;
                             VCBotScript.LocateMainScreen();
                         }
-                        if (BotCore.FindImage(image, "Img\\GuildWar\\Locate.png", false) != null)
+                        if (BotCore.FindImage(image, "Img\\GuildWar\\Locate.png", false, 0.85) != null)
                         {
                             PrivateVariable.Instance.LocatedGuildWar = true;
                             break;
@@ -105,7 +105,7 @@ namespace UI
         {
             var image = Screenshot.ImageCapture();
             //Read energy
-            var greenbutton = BotCore.FindImage(image, Img.GreenButton, false);
+            var greenbutton = BotCore.FindImage(image, Img.GreenButton, false, 0.9);
             if (greenbutton !=null)
             {
                 BotCore.SendTap(greenbutton.Value);
@@ -136,7 +136,7 @@ namespace UI
                     }
                 }
                 PrivateVariable.Instance.Battling = true;
-                var redbutton = BotCore.FindImage(image, Img.Red_Button, false);
+                var redbutton = BotCore.FindImage(image, Img.Red_Button, false, 0.9);
                 if (redbutton != null)
                 {
                     BotCore.SendTap(redbutton.Value);

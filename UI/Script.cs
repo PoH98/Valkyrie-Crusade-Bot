@@ -54,7 +54,7 @@ namespace UI
                 if (!ScriptErrorHandler.ErrorHandle())
                 {
                     var crop = Screenshot.CropImage(image, new Point(315, 150), new Point(1005, 700));
-                    Point? point = BotCore.FindImage(crop, Img.GreenButton, false);
+                    Point? point = BotCore.FindImage(crop, Img.GreenButton, false, 0.9);
                     if (point != null && !BotCore.RGBComparer(new Point(116, 37), Color.FromArgb(36, 8, 39), 15, image))
                     {
                         BotCore.SendTap(point.Value.X + 315, point.Value.Y + 150);
@@ -67,41 +67,43 @@ namespace UI
                         BotCore.KillGame(game);
                         return;
                     }
-                    if (BotCore.FindImage(image, Img.MainScreen, true) == null)
+                    if (BotCore.FindImage(image, Img.MainScreen, true, 0.9) == null)
                     {
                         if (!BotCore.GameIsForeground(game))
                         {
                             return;
                         }
                         Variables.ScriptLog("Main Screen not visible", Color.White);
-                        point = BotCore.FindImage(image, Img.Start_Game, false);
-                        if (point != null && BotCore.RGBComparer(new Point(379, 642), Color.FromArgb(37,37,37), 15, image))
+                        if(BotCore.RGBComparer(new Point(1125, 185), Color.Black, 0, image) && BotCore.RGBComparer(new Point(1195, 610), Color.Black, 0, image))
                         {
-                            Variables.ScriptLog("Start Game Button Located!", Color.Lime);
-                            BotCore.SendTap(point.Value);
-                            error = 0;
-                            StartGame = true;
-                            return;
+                            point = BotCore.FindImage(image, Img.Start_Game, false, 0.8);
+                            if (point != null && BotCore.RGBComparer(new Point(379, 642), Color.FromArgb(37, 37, 37), 15, image))
+                            {
+                                Variables.ScriptLog("Start Game Button Located!", Color.Lime);
+                                BotCore.SendTap(point.Value);
+                                error = 0;
+                                return;
+                            }
                         }
-                        point = BotCore.FindImage(image, Img.Update_Complete, true);
+                        point = BotCore.FindImage(image, Img.Update_Complete, true, 0.8);
                         if (point != null)
                         {
                             BotCore.SendTap(point.Value);
                             return;
                         }
-                        point = BotCore.FindImage(image, Img.Close2, true);
+                        point = BotCore.FindImage(image, Img.Close2, true, 0.9);
                         if (point != null)
                         {
                             BotCore.SendTap(point.Value);
                             return;
                         }
-                        point = BotCore.FindImage(image, Img.Close, true);
+                        point = BotCore.FindImage(image, Img.Close, true, 0.9);
                         if (point != null)
                         {
                             BotCore.SendTap(point.Value);
                             return;
                         }
-                        point = BotCore.FindImage(image, Img.Login_Reward, true);
+                        point = BotCore.FindImage(image, Img.Login_Reward, true, 0.9);
                         if (point != null)
                         {
                             for (int y = 0; y < 4; y++)
@@ -111,13 +113,13 @@ namespace UI
                             }
                             return;
                         }
-                        point = BotCore.FindImage(crop, Img.Red_Button, false);
+                        point = BotCore.FindImage(crop, Img.Red_Button, false, 0.8);
                         if (point != null)
                         {
                             BotCore.SendTap(point.Value);
                             Variables.ScriptLog("Found Red Button!", Color.Lime);
                         }
-                        point = BotCore.FindImage(image, Img.Back_to_Village, true);
+                        point = BotCore.FindImage(image, Img.Back_to_Village, true, 0.9);
                         if (point != null)
                         {
                             Variables.ScriptLog("Going back to Main screen", Color.Lime);
@@ -125,7 +127,7 @@ namespace UI
                             PrivateVariable.Instance.InMainScreen = true;
                             Variables.ScriptLog("Screen Located", Color.Lime);
                         }
-                        point = BotCore.FindImage(image, Img.Menu, true);
+                        point = BotCore.FindImage(image, Img.Menu, true, 0.9);
                         if (point == null)
                         {
                             if (error < 30)
@@ -153,7 +155,7 @@ namespace UI
                             BotCore.SendTap(942, 630);
                             BotCore.Delay(5000, false);
                         }
-                        point = BotCore.FindImage(image, Img.GreenButton, false);
+                        point = BotCore.FindImage(image, Img.GreenButton, false, 0.8);
                         if (point != null)
                         {
                             BotCore.SendTap(point.Value);
@@ -220,12 +222,12 @@ namespace UI
                     }
                     image = Screenshot.ImageCapture();
                     var crop = Screenshot.CropImage(image, new Point(0, 0), new Point(1020, 720));
-                    var p = BotCore.FindImage(image, Img.Red_Button, false);
+                    var p = BotCore.FindImage(image, Img.Red_Button, false, 0.8);
                     if(p != null)
                     {
                         BotCore.SendTap(p.Value);
                     }
-                    p = BotCore.FindImage(image, Img.GreenButton, false);
+                    p = BotCore.FindImage(image, Img.GreenButton, false, 0.8);
                     if(p != null)
                     {
                         BotCore.SendTap(p.Value);
@@ -233,7 +235,7 @@ namespace UI
                     //Find image and collect
                     if(!BotCore.RGBComparer(new Point(1259, 219), Color.FromArgb(75, 87, 254), 65, image))
                     {
-                        p = BotCore.FindImage(crop, Img.Resource_1, false);
+                        p = BotCore.FindImage(crop, Img.Resource_1, false, 0.9);
                         if (p != null)
                         {
                             BotCore.SendTap(p.Value);
@@ -242,7 +244,7 @@ namespace UI
                     }
                     if (!BotCore.RGBComparer(new Point(1261, 101), Color.FromArgb(70, 130, 10), 65, image))
                     {
-                        p = BotCore.FindImage(crop, Img.Resource_2, false);
+                        p = BotCore.FindImage(crop, Img.Resource_2, false, 0.9);
                         if (p != null)
                         {
                             BotCore.SendTap(p.Value);
@@ -257,7 +259,7 @@ namespace UI
                     }
                     if (!BotCore.RGBComparer(new Point(1260, 42), Color.FromArgb(249, 173, 46), 10, image))
                     {
-                        p = BotCore.FindImage(crop, Img.Resource_3, false);
+                        p = BotCore.FindImage(crop, Img.Resource_3, false, 0.9);
                         if (p != null)
                         {
                             BotCore.SendTap(p.Value);
@@ -272,7 +274,7 @@ namespace UI
                     }
                     if(!BotCore.RGBComparer(new Point(1260, 160), Color.FromArgb(125, 125, 125), 10, image))
                     {
-                        p = BotCore.FindImage(crop, Img.Resource_4, false);
+                        p = BotCore.FindImage(crop, Img.Resource_4, false, 0.9);
                         if (p != null)
                         {
                             BotCore.SendTap(p.Value);
@@ -313,7 +315,7 @@ namespace UI
                     for (int x = 0; x < 5; x++)
                     {
                         image = Screenshot.ImageCapture();
-                        Point? located = BotCore.FindImage(image, "Img\\LocateEventSwitch.png", true);
+                        Point? located = BotCore.FindImage(image, "Img\\LocateEventSwitch.png", true, 0.8);
                         if (located == null)
                         {
                             x -= 1;
@@ -331,7 +333,7 @@ namespace UI
                         else if (File.Exists("Img\\Event.png"))
                         {
                             Variables.ScriptLog("Finding Event.png on screen", Color.White);
-                            point = BotCore.FindImage(image, Environment.CurrentDirectory + "\\Img\\Event.png", true);
+                            point = BotCore.FindImage(image, Environment.CurrentDirectory + "\\Img\\Event.png", true, 0.8);
                             if (point != null)
                             {
                                 Variables.ScriptLog("Image matched", Color.Lime);
@@ -380,13 +382,13 @@ namespace UI
                 }
                 image = Screenshot.ImageCapture();
                 var crop = Screenshot.CropImage(image, new Point(60, 133), new Point(255, 160));
-                point = BotCore.FindImage(crop, Img.GreenButton, false);
+                point = BotCore.FindImage(crop, Img.GreenButton, false, 0.8);
                 if (point != null)
                 {
                     BotCore.SendTap(point.Value.X + 125, point.Value.Y);
                     continue;
                 }
-                if (BotCore.FindImage(image, Img.Demon_Tutorial, true) != null || BotCore.FindImage(image, Img.Tower_Tutorial, true) != null)
+                if (BotCore.FindImage(image, Img.Demon_Tutorial, true, 0.8) != null || BotCore.FindImage(image, Img.Tower_Tutorial, true, 0.9) != null)
                 {
                     for(int x = 0; x < 10; x++)
                     {
@@ -406,7 +408,7 @@ namespace UI
                     }
                     continue;
                 }
-                if (BotCore.FindImage(image, Img.ArchwitchHunt, false) != null || BotCore.FindImage(image, Img.SoulArrow, false) != null)
+                if (BotCore.FindImage(image, Img.ArchwitchHunt, false, 0.85) != null || BotCore.FindImage(image, Img.SoulArrow, false, 0.8) != null)
                 {
                     
                     //Is SoulWeapon Event
@@ -414,7 +416,7 @@ namespace UI
                     PrivateVariable.Instance.InEventScreen = true;
                     return;
                 }
-                if (BotCore.FindImage(image, Img.Locate_Tower, true) != null)
+                if (BotCore.FindImage(image, Img.Locate_Tower, true, 0.85) != null)
                 {
                     //Is Tower Event
                     PrivateVariable.Instance.VCevent = PrivateVariable.EventType.Tower;
@@ -428,14 +430,14 @@ namespace UI
                     PrivateVariable.Instance.InEventScreen = true;
                     return;
                 }
-                if (BotCore.FindImage(image, Img.HellLoc, true) != null)
+                if (BotCore.FindImage(image, Img.HellLoc, true, 0.8) != null)
                 {
                     //Is Demon Event
                     PrivateVariable.Instance.VCevent = PrivateVariable.EventType.DemonRealm;
                     PrivateVariable.Instance.InEventScreen = true;
                     return;
                 }
-                if (BotCore.FindImage(image, Img.Archwitch, true) != null)
+                if (BotCore.FindImage(image, Img.Archwitch, true, 0.8) != null)
                 {
                     if (File.Exists("Img\\ArchEvent.png"))
                     {
@@ -446,14 +448,14 @@ namespace UI
                     ScriptErrorHandler.Reset("Archwitch Event found, but we don't want to run this!");
                     return;
                 }
-                if (BotCore.FindImage(image, Img.MainScreen, true) != null)
+                if (BotCore.FindImage(image, Img.MainScreen, true, 0.8) != null)
                 {
                     Variables.ScriptLog("Rare error happens, still in main screen!", Color.Red);
                     PrivateVariable.Instance.InMainScreen = false;
                     return;
                 }
                 crop = Screenshot.CropImage(image, new Point(140, 0), new Point(1160, 720));
-                point = BotCore.FindImage(crop, Img.Red_Button, false);
+                point = BotCore.FindImage(crop, Img.Red_Button, false, 0.8);
                 if (point != null)
                 {
                     Variables.ScriptLog("Battle Screen found. Starting battle!", Color.Lime);
@@ -499,7 +501,7 @@ namespace UI
                 Attackable = false;
                 if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.SoulWeapon)
                 {
-                    if (BotCore.FindImage(image, Img.ArchwitchHunt, true) != null)
+                    if (BotCore.FindImage(image, Img.ArchwitchHunt, true, 0.8) != null)
                     {
                         PrivateVariable.Instance.Battling = false;
                         Variables.ScriptLog("Battle Ended!", Color.Lime);
@@ -510,7 +512,7 @@ namespace UI
                         locateUIError = 0;
                         return;
                     }
-                    if (BotCore.FindImage(image, Img.GodArch, true) != null)
+                    if (BotCore.FindImage(image, Img.GodArch, true, 0.8) != null)
                     {
                         //Ignore it
                         BotCore.SendTap(1067, 54);
@@ -532,7 +534,7 @@ namespace UI
                 {
                     BotCore.SendTap(10, 10);
                 }
-                var point = BotCore.FindImage(image, Img.Close2, false);
+                var point = BotCore.FindImage(image, Img.Close2, true, 0.9);
                 if (point != null)
                 {
                     BotCore.SendTap(point.Value);
@@ -548,7 +550,7 @@ namespace UI
                 {
                     BotCore.SendTap(10, 10);
                 }
-                if (BotCore.FindImage(image, Img.NoEnergy, true) != null)
+                if (BotCore.FindImage(image, Img.NoEnergy, true, 0.85) != null)
                 {
                     ScriptErrorHandler.Reset("No Energy Left!");
                     NoEnergy();
@@ -568,7 +570,7 @@ namespace UI
                     return;
                 }
                 if (BotCore.RGBComparer(new Point(824, 651), Color.FromArgb(80, 1, 9), 15) && BotCore.RGBComparer(new Point(466, 673), Color.FromArgb(77, 75, 84), 15))
-                    {
+                {
                     PrivateVariable.Instance.Battling = false;
                     Variables.ScriptLog("Battle Ended!", Color.Lime);
                     stop.Stop();
@@ -590,7 +592,7 @@ namespace UI
                 {
                     return;
                 }
-                if (BotCore.FindImage(image, Img.Locate_Tower, true) != null)
+                if (BotCore.FindImage(image, Img.Locate_Tower, true, 0.8) != null)
                 {
                     PrivateVariable.Instance.Battling = false;
                     Variables.ScriptLog("Battle Ended!", Color.Lime);
@@ -636,13 +638,13 @@ namespace UI
                     BotCore.SendTap(10, 10);
                 }
                 var crop = Screenshot.CropImage(image, new Point(125, 0), new Point(1280, 720));
-                point = BotCore.FindImage(crop, Img.GreenButton, false);
+                point = BotCore.FindImage(crop, Img.GreenButton, false, 0.85);
                 if (point != null)
                 {
                     Variables.ScriptLog("Green Button Found!", Color.Lime);
                     if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.Tower)
                     {
-                        if (RuneBoss && runes >= 3 && runes != 5 && BotCore.FindImage(image, Img.TowerFinished, true) != null)
+                        if (RuneBoss && runes >= 3 && runes != 5 && BotCore.FindImage(image, Img.TowerFinished, true, 0.8) != null)
                         {
                             PrivateVariable.Instance.InEventScreen = false;
                             PrivateVariable.Instance.InMainScreen = false;
@@ -658,7 +660,7 @@ namespace UI
                         }
                         else
                         {
-                            if (BotCore.FindImage(image, Img.Locate_Tower, true) != null)
+                            if (BotCore.FindImage(image, Img.Locate_Tower, true, 0.85) != null)
                             {
                                 PrivateVariable.Instance.Battling = false;
                                 Variables.ScriptLog("Battle Ended!", Color.Lime);
@@ -680,7 +682,7 @@ namespace UI
                     else if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.DemonRealm)
                     {
                         crop = Screenshot.CropImage(image, new Point(147, 234), new Point(613, 299));
-                        if (BotCore.FindImage(crop, Img.DemonEnd, true) != null)
+                        if (BotCore.FindImage(crop, Img.DemonEnd, true, 0.85) != null)
                         {
                             PrivateVariable.Instance.Battling = false;
                             BotCore.SendTap(point.Value.X + 125, point.Value.Y);
@@ -703,7 +705,7 @@ namespace UI
                     }
                     else
                     {
-                        if (BotCore.FindImages(image, new Bitmap[] { Img.SoulArrow, Img.PT, Img.ArchwitchHunt }, true, true) != null)
+                        if (BotCore.FindImages(image, new Bitmap[] { Img.SoulArrow, Img.PT, Img.ArchwitchHunt }, true, 0.9, true) != null)
                         {
                             Variables.ScriptLog("Battle Ended!", Color.Lime);
                             PrivateVariable.Instance.Battling = false;
@@ -718,7 +720,7 @@ namespace UI
                     }
                 }
                 crop = Screenshot.CropImage(image, new Point(125, 0), new Point(1280, 720));
-                point = BotCore.FindImage(crop, Img.Red_Button, false);
+                point = BotCore.FindImage(crop, Img.Red_Button, false, 0.9);
                 if (point != null)
                 {
                     if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.DemonRealm)
@@ -736,7 +738,7 @@ namespace UI
                     }
                     else if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.GuildWar)
                     {
-                        if (BotCore.FindImage(image, "Img\\GuildWar\\Locate.png", false) != null)
+                        if (BotCore.FindImage(image, "Img\\GuildWar\\Locate.png", false, 0.8) != null)
                         {
                             PrivateVariable.Instance.Battling = false;
                             Variables.ScriptLog("Battle Ended!", Color.Lime);
@@ -765,14 +767,16 @@ namespace UI
                 {
                     return;
                 }
-                point = BotCore.FindImage(Screenshot.CropImage(image, new Point(340, 535), new Point(385, 585)), Img.Start_Game, true);
-                if (point != null)
+                if (BotCore.RGBComparer(new Point(1125, 185), Color.Black, 0, image) && BotCore.RGBComparer(new Point(1195, 610), Color.Black, 0, image))
                 {
-                    BotCore.SendTap(point.Value);
-                    PrivateVariable.Instance.Battling = false;
-                    ScriptErrorHandler.Reset("Start Game Button Located!");
-                    locateUIError = 0;
-                    return;
+                    point = BotCore.FindImage(Screenshot.CropImage(image, new Point(340, 535), new Point(385, 585)), Img.Start_Game, false, 0.8);
+                    if (point != null && BotCore.RGBComparer(new Point(379, 642), Color.FromArgb(37, 37, 37), 15, image))
+                    {
+                        PrivateVariable.Instance.Battling = false;
+                        ScriptErrorHandler.Reset("Start Game Button Located!");
+                        error = 0;
+                        return;
+                    }
                 }
                 if (BotCore.RGBComparer(new Point(959, 656), 31, 102, 26, 34, image))
                 {
@@ -823,7 +827,7 @@ namespace UI
                 {
                     if (PrivateVariable.Instance.Battling == true && PrivateVariable.Instance.VCevent == PrivateVariable.EventType.DemonRealm)
                     {
-                        var point = BotCore.FindImage(image, Img.HellLoc, false);
+                        var point = BotCore.FindImage(image, Img.HellLoc, false, 0.85);
                         if (point != null)
                         {
                             PrivateVariable.Instance.Battling = false;
@@ -1116,7 +1120,7 @@ namespace UI
                                 {
                                     Variables.WinApiCapt = false;
                                     image = Screenshot.ImageCapture();
-                                    var p = BotCore.FindImage(image, Img.biubiu, false);
+                                    var p = BotCore.FindImage(image, Img.biubiu, false, 0.8);
                                     if (p != null)
                                     {
                                         BotCore.SendTap(p.Value.X + 25, p.Value.Y - 600);
@@ -1126,7 +1130,7 @@ namespace UI
                                     }
                                     else
                                     {
-                                        p = BotCore.FindImage(image, Img.biubiu2, false);
+                                        p = BotCore.FindImage(image, Img.biubiu2, false, 0.8);
                                         if (p != null)
                                         {
                                             BotCore.SendTap(p.Value);
@@ -1176,7 +1180,7 @@ namespace UI
                                 {
                                     Variables.WinApiCapt = false;
                                     image = Screenshot.ImageCapture();
-                                    var p = BotCore.FindImage(image, Img.biubiu, false);
+                                    var p = BotCore.FindImage(image, Img.biubiu, false, 0.8);
                                     if (p != null)
                                     {
                                         BotCore.SendTap(p.Value.X + 25, p.Value.Y - 600);
@@ -1186,7 +1190,7 @@ namespace UI
                                     }
                                     else
                                     {
-                                        p = BotCore.FindImage(image, Img.biubiu2, false);
+                                        p = BotCore.FindImage(image, Img.biubiu2, false, 0.8);
                                         if (p != null)
                                         {
                                             BotCore.SendTap(p.Value);
@@ -1531,7 +1535,7 @@ namespace UI
                         {
                             Variables.WinApiCapt = false;
                             image = Screenshot.ImageCapture();
-                            var p = BotCore.FindImage(image, Img.biubiu, false);
+                            var p = BotCore.FindImage(image, Img.biubiu, false, 0.8);
                             if (p != null)
                             {
                                 BotCore.SendTap(p.Value.X + 25, p.Value.Y - 600);
@@ -1541,7 +1545,7 @@ namespace UI
                             }
                             else
                             {
-                                p = BotCore.FindImage(image, Img.biubiu2, false);
+                                p = BotCore.FindImage(image, Img.biubiu2, false, 0.8);
                                 if (p != null)
                                 {
                                     BotCore.SendTap(p.Value);

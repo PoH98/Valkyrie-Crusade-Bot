@@ -18,7 +18,7 @@ namespace UI
             do
             {
                 VCBotScript.image = Screenshot.ImageCapture();
-                if (BotCore.FindImage(VCBotScript.image, Img.SoulArrow, false) != null)
+                if (BotCore.FindImage(VCBotScript.image, Img.SoulArrow, false, 0.9) != null)
                 {
                     Variables.ScriptLog("Already in a stage, running now...",Color.Lime);
                     Attack();
@@ -31,28 +31,28 @@ namespace UI
                 {
                     if (bool.Parse(data))
                     {
-                        var New = BotCore.FindImage(VCBotScript.image, Img.NEW, false);
+                        var New = BotCore.FindImage(VCBotScript.image, Img.NEW, false, 0.8);
                         if(New != null)
                         {
                             Variables.ScriptLog("Found new stage!", Color.Blue);
                             BotCore.SendTap(New.Value);
                             goto SkipSelectStage;
                         }
-                        New = BotCore.FindImage(VCBotScript.image, Img.NEW1, false);
+                        New = BotCore.FindImage(VCBotScript.image, Img.NEW1, false, 0.8);
                         if (New != null)
                         {
                             Variables.ScriptLog("Found new stage!", Color.Blue);
                             BotCore.SendTap(New.Value);
                             goto SkipSelectStage;
                         }
-                        New = BotCore.FindImage(VCBotScript.image, Img.NEW2, false);
+                        New = BotCore.FindImage(VCBotScript.image, Img.NEW2, false, 0.8);
                         if (New != null)
                         {
                             Variables.ScriptLog("Found new stage!", Color.Blue);
                             BotCore.SendTap(New.Value);
                             goto SkipSelectStage;
                         }
-                        New = BotCore.FindImage(VCBotScript.image, Img.NEW3, false);
+                        New = BotCore.FindImage(VCBotScript.image, Img.NEW3, false, 0.8);
                         if (New != null)
                         {
                             Variables.ScriptLog("Found new stage!", Color.Blue);
@@ -62,7 +62,7 @@ namespace UI
                         else
                         {
                             Variables.ScriptLog("New stage not found! Try getting into Boss stage!", Color.Blue);
-                            New = BotCore.FindImage(VCBotScript.image, Img.Castle, true);
+                            New = BotCore.FindImage(VCBotScript.image, Img.Castle, true, 0.8);
                             if(New != null)
                             {
                                 BotCore.SendTap(New.Value);
@@ -107,7 +107,7 @@ namespace UI
                 SkipSelectStage:
                 BotCore.Delay(1000, 1200);
                 VCBotScript.image = Screenshot.ImageCapture();
-                var point = BotCore.FindImage(VCBotScript.image, Img.GreenButton, false);
+                var point = BotCore.FindImage(VCBotScript.image, Img.GreenButton, false, 0.9);
                 if (point != null)
                 {
                     BotCore.SendTap(point.Value);
@@ -170,7 +170,7 @@ namespace UI
                 Random rnd = new Random();
                 VCBotScript.image = Screenshot.ImageCapture();
                 var crop = Screenshot.CropImage(VCBotScript.image, new Point(420, 360), new Point(855, 430));
-                Point? buttons = BotCore.FindImage(crop, Img.GreenButton, false);
+                Point? buttons = BotCore.FindImage(crop, Img.GreenButton, false, 0.9);
                 if (buttons != null)
                 {
                     ArchwitchEvent.CheckWalkEnergy();
@@ -196,21 +196,21 @@ namespace UI
                     BotCore.Delay(2000, 3000);
                     continue;
                 }
-                buttons = BotCore.FindImage(VCBotScript.image, Img.Return, true);
+                buttons = BotCore.FindImage(VCBotScript.image, Img.Return, true, 0.9);
                 if(buttons != null)
                 {
                     BotCore.SendTap(buttons.Value);
                     BotCore.Delay(1000, 1500);
                     continue;
                 }
-                buttons = BotCore.FindImage(VCBotScript.image, Img.Close2, true);
+                buttons = BotCore.FindImage(VCBotScript.image, Img.Close2, true, 0.9);
                 if (buttons != null)
                 {
                     BotCore.SendTap(buttons.Value);
                     BotCore.Delay(1000, 1500);
                     continue;
                 }
-                buttons = BotCore.FindImage(crop, Img.Red_Button, false);
+                buttons = BotCore.FindImage(crop, Img.Red_Button, false, 0.9);
                 if (buttons != null)
                 {
                     ArchwitchEvent.CheckBossEnergy();
@@ -220,16 +220,17 @@ namespace UI
                     VCBotScript.Battle();
                     continue;
                 }
-                buttons = BotCore.FindImage(VCBotScript.image, Img.ShopKeeper, true);
+                buttons = BotCore.FindImage(VCBotScript.image, Img.ShopKeeper, true, 0.9);
                 if(buttons != null)
                 {
                     BotCore.SendTap(770, 640);
                     Variables.ScriptLog("Shop keeper found! Getting in and see what to buy!", Color.White);
                     BotCore.Delay(3000);
                     VCBotScript.image = Screenshot.ImageCapture();
-                    if(BotCore.FindImage(VCBotScript.image, Img.MisteryBox, true)!= null)
+                    if(BotCore.FindImage(VCBotScript.image, Img.MisteryBox, true, 0.9) != null)
                     {
                         Variables.ScriptLog("Mistory Box found! Purchasing all products!", Color.Lime);
+                        BotCore.Delay(10000);
                         for(int x = 0; x < 3; x++)
                         {
                             switch (x)
@@ -254,7 +255,7 @@ namespace UI
                                 BotCore.SendTap(2,2);
                                 BotCore.Delay(300);
                                 VCBotScript.image = Screenshot.ImageCapture();
-                                greenButton = BotCore.FindImage(VCBotScript.image, Img.GreenButton, false);
+                                greenButton = BotCore.FindImage(VCBotScript.image, Img.GreenButton, false, 0.9);
                             }
                             while (greenButton == null);
                             BotCore.SendTap(greenButton.Value);
@@ -263,13 +264,14 @@ namespace UI
                                 BotCore.SendTap(2,2);
                                 BotCore.Delay(500);
                             }
+                            BotCore.Delay(5000);
                         }
                     }
                     BotCore.SendTap(1110, 875);
                     BotCore.Delay(500);
                     continue;
                 }
-                if(BotCore.FindImage(VCBotScript.image, Img.ArchwitchHunt, true) != null)
+                if(BotCore.FindImage(VCBotScript.image, Img.ArchwitchHunt, true, 0.9) != null)
                 {
                     //Stage completed
                     return;
