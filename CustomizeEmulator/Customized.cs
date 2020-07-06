@@ -194,7 +194,6 @@ namespace CustomizeEmulator
             {
                 Variables.Proc = Process.Start(Variables.VBoxManagerPath);
             }
-
         }
 
         public string EmulatorDefaultInstanceName()

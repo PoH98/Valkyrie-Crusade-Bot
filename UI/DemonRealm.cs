@@ -301,7 +301,7 @@ namespace UI
                     }
                     else
                     {
-                        p = BotCore.FindImage(screen, Img.Boss, true, 0.8);
+                        p = BotCore.FindImage(screen, Img.Boss, false, 0.85);
                         if (p != null)
                         {
                             Variables.ScriptLog("Boss Stage found!", Color.Lime);

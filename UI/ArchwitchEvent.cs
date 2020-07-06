@@ -288,7 +288,7 @@ namespace UI
                 VCBotScript.image = Screenshot.ImageCapture();
                 p = BotCore.FindImage(VCBotScript.image, Img.GreenButton, false, 0.8);
             } while (p == null);
-            BotCore.SendTap(p.Value);
+            BotCore.SendTap(620, 525);
             //Entered Stage
             Attack();
         }
@@ -332,6 +332,13 @@ namespace UI
                     BotCore.Delay(2000, 3000);
                     continue;
                 }
+                crop = Screenshot.CropImage(VCBotScript.image, new Point(532, 624), new Point(732, 667));
+                buttons = BotCore.FindImage(crop, Img.GreenButton, false, 0.88);
+                if (buttons != null)
+                {
+                    BotCore.SendTap(635, 648);
+                    continue;
+                }
                 buttons = BotCore.FindImage(VCBotScript.image, Img.Close2, true, 0.9);
                 if (buttons != null)
                 {
@@ -345,13 +352,6 @@ namespace UI
                     BotCore.SendTap(buttons.Value);
                     BotCore.Delay(1000, 1500);
                     VCBotScript.image = Screenshot.ImageCapture();
-                }
-                buttons = BotCore.FindImage(VCBotScript.image, Img.GreenButton, false, 0.9);
-                if(buttons != null)
-                {
-                    BotCore.SendTap(buttons.Value.X + rnd.Next(675, 940), buttons.Value.Y + rnd.Next(620, 650));
-                    BotCore.Delay(1000, 1500);
-                    continue;
                 }
                 crop = Screenshot.CropImage(VCBotScript.image, new Point(665, 565), new Point(970, 640));
                 buttons = BotCore.FindImage(crop, Img.Red_Button, false, 0.9);
@@ -409,7 +409,7 @@ namespace UI
                     }
                 }
                 crop = Screenshot.CropImage(VCBotScript.image, new Point(420, 360), new Point(855, 430));
-                buttons = BotCore.FindImage(crop, Img.Red_Button, false, 0.9);
+                buttons = BotCore.FindImage(crop, Img.Red_Button, false, 0.88);
                 if (buttons != null )
                 {
                     BotCore.SendTap(buttons.Value.X + rnd.Next(410, 880), buttons.Value.Y + rnd.Next(330, 450));

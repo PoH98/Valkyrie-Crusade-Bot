@@ -141,6 +141,7 @@
     <Compile Include="BotCore.cs" />
     <Compile Include="DllImport.cs" />
     <Compile Include="EmulatorInterface.cs" />
+    <Compile Include="EmulatorReader.cs" />
     <Compile Include="Emulator_Selection.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -148,6 +149,7 @@
       <DependentUpon>Emulator_Selection.cs</DependentUpon>
     </Compile>
     <Compile Include="Encryption.cs" />
+    <Compile Include="IEmulator.cs" />
     <Compile Include="Languages.cs" />
     <Compile Include="EmulatorLoader.cs" />
     <Compile Include="OCR.cs" />

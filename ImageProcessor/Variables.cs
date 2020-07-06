@@ -46,6 +46,20 @@ namespace BotFramework
             {
                 throw new FileNotFoundException("No supported emulators detected!");
             }
+            else
+            {
+                if (!string.IsNullOrEmpty(VBoxManagerPath))
+                {
+                    if (!File.Exists(VBoxManagerPath))
+                    {
+                        throw new FileNotFoundException("Emulator exe file is not found in " + VBoxManagerPath + "!");
+                    }
+                }
+                else
+                {
+                    throw new FileNotFoundException("Emulator don't have installed exe exist detected by BotFramework! Please make sure the VBoxManagerPath is not null or empty before proceed!");
+                }
+            }
         }
         /// <summary>
         /// The controlled device
@@ -137,10 +151,12 @@ namespace BotFramework
         /// If new devices added, will return true
         /// </summary>
         public static bool DeviceChanged = false;
+        [Obsolete]
         /// <summary>
         /// The process attached, which is the emulator
         /// </summary>
         public static Process Proc;
+        [Obsolete]
         /// <summary>
         /// hWnd used to WinApi screenshot
         /// </summary>

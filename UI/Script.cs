@@ -74,16 +74,13 @@ namespace UI
                             return;
                         }
                         Variables.ScriptLog("Main Screen not visible", Color.White);
-                        if(BotCore.RGBComparer(new Point(1125, 185), Color.Black, 0, image) && BotCore.RGBComparer(new Point(1195, 610), Color.Black, 0, image))
+                        point = BotCore.FindImage(Screenshot.CropImage(image, new Point(319, 525), new Point(588, 591)), Img.Start_Game, false, 0.8);
+                        if (point != null && BotCore.RGBComparer(new Point(379, 642), Color.FromArgb(37, 37, 37), 15, image))
                         {
-                            point = BotCore.FindImage(image, Img.Start_Game, false, 0.8);
-                            if (point != null && BotCore.RGBComparer(new Point(379, 642), Color.FromArgb(37, 37, 37), 15, image))
-                            {
-                                Variables.ScriptLog("Start Game Button Located!", Color.Lime);
-                                BotCore.SendTap(point.Value);
-                                error = 0;
-                                return;
-                            }
+                            Variables.ScriptLog("Start Game Button Located!", Color.Lime);
+                            BotCore.SendTap(438, 558);
+                            error = 0;
+                            return;
                         }
                         point = BotCore.FindImage(image, Img.Update_Complete, true, 0.8);
                         if (point != null)
@@ -113,12 +110,12 @@ namespace UI
                             }
                             return;
                         }
-                        point = BotCore.FindImage(crop, Img.Red_Button, false, 0.8);
+                        /*point = BotCore.FindImage(crop, Img.Red_Button, false, 0.88);
                         if (point != null)
                         {
                             BotCore.SendTap(point.Value);
                             Variables.ScriptLog("Found Red Button!", Color.Lime);
-                        }
+                        }*/
                         point = BotCore.FindImage(image, Img.Back_to_Village, true, 0.9);
                         if (point != null)
                         {
@@ -155,7 +152,7 @@ namespace UI
                             BotCore.SendTap(942, 630);
                             BotCore.Delay(5000, false);
                         }
-                        point = BotCore.FindImage(image, Img.GreenButton, false, 0.8);
+                        point = BotCore.FindImage(image, Img.GreenButton, false, 0.88);
                         if (point != null)
                         {
                             BotCore.SendTap(point.Value);
@@ -221,16 +218,16 @@ namespace UI
                             break;
                     }
                     image = Screenshot.ImageCapture();
-                    var crop = Screenshot.CropImage(image, new Point(0, 0), new Point(1020, 720));
-                    var p = BotCore.FindImage(image, Img.Red_Button, false, 0.8);
+                    var crop = Screenshot.CropImage(image, new Point(395, 0), new Point(1020, 720));
+                    var p = BotCore.FindImage(crop, Img.Red_Button, false, 0.8);
                     if(p != null)
                     {
-                        BotCore.SendTap(p.Value);
+                        BotCore.SendTap(new Point(p.Value.X + 395, p.Value.Y));
                     }
-                    p = BotCore.FindImage(image, Img.GreenButton, false, 0.8);
+                    p = BotCore.FindImage(crop, Img.GreenButton, false, 0.8);
                     if(p != null)
                     {
-                        BotCore.SendTap(p.Value);
+                        BotCore.SendTap(new Point(p.Value.X + 395, p.Value.Y));
                     }
                     //Find image and collect
                     if(!BotCore.RGBComparer(new Point(1259, 219), Color.FromArgb(75, 87, 254), 65, image))
@@ -238,7 +235,7 @@ namespace UI
                         p = BotCore.FindImage(crop, Img.Resource_1, false, 0.9);
                         if (p != null)
                         {
-                            BotCore.SendTap(p.Value);
+                            BotCore.SendTap(new Point(p.Value.X + 395, p.Value.Y));
                             BotCore.Delay(100, 200);
                         }
                     }
@@ -247,45 +244,30 @@ namespace UI
                         p = BotCore.FindImage(crop, Img.Resource_2, false, 0.9);
                         if (p != null)
                         {
-                            BotCore.SendTap(p.Value);
+                            BotCore.SendTap(new Point(p.Value.X + 395, p.Value.Y));
                             BotCore.Delay(100, 200);
                             
                         }
-                    }
-                    else
-                    {
-                        Variables.ScriptLog("乙醚已满，跳过收取！", Color.Lime);
-                        
                     }
                     if (!BotCore.RGBComparer(new Point(1260, 42), Color.FromArgb(249, 173, 46), 10, image))
                     {
                         p = BotCore.FindImage(crop, Img.Resource_3, false, 0.9);
                         if (p != null)
                         {
-                            BotCore.SendTap(p.Value);
+                            BotCore.SendTap(new Point(p.Value.X + 395, p.Value.Y));
                             BotCore.Delay(100, 200);
                             
                         }
-                    }
-                    else
-                    {
-                        Variables.ScriptLog("黄金已满，跳过收取！", Color.Lime);
-                        
                     }
                     if(!BotCore.RGBComparer(new Point(1260, 160), Color.FromArgb(125, 125, 125), 10, image))
                     {
                         p = BotCore.FindImage(crop, Img.Resource_4, false, 0.9);
                         if (p != null)
                         {
-                            BotCore.SendTap(p.Value);
+                            BotCore.SendTap(new Point(p.Value.X + 395, p.Value.Y));
                             BotCore.Delay(100, 200);
                             
                         }
-                    }
-                    else
-                    {
-                        Variables.ScriptLog("铁已满，跳过收取！", Color.Lime);
-                        
                     }
                     BotCore.Delay(800, 1200);
                 }
@@ -707,6 +689,7 @@ namespace UI
                     {
                         if (BotCore.FindImages(image, new Bitmap[] { Img.SoulArrow, Img.PT, Img.ArchwitchHunt }, true, 0.9, true) != null)
                         {
+                            BotCore.SendTap(point.Value.X + 125, point.Value.Y);
                             Variables.ScriptLog("Battle Ended!", Color.Lime);
                             PrivateVariable.Instance.Battling = false;
                             return;
