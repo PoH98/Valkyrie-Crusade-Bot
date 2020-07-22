@@ -41,9 +41,10 @@ namespace UI
                             x--;
                             continue;
                         }
-                        point = BotCore.FindImage(image, Img.Start_Game, true, 0.9);
-                        if(point != null)
+                        point = BotCore.FindImage(Screenshot.CropImage(image, new Point(319, 525), new Point(588, 591)), Img.Start_Game, false, 0.8);
+                        if (point != null && BotCore.RGBComparer(new Point(379, 642), Color.FromArgb(37, 37, 37), 15, image))
                         {
+                            Variables.ScriptLog("Start Game Button Located!", Color.Lime);
                             BotCore.SendTap(point.Value);
                             PrivateVariable.Instance.InMainScreen = false;
                             PrivateVariable.Instance.LocatedGuildWar = false;
@@ -54,12 +55,33 @@ namespace UI
                             PrivateVariable.Instance.LocatedGuildWar = true;
                             break;
                         }
-                        if (x > 15)
+                        if (x > 10)
                         {
                             Variables.ScriptLog("Somehing is not right! No guild war locate found! Lets get in with different method!", Color.Yellow);
                             if (Variables.FindConfig("GuildWar", "EnterPosX", out string p_x) && Variables.FindConfig("GuildWar", "EnterPosY", out string p_y))
                             {
-                                VCBotScript.LocateMainScreen();
+                                if (BotCore.FindImage(image, Img.MainScreen, true, 0.9) == null)
+                                {
+                                    BotCore.SendTap(point.Value);
+                                    BotCore.Delay(1000, false);
+                                    Variables.ScriptLog("Returning main screen", Color.Lime);
+                                    BotCore.SendTap(942, 630);
+                                    BotCore.Delay(5000, false);
+                                    //We are not at mainscreen and having nothing to do
+                                    point = BotCore.FindImage(image, Img.Back_to_Village, true, 0.9);
+                                    if (point != null)
+                                    {
+                                        Variables.ScriptLog("Going back to Main screen", Color.Lime);
+                                        BotCore.SendTap(point.Value);
+                                        do
+                                        {
+                                            BotCore.Delay(3000);
+                                            VCBotScript.image = Screenshot.ImageCapture();
+                                        }
+                                        while (BotCore.FindImage(VCBotScript.image, Img.MainScreen, true, 0.9) == null);
+                                    }
+                                }
+                                Variables.ScriptLog("Screen Located", Color.Lime);
                                 BotCore.SendTap(170, 655);
                                 BotCore.Delay(5000, false);
                                 try
@@ -90,7 +112,6 @@ namespace UI
                         }
                     }
                 }
-                BotCore.SendTap(10,10);
                 GuildWar(time);
                 time = TimeZoneInfo.ConvertTime(DateTime.Now, Japan).TimeOfDay;
                 hour = time.Hours;

@@ -18,7 +18,7 @@ namespace UI
             do
             {
                 VCBotScript.image = Screenshot.ImageCapture();
-                if (BotCore.FindImage(VCBotScript.image, Img.SoulArrow, false, 0.9) != null)
+                if (BotCore.FindImage(VCBotScript.image, Img.SoulArrow, false, 0.9) != null || BotCore.FindImage(Screenshot.CropImage(VCBotScript.image, new Point(445, 355), new Point(815, 430)), Img.Red_Button, false, 0.87) != null)
                 {
                     Variables.ScriptLog("Already in a stage, running now...",Color.Lime);
                     Attack();
@@ -169,7 +169,7 @@ namespace UI
             {
                 Random rnd = new Random();
                 VCBotScript.image = Screenshot.ImageCapture();
-                var crop = Screenshot.CropImage(VCBotScript.image, new Point(420, 360), new Point(855, 430));
+                var crop = Screenshot.CropImage(VCBotScript.image, new Point(420, 360), new Point(855, 450));
                 Point? buttons = BotCore.FindImage(crop, Img.GreenButton, false, 0.9);
                 if (buttons != null)
                 {
@@ -210,7 +210,7 @@ namespace UI
                     BotCore.Delay(1000, 1500);
                     continue;
                 }
-                buttons = BotCore.FindImage(crop, Img.Red_Button, false, 0.9);
+                buttons = BotCore.FindImage(crop, Img.Red_Button, false, 0.87);
                 if (buttons != null)
                 {
                     ArchwitchEvent.CheckBossEnergy();
