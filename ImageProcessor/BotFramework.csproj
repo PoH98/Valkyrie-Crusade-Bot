@@ -141,7 +141,6 @@
     <Compile Include="BotCore.cs" />
     <Compile Include="DllImport.cs" />
     <Compile Include="EmulatorInterface.cs" />
-    <Compile Include="EmulatorReader.cs" />
     <Compile Include="Emulator_Selection.cs">
       <SubType>Form</SubType>
     </Compile>

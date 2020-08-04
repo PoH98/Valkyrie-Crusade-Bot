@@ -2,7 +2,6 @@
 
 namespace BotFramework
 {
-    [Obsolete]
     /// <summary>
     /// Emulator controlling interface for different emulators
     /// </summary>

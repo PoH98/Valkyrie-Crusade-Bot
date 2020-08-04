@@ -17,8 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nox", "Nox\Nox.csproj", "{F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITools", "ITools\ITools.csproj", "{86D96204-7B8C-4816-A265-569C68DC6C20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomizeEmulator", "CustomizeEmulator\CustomizeEmulator.csproj", "{D3AADFD8-61A6-4326-88BD-41FAC55B5274}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,18 +111,6 @@ Global
 		{86D96204-7B8C-4816-A265-569C68DC6C20}.Release|x64.Build.0 = Release|Any CPU
 		{86D96204-7B8C-4816-A265-569C68DC6C20}.Release|x86.ActiveCfg = Release|Any CPU
 		{86D96204-7B8C-4816-A265-569C68DC6C20}.Release|x86.Build.0 = Release|Any CPU
-		{D3AADFD8-61A6-4326-88BD-41FAC55B5274}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D3AADFD8-61A6-4326-88BD-41FAC55B5274}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D3AADFD8-61A6-4326-88BD-41FAC55B5274}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{D3AADFD8-61A6-4326-88BD-41FAC55B5274}.Debug|x64.Build.0 = Debug|Any CPU
-		{D3AADFD8-61A6-4326-88BD-41FAC55B5274}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{D3AADFD8-61A6-4326-88BD-41FAC55B5274}.Debug|x86.Build.0 = Debug|Any CPU
-		{D3AADFD8-61A6-4326-88BD-41FAC55B5274}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D3AADFD8-61A6-4326-88BD-41FAC55B5274}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D3AADFD8-61A6-4326-88BD-41FAC55B5274}.Release|x64.ActiveCfg = Release|Any CPU
-		{D3AADFD8-61A6-4326-88BD-41FAC55B5274}.Release|x64.Build.0 = Release|Any CPU
-		{D3AADFD8-61A6-4326-88BD-41FAC55B5274}.Release|x86.ActiveCfg = Release|Any CPU
-		{D3AADFD8-61A6-4326-88BD-41FAC55B5274}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

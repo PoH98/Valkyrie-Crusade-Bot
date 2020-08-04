@@ -20,7 +20,6 @@ using System.Windows.Forms;
 
 namespace BotFramework
 {
-    [Obsolete]
     /// <summary>
     /// Load all emulator interface to check if emulator is installed
     /// </summary>

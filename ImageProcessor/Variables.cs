@@ -68,7 +68,7 @@ namespace BotFramework
         /// <summary>
         /// Confiures of bot.ini, use BotCore.ReadConfig() to fill up values
         /// </summary>
-        private static IniData Config = new IniData();
+        internal static IniData Config = new IniData();
         /// <summary>
         /// Get config data by key
         /// </summary>

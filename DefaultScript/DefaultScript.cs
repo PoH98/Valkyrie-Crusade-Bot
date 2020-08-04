@@ -17,8 +17,6 @@ namespace DefaultScript
         private static bool KOChance;
         public void Attack()
         {
-            int loopCount = 0;
-            Loop:
             Random rnd = new Random();
             byte[] KO = Screenshot.CropImage(VCBotScript.image, new Point(230, 70), new Point(1140, 160));
             var points = BotCore.FindImages(KO, new Bitmap[] { Resource.Stun1, Resource.Stun2 }, false, 0.9);
@@ -41,33 +39,6 @@ namespace DefaultScript
                         if (!cboxchecked[index] || PrivateVariable.Instance.VCevent != PrivateVariable.EventType.Tower)
                         {
                             byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(176, 356), new Point(330, 611));
-                            /*foreach (var f in PrivateVariable.Skills)
-                            {
-                                if (!ScriptRun.Run)
-                                {
-                                    return;
-                                }
-                                try
-                                {
-                                    Thread.Sleep(10);
-                                    Point? p = BotCore.FindImage(crop, f, false);
-                                    if (p != null)
-                                    {
-                                        Variables.ScriptLog("Skill actived", Color.Blue);
-                                        BotCore.SendSwipe(new Point(263, 473), new Point(264, 474), 1200);
-                                        for (int x = 0; x < 6; x++)
-                                        {
-                                            Thread.Sleep(100);
-                                            BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
-                                        }
-                                        break;
-                                    }
-                                }
-                                catch
-                                {
-
-                                }
-                            }*/
                             var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, 0.9, true);
                             if(results != null)
                             {
@@ -83,33 +54,6 @@ namespace DefaultScript
                         else if(KOChance)
                         {
                             byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(176, 356), new Point(330, 611));
-                            /*foreach (var f in PrivateVariable.Skills)
-                            {
-                                if (!ScriptRun.Run)
-                                {
-                                    return;
-                                }
-                                try
-                                {
-                                    Thread.Sleep(10);
-                                    Point? p = BotCore.FindImage(crop, f, false);
-                                    if (p != null)
-                                    {
-                                        Variables.ScriptLog("Skill actived", Color.Blue);
-                                        BotCore.SendSwipe(new Point(263, 473), new Point(264, 474), 1200);
-                                        for (int x = 0; x < 6; x++)
-                                        {
-                                            Thread.Sleep(100);
-                                            BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
-                                        }
-                                        break;
-                                    }
-                                }
-                                catch
-                                {
-
-                                }
-                            }*/
                             var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, 0.9, true);
                             if (results != null)
                             {
@@ -127,33 +71,6 @@ namespace DefaultScript
                         if (!cboxchecked[index] || PrivateVariable.Instance.VCevent != PrivateVariable.EventType.ArchWitch)
                         {
                             byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(357, 356), new Point(543, 610));
-                            /*foreach (var f in PrivateVariable.Skills)
-                            {
-                                if (!ScriptRun.Run)
-                                {
-                                    return;
-                                }
-                                try
-                                {
-                                    Thread.Sleep(10);
-                                    Point? p = BotCore.FindImage(crop, f, false);
-                                    if (p != null)
-                                    {
-                                        Variables.ScriptLog("Skill actived", Color.Blue);
-                                        BotCore.SendSwipe(new Point(448, 492), new Point(449, 493), 1200);
-                                        for (int x = 0; x < 6; x++)
-                                        {
-                                            Thread.Sleep(100);
-                                            BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
-                                        }
-                                        break;
-                                    }
-                                }
-                                catch
-                                {
-
-                                }
-                            }*/
                             var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, 0.9, true);
                             if (results != null)
                             {
@@ -169,37 +86,6 @@ namespace DefaultScript
                         else if(KOChance)
                         {
                             byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(500, 0), new Point(800, 50));
-                            /*if (BotCore.FindImage(crop, "Img\\KO_Chance\\KO.png", false) != null)//Ko Chance, active skill
-                            {
-                                crop = Screenshot.CropImage(VCBotScript.image, new Point(357, 356), new Point(543, 610));
-                                foreach (var f in PrivateVariable.Skills)
-                                {
-                                    if (!ScriptRun.Run)
-                                    {
-                                        return;
-                                    }
-                                    try
-                                    {
-                                        Thread.Sleep(10);
-                                        Point? p = BotCore.FindImage(crop, f, false);
-                                        if (p != null)
-                                        {
-                                            Variables.ScriptLog("Skill actived", Color.Blue);
-                                            BotCore.SendSwipe(new Point(263, 473), new Point(264, 474), 1200);
-                                            for (int x = 0; x < 6; x++)
-                                            {
-                                                Thread.Sleep(100);
-                                                BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
-                                            }
-                                            break;
-                                        }
-                                    }
-                                    catch
-                                    {
-
-                                    }
-                                }
-                            }*/
                             var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, 0.9, true);
                             if (results != null)
                             {
@@ -217,33 +103,6 @@ namespace DefaultScript
                         if (!cboxchecked[index] || PrivateVariable.Instance.VCevent != PrivateVariable.EventType.ArchWitch)
                         {
                             byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(546, 376), new Point(724, 597));
-                            /*foreach (var f in PrivateVariable.Skills)
-                            {
-                                if (!ScriptRun.Run)
-                                {
-                                    return;
-                                }
-                                try
-                                {
-                                    Thread.Sleep(10);
-                                    Point? p = BotCore.FindImage(crop, f, false);
-                                    if (p != null)
-                                    {
-                                        Variables.ScriptLog("Skill actived", Color.Blue);
-                                        BotCore.SendSwipe(new Point(641, 473), new Point(642, 474), 1200);
-                                        for (int x = 0; x < 6; x++)
-                                        {
-                                            Thread.Sleep(100);
-                                            BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
-                                        }
-                                        break;
-                                    }
-                                }
-                                catch
-                                {
-
-                                }
-                            }*/
                             var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, 0.9, true);
                             if (results != null)
                             {
@@ -259,37 +118,6 @@ namespace DefaultScript
                         else if(KOChance)
                         {
                             byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(500, 0), new Point(800, 50));
-                            /*if (BotCore.FindImage(crop, "Img\\KO_Chance\\KO.png", false) != null)//Ko Chance, active skill
-                            {
-                                crop = Screenshot.CropImage(VCBotScript.image, new Point(546, 376), new Point(724, 597));
-                                foreach (var f in PrivateVariable.Skills)
-                                {
-                                    if (!ScriptRun.Run)
-                                    {
-                                        return;
-                                    }
-                                    try
-                                    {
-                                        Thread.Sleep(10);
-                                        Point? p = BotCore.FindImage(crop, f, false);
-                                        if (p != null)
-                                        {
-                                            Variables.ScriptLog("Skill actived", Color.Blue);
-                                            BotCore.SendSwipe(new Point(263, 473), new Point(264, 474), 1200);
-                                            for (int x = 0; x < 6; x++)
-                                            {
-                                                Thread.Sleep(100);
-                                                BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
-                                            }
-                                            break;
-                                        }
-                                    }
-                                    catch
-                                    {
-
-                                    }
-                                }
-                            }*/
                             var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, 0.9, true);
                             if (results != null)
                             {
@@ -307,33 +135,6 @@ namespace DefaultScript
                         if (!cboxchecked[index] || PrivateVariable.Instance.VCevent != PrivateVariable.EventType.ArchWitch)
                         {
                             byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(761, 356), new Point(921, 613));
-                            /*foreach (var f in PrivateVariable.Skills)
-                            {
-                                if (!ScriptRun.Run)
-                                {
-                                    return;
-                                }
-                                try
-                                {
-                                    Thread.Sleep(10);
-                                    Point? p = BotCore.FindImage(crop, f, false);
-                                    if (p != null)
-                                    {
-                                        Variables.ScriptLog("Skill actived", Color.Blue);
-                                        BotCore.SendSwipe(new Point(834, 483), new Point(835, 484), 1200);
-                                        for (int x = 0; x < 6; x++)
-                                        {
-                                            Thread.Sleep(100);
-                                            BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
-                                        }
-                                        break;
-                                    }
-                                }
-                                catch
-                                {
-
-                                }
-                            }*/
                             var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, 0.9, true);
                             if (results != null)
                             {
@@ -349,37 +150,6 @@ namespace DefaultScript
                         else if(KOChance)
                         {
                             byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(500, 0), new Point(800, 50));
-                            /*if (BotCore.FindImage(crop, "Img\\KO_Chance\\KO.png", false) != null)//Ko Chance, active skill
-                            {
-                                crop = Screenshot.CropImage(VCBotScript.image, new Point(761, 356), new Point(921, 613));
-                                foreach (var f in PrivateVariable.Skills)
-                                {
-                                    if (!ScriptRun.Run)
-                                    {
-                                        return;
-                                    }
-                                    try
-                                    {
-                                        Thread.Sleep(10);
-                                        Point? p = BotCore.FindImage(crop, f, false);
-                                        if (p != null)
-                                        {
-                                            Variables.ScriptLog("Skill actived", Color.Blue);
-                                            BotCore.SendSwipe(new Point(263, 473), new Point(264, 474), 1200);
-                                            for (int x = 0; x < 6; x++)
-                                            {
-                                                Thread.Sleep(100);
-                                                BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
-                                            }
-                                            break;
-                                        }
-                                    }
-                                    catch
-                                    {
-
-                                    }
-                                }
-                            }*/
                             var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, 0.9, true);
                             if (results != null)
                             {
@@ -397,33 +167,6 @@ namespace DefaultScript
                         if (!cboxchecked[index] || PrivateVariable.Instance.VCevent != PrivateVariable.EventType.ArchWitch)
                         {
                             byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(934, 356), new Point(1090, 578));
-                            /*foreach (var f in PrivateVariable.Skills)
-                            {
-                                if (!ScriptRun.Run)
-                                {
-                                    return;
-                                }
-                                try
-                                {
-                                    Thread.Sleep(10);
-                                    Point? p = BotCore.FindImage(crop, f, false);
-                                    if (p != null)
-                                    {
-                                        Variables.ScriptLog("Skill actived", Color.Blue);
-                                        BotCore.SendSwipe(new Point(1017, 470), new Point(1018, 471), 1200);
-                                        for (int x = 0; x < 6; x++)
-                                        {
-                                            Thread.Sleep(100);
-                                            BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
-                                        }
-                                        break;
-                                    }
-                                }
-                                catch
-                                {
-
-                                }
-                            }*/
                             var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, 0.9, true);
                             if (results != null)
                             {
@@ -439,37 +182,6 @@ namespace DefaultScript
                         else if(KOChance)
                         {
                             byte[] crop = Screenshot.CropImage(VCBotScript.image, new Point(500, 0), new Point(800, 50));
-                            /*if (BotCore.FindImage(crop, "Img\\KO_Chance\\KO.png", false) != null)//Ko Chance, active skill
-                            {
-                                crop = Screenshot.CropImage(VCBotScript.image, new Point(934, 356), new Point(1090, 578));
-                                foreach (var f in PrivateVariable.Skills)
-                                {
-                                    if (!ScriptRun.Run)
-                                    {
-                                        return;
-                                    }
-                                    try
-                                    {
-                                        Thread.Sleep(10);
-                                        Point? p = BotCore.FindImage(crop, f, false);
-                                        if (p != null)
-                                        {
-                                            Variables.ScriptLog("Skill actived", Color.Blue);
-                                            BotCore.SendSwipe(new Point(263, 473), new Point(264, 474), 1200);
-                                            for (int x = 0; x < 6; x++)
-                                            {
-                                                Thread.Sleep(100);
-                                                BotCore.SendTap(rnd.Next(5, 15), rnd.Next(5, 15));
-                                            }
-                                            break;
-                                        }
-                                    }
-                                    catch
-                                    {
-
-                                    }
-                                }
-                            }*/
                             var results = BotCore.FindImages(crop, PrivateVariable.Instance.Skills, false, 0.9, true);
                             if (results != null)
                             {
@@ -484,16 +196,6 @@ namespace DefaultScript
                         }
                         break;
                 }
-            }
-            if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.GuildWar && loopCount < 7)
-            {
-                VCBotScript.image = Screenshot.ImageCapture();
-                if (BotCore.FindImage(VCBotScript.image, ImgXml.Img.GreenButton, false, 0.9) != null)
-                {
-                    return;
-                }
-                loopCount++;
-                goto Loop;
             }
         }
         public static string cboxselected ="";
