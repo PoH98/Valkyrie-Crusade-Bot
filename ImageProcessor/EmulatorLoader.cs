@@ -342,7 +342,7 @@ namespace BotFramework
         public static void ConnectAndroidEmulator([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             int error = 0;
-        Connect:
+            Connect:
             StartAdb();
             if (!ScriptRun.Run)
             {
@@ -356,7 +356,14 @@ namespace BotFramework
                 {
                     return;
                 }
-                foreach (var p in Process.GetProcesses().Where(x => Variables.emulator.EmulatorProcessName().ToLower().Split('|').Contains(x.ProcessName.ToLower())))
+                var emulators = Process.GetProcesses().Where(x => Variables.emulator.EmulatorProcessName().ToLower().Split('|').Contains(x.ProcessName.ToLower()));
+                if(emulators.Count() == 1)
+                {
+                    Variables.Proc = emulators.First();
+                    Variables.ScriptLog("Emulator ID: " + Variables.Proc.Id, Color.DarkGreen);
+                    goto Connect;
+                }
+                foreach (var p in emulators)
                 {
                     string command = GetCommandLineOfProcess(p);
                     Variables.AdvanceLog(command);
@@ -374,6 +381,16 @@ namespace BotFramework
                         Variables.Proc = p;
                         Variables.ScriptLog("Emulator ID: " + p.Id, Color.DarkGreen);
                         break;
+                    }
+                    else
+                    {
+                        //We cant find the command here, lets do some tweak
+                        if (p.MainWindowTitle.ToLower().EndsWith(Variables.emulator.EmulatorDefaultInstanceName().ToLower()))
+                        {
+                            Variables.Proc = p;
+                            Variables.ScriptLog("Emulator ID: " + p.Id, Color.DarkGreen);
+                            break;
+                        }
                     }
                 }
                 Variables.AdvanceLog("Emulator not connected, retrying in 2 second...", lineNumber, caller);
@@ -517,6 +534,7 @@ namespace BotFramework
             }
             ConnectMinitouch();
         }
+
 
         /// <summary>
         /// Warning!!Must run this before exit program, else all sockets records will continue in the PC even when restarted!!
