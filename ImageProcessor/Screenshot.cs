@@ -64,7 +64,7 @@ namespace BotFramework
                 catch (Exception ex)
                 {
                     Variables.AdvanceLog(ex.ToString());
-                    return null;
+                    return new byte[Variables.EmulatorHeight*Variables.EmulatorWidth];
                 }
             }
         }
@@ -87,7 +87,13 @@ namespace BotFramework
                 catch (Exception ex)
                 {
                     Variables.AdvanceLog(ex.ToString());
-                    return null;
+                    Bitmap bmp = new Bitmap(Variables.EmulatorWidth, Variables.EmulatorHeight);
+                    using (Graphics graph = Graphics.FromImage(bmp))
+                    {
+                        Rectangle ImageSize = new Rectangle(0, 0, Variables.EmulatorWidth, Variables.EmulatorHeight);
+                        graph.FillRectangle(Brushes.Black, ImageSize);
+                    }
+                    return bmp;
                 }
             }
         }
