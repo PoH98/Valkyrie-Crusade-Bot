@@ -3,7 +3,6 @@ using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using SharpAdbClient;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -52,19 +51,19 @@ namespace BotFramework
         /// <returns></returns>
         [HandleProcessCorruptedStateExceptions]
         [SecurityCritical]
-        public static byte[] Compress(Image image)
+        public static ScreenshotData Compress(Image image)
         {
             lock (Instance.locker)
             {
                 try
                 {
                     byte[] xByte = (byte[])Instance._imageConverter.ConvertTo(image, typeof(byte[]));
-                    return xByte;
+                    return new ScreenshotData() { imageData = xByte };
                 }
                 catch (Exception ex)
                 {
                     Variables.AdvanceLog(ex.ToString());
-                    return new byte[Variables.EmulatorHeight*Variables.EmulatorWidth];
+                    return null;
                 }
             }
         }
@@ -73,15 +72,29 @@ namespace BotFramework
         /// </summary>
         /// <param name="buffer">the byte array of image compressed by Compress(Image image)</param>
         /// <returns>Image</returns>
-        public static Bitmap Decompress(byte[] buffer)
+        public static Bitmap Decompress(ScreenshotData buffer)
         {
             lock (Instance.locker)
             {
                 try
                 {
-                    using (var ms = new MemoryStream(buffer))
+                    if(buffer == null)
                     {
-                        return Image.FromStream(ms) as Bitmap;
+                        //Unable to get back image, lets return black
+                        Bitmap bmp = new Bitmap(Variables.EmulatorWidth, Variables.EmulatorHeight);
+                        using (Graphics graph = Graphics.FromImage(bmp))
+                        {
+                            Rectangle ImageSize = new Rectangle(0, 0, Variables.EmulatorWidth, Variables.EmulatorHeight);
+                            graph.FillRectangle(Brushes.Black, ImageSize);
+                        }
+                        return bmp;
+                    }
+                    else
+                    {
+                        using(MemoryStream stream = new MemoryStream(buffer.imageData))
+                        {
+                            return new Bitmap(stream);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -100,19 +113,19 @@ namespace BotFramework
         /// <summary> 
         /// Crop the image and return the cropped image
         /// </summary>
-        /// <param name="original">Image that need to be cropped</param>
+        /// <param name="image">Image that need to be cropped</param>
         /// <param name="Start">Starting Point</param>
         /// <param name="End">Ending Point</param>
         /// <param name="caller"></param>
         /// <param name="lineNumber"></param>
         /// <returns></returns>
-        public static byte[] CropImage(byte[] original, Point Start, Point End, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static ScreenshotData CropImage(ScreenshotData image, Point Start, Point End, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
                 return null;
             }
-            return Compress(CropImage(Decompress(original), Start, End, lineNumber, caller));
+            return Compress(CropImage(Decompress(image), Start, End, lineNumber, caller));
         }
 
         private static Bitmap CropImage(Bitmap original, Point start, Point End, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
@@ -151,7 +164,7 @@ namespace BotFramework
         /// <param name="lineNumber"></param>
         /// <param name="caller"></param>
         /// <returns></returns>
-        public static byte[] ImageCapture(IntPtr hWnd, Point cropstart, Point cropend, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static ScreenshotData ImageCapture(IntPtr hWnd, Point cropstart, Point cropend, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             try
             {
@@ -183,7 +196,7 @@ namespace BotFramework
         /// <summary>
         /// Fast Capturing screen and return the image, uses WinAPI capture if Variables.Background is false.
         /// </summary>
-        public static byte[] ImageCapture([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static ScreenshotData ImageCapture([CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
@@ -191,7 +204,7 @@ namespace BotFramework
             }
             if (Variables.WinApiCapt && !Instance.captureerror)
             {
-                if (Variables.ProchWnd != IntPtr.Zero)
+                if (Variables.ProchWnd != null)
                 {
                     return ImageCapture(Variables.ProchWnd, Variables.WinApiCaptCropStart, Variables.WinApiCaptCropEnd, lineNumber, caller);
                 }
@@ -299,7 +312,7 @@ namespace BotFramework
         /// <param name="image"></param>
         /// <param name="angle"></param>
         /// <returns></returns>
-        public static Bitmap RotateImage(Image image, float angle)
+        public static Bitmap RotateImage(Bitmap image, float angle)
         {
             if (!ScriptRun.Run)
             {
@@ -331,6 +344,13 @@ namespace BotFramework
             Image<Rgb, byte> resizedImage = captureImage.Resize(width, height, Inter.Linear);
             return resizedImage.ToBitmap();
         }
+    }
+    /// <summary>
+    /// The image data
+    /// </summary>
+    public class ScreenshotData
+    {
+        internal byte[] imageData;
     }
 
     #region Native Win32 Interop

@@ -151,12 +151,10 @@ namespace BotFramework
         /// If new devices added, will return true
         /// </summary>
         public static bool DeviceChanged = false;
-        [Obsolete]
         /// <summary>
         /// The process attached, which is the emulator
         /// </summary>
         public static Process Proc;
-        [Obsolete]
         /// <summary>
         /// hWnd used to WinApi screenshot
         /// </summary>

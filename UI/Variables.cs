@@ -41,7 +41,7 @@ namespace UI
 
         //public static List<byte[]> Enemies = new List<byte[]>();
 
-        public List<byte[]> Skills = new List<byte[]>();
+        public List<ScreenshotData> Skills = new List<ScreenshotData>();
 
         public bool Battling, InEventScreen, InMainScreen, InMap;
 

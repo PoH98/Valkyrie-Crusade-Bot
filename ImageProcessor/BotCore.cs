@@ -333,7 +333,7 @@ namespace BotFramework
                 {
                     return Color.Black;
                 }
-                byte[] image = null;
+                ScreenshotData image = null;
                 int error = 0;
                 do
                 {
@@ -392,7 +392,7 @@ namespace BotFramework
         /// <param name="caller"></param>
         /// <param name="lineNumber"></param>
         /// <returns>bool</returns>
-        public static bool RGBComparer(Point point, Color color, int tolerance, byte[] image = null, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static bool RGBComparer(Point point, Color color, int tolerance, ScreenshotData image = default, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
@@ -402,7 +402,7 @@ namespace BotFramework
             int blue = color.B;
             int green = color.G;
             int error = 0;
-            while (image == null && error < 5)
+            while (image == default && error < 5)
             {
                 if (Variables.ProchWnd != IntPtr.Zero)
                 {
@@ -468,19 +468,19 @@ namespace BotFramework
         /// <param name="red">Red value of color</param>
         /// <param name="image">The image to check color. If not set will auto screenshot using WinAPI</param>
         /// <returns>bool</returns>
-        public static bool RGBComparer(Point point, int red, int green, int blue, int tolerance, byte[] image = null, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static bool RGBComparer(Point point, int red, int green, int blue, int tolerance, ScreenshotData image =  default, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
                 return false;
             }
-            return RGBComparer(point, Color.FromArgb(red, green, blue), tolerance, image);
+            return RGBComparer(point, Color.FromArgb(red, green, blue), tolerance, image, lineNumber, caller);
         }
         /// <summary>
         /// Compare point RGB from image
         /// </summary>
         /// <returns>bool</returns>
-        public static bool RGBComparer(byte[] image, Color color, int tolerance)
+        public static bool RGBComparer(ScreenshotData image, Color color, int tolerance)
         {
             lock (Instance.locker)
             {
@@ -489,7 +489,7 @@ namespace BotFramework
                     return false;
                 }
                 int error = 0;
-                while (image == null && error < 5)
+                while (image == default && error < 5)
                 {
                     if (Variables.ProchWnd != IntPtr.Zero)
                     {
@@ -502,7 +502,7 @@ namespace BotFramework
                     error++;
                 }
 
-                if (image == null)
+                if (image == default)
                 {
                     return false;
                 }
@@ -549,7 +549,7 @@ namespace BotFramework
         /// Compare point RGB from image
         /// </summary>
         /// <returns>bool</returns>
-        public static bool RGBComparer(Color color, Point start, Point end, int tolerance, out Point? point, byte[] image = null, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static bool RGBComparer(Color color, Point start, Point end, int tolerance, out Point? point, ScreenshotData image =  default, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             lock (Instance.locker)
             {
@@ -559,7 +559,7 @@ namespace BotFramework
                     return false;
                 }
                 int error = 0;
-                while (image == null && error < 5)
+                while (image == default && error < 5)
                 {
                     if (Variables.ProchWnd != IntPtr.Zero)
                     {
@@ -586,7 +586,7 @@ namespace BotFramework
         /// Compare point RGB from image
         /// </summary>
         /// <returns>bool</returns>
-        public static bool RGBComparer(Color color, int tolerance, out Point? point, byte[] image = null,[CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static bool RGBComparer(Color color, int tolerance, out Point? point, ScreenshotData image =  default, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             lock (Instance.locker)
             {
@@ -596,7 +596,7 @@ namespace BotFramework
                     return false;
                 }
                 int error = 0;
-                while (image == null && error < 5)
+                while (image == default && error < 5)
                 {
                     if (Variables.ProchWnd != IntPtr.Zero)
                     {
@@ -666,7 +666,7 @@ namespace BotFramework
         /// <param name="FindOnlyOne"></param>
         /// <returns>Point or null</returns>
         /// <returns></returns>
-        public static Point[] FindImages(byte[] image, Bitmap[] find, bool GrayStyle, double matchRadius, bool FindOnlyOne = false,  [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static Point[] FindImages(ScreenshotData image, Bitmap[] find, bool GrayStyle, double matchRadius, bool FindOnlyOne = false,  [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             lock (Instance.locker)
             {
@@ -792,7 +792,7 @@ namespace BotFramework
         /// <param name="caller"></param>
         /// <returns>Point or null</returns>
         /// <returns></returns>
-        public static Point[] FindImages(byte[] original, List<byte[]> find, bool GrayStyle,double matchRadius, bool FindOnlyOne = false, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static Point[] FindImages(ScreenshotData original, List<ScreenshotData> find, bool GrayStyle,double matchRadius, bool FindOnlyOne = false, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             lock (Instance.locker)
             {
@@ -877,7 +877,7 @@ namespace BotFramework
         /// <param name="screencapture">Original image that need to get the point on it</param>
         /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
         /// <returns>Point or null</returns>
-        public static Point? FindImage(byte[] screencapture, Bitmap find, bool GrayStyle, double matchRadius, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static Point? FindImage(ScreenshotData screencapture, Bitmap find, bool GrayStyle, double matchRadius, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
@@ -973,7 +973,7 @@ namespace BotFramework
         /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
         /// <param name="lineNumber"></param>
         /// <param name="caller"></param>
-        public static Point? FindImage(byte[] screencapture, string findPath, bool GrayStyle, double matchRadius, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static Point? FindImage(ScreenshotData screencapture, string findPath, bool GrayStyle, double matchRadius, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {
@@ -1063,7 +1063,7 @@ namespace BotFramework
         /// <param name="screencapture">Result from <see cref="Screenshot.ImageCapture(int, string)"/></param>
         /// <param name="GrayStyle">Convert the images to gray for faster detection</param>
         /// <returns>Point or null</returns>
-        public static Point? FindImage(byte[] screencapture, byte[] image, bool GrayStyle, double matchRadius, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
+        public static Point? FindImage(ScreenshotData screencapture, ScreenshotData image, bool GrayStyle, double matchRadius, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null)
         {
             if (!ScriptRun.Run)
             {

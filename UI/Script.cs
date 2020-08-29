@@ -20,7 +20,7 @@ namespace UI
         public static int TreasureHuntIndex = -1;
         private static int Retry = 0, error = 0;
         public static string Tower_Floor = "", Tower_Rank = "";
-        public static byte[] image = null;
+        public static ScreenshotData image = default;
         public static DateTime nextOnline;
         private static bool Collected;
         //Try Locate MainScreen

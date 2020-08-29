@@ -15,7 +15,10 @@ namespace BotFramework
     /// </summary>
     class Adb
     {
-        public static int CurrentPort = 5037;
+        /// <summary>
+        /// Default readonly port
+        /// </summary>
+        public static readonly int CurrentPort = 5037;
         /// <summary>
         /// Return true or false to represent Adb is started successful or not
         /// </summary>

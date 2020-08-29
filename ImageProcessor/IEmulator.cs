@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BotFramework
 {
+    /// <summary>
+    /// The interface for customized emulator connector
+    /// </summary>
     public interface IEmulator
     {
         /// <summary>

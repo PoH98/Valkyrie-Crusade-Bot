@@ -36,7 +36,7 @@ namespace BotFramework
         /// <param name="source"></param>
         /// <param name="lang"></param>
         /// <returns></returns>
-        public static string OcrImage(byte[] source, string lang)
+        public static string OcrImage(ScreenshotData source, string lang)
         {
             if(Instance.t == null)
             {
