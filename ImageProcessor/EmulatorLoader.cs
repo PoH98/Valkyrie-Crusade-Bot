@@ -357,12 +357,6 @@ namespace BotFramework
                     return;
                 }
                 var emulators = Process.GetProcesses().Where(x => Variables.emulator.EmulatorProcessName().ToLower().Split('|').Contains(x.ProcessName.ToLower()));
-                if(emulators.Count() == 1)
-                {
-                    Variables.Proc = emulators.First();
-                    Variables.ScriptLog("Emulator ID: " + Variables.Proc.Id, Color.DarkGreen);
-                    goto Connect;
-                }
                 foreach (var p in emulators)
                 {
                     string command = GetCommandLineOfProcess(p);
