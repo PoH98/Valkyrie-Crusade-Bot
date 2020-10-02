@@ -110,12 +110,12 @@ namespace UI
                             }
                             return;
                         }
-                        /*point = BotCore.FindImage(crop, Img.Red_Button, false, 0.88);
-                        if (point != null)
+                        point = BotCore.FindImage(crop, Img.Red_Button, false, 0.88);
+                        if (BotCore.RGBComparer(new Point(282, 285), Color.FromArgb(63, 110, 114), 10, image) && BotCore.RGBComparer(new Point(169, 52), Color.FromArgb(31, 56, 74), 10, image) && point != null)
                         {
                             BotCore.SendTap(point.Value);
                             Variables.ScriptLog("Found Red Button!", Color.Lime);
-                        }*/
+                        }
                         point = BotCore.FindImage(image, Img.Back_to_Village, true, 0.9);
                         if (point != null)
                         {
@@ -999,21 +999,38 @@ namespace UI
             else if (PrivateVariable.Instance.VCevent == PrivateVariable.EventType.DemonRealm)
             {
                 int num = 0;
-                if (!BotCore.RGBComparer(new Point(970, 149), 98, 120, 140, 30, image))
+                
+                if (BotCore.RGBComparer(new Point(980, 163), 117, 95, 80, 30, image))
                 {
                     num++;
                 }
-                if (!BotCore.RGBComparer(new Point(1090, 150), 86, 118, 136, 30, image))
+                else
+                {
+                    return num;
+                }
+                if (BotCore.RGBComparer(new Point(1113, 140), 145, 118, 94, 30, image))
                 {
                     num++;
                 }
-                if (!BotCore.RGBComparer(new Point(961, 253), 65, 74, 84, 30, image))
+                else
+                {
+                    return num;
+                }
+                if (BotCore.RGBComparer(new Point(980, 239), 148, 128, 105, 30, image))
                 {
                     num++;
                 }
-                if (!BotCore.RGBComparer(new Point(1106, 262), 85, 98, 77, 30, image))
+                else
+                {
+                    return num;
+                }
+                if (BotCore.RGBComparer(new Point(1113, 256), 150, 126, 100, 30, image))
                 {
                     num++;
+                }
+                else
+                {
+                    return num;
                 }
                 return num;
             }
