@@ -55,3 +55,6 @@ ___
 # 挂机开发文档
  * 这里拥有文档[资料](https://github.com/PoH98/Valkyrie-Crusade-Bot/wiki)解释如何使用BotFramework.dll编写任何游戏挂机软件
  * 免责声明：本人不会对于任何因使用本脚本而造成的 “外挂” 或 “机器人” 等原因的封号做出任何赔偿，请自行慎用！
+
+# Project Abandon, currently tring to get a working v2 for this bot using my another bot framework which is Zeraniumu to fix current buggy things
+# 软件已停更，目前正在尝试搞v2使用了我另一个框架Zeraniumu修复各种错误

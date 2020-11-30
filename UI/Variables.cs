@@ -45,9 +45,10 @@ namespace UI
 
         public bool Battling, InEventScreen, InMainScreen, InMap;
 
-        public List<int> ProcessID = new List<int>();
+        public List<int> ProcessID { get; set; } = new List<int>();
 
-        public bool TakePartInNormalStage, AlwaysAttackNew;
+        public bool TakePartInNormalStage { get; set; }
+        public bool AlwaysAttackNew { get; set; }
 
         public int UserSelectedStage;
 
