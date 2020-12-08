@@ -477,7 +477,9 @@ namespace UI
         private static void LocateUI()
         {
             BotCore.Delay(1000);
-            if (!BotCore.RGBComparer(new Point(10, 27), Color.FromArgb(200, 200, 200), 5, image))
+            var crop = Screenshot.CropImage(image, new Point(1100, 0), new Point(1280, 200));
+            var check = BotCore.FindImage(crop, Img.BattleScreen, true, 0.7);
+            if (check == null)
             {
                 Variables.ScriptLog("HP bar not found. Finding UIs", Color.Yellow);
                 Attackable = false;
@@ -619,7 +621,7 @@ namespace UI
                 {
                     BotCore.SendTap(10, 10);
                 }
-                var crop = Screenshot.CropImage(image, new Point(125, 0), new Point(1280, 720));
+                crop = Screenshot.CropImage(image, new Point(125, 0), new Point(1280, 720));
                 point = BotCore.FindImage(crop, Img.GreenButton, false, 0.85);
                 if (point != null)
                 {
@@ -871,6 +873,7 @@ namespace UI
                         }
                     }
                     delay.Stop();
+                    BotCore.SendTap(640, 650);
                 }
                 if (!BotCore.GameIsForeground(game))
                 {
@@ -1467,7 +1470,7 @@ namespace UI
                 BotCore.Delay(10, true);
                 do
                 {
-                    BotCore.Delay(1200, false);
+                    BotCore.Delay(2200, false);
                     image = Screenshot.ImageCapture();
                     if (Variables.Controlled_Device == null) //Emulator not started, awaiting...
                     {

@@ -749,7 +749,7 @@ namespace BotFramework
             bool Docked = false;
             do
             {
-                Thread.Sleep(1000);
+                Thread.Sleep(2000);
                 if (Variables.Proc != null)
                 {
                     if (Variables.Proc.HasExited)
