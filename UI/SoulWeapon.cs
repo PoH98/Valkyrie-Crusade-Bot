@@ -17,6 +17,10 @@ namespace UI
             //Check if we didnt need to switch stage
             do
             {
+                if (!BotCore.GameIsForeground(VCBotScript.game))
+                {
+                    return;
+                }
                 VCBotScript.image = Screenshot.ImageCapture();
                 if (BotCore.FindImage(VCBotScript.image, Img.SoulArrow, false, 0.9) != null || BotCore.FindImage(Screenshot.CropImage(VCBotScript.image, new Point(445, 355), new Point(815, 430)), Img.Red_Button, false, 0.87) != null)
                 {
@@ -174,7 +178,7 @@ namespace UI
                 if (buttons != null)
                 {
                     ArchwitchEvent.CheckWalkEnergy();
-                    if (ArchwitchEvent.CurrentWalkEnergy < 15 || (ArchwitchEvent.CurrentBossEnergy < 3 && ArchwitchEvent.FullBossEnergy > 0))
+                    if (ArchwitchEvent.CurrentWalkEnergy <= 15 || (ArchwitchEvent.CurrentBossEnergy <= 3 && ArchwitchEvent.FullBossEnergy > 0))
                     {
                         //No energy
                         Variables.ScriptLog("SoulWeapon Event have no energy. Exiting now! ", Color.Yellow);
